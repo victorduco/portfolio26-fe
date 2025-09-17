@@ -9,7 +9,20 @@ body {
     "Segoe UI",
     sans-serif
   );
-  background: #171717;
-  color: var(--color-text-primary, #ffffff);
+  background: radial-gradient(
+    circle at top left,
+    var(--color-bg-1),
+    var(--color-bg-2) 60%,
+    var(--color-bg-3) 100%
+  );
+  color: var(--color-text-primary);
   min-height: 100vh;
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }

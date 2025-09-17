@@ -8,56 +8,58 @@
       </p>
     </div>
 
-    <ul
-      class="motion-list"
-      layout
-      :transition="{
-        layout: { type: 'spring', stiffness: 20, damping: 4, mass: 0.1 },
-      }"
-    >
-      <motion.li
-        v-for="(block, idx) in blocks"
-        :key="idx"
+    <div class="hero__stage">
+      <ul
+        class="motion-list"
         layout
-        :custom="idx"
-        :variants="boxVariants"
-        :animate="block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'"
-        :transition="getLayoutSpring(idx)"
-        initial="default"
-        class="motion-square"
-        @mouseenter="hovered[idx] = true"
-        @mouseleave="hovered[idx] = false"
-        @click="toggleState(idx)"
-        :data-state="block.isActive"
+        :transition="{
+          layout: { type: 'spring', stiffness: 20, damping: 4, mass: 0.1 },
+        }"
       >
-        <!-- Вращаем ТОЛЬКО SVG -->
-        <motion.svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 100 100"
-          :variants="svgVariants"
-          :animate="
-            block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-          "
-          :transition="spring"
-          style="transform-origin: 50% 50%; display: block"
+        <motion.li
+          v-for="(block, idx) in blocks"
+          :key="idx"
+          layout
+          :custom="idx"
+          :variants="boxVariants"
+          :animate="block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'"
+          :transition="getLayoutSpring(idx)"
+          initial="default"
+          class="motion-square"
+          @mouseenter="hovered[idx] = true"
+          @mouseleave="hovered[idx] = false"
+          @click="toggleState(idx)"
+          :data-state="block.isActive"
         >
-          <!-- rect вместо polygon; скругления пропорциональны (во viewBox ед.) -->
-          <rect
-            x="0"
-            y="0"
-            width="100"
-            height="100"
-            :rx="cornerRadius"
-            :ry="cornerRadius"
-            fill="#111"
-          />
-        </motion.svg>
+          <!-- Вращаем ТОЛЬКО SVG -->
+          <motion.svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            :variants="svgVariants"
+            :animate="
+              block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
+            "
+            :transition="spring"
+            style="transform-origin: 50% 50%; display: block"
+          >
+            <!-- rect вместо polygon; скругления пропорциональны (во viewBox ед.) -->
+            <rect
+              x="0"
+              y="0"
+              width="100"
+              height="100"
+              :rx="cornerRadius"
+              :ry="cornerRadius"
+              fill="var(--color-square-fill)"
+            />
+          </motion.svg>
 
-        <!-- Контент поверх, НЕ вращается -->
-        <div class="motion-content">{{ idx + 1 }}</div>
-      </motion.li>
-    </ul>
+          <!-- Контент поверх, НЕ вращается -->
+          <div class="motion-content">{{ idx + 1 }}</div>
+        </motion.li>
+      </ul>
+    </div>
   </section>
 </template>
 
@@ -123,28 +125,48 @@ function getLayoutSpring(idx) {
 
 <style scoped>
 .hero {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 96px 64px;
-  display: flex;
-  flex-direction: column;
-  gap: 56px;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  justify-items: start;
+  width: 100%;
+  max-width: 1040px;
+  min-height: 100vh;
+  padding-block: clamp(48px, 12vh, 96px);
+  padding-inline-start: clamp(32px, 12vw, 120px);
+  padding-inline-end: clamp(24px, 6vw, 96px);
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .hero__text {
+  grid-area: 1 / 1;
   max-width: 720px;
   display: grid;
   gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero__stage {
+  grid-area: 1 / 1;
+  align-self: stretch;
+  justify-self: stretch;
+  padding-top: clamp(120px, 22vh, 260px);
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .motion-list {
   display: flex;
-  gap: 20px;
+  gap: clamp(12px, 2vw, 20px);
   align-items: center;
   margin: 0;
-  padding: 16px;
-  border: #111 1px solid;
+  padding: 0;
   list-style: none;
+  pointer-events: auto;
 }
 
 .motion-square {
@@ -162,11 +184,24 @@ function getLayoutSpring(idx) {
   inset: 0;
   display: grid;
   place-items: center;
-  color: #fff;
+  color: var(--color-square-content);
   font-weight: 800;
   font-size: 18px;
   line-height: 1;
   user-select: none;
   pointer-events: none; /* клики идут в li */
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: auto;
+    padding-block: clamp(40px, 12vh, 72px);
+    padding-inline-start: clamp(24px, 16vw, 72px);
+    padding-inline-end: clamp(16px, 8vw, 48px);
+  }
+
+  .hero__stage {
+    padding-top: clamp(96px, 24vh, 200px);
+  }
 }
 </style>
