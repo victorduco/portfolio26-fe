@@ -8,7 +8,6 @@
       </p>
     </div>
 
-    <div class="hero__stage"></div>
     <ul
       class="motion-list"
       layout
@@ -33,32 +32,43 @@
         @click="toggleState(idx)"
         :data-state="block.isActive"
       >
-        <!-- Вращаем ТОЛЬКО SVG -->
-        <motion.svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 100 100"
-          :variants="svgVariants"
+        <motion.div
+          class="motion-square__background"
+          :variants="shapeVariants"
           :animate="
             block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
           "
           :transition="spring"
-          style="transform-origin: 50% 50%; display: block"
-        >
-          <!-- rect вместо polygon; скругления пропорциональны (во viewBox ед.) -->
-          <rect
-            x="0"
-            y="0"
-            width="100"
-            height="100"
-            :rx="cornerRadius"
-            :ry="cornerRadius"
-            fill="var(--color-square-fill)"
-          />
-        </motion.svg>
+          :style="getBackgroundStyle(idx)"
+        />
 
-        <!-- Контент поверх, НЕ вращается -->
-        <div class="motion-content">{{ idx + 1 }}</div>
+        <div
+          v-if="!hovered[idx] && !block.isActive"
+          class="motion-circle"
+        ></div>
+
+        <transition name="fade">
+          <div
+            v-if="hovered[idx] && !block.isActive"
+            class="motion-number"
+            :style="getNumberStyle(idx)"
+          >
+            {{ idx + 1 }}
+          </div>
+        </transition>
+
+        <transition name="fade">
+          <article
+            v-if="block.isActive"
+            class="motion-panel"
+            :style="getPanelStyle(idx)"
+          >
+            <span class="motion-panel__index">{{ idx + 1 }}</span>
+            <h3 class="motion-panel__title">{{ block.title }}</h3>
+            <p class="motion-panel__lead">{{ block.lead }}</p>
+            <p class="motion-panel__details">{{ block.details }}</p>
+          </article>
+        </transition>
       </motion.li>
     </ul>
   </section>
@@ -68,150 +78,320 @@
 import { motion } from "motion-v";
 import { reactive, ref } from "vue";
 
-/** Несколько активных можно одновременно */
-const blocks = reactive(Array.from({ length: 4 }, () => ({ isActive: false })));
-const hovered = reactive(Array.from({ length: 4 }, () => false));
+const baseBlocks = [
+  {
+    title: "Four Facts about Victor",
+    lead:
+      "Gute Websites sehen nicht nur gut aus – sie fühlen sich auch gut an.",
+    details:
+      "Ich verbinde Forschung, Strategie und starke Visuals, um digitale Produkte lebendig zu machen.",
+    hoverGradient: "linear-gradient(135deg, #4b7bff 0%, #29e2ff 100%)",
+    activeGradient: "linear-gradient(135deg, #2b4dff 0%, #68f3ff 100%)",
+    hoverShadow:
+      "inset 0 0 60px rgba(255, 255, 255, 0.35), 0 28px 52px rgba(71, 162, 255, 0.35)",
+    activeShadow:
+      "inset 0 0 80px rgba(255, 255, 255, 0.32), 0 36px 72px rgba(71, 162, 255, 0.45)",
+    numberColor: "#061932",
+    panelTextColor: "#05080f",
+  },
+  {
+    title: "Four Facts about Victor",
+    lead: "Research first, pixels second.",
+    details:
+      "Jedes Interface beginnt mit echten Insights der Nutzer:innen, damit das Design nicht nur schön, sondern sinnvoll ist.",
+    hoverGradient: "linear-gradient(135deg, #ff9b07 0%, #ffe760 100%)",
+    activeGradient: "linear-gradient(135deg, #ffb40f 0%, #fff38f 100%)",
+    hoverShadow:
+      "inset 0 0 60px rgba(255, 255, 255, 0.35), 0 28px 52px rgba(255, 207, 86, 0.35)",
+    activeShadow:
+      "inset 0 0 80px rgba(255, 255, 255, 0.32), 0 36px 72px rgba(255, 207, 86, 0.45)",
+    numberColor: "#211200",
+    panelTextColor: "#1d1300",
+  },
+  {
+    title: "Four Facts about Victor",
+    lead: "Motion erklärt komplexe Dinge ohne Worte.",
+    details:
+      "Durchdachte Animationen führen den Blick, erklären Abläufe und lassen komplexe Systeme leicht erscheinen.",
+    hoverGradient: "linear-gradient(135deg, #00b76b 0%, #8bfd7e 100%)",
+    activeGradient: "linear-gradient(135deg, #00cb76 0%, #b7ff95 100%)",
+    hoverShadow:
+      "inset 0 0 60px rgba(255, 255, 255, 0.35), 0 28px 52px rgba(0, 197, 120, 0.35)",
+    activeShadow:
+      "inset 0 0 80px rgba(255, 255, 255, 0.32), 0 36px 72px rgba(0, 197, 120, 0.45)",
+    numberColor: "#012416",
+    panelTextColor: "#062013",
+  },
+  {
+    title: "Four Facts about Victor",
+    lead: "Kollaboration macht Ideen schnell erlebbar.",
+    details:
+      "Ich arbeite nah am Team, teste früh und liefere stetig, sodass Konzepte rasch zu erlebbaren Prototypen werden.",
+    hoverGradient: "linear-gradient(135deg, #ff3e6e 0%, #ffa6ff 100%)",
+    activeGradient: "linear-gradient(135deg, #ff5b86 0%, #ffd0ff 100%)",
+    hoverShadow:
+      "inset 0 0 60px rgba(255, 255, 255, 0.35), 0 28px 52px rgba(255, 133, 191, 0.35)",
+    activeShadow:
+      "inset 0 0 80px rgba(255, 255, 255, 0.32), 0 36px 72px rgba(255, 133, 191, 0.45)",
+    numberColor: "#2e0617",
+    panelTextColor: "#240612",
+  },
+];
+
+const blocks = reactive(
+  baseBlocks.map((block) => ({
+    ...block,
+    isActive: false,
+  }))
+);
+
+const hovered = reactive(Array.from({ length: blocks.length }, () => false));
 const lastToggledIdx = ref(-1);
 
-/** Пружина (как было) */
-const spring = { type: "spring", stiffness: 20, damping: 4, mass: 0.1 };
+const spring = { type: "spring", stiffness: 20, damping: 5, mass: 0.15 };
 
-/** ТВОИ ЖЕ boxVariants — без изменений */
 const boxVariants = {
   default: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     marginLeft: 0,
     marginRight: 0,
     y: 0,
     transition: spring,
   },
   hover: {
-    width: 150,
-    height: 150,
-    marginLeft: 10, // фиксированный отступ
-    marginRight: 10, // фиксированный отступ
+    width: 192,
+    height: 192,
+    marginLeft: 14,
+    marginRight: 14,
     transition: spring,
   },
-  active: (i) => ({
-    width: 600,
-    height: 600,
-    marginLeft: 10, // ещё больше отступ
-    marginRight: 10, // ещё больше отступ
-    y: i % 2 === 0 ? "33%" : "-33%",
+  active: {
+    width: 360,
+    height: 360,
+    marginLeft: 24,
+    marginRight: 24,
+    y: 0,
     transition: spring,
-  }),
+  },
 };
 
-/** Поворот ромбом */
-const svgVariants = {
+const shapeVariants = {
   default: { rotate: 0 },
   hover: { rotate: 45 },
   active: { rotate: 45 },
 };
 
-const cornerRadius = 10; // во viewBox-единицах (масштабируется пропорционально)
+const defaultBackground = "#2a2a2a";
+const defaultShadow = "inset 0 0 28px rgba(0, 0, 0, 0.55)";
 
 function toggleState(idx) {
-  blocks[idx].isActive = !blocks[idx].isActive; // НЕ закрываем другие
-  lastToggledIdx.value = idx;
+  const nextState = !blocks[idx].isActive;
+  blocks.forEach((block, blockIdx) => {
+    block.isActive = blockIdx === idx ? nextState : false;
+  });
+  lastToggledIdx.value = nextState ? idx : -1;
 }
 
 function getLayoutSpring(idx) {
-  const d =
-    lastToggledIdx.value === -1 ? 0 : Math.abs(idx - lastToggledIdx.value);
-  return { ...spring, delay: d * 0.5 };
+  if (lastToggledIdx.value === -1) {
+    return spring;
+  }
+
+  const distance = Math.abs(idx - lastToggledIdx.value);
+  return { ...spring, delay: distance * 0.06 };
+}
+
+function getBackgroundStyle(idx) {
+  const block = blocks[idx];
+
+  if (block.isActive) {
+    return {
+      background: block.activeGradient,
+      boxShadow: block.activeShadow,
+    };
+  }
+
+  if (hovered[idx]) {
+    return {
+      background: block.hoverGradient,
+      boxShadow: block.hoverShadow,
+    };
+  }
+
+  return {
+    background: defaultBackground,
+    boxShadow: defaultShadow,
+  };
+}
+
+function getNumberStyle(idx) {
+  return {
+    color: blocks[idx].numberColor,
+  };
+}
+
+function getPanelStyle(idx) {
+  return {
+    color: blocks[idx].panelTextColor,
+  };
 }
 </script>
 
 <style scoped>
 .hero {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: center;
-  justify-items: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
   max-width: 1040px;
   min-height: 100vh;
   padding-block: clamp(48px, 12vh, 96px);
-  padding-inline-start: clamp(32px, 12vw, 120px);
-  padding-inline-end: clamp(24px, 6vw, 96px);
+  padding-inline: clamp(32px, 12vw, 120px) clamp(24px, 6vw, 96px);
   box-sizing: border-box;
-  overflow: visible;
+  gap: clamp(48px, 12vh, 80px);
 }
 
 .hero__text {
-  grid-area: 1 / 1;
-  max-width: 720px;
   display: grid;
   gap: 24px;
-  position: relative;
-  z-index: 3;
-}
-
-.hero__stage {
-  grid-area: 1 / 1;
-  align-self: stretch;
-  justify-self: stretch;
-  padding-top: clamp(120px, 22vh, 260px);
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
+  max-width: 720px;
 }
 
 .motion-list {
+  position: relative;
   display: flex;
-  gap: clamp(12px, 2vw, 20px);
+  flex-wrap: wrap;
+  gap: clamp(16px, 3vw, 32px);
   align-items: center;
-  margin: 8px 0 0 0;
-  justify-content: center;
+  justify-content: flex-start;
+  margin: 0;
   padding: 0;
   list-style: none;
-  pointer-events: auto;
-  height: 600px; /* максимальная высота квадрата */
+  min-height: 360px;
 }
 
 .motion-square {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  width: 120px;
-  height: 120px;
   background: transparent;
   list-style: none;
-  box-sizing: border-box;
   cursor: pointer;
-  z-index: 1;
+  box-sizing: border-box;
+  overflow: visible;
 }
-/* SVG поверх при hover/active */
+
 .motion-square[data-state="true"],
 .motion-square:hover {
   z-index: 4;
 }
 
-.motion-content {
+.motion-square__background {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  color: var(--color-square-content);
-  font-weight: 800;
-  font-size: 18px;
-  line-height: 1;
-  user-select: none;
-  pointer-events: none; /* клики идут в li */
+  border-radius: 36px;
+  pointer-events: none;
+  will-change: transform, background, box-shadow;
 }
 
-@media (max-width: 768px) {
+.motion-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #3b3b3b 0%, #2a2a2a 65%, #222222 100%);
+  box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.55),
+    0 12px 24px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  z-index: 3;
+}
+
+.motion-number {
+  position: relative;
+  z-index: 3;
+  font-weight: 700;
+  font-size: 58px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+}
+
+.motion-panel {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 14px;
+  width: 70%;
+  max-width: 240px;
+  text-align: left;
+  margin: 0;
+}
+
+.motion-panel__index {
+  font-size: 16px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.motion-panel__title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.motion-panel__lead,
+.motion-panel__details {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: inherit;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+@media (max-width: 900px) {
   .hero {
-    min-height: auto;
-    padding-block: clamp(40px, 12vh, 72px);
-    padding-inline-start: clamp(24px, 16vw, 72px);
-    padding-inline-end: clamp(16px, 8vw, 48px);
+    padding-inline: clamp(24px, 8vw, 72px);
+    gap: 56px;
   }
 
-  .hero__stage {
-    padding-top: clamp(96px, 24vh, 200px);
+  .motion-list {
+    justify-content: center;
+  }
+
+  .motion-panel {
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    min-height: auto;
+    gap: 48px;
+  }
+
+  .motion-list {
+    min-height: 260px;
+    gap: 20px;
+  }
+
+  .motion-panel {
+    width: 80%;
+    max-width: 200px;
   }
 }
 </style>
