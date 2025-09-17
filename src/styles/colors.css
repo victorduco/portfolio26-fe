@@ -1,9 +1,29 @@
 :root {
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.8);
-  --color-bg-1: #1b1b1d;
-  --color-bg-2: #0d0d0f;
-  --color-bg-3: #050506;
-  --color-square-fill: #111111;
-  --color-square-content: var(--color-text-primary);
+  --color-bg: #0f1014;
+  --color-surface: #1a1c23;
+  --color-stage-text: rgba(244, 244, 245, 0.05);
+
+  --color-text-primary: #f4f4f5;
+  --color-text-secondary: rgba(244, 244, 245, 0.72);
+  --color-text-muted: rgba(244, 244, 245, 0.45);
+
+  --color-card-1: #4c8dff;
+  --color-card-1-soft: rgba(76, 141, 255, 0.18);
+  --color-card-1-glow: rgba(76, 141, 255, 0.55);
+  --color-card-1-ink: #061735;
+
+  --color-card-2: #ff6fa7;
+  --color-card-2-soft: rgba(255, 111, 167, 0.2);
+  --color-card-2-glow: rgba(255, 111, 167, 0.52);
+  --color-card-2-ink: #330515;
+
+  --color-card-3: #8fff6e;
+  --color-card-3-soft: rgba(143, 255, 110, 0.2);
+  --color-card-3-glow: rgba(143, 255, 110, 0.48);
+  --color-card-3-ink: #102205;
+
+  --color-card-4: #ffd66d;
+  --color-card-4-soft: rgba(255, 214, 109, 0.25);
+  --color-card-4-glow: rgba(255, 214, 109, 0.5);
+  --color-card-4-ink: #2e1e02;
 }
