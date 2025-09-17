@@ -6,4 +6,40 @@
   --color-bg-3: #050506;
   --color-square-fill: #111111;
   --color-square-content: var(--color-text-primary);
+  /* Цвета для motion-square блоков */
+  --square-hover-one-start: #0f4cff;
+  --square-hover-one-end: #30a3ff;
+  --square-hover-one-glow: rgba(31, 116, 255, 0.45);
+  --square-active-one-start: #1c64ff;
+  --square-active-one-end: #2ab6ff;
+  --square-active-one-glow: rgba(33, 142, 255, 0.6);
+
+  --square-hover-two-start: #f2668b;
+  --square-hover-two-end: #ff9cbd;
+  --square-hover-two-glow: rgba(255, 120, 165, 0.45);
+  --square-active-two-start: #ff6f9f;
+  --square-active-two-end: #ffbed7;
+  --square-active-two-glow: rgba(255, 146, 187, 0.6);
+
+  --square-hover-three-start: #00dbb6;
+  --square-hover-three-end: #34ffdc;
+  --square-hover-three-glow: rgba(0, 206, 176, 0.45);
+  --square-active-three-start: #16f2c7;
+  --square-active-three-end: #5cffe3;
+  --square-active-three-glow: rgba(45, 255, 210, 0.6);
+
+  --square-hover-four-start: #ffe066;
+  --square-hover-four-end: #fff199;
+  --square-hover-four-glow: rgba(255, 224, 102, 0.45);
+  --square-active-four-start: #ffe676;
+  --square-active-four-end: #fff7b8;
+  --square-active-four-glow: rgba(255, 234, 135, 0.6);
+
+  /* Цвета для текста и теней */
+  --square-content: #ffffff;
+  --square-title: #0b0b0b;
+  --square-copy: rgba(12, 12, 12, 0.85);
+  --square-shadow: rgba(0, 0, 0, 0.4);
+  --square-bg-dark1: #2a2a2a;
+  --square-bg-dark2: #202020;
 }
