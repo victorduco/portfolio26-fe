@@ -1,4 +1,10 @@
 /* Global baseline styling */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: var(
@@ -9,20 +15,22 @@ body {
     "Segoe UI",
     sans-serif
   );
-  background: radial-gradient(
-    circle at top left,
-    var(--color-bg-1),
-    var(--color-bg-2) 60%,
-    var(--color-bg-3) 100%
-  );
+  background-color: var(--color-bg-main);
   color: var(--color-text-primary);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 #app {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: stretch;
+  justify-content: center;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }

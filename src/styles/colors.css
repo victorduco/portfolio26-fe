@@ -1,9 +1,28 @@
 :root {
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.8);
-  --color-bg-1: #1b1b1d;
-  --color-bg-2: #0d0d0f;
-  --color-bg-3: #050506;
-  --color-square-fill: #111111;
-  --color-square-content: var(--color-text-primary);
+  --color-bg-main: #0f1014;
+  --color-surface-dim: #14161c;
+  --color-surface-raised: #1b1e27;
+
+  --color-text-primary: #f4f6f8;
+  --color-text-secondary: rgba(244, 246, 248, 0.72);
+  --color-text-tertiary: rgba(244, 246, 248, 0.56);
+
+  --color-square-default: rgba(244, 246, 248, 0.06);
+  --color-square-outline: rgba(244, 246, 248, 0.08);
+
+  --color-accent-1: #4aa9ff;
+  --color-accent-1-strong: #62c4ff;
+  --color-accent-1-glow: rgba(74, 169, 255, 0.65);
+
+  --color-accent-2: #ff7eb6;
+  --color-accent-2-strong: #ff99c6;
+  --color-accent-2-glow: rgba(255, 126, 182, 0.6);
+
+  --color-accent-3: #7ff6a6;
+  --color-accent-3-strong: #9dffbd;
+  --color-accent-3-glow: rgba(127, 246, 166, 0.6);
+
+  --color-accent-4: #ffd76f;
+  --color-accent-4-strong: #ffe59b;
+  --color-accent-4-glow: rgba(255, 215, 111, 0.58);
 }
