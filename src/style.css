@@ -9,12 +9,7 @@ body {
     "Segoe UI",
     sans-serif
   );
-  background: radial-gradient(
-    circle at top left,
-    var(--color-bg-1),
-    var(--color-bg-2) 60%,
-    var(--color-bg-3) 100%
-  );
+  background: #171717;
   color: var(--color-text-primary);
   min-height: 100vh;
 }

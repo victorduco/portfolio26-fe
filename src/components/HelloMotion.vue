@@ -3,63 +3,64 @@
     <div class="hero__text">
       <h1 class="h1">Rectangles That Rules Numbers</h1>
       <p class="body1">
-        This is story of me and how UX can change things around us. Something else
-        to write here.
+        This is story of me and how UX can change things around us. Something
+        else to write here.
       </p>
     </div>
 
-    <div class="hero__stage">
-      <ul
-        class="motion-list"
+    <div class="hero__stage"></div>
+    <ul
+      class="motion-list"
+      layout
+      :transition="{
+        layout: { type: 'spring', stiffness: 20, damping: 4, mass: 0.1 },
+      }"
+    >
+      <motion.li
+        v-for="(block, idx) in blocks"
+        :key="idx"
         layout
-        :transition="{
-          layout: { type: 'spring', stiffness: 20, damping: 4, mass: 0.1 },
-        }"
+        :custom="idx"
+        :variants="boxVariants"
+        :animate="
+          block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
+        "
+        :transition="getLayoutSpring(idx)"
+        initial="default"
+        class="motion-square"
+        @mouseenter="hovered[idx] = true"
+        @mouseleave="hovered[idx] = false"
+        @click="toggleState(idx)"
+        :data-state="block.isActive"
       >
-        <motion.li
-          v-for="(block, idx) in blocks"
-          :key="idx"
-          layout
-          :custom="idx"
-          :variants="boxVariants"
-          :animate="block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'"
-          :transition="getLayoutSpring(idx)"
-          initial="default"
-          class="motion-square"
-          @mouseenter="hovered[idx] = true"
-          @mouseleave="hovered[idx] = false"
-          @click="toggleState(idx)"
-          :data-state="block.isActive"
+        <!-- Вращаем ТОЛЬКО SVG -->
+        <motion.svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 100 100"
+          :variants="svgVariants"
+          :animate="
+            block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
+          "
+          :transition="spring"
+          style="transform-origin: 50% 50%; display: block"
         >
-          <!-- Вращаем ТОЛЬКО SVG -->
-          <motion.svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 100 100"
-            :variants="svgVariants"
-            :animate="
-              block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-            "
-            :transition="spring"
-            style="transform-origin: 50% 50%; display: block"
-          >
-            <!-- rect вместо polygon; скругления пропорциональны (во viewBox ед.) -->
-            <rect
-              x="0"
-              y="0"
-              width="100"
-              height="100"
-              :rx="cornerRadius"
-              :ry="cornerRadius"
-              fill="var(--color-square-fill)"
-            />
-          </motion.svg>
+          <!-- rect вместо polygon; скругления пропорциональны (во viewBox ед.) -->
+          <rect
+            x="0"
+            y="0"
+            width="100"
+            height="100"
+            :rx="cornerRadius"
+            :ry="cornerRadius"
+            fill="var(--color-square-fill)"
+          />
+        </motion.svg>
 
-          <!-- Контент поверх, НЕ вращается -->
-          <div class="motion-content">{{ idx + 1 }}</div>
-        </motion.li>
-      </ul>
-    </div>
+        <!-- Контент поверх, НЕ вращается -->
+        <div class="motion-content">{{ idx + 1 }}</div>
+      </motion.li>
+    </ul>
   </section>
 </template>
 
@@ -146,7 +147,7 @@ function getLayoutSpring(idx) {
   display: grid;
   gap: 24px;
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 .hero__stage {
@@ -155,7 +156,7 @@ function getLayoutSpring(idx) {
   justify-self: stretch;
   padding-top: clamp(120px, 22vh, 260px);
   position: relative;
-  z-index: 2;
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -163,20 +164,29 @@ function getLayoutSpring(idx) {
   display: flex;
   gap: clamp(12px, 2vw, 20px);
   align-items: center;
-  margin: 0;
+  margin: 8px 0 0 0;
+  justify-content: center;
   padding: 0;
   list-style: none;
   pointer-events: auto;
+  height: 600px; /* максимальная высота квадрата */
 }
 
 .motion-square {
-  position: relative; /* для контента поверх */
-  width: 120px; /* фолбэк до инициализации Motion */
+  position: relative;
+  flex-shrink: 0;
+  width: 120px;
   height: 120px;
   background: transparent;
   list-style: none;
   box-sizing: border-box;
   cursor: pointer;
+  z-index: 1;
+}
+/* SVG поверх при hover/active */
+.motion-square[data-state="true"],
+.motion-square:hover {
+  z-index: 4;
 }
 
 .motion-content {
