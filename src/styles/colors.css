@@ -1,9 +1,18 @@
 :root {
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.8);
-  --color-bg-1: #1b1b1d;
-  --color-bg-2: #0d0d0f;
-  --color-bg-3: #050506;
-  --color-square-fill: #111111;
-  --color-square-content: var(--color-text-primary);
+  --color-text-primary: #f7f7f9;
+  --color-text-secondary: rgba(235, 236, 242, 0.72);
+  --color-text-tertiary: rgba(235, 236, 242, 0.48);
+  --color-text-soft: rgba(235, 236, 242, 0.56);
+
+  --color-bg-main: #0d0d10;
+  --color-square-surface: #16161f;
+
+  --color-card-1: #3c8bff;
+  --color-card-1-glow: #7fb7ff;
+  --color-card-2: #ff7aad;
+  --color-card-2-glow: #ffc2dc;
+  --color-card-3: #63f4d1;
+  --color-card-3-glow: #c0ffef;
+  --color-card-4: #ffd86b;
+  --color-card-4-glow: #fff2bf;
 }
