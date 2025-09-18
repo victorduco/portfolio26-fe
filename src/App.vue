@@ -1,7 +1,7 @@
 <script setup>
-import Intro from "./components/intro/Intro.vue";
+import GlassDemo from "./components/GlassDemo.vue";
 </script>
 
 <template>
-  <Intro />
+  <GlassDemo />
 </template>
