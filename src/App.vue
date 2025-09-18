@@ -1,7 +1,7 @@
 <script setup>
-import Intro from "./components/intro/Intro.vue";
+import LiquidGlassDemo from "./components/LiquidGlassDemo.vue";
 </script>
 
 <template>
-  <Intro />
+  <LiquidGlassDemo />
 </template>
