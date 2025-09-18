@@ -1,6 +1,8 @@
 <template>
   <div class="glass-demo">
-    <div class="glass-demo__background" />
+    <div class="glass-demo__background" :style="backgroundStyle">
+      <div class="glass-demo__background-overlay" :style="backgroundOverlayStyle" />
+    </div>
 
     <div class="glass-demo__layout">
       <div class="glass-demo__card-wrapper">
@@ -123,14 +125,14 @@
         <div
           ref="glassRef"
           class="glass-demo__card"
-          :style="cardTransformStyle"
+          :style="cardStyle"
           @mouseenter="handleEnter"
           @mouseleave="handleLeave"
           @mousedown="handleDown"
           @mouseup="handleUp"
           @mousemove="handleMouseMove"
         >
-          <span class="glass-demo__warp" :style="warpStyle" />
+          <div class="glass-demo__liquid" :style="liquidStyle" />
           <div class="glass-demo__card-content">
             <h2>Liquid Glass Playground</h2>
             <p>
@@ -147,38 +149,113 @@
 
       <aside class="glass-demo__controls">
         <h3>Effect controls</h3>
-        <label class="glass-demo__field">
-          <span>Mode</span>
-          <select v-model="mode">
-            <option v-for="option in modes" :key="option" :value="option">
-              {{ option }}
-            </option>
-          </select>
-        </label>
+        <section class="glass-demo__section">
+          <h4>Displacement</h4>
+          <label class="glass-demo__field">
+            <span>Mode</span>
+            <select v-model="mode">
+              <option v-for="option in modes" :key="option" :value="option">
+                {{ option }}
+              </option>
+            </select>
+          </label>
 
-        <label class="glass-demo__field">
-          <span>Displacement scale</span>
-          <input type="range" min="10" max="120" v-model.number="displacementScale" />
-          <strong>{{ displacementScale }}</strong>
-        </label>
+          <label class="glass-demo__field">
+            <span>Displacement scale</span>
+            <input type="range" min="10" max="120" v-model.number="displacementScale" />
+            <strong>{{ displacementScale }}</strong>
+          </label>
 
-        <label class="glass-demo__field">
-          <span>Aberration</span>
-          <input type="range" min="0" max="6" step="0.1" v-model.number="aberrationIntensity" />
-          <strong>{{ aberrationIntensity.toFixed(1) }}</strong>
-        </label>
+          <label class="glass-demo__field">
+            <span>Aberration</span>
+            <input type="range" min="0" max="6" step="0.1" v-model.number="aberrationIntensity" />
+            <strong>{{ aberrationIntensity.toFixed(1) }}</strong>
+          </label>
 
-        <label class="glass-demo__field">
-          <span>Blur amount</span>
-          <input type="range" min="0" max="0.3" step="0.01" v-model.number="blurAmount" />
-          <strong>{{ blurAmount.toFixed(2) }}</strong>
-        </label>
+          <label class="glass-demo__field">
+            <span>Edge feather</span>
+            <input type="range" min="30" max="90" v-model.number="edgeFeather" />
+            <strong>{{ edgeFeather }}</strong>
+          </label>
 
-        <label class="glass-demo__field">
-          <span>Saturation</span>
-          <input type="range" min="80" max="260" step="5" v-model.number="saturation" />
-          <strong>{{ saturation }}</strong>
-        </label>
+          <label class="glass-demo__field">
+            <span>Edge contrast</span>
+            <input type="range" min="0.05" max="0.4" step="0.01" v-model.number="edgeSharpness" />
+            <strong>{{ edgeSharpness.toFixed(2) }}</strong>
+          </label>
+        </section>
+
+        <section class="glass-demo__section">
+          <h4>Glass</h4>
+          <label class="glass-demo__field">
+            <span>Glass blur</span>
+            <input type="range" min="12" max="40" v-model.number="glassBlur" />
+            <strong>{{ glassBlur }}px</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Glass saturation</span>
+            <input type="range" min="120" max="280" step="10" v-model.number="glassSaturation" />
+            <strong>{{ glassSaturation }}%</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Glass opacity</span>
+            <input type="range" min="0.35" max="0.85" step="0.01" v-model.number="glassOpacity" />
+            <strong>{{ Math.round(glassOpacity * 100) }}%</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Highlight intensity</span>
+            <input type="range" min="0.2" max="1" step="0.01" v-model.number="highlightIntensity" />
+            <strong>{{ highlightIntensity.toFixed(2) }}</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Highlight spread</span>
+            <input type="range" min="0.6" max="1.6" step="0.01" v-model.number="highlightSpread" />
+            <strong>{{ highlightSpread.toFixed(2) }}</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Highlight hue</span>
+            <input type="range" min="0" max="360" v-model.number="highlightHue" />
+            <strong>{{ highlightHue }}°</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Parallax</span>
+            <input type="range" min="0" max="0.8" step="0.01" v-model.number="parallaxIntensity" />
+            <strong>{{ parallaxIntensity.toFixed(2) }}</strong>
+          </label>
+        </section>
+
+        <section class="glass-demo__section">
+          <h4>Background</h4>
+          <label class="glass-demo__field">
+            <span>Saturation</span>
+            <input type="range" min="90" max="170" step="5" v-model.number="backgroundSaturation" />
+            <strong>{{ backgroundSaturation }}%</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Blur</span>
+            <input type="range" min="0" max="16" step="0.5" v-model.number="backgroundBlur" />
+            <strong>{{ backgroundBlur.toFixed(1) }}px</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Dimming</span>
+            <input type="range" min="0" max="0.6" step="0.01" v-model.number="backgroundDim" />
+            <strong>{{ backgroundDim.toFixed(2) }}</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Zoom</span>
+            <input type="range" min="95" max="140" v-model.number="backgroundZoom" />
+            <strong>{{ backgroundZoom }}%</strong>
+          </label>
+        </section>
       </aside>
     </div>
   </div>
@@ -192,13 +269,25 @@ import {
   polarDisplacementMap,
   prominentDisplacementMap,
 } from "../../demos/utils.ts";
+import backgroundImageUrl from "../assets/liquid-bg.jpg";
 
 const modes = ["standard", "polar", "prominent", "shader"];
 const mode = ref("shader");
 const displacementScale = ref(60);
 const aberrationIntensity = ref(2.4);
-const blurAmount = ref(0.12);
-const saturation = ref(160);
+const edgeFeather = ref(68);
+const edgeSharpness = ref(0.18);
+const glassBlur = ref(22);
+const glassSaturation = ref(180);
+const glassOpacity = ref(0.58);
+const highlightIntensity = ref(0.68);
+const highlightSpread = ref(1.05);
+const highlightHue = ref(210);
+const parallaxIntensity = ref(0.36);
+const backgroundSaturation = ref(120);
+const backgroundBlur = ref(6);
+const backgroundDim = ref(0.28);
+const backgroundZoom = ref(108);
 const cornerRadius = 32;
 
 const glassRef = ref(null);
@@ -211,6 +300,8 @@ const mouseOffset = reactive({ x: 0, y: 0 });
 const glassSize = reactive({ width: 320, height: 160 });
 
 const isFirefox = typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent);
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 const getMap = (currentMode, shaderUrl) => {
   switch (currentMode) {
@@ -229,8 +320,8 @@ const getMap = (currentMode, shaderUrl) => {
 
 const currentMap = computed(() => getMap(mode.value, shaderMapUrl.value));
 
-const edgeMaskStop = computed(() => Math.max(30, 80 - aberrationIntensity.value * 2));
-const edgeMaskTable = computed(() => `0 ${aberrationIntensity.value * 0.05} 1`);
+const edgeMaskStop = computed(() => clamp(edgeFeather.value, 20, 95));
+const edgeMaskTable = computed(() => `0 ${edgeSharpness.value.toFixed(2)} 1`);
 const displacementSign = computed(() => (mode.value === "shader" ? 1 : -1));
 const redScale = computed(() => displacementScale.value * displacementSign.value);
 const greenScale = computed(
@@ -239,27 +330,34 @@ const greenScale = computed(
 const blueScale = computed(
   () => displacementScale.value * (displacementSign.value - aberrationIntensity.value * 0.1),
 );
-const gaussianBlur = computed(() => Math.max(0.1, 0.5 - aberrationIntensity.value * 0.1));
+const gaussianBlur = computed(() => Math.max(0.12, glassBlur.value * 0.02));
 
-const warpStyle = computed(() => ({
-  filter: isFirefox ? undefined : `url(#${filterId})`,
-  backdropFilter: `blur(${4 + blurAmount.value * 32}px) saturate(${saturation.value}%)`,
+const backgroundStyle = computed(() => ({
+  backgroundImage: `url(${backgroundImageUrl})`,
+  backgroundSize: `${backgroundZoom.value}%`,
+  backgroundPosition: "center",
+  filter: `saturate(${backgroundSaturation.value / 100}) blur(${backgroundBlur.value}px)`,
 }));
 
-const lightStyle = computed(() => ({
-  opacity: isHovered.value ? 0.55 : 0.2,
-  background: `radial-gradient(circle at ${50 + mouseOffset.x * 0.4}% ${30 + mouseOffset.y * 0.2}%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0))`,
+const backgroundOverlayStyle = computed(() => ({
+  background:
+    `linear-gradient(120deg, rgba(6, 10, 24, ${0.4 + backgroundDim.value}) 0%, rgba(12, 18, 38, ${0.55 +
+      backgroundDim.value}) 55%, rgba(4, 8, 18, ${0.35 + backgroundDim.value}) 100%)`,
+  opacity: 1,
 }));
 
-const outlineStyle = computed(() => ({
-  borderRadius: `${cornerRadius}px`,
-  width: `${glassSize.width}px`,
-  height: `${glassSize.height}px`,
-  transform: cardTransform.value,
-  transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
-  opacity: isHovered.value ? 0.4 : 0.22,
-  background: `linear-gradient(${135 + mouseOffset.x * 1.2}deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.1) 100%)`,
-}));
+const liquidStyle = computed(() => {
+  const parallaxX = clamp(50 - mouseOffset.x * parallaxIntensity.value, -20, 120);
+  const parallaxY = clamp(50 - mouseOffset.y * parallaxIntensity.value, -20, 120);
+  return {
+    borderRadius: `${cornerRadius}px`,
+    backgroundImage: `url(${backgroundImageUrl})`,
+    backgroundSize: `${backgroundZoom.value}%`,
+    backgroundPosition: `${parallaxX}% ${parallaxY}%`,
+    filter: isFirefox ? undefined : `url(#${filterId})`,
+    opacity: clamp(0.75 + glassOpacity.value * 0.35, 0.65, 1),
+  };
+});
 
 const cardTransform = computed(() => {
   const scaleX = 1 + Math.max(-0.2, Math.min(0.2, mouseOffset.x / 120));
@@ -269,14 +367,65 @@ const cardTransform = computed(() => {
   return `scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(3)}) translate(${translateX.toFixed(2)}px, ${translateY.toFixed(2)}px)`;
 });
 
-const cardTransformStyle = computed(() => ({
-  borderRadius: `${cornerRadius}px`,
-  boxShadow: isActive.value
-    ? "0 18px 60px rgba(0, 0, 0, 0.35)"
-    : "0 16px 55px rgba(0, 0, 0, 0.28)",
-  transform: cardTransform.value,
-  transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
-}));
+const cardStyle = computed(() => {
+  const backgroundAlpha = clamp(glassOpacity.value * 0.65, 0.18, 0.72).toFixed(3);
+  const borderAlpha = clamp(0.1 + glassOpacity.value * 0.28, 0.16, 0.42).toFixed(3);
+  return {
+    borderRadius: `${cornerRadius}px`,
+    transform: cardTransform.value,
+    transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
+    boxShadow: isActive.value
+      ? "0 18px 60px rgba(0, 0, 0, 0.35)"
+      : "0 20px 65px rgba(8, 12, 24, 0.42)",
+    backgroundColor: `rgba(12, 16, 30, ${backgroundAlpha})`,
+    border: `1px solid rgba(255, 255, 255, ${borderAlpha})`,
+    backdropFilter: `blur(${glassBlur.value}px) saturate(${glassSaturation.value}%)`,
+    backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, ${clamp(
+      0.04 + glassOpacity.value * 0.24,
+      0.05,
+      0.32,
+    ).toFixed(3)}) 0%, rgba(255, 255, 255, ${clamp(
+      0.01 + glassOpacity.value * 0.12,
+      0.02,
+      0.24,
+    ).toFixed(3)}) 100%)`,
+  };
+});
+
+const lightStyle = computed(() => {
+  const intensity = isHovered.value ? highlightIntensity.value : highlightIntensity.value * 0.6;
+  const spread = Math.min(100, 48 + highlightSpread.value * 34);
+  const inner = Math.max(12, highlightSpread.value * 14);
+  const hue = highlightHue.value;
+  return {
+    opacity: clamp(intensity + 0.12, 0.18, 0.95),
+    background: `radial-gradient(circle at ${50 + mouseOffset.x * 0.35}% ${30 + mouseOffset.y * 0.22}%, hsla(${hue}, 96%, 82%, ${clamp(
+      0.45 + intensity * 0.55,
+      0.35,
+      0.92,
+    ).toFixed(3)}) 0%, hsla(${hue}, 98%, 74%, ${clamp(
+      0.12 + intensity * 0.35,
+      0.14,
+      0.6,
+    ).toFixed(3)}) ${inner}%, rgba(255, 255, 255, 0) ${spread}%)`,
+  };
+});
+
+const outlineStyle = computed(() => {
+  const hue = highlightHue.value;
+  const opacity = isHovered.value
+    ? clamp(0.28 + highlightIntensity.value * 0.38, 0.3, 0.75)
+    : clamp(0.18 + highlightIntensity.value * 0.28, 0.22, 0.6);
+  return {
+    borderRadius: `${cornerRadius}px`,
+    width: `${glassSize.width}px`,
+    height: `${glassSize.height}px`,
+    transform: cardTransform.value,
+    transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
+    opacity,
+    background: `linear-gradient(${135 + mouseOffset.x * 1.2}deg, hsla(${hue}, 95%, 86%, 0.08) 0%, hsla(${hue}, 98%, 80%, 0.58) 50%, hsla(${hue}, 92%, 72%, 0.14) 100%)`,
+  };
+});
 
 const updateGlassSize = () => {
   if (!glassRef.value) return;
@@ -373,16 +522,25 @@ watch(
   justify-content: center;
   padding: 48px clamp(24px, 4vw, 64px);
   box-sizing: border-box;
+  background: radial-gradient(circle at top, rgba(8, 12, 26, 0.65), rgba(4, 6, 12, 0.9));
 }
 
 .glass-demo__background {
+  position: fixed;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transform: translateZ(0);
+}
+
+.glass-demo__background-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top left, #3030ff 0%, transparent 45%),
-    radial-gradient(circle at bottom right, #ff497a 0%, transparent 55%),
-    linear-gradient(135deg, #1b1b1b, #0f0f0f 60%, #1c2838);
-  filter: saturate(150%);
-  z-index: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  backdrop-filter: saturate(160%);
 }
 
 .glass-demo__layout {
@@ -422,17 +580,19 @@ watch(
   gap: 16px;
   padding: 28px clamp(24px, 5vw, 32px);
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.16);
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.2s ease, border 0.2s ease;
-  backdrop-filter: blur(16px);
+  transition: box-shadow 0.25s ease, border 0.25s ease, background 0.25s ease;
 }
 
-.glass-demo__warp {
+.glass-demo__liquid {
   position: absolute;
   inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  pointer-events: none;
 }
 
 .glass-demo__card-content {
@@ -502,7 +662,7 @@ watch(
   color: rgba(244, 247, 255, 0.88);
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.4);
   display: grid;
-  gap: 18px;
+  gap: 24px;
 }
 
 .glass-demo__controls h3 {
@@ -510,6 +670,19 @@ watch(
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.glass-demo__section {
+  display: grid;
+  gap: 18px;
+}
+
+.glass-demo__section h4 {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .glass-demo__field {
