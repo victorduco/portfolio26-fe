@@ -98,9 +98,7 @@
 import { motion } from "motion-v";
 import { LiquidGlass } from "@wxperia/liquid-glass-vue";
 
-const handleClick = () => {
-  console.log("Button clicked!");
-};
+const handleClick = () => {};
 import { blocks, hovered, getLayoutSpring, toggleState } from "./index.js";
 
 import {

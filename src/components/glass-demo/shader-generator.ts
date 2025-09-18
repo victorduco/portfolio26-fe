@@ -46,7 +46,6 @@ export class ShaderDisplacementGenerator {
         rawValues.push(dx, dy);
       }
     }
-    console.log("rawValues", rawValues);
 
     // Improved normalization to prevent artifacts while maintaining intensity
     if (maxScale > 0) {
@@ -85,8 +84,6 @@ export class ShaderDisplacementGenerator {
     }
 
     this.context.putImageData(imageData, 0, 0);
-    console.log("Map generated");
-    console.log("Shader URL:", this.canvas.toDataURL());
 
     return this.canvas.toDataURL();
   }
@@ -127,7 +124,6 @@ export class ShaderDisplacementGenerator {
     const displacement = this.smoothStep(0.8, 0, distanceToEdge - 0.15);
     const scaled = this.smoothStep(0, 1, displacement);
     const texCoords = this.texture(ix * scaled + 0.5, iy * scaled + 0.5);
-    console.log("texCoords", texCoords);
     return texCoords;
   }
 

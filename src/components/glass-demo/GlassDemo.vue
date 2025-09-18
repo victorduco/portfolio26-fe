@@ -1,6 +1,6 @@
 <template>
   <div class="glass-demo">
-    <div class="glass-demo__background" :style="backgroundStyle" />
+    <div class="glass-demo__background" />
 
     <div class="glass-demo__layout">
       <div class="glass-demo__card-wrapper">
@@ -423,7 +423,6 @@ const {
   surfaceReflection,
   shadowDepth,
   parallaxIntensity,
-  backgroundStyle,
   filterReady,
   glassSize,
   filterId,

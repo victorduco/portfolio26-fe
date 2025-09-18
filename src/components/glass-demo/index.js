@@ -8,7 +8,7 @@ import {
   watch,
 } from "vue";
 import { ShaderDisplacementGenerator } from "./shader-generator.ts";
-import backgroundImageUrl from "../../assets/grd.jpg";
+import backgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo() {
   // Enhanced modes for Apple Liquid Glass
@@ -112,27 +112,16 @@ export default function useGlassDemo() {
             0 0 0 1 0`;
   });
 
-  // Background style
-  const backgroundStyle = computed(() => ({
-    backgroundImage: `url(${backgroundImageUrl})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    position: "absolute",
-    top: `${window.scrollY}px`,
-    left: "0",
-    width: "100vw",
-    height: "100vh",
-  }));
-
   // Liquid layer style - THIS IS WHERE THE MAGIC HAPPENS
   // Only this layer gets the SVG distortion filter applied to show distorted background
   const liquidStyle = computed(() => {
     // Получаем позицию блока относительно окна
     let offsetX = 0;
     let offsetY = 0;
+    let scale = 0.24;
     let winW = window.innerWidth;
     let winH = window.innerHeight;
+    console.log("winW, winH", winW, winH);
     if (glassRef.value) {
       const rect = glassRef.value.getBoundingClientRect();
       offsetX = rect.left;
@@ -143,21 +132,28 @@ export default function useGlassDemo() {
     // Вычисляем процент смещения для backgroundPosition
     const posX = ((offsetX + glassSize.width / 2) / winW) * 100;
     const posY = ((offsetY + glassSize.height / 2) / winH) * 100;
-    // Добавляем параллакс
-    const parallaxX = clamp(
-      posX - mouseOffset.x * parallaxIntensity.value,
-      0,
-      100
-    );
-    const parallaxY = clamp(
-      posY - mouseOffset.y * parallaxIntensity.value,
-      0,
-      100
-    );
+    let dx = -5.7;
+    let dy = -24.9;
+    //Добавляем параллакс
+    let parallaxToggle = true;
+    let parallaxX = posX + dx;
+    let parallaxY = posY + dy;
+    if (parallaxToggle) {
+      parallaxX = clamp(
+        parallaxX - mouseOffset.x * parallaxIntensity.value,
+        0,
+        100
+      );
+      parallaxY = clamp(
+        parallaxY - mouseOffset.y * parallaxIntensity.value,
+        0,
+        100
+      );
+    }
     return {
       borderRadius: `${cornerRadius}px`,
       backgroundImage: `url(${backgroundImageUrl})`,
-      backgroundSize: `${winW}px ${winH}px`,
+      backgroundSize: `${winW * scale}%`,
       backgroundPosition: `${parallaxX}% ${parallaxY}%`,
       filter: isFirefox ? undefined : `url(#${filterId})`, // SVG filter applied HERE
       opacity: clamp(0.75 + glassOpacity.value * 0.35, 0.65, 1),
@@ -466,7 +462,6 @@ export default function useGlassDemo() {
     surfaceReflection,
     shadowDepth,
     parallaxIntensity,
-    backgroundStyle,
     filterReady,
     glassSize,
     filterId,
@@ -493,5 +488,4 @@ export default function useGlassDemo() {
     applyMinimalGlassPreset,
     applyIntenseGlassPreset,
   };
-
 }
