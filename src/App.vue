@@ -1,7 +1,7 @@
 <script setup>
-import HelloMotion from "./components/HelloMotion.vue";
+import Intro from "./components/intro/Intro.vue";
 </script>
 
 <template>
-  <HelloMotion />
+  <Intro />
 </template>
