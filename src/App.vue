@@ -1,5 +1,5 @@
 <script setup>
-import GlassDemo from "./components/GlassDemo.vue";
+import GlassDemo from "./components/glass-demo/GlassDemo.vue";
 </script>
 
 <template>
