@@ -1,8 +1,6 @@
 <template>
   <div class="glass-demo">
-    <div class="glass-demo__background" :style="backgroundStyle">
-      <div class="glass-demo__background-overlay" :style="backgroundOverlayStyle" />
-    </div>
+    <div class="glass-demo__background" :style="backgroundStyle" />
 
     <div class="glass-demo__layout">
       <div class="glass-demo__card-wrapper">
@@ -133,6 +131,7 @@
           @mousemove="handleMouseMove"
         >
           <div class="glass-demo__liquid" :style="liquidStyle" />
+          <div class="glass-demo__noise" :style="noiseStyle" />
           <div class="glass-demo__card-content">
             <h2>Liquid Glass Playground</h2>
             <p>
@@ -224,36 +223,45 @@
           </label>
 
           <label class="glass-demo__field">
+            <span>Backdrop brightness</span>
+            <input type="range" min="85" max="140" v-model.number="glassBrightness" />
+            <strong>{{ glassBrightness }}%</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Backdrop contrast</span>
+            <input type="range" min="85" max="135" v-model.number="glassContrast" />
+            <strong>{{ glassContrast }}%</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Tint hue</span>
+            <input type="range" min="0" max="360" v-model.number="glassTintHue" />
+            <strong>{{ glassTintHue }}°</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Tint saturation</span>
+            <input type="range" min="20" max="100" v-model.number="glassTintSaturation" />
+            <strong>{{ glassTintSaturation }}%</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Tint depth</span>
+            <input type="range" min="0.05" max="0.65" step="0.01" v-model.number="glassTintOpacity" />
+            <strong>{{ glassTintOpacity.toFixed(2) }}</strong>
+          </label>
+
+          <label class="glass-demo__field">
+            <span>Surface noise</span>
+            <input type="range" min="0" max="0.5" step="0.01" v-model.number="noiseStrength" />
+            <strong>{{ noiseStrength.toFixed(2) }}</strong>
+          </label>
+
+          <label class="glass-demo__field">
             <span>Parallax</span>
             <input type="range" min="0" max="0.8" step="0.01" v-model.number="parallaxIntensity" />
             <strong>{{ parallaxIntensity.toFixed(2) }}</strong>
-          </label>
-        </section>
-
-        <section class="glass-demo__section">
-          <h4>Background</h4>
-          <label class="glass-demo__field">
-            <span>Saturation</span>
-            <input type="range" min="90" max="170" step="5" v-model.number="backgroundSaturation" />
-            <strong>{{ backgroundSaturation }}%</strong>
-          </label>
-
-          <label class="glass-demo__field">
-            <span>Blur</span>
-            <input type="range" min="0" max="16" step="0.5" v-model.number="backgroundBlur" />
-            <strong>{{ backgroundBlur.toFixed(1) }}px</strong>
-          </label>
-
-          <label class="glass-demo__field">
-            <span>Dimming</span>
-            <input type="range" min="0" max="0.6" step="0.01" v-model.number="backgroundDim" />
-            <strong>{{ backgroundDim.toFixed(2) }}</strong>
-          </label>
-
-          <label class="glass-demo__field">
-            <span>Zoom</span>
-            <input type="range" min="95" max="140" v-model.number="backgroundZoom" />
-            <strong>{{ backgroundZoom }}%</strong>
           </label>
         </section>
       </aside>
@@ -277,17 +285,19 @@ const displacementScale = ref(60);
 const aberrationIntensity = ref(2.4);
 const edgeFeather = ref(68);
 const edgeSharpness = ref(0.18);
-const glassBlur = ref(22);
+const glassBlur = ref(28);
 const glassSaturation = ref(180);
 const glassOpacity = ref(0.58);
 const highlightIntensity = ref(0.68);
 const highlightSpread = ref(1.05);
 const highlightHue = ref(210);
 const parallaxIntensity = ref(0.36);
-const backgroundSaturation = ref(120);
-const backgroundBlur = ref(6);
-const backgroundDim = ref(0.28);
-const backgroundZoom = ref(108);
+const glassBrightness = ref(110);
+const glassContrast = ref(112);
+const glassTintHue = ref(210);
+const glassTintSaturation = ref(68);
+const glassTintOpacity = ref(0.32);
+const noiseStrength = ref(0.18);
 const cornerRadius = 32;
 
 const glassRef = ref(null);
@@ -334,25 +344,18 @@ const gaussianBlur = computed(() => Math.max(0.12, glassBlur.value * 0.02));
 
 const backgroundStyle = computed(() => ({
   backgroundImage: `url(${backgroundImageUrl})`,
-  backgroundSize: `${backgroundZoom.value}%`,
+  backgroundSize: "cover",
   backgroundPosition: "center",
-  filter: `saturate(${backgroundSaturation.value / 100}) blur(${backgroundBlur.value}px)`,
-}));
-
-const backgroundOverlayStyle = computed(() => ({
-  background:
-    `linear-gradient(120deg, rgba(6, 10, 24, ${0.4 + backgroundDim.value}) 0%, rgba(12, 18, 38, ${0.55 +
-      backgroundDim.value}) 55%, rgba(4, 8, 18, ${0.35 + backgroundDim.value}) 100%)`,
-  opacity: 1,
+  backgroundRepeat: "no-repeat",
 }));
 
 const liquidStyle = computed(() => {
-  const parallaxX = clamp(50 - mouseOffset.x * parallaxIntensity.value, -20, 120);
-  const parallaxY = clamp(50 - mouseOffset.y * parallaxIntensity.value, -20, 120);
+  const parallaxX = clamp(50 - mouseOffset.x * parallaxIntensity.value, 8, 92);
+  const parallaxY = clamp(50 - mouseOffset.y * parallaxIntensity.value, 5, 95);
   return {
     borderRadius: `${cornerRadius}px`,
     backgroundImage: `url(${backgroundImageUrl})`,
-    backgroundSize: `${backgroundZoom.value}%`,
+    backgroundSize: "cover",
     backgroundPosition: `${parallaxX}% ${parallaxY}%`,
     filter: isFirefox ? undefined : `url(#${filterId})`,
     opacity: clamp(0.75 + glassOpacity.value * 0.35, 0.65, 1),
@@ -368,29 +371,44 @@ const cardTransform = computed(() => {
 });
 
 const cardStyle = computed(() => {
-  const backgroundAlpha = clamp(glassOpacity.value * 0.65, 0.18, 0.72).toFixed(3);
   const borderAlpha = clamp(0.1 + glassOpacity.value * 0.28, 0.16, 0.42).toFixed(3);
+  const brightness = Math.max(0.5, glassBrightness.value / 100).toFixed(2);
+  const contrast = Math.max(0.5, glassContrast.value / 100).toFixed(2);
+  const tintHue = glassTintHue.value;
+  const tintSaturation = clamp(glassTintSaturation.value, 0, 100);
+  const tintTopOpacity = clamp(glassTintOpacity.value * 1.25, 0.06, 0.55).toFixed(3);
+  const tintBottomOpacity = clamp(glassTintOpacity.value * 0.9, 0.05, 0.42).toFixed(3);
+  const baseAlpha = clamp(glassTintOpacity.value * 0.5 + glassOpacity.value * 0.25, 0.12, 0.55).toFixed(3);
   return {
     borderRadius: `${cornerRadius}px`,
     transform: cardTransform.value,
     transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
     boxShadow: isActive.value
       ? "0 18px 60px rgba(0, 0, 0, 0.35)"
-      : "0 20px 65px rgba(8, 12, 24, 0.42)",
-    backgroundColor: `rgba(12, 16, 30, ${backgroundAlpha})`,
-    border: `1px solid rgba(255, 255, 255, ${borderAlpha})`,
-    backdropFilter: `blur(${glassBlur.value}px) saturate(${glassSaturation.value}%)`,
-    backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, ${clamp(
-      0.04 + glassOpacity.value * 0.24,
-      0.05,
-      0.32,
-    ).toFixed(3)}) 0%, rgba(255, 255, 255, ${clamp(
-      0.01 + glassOpacity.value * 0.12,
-      0.02,
-      0.24,
-    ).toFixed(3)}) 100%)`,
+      : "0 24px 70px rgba(6, 10, 24, 0.48)",
+    backgroundColor: `hsla(${tintHue}, ${Math.max(12, tintSaturation * 0.45)}%, 14%, ${baseAlpha})`,
+    border: `1px solid hsla(${tintHue}, 92%, 86%, ${borderAlpha})`,
+    backdropFilter: `blur(${glassBlur.value}px) saturate(${glassSaturation.value}%) brightness(${brightness}) contrast(${contrast})`,
+    backgroundImage: `linear-gradient(145deg, hsla(${tintHue}, ${tintSaturation}%, ${Math.min(
+      82,
+      60 + glassTintOpacity.value * 35,
+    )}%, ${tintTopOpacity}) 0%, hsla(${tintHue}, ${Math.max(
+      32,
+      tintSaturation * 0.66,
+    )}%, ${Math.max(32, 46 + glassTintOpacity.value * 18)}%, ${tintBottomOpacity}) 100%)`,
   };
 });
+
+const noiseTexture =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E";
+
+const noiseStyle = computed(() => ({
+  borderRadius: `${cornerRadius}px`,
+  backgroundImage: `url(${noiseTexture})`,
+  backgroundSize: "180px",
+  mixBlendMode: "soft-light",
+  opacity: clamp(noiseStrength.value, 0, 1),
+}));
 
 const lightStyle = computed(() => {
   const intensity = isHovered.value ? highlightIntensity.value : highlightIntensity.value * 0.6;
@@ -412,7 +430,7 @@ const lightStyle = computed(() => {
 });
 
 const outlineStyle = computed(() => {
-  const hue = highlightHue.value;
+  const hue = glassTintHue.value;
   const opacity = isHovered.value
     ? clamp(0.28 + highlightIntensity.value * 0.38, 0.3, 0.75)
     : clamp(0.18 + highlightIntensity.value * 0.28, 0.22, 0.6);
@@ -423,7 +441,7 @@ const outlineStyle = computed(() => {
     transform: cardTransform.value,
     transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
     opacity,
-    background: `linear-gradient(${135 + mouseOffset.x * 1.2}deg, hsla(${hue}, 95%, 86%, 0.08) 0%, hsla(${hue}, 98%, 80%, 0.58) 50%, hsla(${hue}, 92%, 72%, 0.14) 100%)`,
+    background: `linear-gradient(${135 + mouseOffset.x * 1.2}deg, hsla(${hue}, 95%, 86%, 0.08) 0%, hsla(${hue}, 96%, 78%, 0.52) 50%, hsla(${hue}, 92%, 68%, 0.16) 100%)`,
   };
 });
 
@@ -535,14 +553,6 @@ watch(
   transform: translateZ(0);
 }
 
-.glass-demo__background-overlay {
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-  backdrop-filter: saturate(160%);
-}
-
 .glass-demo__layout {
   position: relative;
   z-index: 1;
@@ -583,6 +593,7 @@ watch(
   overflow: hidden;
   cursor: pointer;
   transition: box-shadow 0.25s ease, border 0.25s ease, background 0.25s ease;
+  isolation: isolate;
 }
 
 .glass-demo__liquid {
@@ -595,9 +606,17 @@ watch(
   pointer-events: none;
 }
 
+.glass-demo__noise {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-repeat: repeat;
+}
+
 .glass-demo__card-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   color: #f4f6fb;
 }
 
@@ -635,7 +654,7 @@ watch(
 .glass-demo__light {
   position: absolute;
   inset: -30% 0 0;
-  z-index: 1;
+  z-index: 2;
   mix-blend-mode: screen;
   transition: opacity 0.3s ease;
   pointer-events: none;
