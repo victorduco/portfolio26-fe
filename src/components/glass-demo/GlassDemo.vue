@@ -1,15 +1,27 @@
 <template>
-  <div class="tmp-background" />
-
-  <LiquidGlass>
-    <h2>Apple Liquid Glass</h2>
-    <p>
-      Experience the revolutionary liquid glass with real refraction physics.
-      Notice how the background distorts through the glass while text stays
-      crystal clear.
-    </p>
-    <button type="button" class="demo__button">Explore Magic</button>
-  </LiquidGlass>
+  <ExportBgImg
+    :dom-id="'glass-export-node'"
+    v-model="imgUrl"
+    background-color="#000"
+  />
+  <div
+    class="tmp-background"
+    :style="{ '--bg-img': imgUrl ? `url(${imgUrl})` : 'none' }"
+  />
+  <div style="position: relative" id="glass-export-node">
+    <LiquidGlass>
+      <div ref="glassRef">
+        <h2>Apple Liquid Glass</h2>
+        <p>
+          Experience the revolutionary liquid glass with real refraction
+          physics. Notice how the background distorts through the glass while
+          text stays crystal clear.
+        </p>
+        <button type="button" class="demo__button">Explore Magic</button>
+      </div>
+    </LiquidGlass>
+    <!-- PNG preview removed: image is not inserted into DOM -->
+  </div>
 
   <LiquidGlass>
     <h2>Apple Liquid Glass</h2>
@@ -23,7 +35,11 @@
 </template>
 
 <script setup>
-import LiquidGlass from "../LiquidGlass/LiquidGlass.vue";
+import LiquidGlass from "../lg-effect/GlassEffect.vue";
+import ExportBgImg from "../bg-img/ExportBgImg.vue";
+import { ref } from "vue";
+const glassRef = ref(null);
+const imgUrl = ref("");
 </script>
 
 <style scoped>
@@ -81,7 +97,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("../../assets/grd3.png");
+  background-image: var(--bg-img);
   background-position: top left;
   background-size: cover;
 }
