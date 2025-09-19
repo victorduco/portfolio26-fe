@@ -423,6 +423,7 @@ const {
   surfaceReflection,
   shadowDepth,
   parallaxIntensity,
+  backgroundStyle,
   filterReady,
   glassSize,
   filterId,

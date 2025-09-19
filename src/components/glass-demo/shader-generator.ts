@@ -11,7 +11,7 @@ export interface ShaderOptions {
 export class ShaderDisplacementGenerator {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
-  private canvasDPI = 1;
+  private canvasDPI = 2;
 
   constructor(private options: ShaderOptions) {
     this.canvas = document.createElement("canvas");
@@ -53,6 +53,7 @@ export class ShaderDisplacementGenerator {
     } else {
       maxScale = 1;
     }
+    console.log("Max Scale:", maxScale);
 
     // Create ImageData and fill it
     const imageData = this.context.createImageData(w, h);
@@ -120,9 +121,9 @@ export class ShaderDisplacementGenerator {
   getFragment(uv: Vec2): Vec2 {
     const ix = uv.x - 0.5;
     const iy = uv.y - 0.5;
-    const distanceToEdge = this.roundedRectSDF(ix, iy, 0.3, 0.2, 0.6);
-    const displacement = this.smoothStep(0.8, 0, distanceToEdge - 0.15);
-    const scaled = this.smoothStep(0, 1, displacement);
+    const distanceToEdge = this.roundedRectSDF(ix, iy, 0, 0, 0.2); // todo: props to api
+    const displacement = this.smoothStep(0.3, 0, distanceToEdge - 0.15); // todo: props to api
+    const scaled = this.smoothStep(0, 1, displacement); // todo: props to api
     const texCoords = this.texture(ix * scaled + 0.5, iy * scaled + 0.5);
     return texCoords;
   }
