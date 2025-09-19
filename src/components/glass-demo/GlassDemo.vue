@@ -4,13 +4,28 @@
     v-model="imgUrl"
     background-color="#000"
   />
-  <div
-    class="tmp-background"
-    :style="{ '--bg-img': imgUrl ? `url(${imgUrl})` : 'none' }"
-  />
-  <div style="position: relative" id="glass-export-node">
+  <div id="glass-export-node">
+    <div
+      class="tmp-background"
+      :style="{ '--bg-img': imgUrl ? `url(${imgUrl})` : 'none' }"
+    />
+    <div style="position: relative">
+      <LiquidGlass :background-image-url="imgUrl">
+        <div class="card__content">
+          <h2>Apple Liquid Glass</h2>
+          <p>
+            Experience the revolutionary liquid glass with real refraction
+            physics. Notice how the background distorts through the glass while
+            text stays crystal clear.
+          </p>
+          <button type="button" class="demo__button">Explore Magic</button>
+        </div>
+      </LiquidGlass>
+      <!-- PNG preview removed: image is not inserted into DOM -->
+    </div>
+
     <LiquidGlass :background-image-url="imgUrl">
-      <div ref="glassRef">
+      <div class="card__content">
         <h2>Apple Liquid Glass</h2>
         <p>
           Experience the revolutionary liquid glass with real refraction
@@ -20,18 +35,7 @@
         <button type="button" class="demo__button">Explore Magic</button>
       </div>
     </LiquidGlass>
-    <!-- PNG preview removed: image is not inserted into DOM -->
   </div>
-
-  <LiquidGlass :background-image-url="imgUrl">
-    <h2>Apple Liquid Glass</h2>
-    <p>
-      Experience the revolutionary liquid glass with real refraction physics.
-      Notice how the background distorts through the glass while text stays
-      crystal clear.
-    </p>
-    <button type="button" class="demo__button">Explore Magic</button>
-  </LiquidGlass>
 </template>
 
 <script setup>
@@ -43,6 +47,18 @@ const imgUrl = ref("");
 </script>
 
 <style scoped>
+.card__content {
+  width: 100%;
+  max-width: 1000px;
+  padding: 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 40px auto;
+}
+
 h2 {
   margin: 0 0 16px;
   font-size: clamp(1.8rem, 2.6vw, 2.2rem);

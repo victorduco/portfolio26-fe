@@ -166,9 +166,8 @@
         class="liquid-glass__layer liquid-glass__layer--light"
         :style="lightStyle"
       />
+      <div class="liquid-glass__outline" :style="outlineStyle" />
     </div>
-
-    <span class="liquid-glass__outline" :style="outlineStyle" />
   </section>
 </template>
 
@@ -204,8 +203,6 @@ const {
   outlineStyle,
   handleEnter,
   handleLeave,
-  handleDown,
-  handleUp,
   handleMouseMove,
 } = useGlassDemo({
   displacementScale: 65,

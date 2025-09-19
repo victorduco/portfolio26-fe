@@ -331,24 +331,14 @@ export default function useGlassDemo() {
     const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
     mouseOffset.x = Math.max(-50, Math.min(50, relativeX - 50));
     mouseOffset.y = Math.max(-50, Math.min(50, relativeY - 50));
-    // ...existing code...
   };
 
   const handleEnter = () => {
     isHovered.value = true;
   };
 
-  const handleDown = () => {
-    isActive.value = true;
-  };
-
-  const handleUp = () => {
-    isActive.value = false;
-  };
-
   const handleLeave = () => {
     isHovered.value = false;
-    isActive.value = false;
     mouseOffset.x = 0;
     mouseOffset.y = 0;
   };
@@ -465,8 +455,6 @@ export default function useGlassDemo() {
     outlineStyle,
     handleEnter,
     handleLeave,
-    handleDown,
-    handleUp,
     handleMouseMove,
   };
 }
