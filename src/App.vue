@@ -1,7 +1,7 @@
 <script setup>
-import GlassDemo from "./components/glass-demo/GlassDemo.vue";
+import { GlassDistortionDemo } from "./components/distortion-test";
 </script>
 
 <template>
-  <GlassDemo />
+  <GlassDistortionDemo />
 </template>
