@@ -7,41 +7,18 @@
   >
     <svg class="glass-distortion-demo__filters" aria-hidden="true">
       <filter :id="filterId" x="-50%" y="-50%" width="200%" height="200%">
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency="0.018"
-          numOctaves="3"
-          seed="8"
-          result="turbulence"
-        >
-          <animate
-            attributeName="baseFrequency"
-            values="0.012;0.02;0.012"
-            dur="6s"
-            repeatCount="indefinite"
-          />
-        </feTurbulence>
-        <feDisplacementMap
-          in="SourceGraphic"
-          in2="turbulence"
-          scale="55"
-          xChannelSelector="R"
-          yChannelSelector="G"
-        />
+        <feGaussianBlur stdDeviation="1" />
       </filter>
     </svg>
 
-    <div class="glass-distortion-demo__controls">
-      <button type="button" class="glass-distortion-demo__control" @click="toggleDistortion">
-        {{ distortionEnabled ? "Disable" : "Enable" }} Distortion
-      </button>
-      <button type="button" class="glass-distortion-demo__control" @click="toggleGuides">
-        {{ showGuides ? "Hide" : "Show" }} Alignment Guides
-      </button>
-    </div>
+    <!-- controls removed -->
 
     <section class="glass-distortion-demo__stage">
-      <article ref="contentRef" class="glass-distortion-demo__content" aria-hidden="false">
+      <article
+        ref="contentRef"
+        class="glass-distortion-demo__content"
+        aria-hidden="false"
+      >
         <header class="glass-distortion-demo__header">
           <h1>{{ heading }}</h1>
           <p class="glass-distortion-demo__lead">{{ lead }}</p>
@@ -56,7 +33,6 @@
       class="glass-distortion-demo__window"
       :class="{
         'glass-distortion-demo__window--active': isPointerActive,
-        'glass-distortion-demo__window--guides': showGuides,
       }"
       :style="glassStyle"
       aria-hidden="true"
@@ -90,12 +66,21 @@
   a clearly visible ripple while maintaining 60 fps. Safari/iOS behaviour was not
   evaluated; the SVG filter may render differently in those engines.
 */
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { transform } from "motion-v";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+} from "vue";
 
 const GLASS_SIZE = 150;
 
 const heading = "Glass Distortion Alignment Test";
-const lead = "Verifies the duplicated content pipeline for the glass distortion prototype.";
+const lead =
+  "Verifies the duplicated content pipeline for the glass distortion prototype.";
 const paragraphs = [
   "The goal of this testbed is to prove that a duplicated content approach can align perfectly without hand-tuned offsets.",
   "Move the window across different lines, scroll the page, and change zoom levels to verify that the copy stays in register with the real text.",
@@ -109,8 +94,7 @@ const filterId = `glass-distortion-${Math.random().toString(36).slice(2, 8)}`;
 
 const contentRef = ref(null);
 
-const distortionEnabled = ref(true);
-const showGuides = ref(false);
+const distortionEnabled = ref(true); // always enabled
 const isPointerActive = ref(false);
 
 const pointer = reactive({ x: 0, y: 0 });
@@ -188,24 +172,21 @@ const handleResize = () => {
   scheduleUpdate();
 };
 
-const toggleDistortion = () => {
-  distortionEnabled.value = !distortionEnabled.value;
-};
-
-const toggleGuides = () => {
-  showGuides.value = !showGuides.value;
-};
+// toggleDistortion and toggleGuides removed
 
 const glassStyle = computed(() => ({
   width: `${GLASS_SIZE}px`,
   height: `${GLASS_SIZE}px`,
-  transform: `translate3d(${cloneMetrics.glassX}px, ${cloneMetrics.glassY}px, 0)`,
+  transform: `translate3d(${cloneMetrics.glassX}px, ${cloneMetrics.glassY}px, 0) rotate(45deg)`,
   opacity: isPointerActive.value ? 1 : 0,
+  transformOrigin: "0 0",
 }));
 
 const cloneStyle = computed(() => {
   const styles = {
-    transform: `translate3d(${-cloneMetrics.offsetX}px, ${-cloneMetrics.offsetY}px, 0)`,
+    transform: `rotate(-45deg)  translate3d(${-cloneMetrics.offsetX}px, ${-cloneMetrics.offsetY}px, 0)`,
+    transformOrigin: "0 0",
+
     filter: distortionEnabled.value
       ? `url(#${filterId}) saturate(160%) contrast(120%)`
       : "none",
@@ -246,7 +227,8 @@ onBeforeUnmount(() => {
   background-color: #fff;
   color: #0f0f10;
   overflow-x: hidden;
-  font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
 }
 
 .glass-distortion-demo__filters {
@@ -348,12 +330,11 @@ onBeforeUnmount(() => {
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(15, 15, 25, 0.24);
   border: 1px solid rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.06);
-  transform: translate3d(-9999px, -9999px, 0);
+  background: white;
   transition: opacity 0.18s ease;
   will-change: transform;
   mix-blend-mode: normal;
-  opacity: 0;
+  opacity: 1;
   z-index: 10;
 }
 
@@ -380,7 +361,8 @@ onBeforeUnmount(() => {
   width: 80%;
   height: 1px;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 0 1px rgba(53, 109, 255, 0.6), 0 0 0 2px rgba(53, 109, 255, 0.2);
+  box-shadow: 0 0 0 1px rgba(53, 109, 255, 0.6),
+    0 0 0 2px rgba(53, 109, 255, 0.2);
 }
 
 @media (max-width: 860px) {

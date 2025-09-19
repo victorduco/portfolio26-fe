@@ -11,29 +11,26 @@ import { ShaderDisplacementGenerator } from "./shader-generator.ts";
 import backgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo() {
-  // Enhanced modes for Apple Liquid Glass
-  const modes = ["shader"];
+  // Режим Apple Liquid Glass (только один)
+  const defaultOptions = typeof arguments[0] === "object" ? arguments[0] : {};
   const mode = ref("shader");
 
   // Core displacement parameters
-  const displacementScale = ref(60);
-  const aberrationIntensity = ref(2.4);
-  const edgeFeather = ref(68);
-  const edgeSharpness = ref(0.18);
-  const surfaceCurvature = ref(1.5);
+  const displacementScale = ref(defaultOptions.displacementScale ?? 60);
+  const aberrationIntensity = ref(defaultOptions.aberrationIntensity ?? 2.8);
+  const surfaceCurvature = ref(defaultOptions.surfaceCurvature ?? 1.8);
 
   // Glass material properties
-  const glassBlur = ref(28);
-  const glassSaturation = ref(180);
-  const glassOpacity = ref(0.58);
-  const refractionDepth = ref(1.8);
-  const surfaceReflection = ref(0.4);
+  const glassBlur = ref(defaultOptions.glassBlur ?? 25);
+  const glassSaturation = ref(defaultOptions.glassSaturation ?? 185);
+  const refractionDepth = ref(defaultOptions.refractionDepth ?? 1.8);
+  const surfaceReflection = ref(defaultOptions.surfaceReflection ?? 0.4);
 
   // Light and shadow
   const highlightIntensity = ref(0.68);
   const highlightSpread = ref(1.05);
   const highlightHue = ref(210);
-  const shadowDepth = ref(0.35);
+  const shadowDepth = ref(defaultOptions.shadowDepth ?? 0.35);
 
   // Advanced effects
   const glassBrightness = ref(110);
@@ -41,7 +38,7 @@ export default function useGlassDemo() {
   const glassTintHue = ref(210);
   const glassTintOpacity = ref(0.32);
   const noiseStrength = ref(0.18);
-  const parallaxIntensity = ref(0.36);
+  const parallaxIntensity = ref(defaultOptions.parallaxIntensity ?? 0.36);
 
   // Core system
   const cornerRadius = 32;
@@ -59,33 +56,31 @@ export default function useGlassDemo() {
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-  const getMap = (currentMode, shaderUrl) => {
+  const getMap = (shaderUrl) => {
     return shaderUrl;
   };
 
   // Enhanced computed properties for Apple Liquid Glass
-  const currentMap = computed(() => getMap(mode.value, shaderMapUrl.value));
+  const currentMap = computed(() => getMap(shaderMapUrl.value));
 
-  const edgeMaskStop = computed(() => clamp(edgeFeather.value, 20, 95));
-  const edgeMaskTable = computed(() => `0 ${edgeSharpness.value.toFixed(2)} 1`);
-  const displacementSign = computed(() => (mode.value === "shader" ? 1 : -1));
+  // edgeFeather and edgeSharpness removed
+  const displacementSign = computed(() => 1);
 
   // Enhanced displacement scaling with surface curvature
   const redScale = computed(
-    () =>
-      displacementScale.value * displacementSign.value * surfaceCurvature.value
+    () => displacementScale.value * surfaceCurvature.value
   );
   const greenScale = computed(
     () =>
       displacementScale.value *
       surfaceCurvature.value *
-      (displacementSign.value - aberrationIntensity.value * 0.05)
+      (1 - aberrationIntensity.value * 0.05)
   );
   const blueScale = computed(
     () =>
       displacementScale.value *
       surfaceCurvature.value *
-      (displacementSign.value - aberrationIntensity.value * 0.1)
+      (1 - aberrationIntensity.value * 0.1)
   );
 
   // Apple Liquid Glass specific blur
@@ -121,7 +116,7 @@ export default function useGlassDemo() {
     let scale = 0.24;
     let winW = window.innerWidth;
     let winH = window.innerHeight;
-    console.log("winW, winH", winW, winH);
+    // ...existing code...
     if (glassRef.value) {
       const rect = glassRef.value.getBoundingClientRect();
       offsetX = rect.left;
@@ -156,7 +151,7 @@ export default function useGlassDemo() {
       backgroundSize: `${winW * scale}%`,
       backgroundPosition: `${parallaxX}% ${parallaxY}%`,
       filter: isFirefox ? undefined : `url(#${filterId})`, // SVG filter applied HERE
-      opacity: clamp(0.75 + glassOpacity.value * 0.35, 0.65, 1),
+      opacity: 1,
     };
   });
 
@@ -176,11 +171,7 @@ export default function useGlassDemo() {
 
   // Enhanced card style with better Apple Liquid Glass properties
   const cardStyle = computed(() => {
-    const borderAlpha = clamp(
-      0.1 + glassOpacity.value * 0.28,
-      0.16,
-      0.42
-    ).toFixed(3);
+    const borderAlpha = 0.42;
     const brightness = Math.max(0.5, glassBrightness.value / 100).toFixed(2);
     const contrast = Math.max(0.5, glassContrast.value / 100).toFixed(2);
     const tintHue = glassTintHue.value;
@@ -296,7 +287,7 @@ export default function useGlassDemo() {
   };
 
   const generateShaderDisplacementMap = () => {
-    if (mode.value !== "shader" || typeof window === "undefined") {
+    if (typeof window === "undefined") {
       return;
     }
     const generator = new ShaderDisplacementGenerator({
@@ -308,10 +299,6 @@ export default function useGlassDemo() {
   };
 
   const scheduleShaderGeneration = () => {
-    if (mode.value !== "shader") {
-      shaderMapUrl.value = "";
-      return;
-    }
     nextTick(() => {
       requestAnimationFrame(() => {
         updateGlassSize();
@@ -328,6 +315,7 @@ export default function useGlassDemo() {
     const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
     mouseOffset.x = Math.max(-50, Math.min(50, relativeX - 50));
     mouseOffset.y = Math.max(-50, Math.min(50, relativeY - 50));
+    // ...existing code...
   };
 
   const handleEnter = () => {
@@ -350,77 +338,6 @@ export default function useGlassDemo() {
   };
 
   // Apple Liquid Glass Presets
-  const applyAppleLiquidGlassPreset = () => {
-    mode.value = "shader";
-    displacementScale.value = 65;
-    aberrationIntensity.value = 2.8;
-    edgeFeather.value = 72;
-    edgeSharpness.value = 0.22;
-    surfaceCurvature.value = 1.8;
-    glassBlur.value = 25;
-    glassSaturation.value = 185;
-    glassOpacity.value = 0.62;
-    refractionDepth.value = 2.0;
-    surfaceReflection.value = 0.45;
-    highlightIntensity.value = 0.75;
-    highlightSpread.value = 1.1;
-    highlightHue.value = 210;
-    shadowDepth.value = 0.4;
-    glassBrightness.value = 115;
-    glassContrast.value = 118;
-    glassTintHue.value = 210;
-    glassTintOpacity.value = 0.38;
-    noiseStrength.value = 0.22;
-    parallaxIntensity.value = 0.4;
-  };
-
-  const applyMinimalGlassPreset = () => {
-    mode.value = "standard";
-    displacementScale.value = 35;
-    aberrationIntensity.value = 1.2;
-    edgeFeather.value = 75;
-    edgeSharpness.value = 0.15;
-    surfaceCurvature.value = 1.0;
-    glassBlur.value = 18;
-    glassSaturation.value = 160;
-    glassOpacity.value = 0.45;
-    refractionDepth.value = 1.2;
-    surfaceReflection.value = 0.25;
-    highlightIntensity.value = 0.5;
-    highlightSpread.value = 0.8;
-    highlightHue.value = 200;
-    shadowDepth.value = 0.25;
-    glassBrightness.value = 105;
-    glassContrast.value = 108;
-    glassTintHue.value = 200;
-    glassTintOpacity.value = 0.25;
-    noiseStrength.value = 0.12;
-    parallaxIntensity.value = 0.25;
-  };
-
-  const applyIntenseGlassPreset = () => {
-    mode.value = "prominent";
-    displacementScale.value = 95;
-    aberrationIntensity.value = 4.5;
-    edgeFeather.value = 65;
-    edgeSharpness.value = 0.35;
-    surfaceCurvature.value = 2.5;
-    glassBlur.value = 35;
-    glassSaturation.value = 220;
-    glassOpacity.value = 0.75;
-    refractionDepth.value = 2.5;
-    surfaceReflection.value = 0.65;
-    highlightIntensity.value = 0.9;
-    highlightSpread.value = 1.4;
-    highlightHue.value = 220;
-    shadowDepth.value = 0.6;
-    glassBrightness.value = 125;
-    glassContrast.value = 125;
-    glassTintHue.value = 220;
-    glassTintOpacity.value = 0.5;
-    noiseStrength.value = 0.35;
-    parallaxIntensity.value = 0.6;
-  };
 
   // Lifecycle
   onMounted(() => {
@@ -428,16 +345,72 @@ export default function useGlassDemo() {
     updateGlassSize();
     scheduleShaderGeneration();
     window.addEventListener("resize", updateGlassSize);
-    // Apply Apple preset by default
-    applyAppleLiquidGlassPreset();
+    // Значения по умолчанию
+    if (defaultOptions.displacementScale !== undefined) {
+      displacementScale.value = defaultOptions.displacementScale;
+    } else {
+      displacementScale.value = 65;
+    }
+    if (defaultOptions.aberrationIntensity !== undefined) {
+      aberrationIntensity.value = defaultOptions.aberrationIntensity;
+    } else {
+      aberrationIntensity.value = 2.8;
+    }
+    if (defaultOptions.surfaceCurvature !== undefined) {
+      surfaceCurvature.value = defaultOptions.surfaceCurvature;
+    } else {
+      surfaceCurvature.value = 1.8;
+    }
+    if (defaultOptions.glassBlur !== undefined) {
+      glassBlur.value = defaultOptions.glassBlur;
+    } else {
+      glassBlur.value = 25;
+    }
+    if (defaultOptions.glassSaturation !== undefined) {
+      glassSaturation.value = defaultOptions.glassSaturation;
+    } else {
+      glassSaturation.value = 185;
+    }
+    // glassOpacity removed, always 100%
+    if (defaultOptions.refractionDepth !== undefined) {
+      refractionDepth.value = defaultOptions.refractionDepth;
+    } else {
+      refractionDepth.value = 2.0;
+    }
+    if (defaultOptions.surfaceReflection !== undefined) {
+      surfaceReflection.value = defaultOptions.surfaceReflection;
+    } else {
+      surfaceReflection.value = 0.45;
+    }
+    if (defaultOptions.highlightIntensity !== undefined) {
+      highlightIntensity.value = defaultOptions.highlightIntensity;
+    } else {
+      highlightIntensity.value = 0.75;
+    }
+    if (defaultOptions.highlightSpread !== undefined) {
+      highlightSpread.value = defaultOptions.highlightSpread;
+    } else {
+      highlightSpread.value = 1.1;
+    }
+    if (defaultOptions.highlightHue !== undefined) {
+      highlightHue.value = defaultOptions.highlightHue;
+    } else {
+      highlightHue.value = 210;
+    }
+    if (defaultOptions.shadowDepth !== undefined) {
+      shadowDepth.value = defaultOptions.shadowDepth;
+    } else {
+      shadowDepth.value = 0.4;
+    }
+    glassBrightness.value = 115;
+    glassContrast.value = 118;
+    glassTintHue.value = 210;
+    glassTintOpacity.value = 0.38;
+    noiseStrength.value = 0.22;
   });
 
   onBeforeUnmount(() => {
     window.removeEventListener("resize", updateGlassSize);
-  });
-
-  watch(mode, () => {
-    scheduleShaderGeneration();
   });
 
   watch(
@@ -448,16 +421,12 @@ export default function useGlassDemo() {
   );
 
   return {
-    modes,
     mode,
     displacementScale,
     aberrationIntensity,
-    edgeFeather,
-    edgeSharpness,
     surfaceCurvature,
     glassBlur,
     glassSaturation,
-    glassOpacity,
     refractionDepth,
     surfaceReflection,
     shadowDepth,
@@ -467,7 +436,6 @@ export default function useGlassDemo() {
     filterId,
     currentMap,
     edgeIntensityMatrix,
-    edgeMaskTable,
     redScale,
     greenScale,
     liquidGlassBlur,
@@ -484,8 +452,5 @@ export default function useGlassDemo() {
     handleDown,
     handleUp,
     handleMouseMove,
-    applyAppleLiquidGlassPreset,
-    applyMinimalGlassPreset,
-    applyIntenseGlassPreset,
   };
 }

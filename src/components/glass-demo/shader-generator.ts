@@ -53,7 +53,7 @@ export class ShaderDisplacementGenerator {
     } else {
       maxScale = 1;
     }
-    console.log("Max Scale:", maxScale);
+    // ...existing code...
 
     // Create ImageData and fill it
     const imageData = this.context.createImageData(w, h);
