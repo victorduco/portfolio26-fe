@@ -173,7 +173,17 @@
 </template>
 
 <script setup>
+import { toRef } from "vue";
 import useGlassDemo from "./index.js";
+
+const props = defineProps({
+  backgroundImageUrl: {
+    type: String,
+    default: "",
+  },
+});
+
+const backgroundImageUrl = toRef(props, "backgroundImageUrl");
 
 const {
   filterReady,
@@ -207,6 +217,7 @@ const {
   surfaceReflection: 0.45,
   shadowDepth: 0.4,
   parallaxIntensity: 0.35,
+  backgroundImageUrl,
 });
 </script>
 

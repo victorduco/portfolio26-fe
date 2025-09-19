@@ -9,7 +9,7 @@
     :style="{ '--bg-img': imgUrl ? `url(${imgUrl})` : 'none' }"
   />
   <div style="position: relative" id="glass-export-node">
-    <LiquidGlass>
+    <LiquidGlass :background-image-url="imgUrl">
       <div ref="glassRef">
         <h2>Apple Liquid Glass</h2>
         <p>
@@ -23,7 +23,7 @@
     <!-- PNG preview removed: image is not inserted into DOM -->
   </div>
 
-  <LiquidGlass>
+  <LiquidGlass :background-image-url="imgUrl">
     <h2>Apple Liquid Glass</h2>
     <p>
       Experience the revolutionary liquid glass with real refraction physics.

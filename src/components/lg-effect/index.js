@@ -1,5 +1,6 @@
 import {
   computed,
+  isRef,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -8,12 +9,25 @@ import {
   watch,
 } from "vue";
 import { ShaderDisplacementGenerator } from "./shader-generator.ts";
-import backgroundImageUrl from "../../assets/grd3.png";
+import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo() {
   // Режим Apple Liquid Glass (только один)
   const defaultOptions = typeof arguments[0] === "object" ? arguments[0] : {};
   const mode = ref("shader");
+
+  const backgroundImageOption = defaultOptions.backgroundImageUrl;
+  const backgroundImageUrl = computed(() => {
+    if (isRef(backgroundImageOption)) {
+      return backgroundImageOption.value || defaultBackgroundImageUrl;
+    }
+
+    if (typeof backgroundImageOption === "string" && backgroundImageOption) {
+      return backgroundImageOption;
+    }
+
+    return defaultBackgroundImageUrl;
+  });
 
   // Core displacement parameters
   const displacementScale = ref(defaultOptions.displacementScale ?? 60);
@@ -147,7 +161,9 @@ export default function useGlassDemo() {
     }
     return {
       borderRadius: `${cornerRadius}px`,
-      backgroundImage: `url(${backgroundImageUrl})`,
+      backgroundImage: backgroundImageUrl.value
+        ? `url(${backgroundImageUrl.value})`
+        : "none",
       backgroundSize: `${winW * scale}%`,
       backgroundPosition: `${parallaxX}% ${parallaxY}%`,
       filter: isFirefox ? undefined : `url(#${filterId})`, // SVG filter applied HERE
