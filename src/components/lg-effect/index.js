@@ -331,6 +331,7 @@ export default function useGlassDemo() {
     const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
     mouseOffset.x = Math.max(-50, Math.min(50, relativeX - 50));
     mouseOffset.y = Math.max(-50, Math.min(50, relativeY - 50));
+    // ...existing code...
   };
 
   const handleEnter = () => {
