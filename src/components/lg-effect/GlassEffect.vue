@@ -139,11 +139,11 @@
       ref="glassRef"
       class="liquid-glass__card"
       :style="cardStyle"
-      @mouseenter="handleEnter"
-      @mouseleave="handleLeave"
-      @mousedown="handleDown"
-      @mouseup="handleUp"
-      @mousemove="handleMouseMove"
+      v-hover-distortion="{
+        onEnter: handleEnter,
+        onLeave: handleLeave,
+        onMouseMove: handleMouseMove
+      }"
     >
       <div
         class="liquid-glass__layer liquid-glass__layer--liquid"

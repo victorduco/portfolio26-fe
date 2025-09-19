@@ -324,14 +324,9 @@ export default function useGlassDemo() {
   };
 
   // Event handlers
-  const handleMouseMove = (event) => {
-    if (!glassRef.value) return;
-    const rect = glassRef.value.getBoundingClientRect();
-    const relativeX = ((event.clientX - rect.left) / rect.width) * 100;
-    const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
-    mouseOffset.x = Math.max(-50, Math.min(50, relativeX - 50));
-    mouseOffset.y = Math.max(-50, Math.min(50, relativeY - 50));
-    // ...existing code...
+  const handleMouseMove = (_, offset) => {
+    mouseOffset.x = offset.x;
+    mouseOffset.y = offset.y;
   };
 
   const handleEnter = () => {

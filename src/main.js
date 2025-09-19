@@ -4,5 +4,8 @@ import "./styles/typography.css";
 import "./style.css";
 import "./styles/glass.css";
 import App from "./App.vue";
+import directivesPlugin from "./plugins/directives.js";
 
-createApp(App).mount("#app");
+const app = createApp(App);
+app.use(directivesPlugin);
+app.mount("#app");
