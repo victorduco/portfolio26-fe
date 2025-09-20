@@ -46,8 +46,6 @@ export default function useGlassDemo({
     })
   );
 
-  const isFirefox =
-    typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent);
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const liquidStyle = computed(() =>
@@ -55,7 +53,6 @@ export default function useGlassDemo({
       backgroundImageUrl,
       glassElementRef,
       glassSize,
-      isFirefox,
       filterId
     )
   );
