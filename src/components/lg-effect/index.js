@@ -9,14 +9,13 @@ import {
   watch,
 } from "vue";
 import { ShaderDisplacementGenerator } from "./shader-generator.ts";
-import { createGlassRefs } from "./defaults.js";
+import { createGlassConfig } from "./defaults.js";
 import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo({
   backgroundImageUrl: backgroundImageOption,
   ...userOptions
 } = {}) {
-  const mode = ref("shader");
 
   // Input handling
   const backgroundImageUrl = computed(() =>
@@ -24,11 +23,11 @@ export default function useGlassDemo({
       ? backgroundImageOption.value || defaultBackgroundImageUrl
       : "none"
   );
-  const options = createGlassRefs(userOptions);
+  const options = createGlassConfig(userOptions);
 
   // Core system
   const cornerRadius = 32;
-  const glassRef = ref(null);
+  const glassElementRef = ref(null);
   const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
   const filterReady = ref(false);
   const shaderMapUrl = ref("");
@@ -94,8 +93,8 @@ export default function useGlassDemo({
     let winW = window.innerWidth;
     let winH = window.innerHeight;
     // ...existing code...
-    if (glassRef.value) {
-      const rect = glassRef.value.getBoundingClientRect();
+    if (glassElementRef.value) {
+      const rect = glassElementRef.value.getBoundingClientRect();
       offsetX = rect.left;
       offsetY = rect.top;
       winW = window.innerWidth;
@@ -253,8 +252,8 @@ export default function useGlassDemo({
 
   // Core system functions
   const updateGlassSize = () => {
-    if (!glassRef.value) return;
-    const rect = glassRef.value.getBoundingClientRect();
+    if (!glassElementRef.value) return;
+    const rect = glassElementRef.value.getBoundingClientRect();
     glassSize.width = Math.round(rect.width);
     glassSize.height = Math.round(rect.height);
     // Триггерим обновление liquidStyle
@@ -319,7 +318,6 @@ export default function useGlassDemo({
   );
 
   return {
-    mode,
     ...options,
     filterReady,
     glassSize,
@@ -330,7 +328,7 @@ export default function useGlassDemo({
     greenScale,
     liquidGlassBlur,
     surfaceEnhancementMatrix,
-    glassRef,
+    glassElementRef,
     cardStyle,
     liquidStyle,
     noiseStyle,

@@ -2,7 +2,7 @@
   <section class="liquid-glass">
     <LiquidGlassFilter v-bind="filterProps" />
 
-    <div ref="glassRef" class="liquid-glass__card" :style="combinedCardStyle">
+    <div ref="glassElementRef" class="liquid-glass__card" :style="combinedCardStyle">
       <div class="liquid-glass__layer liquid-glass__layer--liquid" />
       <div class="liquid-glass__layer liquid-glass__layer--highlight" />
       <div class="liquid-glass__layer liquid-glass__layer--noise" />
@@ -42,7 +42,7 @@ const {
   greenScale,
   liquidGlassBlur,
   surfaceEnhancementMatrix,
-  glassRef,
+  glassElementRef,
   cardStyle,
   liquidStyle,
   noiseStyle,

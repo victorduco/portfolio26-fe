@@ -1,12 +1,12 @@
 import { reactive } from "vue";
 
 /**
- * Create all glass effect refs with default values
- * @param {Object} options - User options to override defaults
- * @returns {Object} Object containing all glass effect refs
+ * Create reactive glass effect configuration with default values
+ * @param {Object} userOptions - User options to override defaults
+ * @returns {Object} Reactive object containing all glass effect configuration
  */
-export function createGlassRefs(options = {}) {
-  const refs = reactive({
+export function createGlassConfig(userOptions = {}) {
+  const config = reactive({
     // Core displacement parameters
     displacementScale: 65,
     aberrationIntensity: 2.8,
@@ -40,8 +40,8 @@ export function createGlassRefs(options = {}) {
     shaderScalingEnd: 1,
   });
 
-  loadGlassValues(options, refs);
-  return refs;
+  loadGlassValues(userOptions, config);
+  return config;
 }
 
 /**
