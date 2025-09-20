@@ -1,11 +1,12 @@
+import { clamp } from "./lg-utils.js";
+
 /**
  * Creates outline style object for the glass effect
  * @param {Object} options - Effect options object
  * @param {Object} glassSize - Reactive glass size object
- * @param {Function} clamp - Clamp utility function
  * @returns {Object} Outline style properties
  */
-export function createOutlineStyle(options, glassSize, clamp) {
+export function createOutlineStyle(options) {
   const hue = options.glassTintHue;
   const idleOpacity = clamp(
     0.18 + options.highlightIntensity * 0.28,
@@ -21,8 +22,8 @@ export function createOutlineStyle(options, glassSize, clamp) {
   const hoverOpacityTotal = hoverOpacity * options.surfaceReflection;
   const opacityDelta = hoverOpacityTotal - baseOpacity;
   return {
-    width: `${glassSize.width}px`,
-    height: `${glassSize.height}px`,
+    width: "100%",
+    height: "100%",
     transform:
       "var(--distortion-transform, scaleX(1) scaleY(1) translate(0px, 0px))",
     transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,

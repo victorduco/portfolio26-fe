@@ -1,10 +1,11 @@
+import { clamp } from "./lg-utils.js";
+
 /**
  * Creates card style object for the glass effect
  * @param {Object} options - Effect options object
- * @param {Function} clamp - Clamp utility function
  * @returns {Object} Card style properties
  */
-export function createCardStyle(options, clamp) {
+export function createCardStyle(options) {
   const borderAlpha = 0.42;
   const brightness = Math.max(0.5, options.glassBrightness / 100).toFixed(2);
   const contrast = Math.max(0.5, options.glassContrast / 100).toFixed(2);

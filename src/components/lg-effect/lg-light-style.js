@@ -1,10 +1,11 @@
+import { clamp } from "./lg-utils.js";
+
 /**
  * Creates light style object for the glass effect
  * @param {Object} options - Effect options object
- * @param {Function} clamp - Clamp utility function
  * @returns {Object} Light style properties
  */
-export function createLightStyle(options, clamp) {
+export function createLightStyle(options) {
   const activeIntensity = options.highlightIntensity;
   const baseIntensity = activeIntensity * 0.6;
   const spread = Math.min(100, 48 + options.highlightSpread * 34);

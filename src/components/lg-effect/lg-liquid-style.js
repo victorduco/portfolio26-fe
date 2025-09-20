@@ -6,7 +6,12 @@
  * @param {string} filterId - Filter ID for SVG filter
  * @returns {Object} Liquid style properties
  */
-export function createLiquidStyle(backgroundImageUrl, glassElementRef, glassSize, filterId) {
+export function createLiquidStyle(
+  backgroundImageUrl,
+  glassElementRef,
+  glassSize,
+  filterId
+) {
   let offsetX = 0;
   let offsetY = 0;
   let scale = 0.24;

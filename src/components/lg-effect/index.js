@@ -23,7 +23,9 @@ export default function useGlassDemo({
   backgroundImageUrl: backgroundImageOption,
   ...userOptions
 } = {}) {
+  //
   // =====  INPUT HANDLING  =====
+  //
   const backgroundImageUrl = computed(() =>
     isRef(backgroundImageOption)
       ? backgroundImageOption.value || defaultBackgroundImageUrl
@@ -31,48 +33,18 @@ export default function useGlassDemo({
   );
   const options = createEffectOptions(userOptions);
 
-  // ===== REMAINING CODE TODO: REFACTOR =====
+  //
+  // =====  ELEMENT REFS  =====
+  //
   const glassElementRef = ref(null);
   const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
   const filterReady = ref(false);
   const shaderMapUrl = ref("");
-  const glassSize = reactive({ width: 320, height: 160 });
+  const glassSize = reactive({ width: 0, height: 0 });
 
-  const filterProps = computed(() =>
-    createFilterProps(options, {
-      filterReady: filterReady.value,
-      filterId,
-      shaderMapUrl: shaderMapUrl.value,
-    })
-  );
-
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-  const liquidStyle = computed(() =>
-    createLiquidStyle(
-      backgroundImageUrl,
-      glassElementRef,
-      glassSize,
-      filterId
-    )
-  );
-  const cardStyle = computed(() => createCardStyle(options, clamp));
-  const surfaceHighlightStyle = computed(() =>
-    createSurfaceHighlightStyle(options)
-  );
-  const noiseStyle = computed(() => createNoiseStyle(options, clamp));
-  const lightStyle = computed(() => createLightStyle(options, clamp));
-  const outlineStyle = computed(() =>
-    createOutlineStyle(options, glassSize, clamp)
-  );
-
-  const updateGlassSize = () => {
-    if (!glassElementRef.value) return;
-    const rect = glassElementRef.value.getBoundingClientRect();
-    glassSize.width = Math.round(rect.width);
-    glassSize.height = Math.round(rect.height);
-  };
-
+  //
+  // =====  SHADER GENERATION  =====
+  //
   const generateShaderDisplacementMap = () => {
     if (typeof window === "undefined") {
       return;
@@ -90,6 +62,38 @@ export default function useGlassDemo({
     const url = generator.updateShader();
     shaderMapUrl.value = url;
     generator.destroy();
+  };
+
+  const filterProps = computed(() =>
+    createFilterProps(options, {
+      filterReady: filterReady.value,
+      filterId,
+      shaderMapUrl: shaderMapUrl.value,
+    })
+  );
+
+  //
+  // =====  STYLES  =====
+  //
+  const liquidStyle = computed(() =>
+    createLiquidStyle(backgroundImageUrl, glassElementRef, glassSize, filterId)
+  );
+  const cardStyle = computed(() => createCardStyle(options));
+  const surfaceHighlightStyle = computed(() =>
+    createSurfaceHighlightStyle(options)
+  );
+  const noiseStyle = computed(() => createNoiseStyle(options));
+  const lightStyle = computed(() => createLightStyle(options));
+  const outlineStyle = computed(() => createOutlineStyle(options));
+
+  //
+  // =====  LIFECYCLE & WATCHERS  =====
+  //
+  const updateGlassSize = () => {
+    if (!glassElementRef.value) return;
+    const rect = glassElementRef.value.getBoundingClientRect();
+    glassSize.width = Math.round(rect.width);
+    glassSize.height = Math.round(rect.height);
   };
 
   const scheduleShaderGeneration = () => {
@@ -129,9 +133,6 @@ export default function useGlassDemo({
   );
 
   return {
-    filterReady,
-    glassSize,
-    filterId,
     filterProps,
     glassElementRef,
     cardStyle,

@@ -2,7 +2,11 @@
   <section class="liquid-glass">
     <LiquidGlassFilter v-bind="filterProps" />
 
-    <div ref="glassElementRef" class="liquid-glass__card" :style="combinedCardStyle">
+    <div
+      ref="glassElementRef"
+      class="liquid-glass__card"
+      :style="combinedCardStyle"
+    >
       <div class="liquid-glass__layer liquid-glass__layer--liquid" />
       <div class="liquid-glass__layer liquid-glass__layer--highlight" />
       <div class="liquid-glass__layer liquid-glass__layer--noise" />
@@ -56,22 +60,22 @@ const combinedCardStyle = computed(() => {
 
   return {
     ...cardStyle.value,
-    '--liquid-bg-image': liquid.backgroundImage,
-    '--liquid-bg-size': liquid.backgroundSize,
-    '--liquid-bg-position': liquid.backgroundPosition,
-    '--liquid-filter': liquid.filter,
-    '--liquid-opacity': liquid.opacity,
-    '--highlight-gradient': highlight.background,
-    '--highlight-opacity': highlight.opacity,
-    '--noise-texture': noise.backgroundImage,
-    '--noise-opacity': noise.opacity,
-    '--light-gradient': light.background,
-    '--light-opacity': light.opacity,
-    '--outline-width': outline.width,
-    '--outline-height': outline.height,
-    '--outline-gradient': outline.background,
-    '--outline-opacity': outline.opacity,
-    '--outline-transform': outline.transform,
+    "--liquid-bg-image": liquid.backgroundImage,
+    "--liquid-bg-size": liquid.backgroundSize,
+    "--liquid-bg-position": liquid.backgroundPosition,
+    "--liquid-filter": liquid.filter,
+    "--liquid-opacity": liquid.opacity,
+    "--highlight-gradient": highlight.background,
+    "--highlight-opacity": highlight.opacity,
+    "--noise-texture": noise.backgroundImage,
+    "--noise-opacity": noise.opacity,
+    "--light-gradient": light.background,
+    "--light-opacity": light.opacity,
+    "--outline-width": outline.width,
+    "--outline-height": outline.height,
+    "--outline-gradient": outline.background,
+    "--outline-opacity": outline.opacity,
+    "--outline-transform": outline.transform,
   };
 });
 </script>
