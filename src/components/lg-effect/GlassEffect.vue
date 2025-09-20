@@ -135,12 +135,7 @@
       </defs>
     </svg>
 
-    <div
-      ref="glassRef"
-      class="liquid-glass__card"
-      :style="cardStyle"
-      v-hover-distortion="hoverDistortionOptions"
-    >
+    <div ref="glassRef" class="liquid-glass__card" :style="cardStyle">
       <div
         class="liquid-glass__layer liquid-glass__layer--liquid"
         :style="liquidStyle"
@@ -180,8 +175,6 @@ const props = defineProps({
 
 const backgroundImageUrl = toRef(props, "backgroundImageUrl");
 
-const transformCurvature = 1.8;
-
 const {
   filterReady,
   glassSize,
@@ -203,7 +196,7 @@ const {
 } = useGlassDemo({
   displacementScale: 65,
   aberrationIntensity: 2.8,
-  surfaceCurvature: transformCurvature,
+  surfaceCurvature: 1.8,
   glassBlur: 25,
   glassSaturation: 185,
   refractionDepth: 2.0,
@@ -212,11 +205,6 @@ const {
   parallaxIntensity: 0.35,
   backgroundImageUrl,
 });
-
-const hoverDistortionOptions = computed(() => ({
-  curvature: transformCurvature,
-  parallaxIntensity: parallaxIntensity.value,
-}));
 </script>
 
 <style scoped src="./index.css"></style>

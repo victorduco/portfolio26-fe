@@ -10,7 +10,10 @@
       :style="{ '--bg-img': imgUrl ? `url(${imgUrl})` : 'none' }"
     />
     <div style="position: relative">
-      <LiquidGlass :background-image-url="imgUrl">
+      <LiquidGlass
+        :background-image-url="imgUrl"
+        v-hover-distortion="hoverDistortionOptions"
+      >
         <div class="card__content">
           <h2>Apple Liquid Glass</h2>
           <p>
@@ -41,9 +44,13 @@
 <script setup>
 import LiquidGlass from "../lg-effect/GlassEffect.vue";
 import ExportBgImg from "../bg-img/ExportBgImg.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 const glassRef = ref(null);
 const imgUrl = ref("");
+const hoverDistortionOptions = computed(() => ({
+  curvature: 1.8,
+  parallaxIntensity: 0.35,
+}));
 </script>
 
 <style scoped>
