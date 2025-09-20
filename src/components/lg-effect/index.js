@@ -82,23 +82,23 @@ export default function useGlassDemo() {
 
   // Enhanced displacement scaling with surface curvature
   const redScale = computed(
-    () => displacementScale.value * displacementCurvature.value
+    () => displacementScale * displacementCurvature
   );
   const greenScale = computed(
     () =>
-      displacementScale.value *
-      displacementCurvature.value *
-      (1 - aberrationIntensity.value * 0.05)
+      displacementScale *
+      displacementCurvature *
+      (1 - aberrationIntensity * 0.05)
   );
 
   // Apple Liquid Glass specific blur
   const liquidGlassBlur = computed(() =>
-    Math.max(0.12, glassBlur.value * 0.02 * refractionDepth.value)
+    Math.max(0.12, glassBlur * 0.02 * refractionDepth)
   );
 
   // Enhanced edge intensity matrix
   const edgeIntensityMatrix = computed(() => {
-    const intensity = surfaceReflection.value;
+    const intensity = surfaceReflection;
     return `${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
             ${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
             ${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
@@ -107,8 +107,8 @@ export default function useGlassDemo() {
 
   // Surface enhancement matrix for glass realism
   const surfaceEnhancementMatrix = computed(() => {
-    const contrast = 1 + (glassSaturation.value - 180) / 300;
-    const brightness = 1 + surfaceReflection.value * 0.2;
+    const contrast = 1 + (glassSaturation - 180) / 300;
+    const brightness = 1 + surfaceReflection * 0.2;
     return `${contrast} 0 0 0 ${brightness * 0.1}
             0 ${contrast} 0 0 ${brightness * 0.1}
             0 0 ${contrast} 0 ${brightness * 0.1}
@@ -154,11 +154,11 @@ export default function useGlassDemo() {
   // Enhanced card style with better Apple Liquid Glass properties
   const cardStyle = computed(() => {
     const borderAlpha = 0.42;
-    const brightness = Math.max(0.5, glassBrightness.value / 100).toFixed(2);
-    const contrast = Math.max(0.5, glassContrast.value / 100).toFixed(2);
-    const tintHue = glassTintHue.value;
-    const tintOpacity = glassTintOpacity.value;
-    const shadowIntensity = shadowDepth.value * (isActive.value ? 1.3 : 1);
+    const brightness = Math.max(0.5, glassBrightness / 100).toFixed(2);
+    const contrast = Math.max(0.5, glassContrast / 100).toFixed(2);
+    const tintHue = glassTintHue;
+    const tintOpacity = glassTintOpacity;
+    const shadowIntensity = shadowDepth * (isActive.value ? 1.3 : 1);
 
     return {
       borderRadius: `${cornerRadius}px`,
@@ -174,7 +174,7 @@ export default function useGlassDemo() {
         0.55
       )})`,
       border: `1px solid hsla(${tintHue}, 92%, 86%, ${borderAlpha})`,
-      backdropFilter: `blur(${glassBlur.value}px) saturate(${glassSaturation.value}%) brightness(${brightness}) contrast(${contrast})`,
+      backdropFilter: `blur(${glassBlur}px) saturate(${glassSaturation}%) brightness(${brightness}) contrast(${contrast})`,
       backgroundImage: `linear-gradient(145deg,
         hsla(${tintHue}, 70%, ${Math.min(82, 60 + tintOpacity * 35)}%, ${clamp(
         tintOpacity * 1.25,
@@ -193,8 +193,8 @@ export default function useGlassDemo() {
   const surfaceHighlightStyle = computed(() => ({
     borderRadius: `${cornerRadius}px`,
     background: `linear-gradient(135deg,
-      rgba(255, 255, 255, ${surfaceReflection.value * 0.4}) 0%,
-      rgba(255, 255, 255, ${surfaceReflection.value * 0.1}) 50%,
+      rgba(255, 255, 255, ${surfaceReflection * 0.4}) 0%,
+      rgba(255, 255, 255, ${surfaceReflection * 0.1}) 50%,
       rgba(255, 255, 255, 0.02) 100%)`,
     opacity: "calc(0.7 + var(--distortion-hovered, 0) * 0.3)",
     transition: "opacity 0.3s ease",
@@ -209,16 +209,16 @@ export default function useGlassDemo() {
     backgroundImage: `url(${noiseTexture})`,
     backgroundSize: "180px",
     mixBlendMode: "soft-light",
-    opacity: clamp(noiseStrength.value * refractionDepth.value, 0, 1),
+    opacity: clamp(noiseStrength * refractionDepth, 0, 1),
   }));
 
   // Enhanced light style with temperature control
   const lightStyle = computed(() => {
-    const activeIntensity = highlightIntensity.value;
+    const activeIntensity = highlightIntensity;
     const baseIntensity = activeIntensity * 0.6;
-    const spread = Math.min(100, 48 + highlightSpread.value * 34);
-    const inner = Math.max(12, highlightSpread.value * 14);
-    const hue = highlightHue.value;
+    const spread = Math.min(100, 48 + highlightSpread * 34);
+    const inner = Math.max(12, highlightSpread * 14);
+    const hue = highlightHue;
 
     const idleOpacity = clamp(baseIntensity + 0.12, 0.18, 0.95);
     const hoverOpacity = clamp(activeIntensity + 0.12, 0.18, 0.95);
@@ -245,11 +245,11 @@ export default function useGlassDemo() {
 
   // Enhanced outline with surface curvature
   const outlineStyle = computed(() => {
-    const hue = glassTintHue.value;
-    const idleOpacity = clamp(0.18 + highlightIntensity.value * 0.28, 0.22, 0.6);
-    const hoverOpacity = clamp(0.28 + highlightIntensity.value * 0.38, 0.3, 0.75);
-    const baseOpacity = idleOpacity * surfaceReflection.value;
-    const hoverOpacityTotal = hoverOpacity * surfaceReflection.value;
+    const hue = glassTintHue;
+    const idleOpacity = clamp(0.18 + highlightIntensity * 0.28, 0.22, 0.6);
+    const hoverOpacity = clamp(0.28 + highlightIntensity * 0.38, 0.3, 0.75);
+    const baseOpacity = idleOpacity * surfaceReflection;
+    const hoverOpacityTotal = hoverOpacity * surfaceReflection;
     const opacityDelta = hoverOpacityTotal - baseOpacity;
     return {
       borderRadius: `${cornerRadius}px`,
@@ -263,7 +263,7 @@ export default function useGlassDemo() {
       })`,
       background: `linear-gradient(calc(135deg + var(--distortion-outline-rotation, 0deg)),
         hsla(${hue}, 95%, 86%, 0.08) 0%,
-        hsla(${hue}, 96%, 78%, ${0.52 * surfaceReflection.value}) 50%,
+        hsla(${hue}, 96%, 78%, ${0.52 * surfaceReflection}) 50%,
         hsla(${hue}, 92%, 68%, 0.16) 100%)`,
     };
   });
@@ -285,12 +285,12 @@ export default function useGlassDemo() {
     const generator = new ShaderDisplacementGenerator({
       width: Math.max(1, Math.floor(glassSize.width)),
       height: Math.max(1, Math.floor(glassSize.height)),
-      cornerRadius: shaderCornerRadius.value,
-      distortionStart: shaderDistortionStart.value,
-      distortionEnd: shaderDistortionEnd.value,
-      distortionOffset: shaderDistortionOffset.value,
-      scalingStart: shaderScalingStart.value,
-      scalingEnd: shaderScalingEnd.value,
+      cornerRadius: shaderCornerRadius,
+      distortionStart: shaderDistortionStart,
+      distortionEnd: shaderDistortionEnd,
+      distortionOffset: shaderDistortionOffset,
+      scalingStart: shaderScalingStart,
+      scalingEnd: shaderScalingEnd,
     });
     shaderMapUrl.value = generator.updateShader();
     generator.destroy();
@@ -326,12 +326,12 @@ export default function useGlassDemo() {
     () => [
       glassSize.width,
       glassSize.height,
-      shaderCornerRadius.value,
-      shaderDistortionStart.value,
-      shaderDistortionEnd.value,
-      shaderDistortionOffset.value,
-      shaderScalingStart.value,
-      shaderScalingEnd.value
+      shaderCornerRadius,
+      shaderDistortionStart,
+      shaderDistortionEnd,
+      shaderDistortionOffset,
+      shaderScalingStart,
+      shaderScalingEnd
     ],
     () => {
       scheduleShaderGeneration();
