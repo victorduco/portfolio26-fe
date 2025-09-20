@@ -177,7 +177,6 @@ const backgroundImageUrl = toRef(props, "backgroundImageUrl");
 
 const {
   filterReady,
-  glassSize,
   filterId,
   currentMap,
   edgeIntensityMatrix,

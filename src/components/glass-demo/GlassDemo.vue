@@ -29,13 +29,19 @@
 
     <LiquidGlass :background-image-url="imgUrl">
       <div class="card__content">
-        <h2>Apple Liquid Glass</h2>
+        <h2 v-hover-distortion="hoverDistortionOptions">Apple Liquid Glass</h2>
         <p>
           Experience the revolutionary liquid glass with real refraction
           physics. Notice how the background distorts through the glass while
           text stays crystal clear.
         </p>
-        <button type="button" class="demo__button">Explore Magic</button>
+        <button
+          v-hover-distortion="hoverDistortionOptions"
+          type="button"
+          class="demo__button"
+        >
+          Explore Magic
+        </button>
       </div>
     </LiquidGlass>
   </div>
@@ -45,7 +51,6 @@
 import LiquidGlass from "../lg-effect/GlassEffect.vue";
 import ExportBgImg from "../bg-img/ExportBgImg.vue";
 import { ref, computed } from "vue";
-const glassRef = ref(null);
 const imgUrl = ref("");
 const hoverDistortionOptions = computed(() => ({
   curvature: 1.8,

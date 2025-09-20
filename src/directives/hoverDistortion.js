@@ -55,6 +55,7 @@ export const hoverDistortion = {
 
       const updateTransform = (value) => {
         el.style.setProperty("--distortion-transform", value);
+        el.style.transform = value;
       };
 
       watch(cardTransform, updateTransform, { immediate: true });
@@ -163,6 +164,9 @@ export const hoverDistortion = {
     el.addEventListener("mouseleave", state.handleLeave);
     el.addEventListener("mousemove", state.handleMouseMove);
 
+    el.style.transition = "transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)";
+    el.style.transformOrigin = "center center";
+
     el._hoverDistortion = {
       scope,
       ...state,
@@ -192,6 +196,9 @@ export const hoverDistortion = {
     el.style.removeProperty("--distortion-light-y");
     el.style.removeProperty("--distortion-outline-rotation");
     el.style.removeProperty("--distortion-background-position");
+    el.style.removeProperty("transform");
+    el.style.removeProperty("transition");
+    el.style.removeProperty("transform-origin");
 
     delete el._hoverDistortion;
   },
