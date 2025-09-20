@@ -6,6 +6,12 @@ export interface Vec2 {
 export interface ShaderOptions {
   width: number;
   height: number;
+  cornerRadius?: number;
+  distortionStart?: number;
+  distortionEnd?: number;
+  distortionOffset?: number;
+  scalingStart?: number;
+  scalingEnd?: number;
 }
 
 export class ShaderDisplacementGenerator {
@@ -121,9 +127,16 @@ export class ShaderDisplacementGenerator {
   getFragment(uv: Vec2): Vec2 {
     const ix = uv.x - 0.5;
     const iy = uv.y - 0.5;
-    const distanceToEdge = this.roundedRectSDF(ix, iy, 0, 0, 0.2); // todo: props to api
-    const displacement = this.smoothStep(0.3, 0, distanceToEdge - 0.15); // todo: props to api
-    const scaled = this.smoothStep(0, 1, displacement); // todo: props to api
+    const cornerRadius = this.options.cornerRadius ?? 0.2;
+    const distortionStart = this.options.distortionStart ?? 0.3;
+    const distortionEnd = this.options.distortionEnd ?? 0;
+    const distortionOffset = this.options.distortionOffset ?? 0.15;
+    const scalingStart = this.options.scalingStart ?? 0;
+    const scalingEnd = this.options.scalingEnd ?? 1;
+
+    const distanceToEdge = this.roundedRectSDF(ix, iy, 0, 0, cornerRadius);
+    const displacement = this.smoothStep(distortionStart, distortionEnd, distanceToEdge - distortionOffset);
+    const scaled = this.smoothStep(scalingStart, scalingEnd, displacement);
     const texCoords = this.texture(ix * scaled + 0.5, iy * scaled + 0.5);
     return texCoords;
   }

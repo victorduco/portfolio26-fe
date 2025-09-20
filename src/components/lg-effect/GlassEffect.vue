@@ -192,7 +192,6 @@ const {
   surfaceHighlightStyle,
   lightStyle,
   outlineStyle,
-  parallaxIntensity,
 } = useGlassDemo({
   displacementScale: 65,
   aberrationIntensity: 2.8,
@@ -203,6 +202,12 @@ const {
   surfaceReflection: 0.45,
   shadowDepth: 0.4,
   parallaxIntensity: 0.35,
+  shaderCornerRadius: 0.2,
+  shaderDistortionStart: 0.3,
+  shaderDistortionEnd: 0,
+  shaderDistortionOffset: 0.15,
+  shaderScalingStart: 0,
+  shaderScalingEnd: 1,
   backgroundImageUrl,
 });
 </script>

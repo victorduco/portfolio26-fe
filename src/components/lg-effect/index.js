@@ -56,6 +56,14 @@ export default function useGlassDemo() {
   const noiseStrength = ref(0.18);
   const parallaxIntensity = ref(defaultOptions.parallaxIntensity ?? 0.36);
 
+  // Shader distortion parameters
+  const shaderCornerRadius = ref(defaultOptions.shaderCornerRadius ?? 0.2);
+  const shaderDistortionStart = ref(defaultOptions.shaderDistortionStart ?? 0.3);
+  const shaderDistortionEnd = ref(defaultOptions.shaderDistortionEnd ?? 0);
+  const shaderDistortionOffset = ref(defaultOptions.shaderDistortionOffset ?? 0.15);
+  const shaderScalingStart = ref(defaultOptions.shaderScalingStart ?? 0);
+  const shaderScalingEnd = ref(defaultOptions.shaderScalingEnd ?? 1);
+
   // Core system
   const cornerRadius = 32;
   const glassRef = ref(null);
@@ -291,6 +299,12 @@ export default function useGlassDemo() {
     const generator = new ShaderDisplacementGenerator({
       width: Math.max(1, Math.floor(glassSize.width)),
       height: Math.max(1, Math.floor(glassSize.height)),
+      cornerRadius: shaderCornerRadius.value,
+      distortionStart: shaderDistortionStart.value,
+      distortionEnd: shaderDistortionEnd.value,
+      distortionOffset: shaderDistortionOffset.value,
+      scalingStart: shaderScalingStart.value,
+      scalingEnd: shaderScalingEnd.value,
     });
     shaderMapUrl.value = generator.updateShader();
     generator.destroy();
@@ -384,7 +398,16 @@ export default function useGlassDemo() {
   });
 
   watch(
-    () => [glassSize.width, glassSize.height],
+    () => [
+      glassSize.width,
+      glassSize.height,
+      shaderCornerRadius.value,
+      shaderDistortionStart.value,
+      shaderDistortionEnd.value,
+      shaderDistortionOffset.value,
+      shaderScalingStart.value,
+      shaderScalingEnd.value
+    ],
     () => {
       scheduleShaderGeneration();
     }
@@ -401,6 +424,12 @@ export default function useGlassDemo() {
     surfaceReflection,
     shadowDepth,
     parallaxIntensity,
+    shaderCornerRadius,
+    shaderDistortionStart,
+    shaderDistortionEnd,
+    shaderDistortionOffset,
+    shaderScalingStart,
+    shaderScalingEnd,
     filterReady,
     glassSize,
     filterId,
