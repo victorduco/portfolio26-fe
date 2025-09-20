@@ -9,46 +9,33 @@ import {
   watch,
 } from "vue";
 import { ShaderDisplacementGenerator } from "./shader-generator.ts";
-import { createGlassConfig } from "./defaults.js";
+import { createEffectOptions } from "./defaults.js";
 import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo({
   backgroundImageUrl: backgroundImageOption,
   ...userOptions
 } = {}) {
-
-  // Input handling
+  // =====  INPUT HANDLING  =====
   const backgroundImageUrl = computed(() =>
     isRef(backgroundImageOption)
       ? backgroundImageOption.value || defaultBackgroundImageUrl
       : "none"
   );
-  const options = createGlassConfig(userOptions);
+  const options = createEffectOptions(userOptions);
 
-  // Core system
+  // ===== REMAINING CODE TODO: REFACTOR =====
   const cornerRadius = 32;
   const glassElementRef = ref(null);
   const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
   const filterReady = ref(false);
   const shaderMapUrl = ref("");
-  const isActive = ref(false);
   const glassSize = reactive({ width: 320, height: 160 });
 
   const isFirefox =
     typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent);
-
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-  const getMap = (shaderUrl) => {
-    return shaderUrl;
-  };
-
-  // Enhanced computed properties for Apple Liquid Glass
-  const currentMap = computed(() => getMap(shaderMapUrl.value));
-
-  // edgeFeather and edgeSharpness removed
-
-  // Enhanced displacement scaling with surface curvature
   const redScale = computed(
     () => options.displacementScale * options.displacementCurvature
   );
@@ -58,13 +45,9 @@ export default function useGlassDemo({
       options.displacementCurvature *
       (1 - options.aberrationIntensity * 0.05)
   );
-
-  // Apple Liquid Glass specific blur
   const liquidGlassBlur = computed(() =>
     Math.max(0.12, options.glassBlur * 0.02 * options.refractionDepth)
   );
-
-  // Enhanced edge intensity matrix
   const edgeIntensityMatrix = computed(() => {
     const intensity = options.surfaceReflection;
     return `${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
@@ -72,8 +55,6 @@ export default function useGlassDemo({
             ${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
             0 0 0 1 0`;
   });
-
-  // Surface enhancement matrix for glass realism
   const surfaceEnhancementMatrix = computed(() => {
     const contrast = 1 + (options.glassSaturation - 180) / 300;
     const brightness = 1 + options.surfaceReflection * 0.2;
@@ -83,24 +64,17 @@ export default function useGlassDemo({
             0 0 0 1 0`;
   });
 
-  // Liquid layer style - THIS IS WHERE THE MAGIC HAPPENS
-  // Only this layer gets the SVG distortion filter applied to show distorted background
   const liquidStyle = computed(() => {
-    // Получаем позицию блока относительно окна
     let offsetX = 0;
     let offsetY = 0;
     let scale = 0.24;
     let winW = window.innerWidth;
     let winH = window.innerHeight;
-    // ...existing code...
     if (glassElementRef.value) {
       const rect = glassElementRef.value.getBoundingClientRect();
       offsetX = rect.left;
       offsetY = rect.top;
-      winW = window.innerWidth;
-      winH = window.innerHeight;
     }
-    // Базовая позиция для fallback (без интерактивности)
     const posX = ((offsetX + glassSize.width / 2) / winW) * 100;
     const posY = ((offsetY + glassSize.height / 2) / winH) * 100;
     const dx = -5.7;
@@ -114,28 +88,25 @@ export default function useGlassDemo({
         : "none",
       backgroundSize: `${winW * scale}%`,
       backgroundPosition: `var(--distortion-background-position, ${parallaxX}% ${parallaxY}%)`,
-      filter: isFirefox ? undefined : `url(#${filterId})`, // SVG filter applied HERE
+      filter: isFirefox ? undefined : `url(#${filterId})`,
       opacity: 1,
     };
   });
 
-  // Enhanced card style with better Apple Liquid Glass properties
   const cardStyle = computed(() => {
     const borderAlpha = 0.42;
     const brightness = Math.max(0.5, options.glassBrightness / 100).toFixed(2);
     const contrast = Math.max(0.5, options.glassContrast / 100).toFixed(2);
     const tintHue = options.glassTintHue;
     const tintOpacity = options.glassTintOpacity;
-    const shadowIntensity = options.shadowDepth * (isActive.value ? 1.3 : 1);
+    const shadowIntensity = options.shadowDepth;
 
     return {
       borderRadius: `${cornerRadius}px`,
       transform:
         "var(--distortion-transform, scaleX(1) scaleY(1) translate(0px, 0px))",
       transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
-      boxShadow: isActive.value
-        ? `0 18px 60px rgba(0, 0, 0, ${shadowIntensity + 0.2})`
-        : `0 24px 70px rgba(6, 10, 24, ${shadowIntensity})`,
+      boxShadow: `0 24px 70px rgba(6, 10, 24, ${shadowIntensity})`,
       backgroundColor: `hsla(${tintHue}, 50%, 14%, ${clamp(
         tintOpacity * 0.8,
         0.12,
@@ -157,7 +128,6 @@ export default function useGlassDemo({
     };
   });
 
-  // Enhanced surface highlight
   const surfaceHighlightStyle = computed(() => ({
     borderRadius: `${cornerRadius}px`,
     background: `linear-gradient(135deg,
@@ -168,7 +138,6 @@ export default function useGlassDemo({
     transition: "opacity 0.3s ease",
   }));
 
-  // Enhanced noise texture
   const noiseTexture =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E";
 
@@ -180,7 +149,6 @@ export default function useGlassDemo({
     opacity: clamp(options.noiseStrength * options.refractionDepth, 0, 1),
   }));
 
-  // Enhanced light style with temperature control
   const lightStyle = computed(() => {
     const activeIntensity = options.highlightIntensity;
     const baseIntensity = activeIntensity * 0.6;
@@ -217,7 +185,6 @@ export default function useGlassDemo({
     };
   });
 
-  // Enhanced outline with surface curvature
   const outlineStyle = computed(() => {
     const hue = options.glassTintHue;
     const idleOpacity = clamp(
@@ -250,14 +217,11 @@ export default function useGlassDemo({
     };
   });
 
-  // Core system functions
   const updateGlassSize = () => {
     if (!glassElementRef.value) return;
     const rect = glassElementRef.value.getBoundingClientRect();
     glassSize.width = Math.round(rect.width);
     glassSize.height = Math.round(rect.height);
-    // Триггерим обновление liquidStyle
-    // (computed автоматически пересчитается)
   };
 
   const generateShaderDisplacementMap = () => {
@@ -287,9 +251,6 @@ export default function useGlassDemo({
     });
   };
 
-  // Apple Liquid Glass Presets
-
-  // Lifecycle
   onMounted(() => {
     filterReady.value = true;
     updateGlassSize();
@@ -322,7 +283,7 @@ export default function useGlassDemo({
     filterReady,
     glassSize,
     filterId,
-    currentMap,
+    currentMap: shaderMapUrl,
     edgeIntensityMatrix,
     redScale,
     greenScale,

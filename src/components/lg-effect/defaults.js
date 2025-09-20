@@ -5,7 +5,7 @@ import { reactive } from "vue";
  * @param {Object} userOptions - User options to override defaults
  * @returns {Object} Reactive object containing all glass effect configuration
  */
-export function createGlassConfig(userOptions = {}) {
+export function createEffectOptions(userOptions = {}) {
   const config = reactive({
     // Core displacement parameters
     displacementScale: 65,
