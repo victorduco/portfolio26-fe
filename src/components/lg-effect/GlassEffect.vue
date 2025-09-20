@@ -171,6 +171,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  glassConfig: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 const backgroundImageUrl = toRef(props, "backgroundImageUrl");
@@ -210,6 +214,7 @@ const {
     start: 0,
     end: 1,
   },
+  ...props.glassConfig,
   backgroundImageUrl,
 });
 </script>

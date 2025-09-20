@@ -61,7 +61,7 @@ export default function useGlassDemo() {
     defaultOptions.distortion?.start ?? defaultOptions.shaderDistortionStart ?? 0.3
   );
   const shaderDistortionEnd = ref(
-    defaultOptions.distortion?.end ?? defaultOptions.shaderDistortionEnd ?? 0
+    defaultOptions.distortion?.end ?? defaultOptions.shaderDistortionEnd ?? 0.2
   );
   const shaderDistortionOffset = ref(
     defaultOptions.distortion?.offset ?? defaultOptions.shaderDistortionOffset ?? 0.15

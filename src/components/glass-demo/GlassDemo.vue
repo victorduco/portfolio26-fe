@@ -12,6 +12,7 @@
     <div style="position: relative">
       <LiquidGlass
         :background-image-url="imgUrl"
+        :glass-config="glassConfig"
         v-hover-distortion="hoverDistortionOptions"
       >
         <div class="card__content">
@@ -27,7 +28,7 @@
       <!-- PNG preview removed: image is not inserted into DOM -->
     </div>
 
-    <LiquidGlass :background-image-url="imgUrl">
+    <LiquidGlass :background-image-url="imgUrl" :glass-config="glassConfig">
       <div class="card__content">
         <h2 v-hover-distortion="hoverDistortionOptions">Apple Liquid Glass</h2>
         <p>
@@ -56,6 +57,27 @@ const hoverDistortionOptions = computed(() => ({
   curvature: 1.8,
   parallaxIntensity: 0.35,
 }));
+
+const glassConfig = {
+  displacementScale: 65,
+  aberrationIntensity: 2.8,
+  surfaceCurvature: 1.8,
+  glassBlur: 25,
+  glassSaturation: 185,
+  refractionDepth: 2.0,
+  surfaceReflection: 0.45,
+  shadowDepth: 0.4,
+  shaderCornerRadius: 0.2,
+  distortion: {
+    start: 0.3,
+    end: 0.2,
+    offset: 0.15,
+  },
+  scaling: {
+    start: 0,
+    end: 1,
+  },
+};
 </script>
 
 <style scoped>
