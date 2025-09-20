@@ -34,14 +34,7 @@ const props = defineProps({
 const backgroundImageUrl = toRef(props, "backgroundImageUrl");
 
 const {
-  filterReady,
-  filterId,
-  currentMap,
-  edgeIntensityMatrix,
-  redScale,
-  greenScale,
-  liquidGlassBlur,
-  surfaceEnhancementMatrix,
+  filterProps,
   glassElementRef,
   cardStyle,
   liquidStyle,
@@ -53,17 +46,6 @@ const {
   ...props.glassConfig,
   backgroundImageUrl,
 });
-
-const filterProps = computed(() => ({
-  filterReady: filterReady.value,
-  filterId,
-  currentMap: currentMap.value,
-  edgeIntensityMatrix: edgeIntensityMatrix.value,
-  redScale: redScale.value,
-  greenScale: greenScale.value,
-  liquidGlassBlur: liquidGlassBlur.value,
-  surfaceEnhancementMatrix: surfaceEnhancementMatrix.value,
-}));
 
 const combinedCardStyle = computed(() => {
   const liquid = liquidStyle.value;

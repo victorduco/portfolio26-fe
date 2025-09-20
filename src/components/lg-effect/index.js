@@ -31,37 +31,51 @@ export default function useGlassDemo({
   const shaderMapUrl = ref("");
   const glassSize = reactive({ width: 320, height: 160 });
 
+  const filterProps = computed(() => {
+    const red = options.displacementScale * options.displacementCurvature;
+    const green =
+      options.displacementScale *
+      options.displacementCurvature *
+      (1 - options.aberrationIntensity * 0.05);
+    const blur = Math.max(
+      0.12,
+      options.glassBlur * 0.02 * options.refractionDepth
+    );
+
+    const intensity = options.surfaceReflection;
+    const edgeMatrix = `${0.3 * intensity} ${0.3 * intensity} ${
+      0.3 * intensity
+    } 0 0\n            ${0.3 * intensity} ${0.3 * intensity} ${
+      0.3 * intensity
+    } 0 0\n            ${0.3 * intensity} ${0.3 * intensity} ${
+      0.3 * intensity
+    } 0 0\n            0 0 0 1 0`;
+
+    const contrast = 1 + (options.glassSaturation - 180) / 300;
+    const brightness = 1 + options.surfaceReflection * 0.2;
+    const surfaceMatrix = `${contrast} 0 0 0 ${
+      brightness * 0.1
+    }\n            0 ${contrast} 0 0 ${
+      brightness * 0.1
+    }\n            0 0 ${contrast} 0 ${
+      brightness * 0.1
+    }\n            0 0 0 1 0`;
+
+    return {
+      filterReady: filterReady.value,
+      filterId,
+      currentMap: shaderMapUrl.value,
+      edgeIntensityMatrix: edgeMatrix,
+      redScale: red,
+      greenScale: green,
+      liquidGlassBlur: blur,
+      surfaceEnhancementMatrix: surfaceMatrix,
+    };
+  });
+
   const isFirefox =
     typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent);
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-  const redScale = computed(
-    () => options.displacementScale * options.displacementCurvature
-  );
-  const greenScale = computed(
-    () =>
-      options.displacementScale *
-      options.displacementCurvature *
-      (1 - options.aberrationIntensity * 0.05)
-  );
-  const liquidGlassBlur = computed(() =>
-    Math.max(0.12, options.glassBlur * 0.02 * options.refractionDepth)
-  );
-  const edgeIntensityMatrix = computed(() => {
-    const intensity = options.surfaceReflection;
-    return `${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
-            ${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
-            ${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
-            0 0 0 1 0`;
-  });
-  const surfaceEnhancementMatrix = computed(() => {
-    const contrast = 1 + (options.glassSaturation - 180) / 300;
-    const brightness = 1 + options.surfaceReflection * 0.2;
-    return `${contrast} 0 0 0 ${brightness * 0.1}
-            0 ${contrast} 0 0 ${brightness * 0.1}
-            0 0 ${contrast} 0 ${brightness * 0.1}
-            0 0 0 1 0`;
-  });
 
   const liquidStyle = computed(() => {
     let offsetX = 0;
@@ -232,7 +246,8 @@ export default function useGlassDemo({
       scalingStart: options.shaderScalingStart,
       scalingEnd: options.shaderScalingEnd,
     });
-    shaderMapUrl.value = generator.updateShader();
+    const url = generator.updateShader();
+    shaderMapUrl.value = url;
     generator.destroy();
   };
 
@@ -276,12 +291,7 @@ export default function useGlassDemo({
     filterReady,
     glassSize,
     filterId,
-    currentMap: shaderMapUrl,
-    edgeIntensityMatrix,
-    redScale,
-    greenScale,
-    liquidGlassBlur,
-    surfaceEnhancementMatrix,
+    filterProps,
     glassElementRef,
     cardStyle,
     liquidStyle,
