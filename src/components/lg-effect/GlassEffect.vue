@@ -139,11 +139,7 @@
       ref="glassRef"
       class="liquid-glass__card"
       :style="cardStyle"
-      v-hover-distortion="{
-        onEnter: handleEnter,
-        onLeave: handleLeave,
-        onMouseMove: handleMouseMove
-      }"
+      v-hover-distortion="hoverDistortionOptions"
     >
       <div
         class="liquid-glass__layer liquid-glass__layer--liquid"
@@ -172,7 +168,7 @@
 </template>
 
 <script setup>
-import { toRef } from "vue";
+import { computed, toRef } from "vue";
 import useGlassDemo from "./index.js";
 
 const props = defineProps({
@@ -183,6 +179,8 @@ const props = defineProps({
 });
 
 const backgroundImageUrl = toRef(props, "backgroundImageUrl");
+
+const transformCurvature = 1.8;
 
 const {
   filterReady,
@@ -201,13 +199,11 @@ const {
   surfaceHighlightStyle,
   lightStyle,
   outlineStyle,
-  handleEnter,
-  handleLeave,
-  handleMouseMove,
+  parallaxIntensity,
 } = useGlassDemo({
   displacementScale: 65,
   aberrationIntensity: 2.8,
-  surfaceCurvature: 1.8,
+  surfaceCurvature: transformCurvature,
   glassBlur: 25,
   glassSaturation: 185,
   refractionDepth: 2.0,
@@ -216,6 +212,11 @@ const {
   parallaxIntensity: 0.35,
   backgroundImageUrl,
 });
+
+const hoverDistortionOptions = computed(() => ({
+  curvature: transformCurvature,
+  parallaxIntensity: parallaxIntensity.value,
+}));
 </script>
 
 <style scoped src="./index.css"></style>
