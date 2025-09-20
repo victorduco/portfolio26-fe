@@ -35,6 +35,11 @@ export const hoverDistortion = {
       const mouseOffset = reactive({ x: 0, y: 0 });
       const isHovered = ref(false);
 
+      // Performance optimizations - cache rect and batch DOM operations
+      let cachedRect = null;
+      let rafId = null;
+      let pendingUpdate = false;
+
       const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
       const cardTransform = computed(() => {
@@ -68,25 +73,33 @@ export const hoverDistortion = {
         { immediate: true }
       );
 
+      const updateCachedRect = () => {
+        cachedRect = el.getBoundingClientRect();
+      };
+
+      const scheduleUpdate = () => {
+        if (pendingUpdate) return;
+        pendingUpdate = true;
+
+        rafId = requestAnimationFrame(() => {
+          updatePointerVariables();
+          pendingUpdate = false;
+        });
+      };
+
       const updatePointerVariables = () => {
-        el.style.setProperty(
-          "--distortion-light-x",
-          `${(mouseOffset.x * 0.35).toFixed(2)}%`
-        );
-        el.style.setProperty(
-          "--distortion-light-y",
-          `${(mouseOffset.y * 0.22).toFixed(2)}%`
-        );
-        el.style.setProperty(
-          "--distortion-outline-rotation",
-          `${(mouseOffset.x * 1.2).toFixed(2)}deg`
-        );
+        // Use cached rect if available, otherwise get fresh one
+        const rect = cachedRect || el.getBoundingClientRect();
 
         if (typeof window === "undefined") {
           return;
         }
 
-        const rect = el.getBoundingClientRect();
+        // Batch all style updates together
+        const lightX = (mouseOffset.x * 0.35).toFixed(2);
+        const lightY = (mouseOffset.y * 0.22).toFixed(2);
+        const rotation = (mouseOffset.x * 1.2).toFixed(2);
+
         const winW = window.innerWidth || rect.width;
         const winH = window.innerHeight || rect.height;
         const baseX = ((rect.left + rect.width / 2) / winW) * 100;
@@ -105,6 +118,10 @@ export const hoverDistortion = {
           100
         );
 
+        // Batch all DOM writes together to avoid multiple reflows
+        el.style.setProperty("--distortion-light-x", `${lightX}%`);
+        el.style.setProperty("--distortion-light-y", `${lightY}%`);
+        el.style.setProperty("--distortion-outline-rotation", `${rotation}deg`);
         el.style.setProperty(
           "--distortion-background-position",
           `${parallaxX.toFixed(2)}% ${parallaxY.toFixed(2)}%`
@@ -113,7 +130,7 @@ export const hoverDistortion = {
 
       watch(
         [() => mouseOffset.x, () => mouseOffset.y, parallaxIntensity],
-        updatePointerVariables,
+        scheduleUpdate,
         { immediate: true }
       );
 
@@ -128,7 +145,9 @@ export const hoverDistortion = {
       };
 
       const handleMouseMove = (event) => {
-        const rect = el.getBoundingClientRect();
+        // Use cached rect to avoid getBoundingClientRect on every mousemove
+        const rect = cachedRect || el.getBoundingClientRect();
+
         const relativeX = ((event.clientX - rect.left) / rect.width) * 100;
         const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
 
@@ -138,6 +157,8 @@ export const hoverDistortion = {
 
       const handleEnter = (event) => {
         isHovered.value = true;
+        // Cache rect on first hover for performance
+        updateCachedRect();
         if (event != null) {
           handleMouseMove(event);
         }
@@ -148,6 +169,12 @@ export const hoverDistortion = {
         mouseOffset.x = 0;
         mouseOffset.y = 0;
         el.style.removeProperty("--distortion-background-position");
+        // Cancel any pending RAF
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+          pendingUpdate = false;
+        }
       };
 
       updateOptions(binding.value);
@@ -157,6 +184,7 @@ export const hoverDistortion = {
         handleEnter,
         handleLeave,
         updateOptions,
+        updateCachedRect,
       };
     });
 
@@ -164,11 +192,16 @@ export const hoverDistortion = {
     el.addEventListener("mouseleave", state.handleLeave);
     el.addEventListener("mousemove", state.handleMouseMove);
 
+    // Update cached rect on window resize
+    const handleResize = () => state.updateCachedRect();
+    window.addEventListener("resize", handleResize);
+
     el.style.transition = "transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)";
     el.style.transformOrigin = "center center";
 
     el._hoverDistortion = {
       scope,
+      handleResize,
       ...state,
     };
   },
@@ -187,6 +220,7 @@ export const hoverDistortion = {
     el.removeEventListener("mouseenter", instance.handleEnter);
     el.removeEventListener("mouseleave", instance.handleLeave);
     el.removeEventListener("mousemove", instance.handleMouseMove);
+    window.removeEventListener("resize", instance.handleResize);
 
     instance.scope.stop();
 

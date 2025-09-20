@@ -50,37 +50,19 @@ const {
   lightStyle,
   outlineStyle,
 } = useGlassDemo({
-  displacementScale: 65,
-  aberrationIntensity: 2.8,
-  surfaceCurvature: 1.8,
-  glassBlur: 25,
-  glassSaturation: 185,
-  refractionDepth: 2.0,
-  surfaceReflection: 0.45,
-  shadowDepth: 0.4,
-  shaderCornerRadius: 0.2,
-  distortion: {
-    start: 0.3,
-    end: 0.2,
-    offset: 0.15,
-  },
-  scaling: {
-    start: 0,
-    end: 1,
-  },
   ...props.glassConfig,
   backgroundImageUrl,
 });
 
 const filterProps = computed(() => ({
-  filterReady,
+  filterReady: filterReady.value,
   filterId,
-  currentMap,
-  edgeIntensityMatrix,
-  redScale,
-  greenScale,
-  liquidGlassBlur,
-  surfaceEnhancementMatrix,
+  currentMap: currentMap.value,
+  edgeIntensityMatrix: edgeIntensityMatrix.value,
+  redScale: redScale.value,
+  greenScale: greenScale.value,
+  liquidGlassBlur: liquidGlassBlur.value,
+  surfaceEnhancementMatrix: surfaceEnhancementMatrix.value,
 }));
 
 const combinedCardStyle = computed(() => {
