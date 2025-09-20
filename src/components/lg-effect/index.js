@@ -54,7 +54,6 @@ export default function useGlassDemo() {
   const glassTintHue = ref(210);
   const glassTintOpacity = ref(0.32);
   const noiseStrength = ref(0.18);
-  const parallaxIntensity = ref(defaultOptions.parallaxIntensity ?? 0.36);
 
   // Shader distortion parameters
   const shaderCornerRadius = ref(defaultOptions.shaderCornerRadius ?? 0.2);
@@ -86,7 +85,6 @@ export default function useGlassDemo() {
   const currentMap = computed(() => getMap(shaderMapUrl.value));
 
   // edgeFeather and edgeSharpness removed
-  const displacementSign = computed(() => 1);
 
   // Enhanced displacement scaling with surface curvature
   const redScale = computed(
@@ -97,12 +95,6 @@ export default function useGlassDemo() {
       displacementScale.value *
       displacementCurvature.value *
       (1 - aberrationIntensity.value * 0.05)
-  );
-  const blueScale = computed(
-    () =>
-      displacementScale.value *
-      displacementCurvature.value *
-      (1 - aberrationIntensity.value * 0.1)
   );
 
   // Apple Liquid Glass specific blur
@@ -146,11 +138,11 @@ export default function useGlassDemo() {
       winW = window.innerWidth;
       winH = window.innerHeight;
     }
-    // Вычисляем процент смещения для backgroundPosition
+    // Базовая позиция для fallback (без интерактивности)
     const posX = ((offsetX + glassSize.width / 2) / winW) * 100;
     const posY = ((offsetY + glassSize.height / 2) / winH) * 100;
-    let dx = -5.7;
-    let dy = -24.9;
+    const dx = -5.7;
+    const dy = -24.9;
     const parallaxX = posX + dx;
     const parallaxY = posY + dy;
     return {
@@ -423,7 +415,6 @@ export default function useGlassDemo() {
     refractionDepth,
     surfaceReflection,
     shadowDepth,
-    parallaxIntensity,
     shaderCornerRadius,
     shaderDistortionStart,
     shaderDistortionEnd,
