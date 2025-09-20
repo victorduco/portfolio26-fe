@@ -38,6 +38,7 @@ export const hoverDistortion = {
       // Performance optimizations - cache rect and batch DOM operations
       let cachedRect = null;
       let rafId = null;
+      let transformRafId = null;
       let pendingUpdate = false;
 
       const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -59,11 +60,19 @@ export const hoverDistortion = {
       });
 
       const updateTransform = (value) => {
-        el.style.setProperty("--distortion-transform", value);
-        el.style.transform = value;
+        // Debounce transform updates to avoid conflicts with CSS transitions
+        if (transformRafId) {
+          cancelAnimationFrame(transformRafId);
+        }
+        transformRafId = requestAnimationFrame(() => {
+          el.style.setProperty("--distortion-transform", value);
+          el.style.transform = value;
+          transformRafId = null;
+        });
       };
 
-      watch(cardTransform, updateTransform, { immediate: true });
+      // Remove immediate watcher to avoid performance issues
+      watch(cardTransform, updateTransform);
 
       watch(
         isHovered,
@@ -144,15 +153,25 @@ export const hoverDistortion = {
         }
       };
 
+      let mouseMoveThrottled = false;
+
       const handleMouseMove = (event) => {
-        // Use cached rect to avoid getBoundingClientRect on every mousemove
-        const rect = cachedRect || el.getBoundingClientRect();
+        // Throttle mousemove for better performance
+        if (mouseMoveThrottled) return;
+        mouseMoveThrottled = true;
 
-        const relativeX = ((event.clientX - rect.left) / rect.width) * 100;
-        const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
+        requestAnimationFrame(() => {
+          // Use cached rect to avoid getBoundingClientRect on every mousemove
+          const rect = cachedRect || el.getBoundingClientRect();
 
-        mouseOffset.x = clamp(relativeX - 50, -50, 50);
-        mouseOffset.y = clamp(relativeY - 50, -50, 50);
+          const relativeX = ((event.clientX - rect.left) / rect.width) * 100;
+          const relativeY = ((event.clientY - rect.top) / rect.height) * 100;
+
+          mouseOffset.x = clamp(relativeX - 50, -50, 50);
+          mouseOffset.y = clamp(relativeY - 50, -50, 50);
+
+          mouseMoveThrottled = false;
+        });
       };
 
       const handleEnter = (event) => {
@@ -175,6 +194,10 @@ export const hoverDistortion = {
           rafId = null;
           pendingUpdate = false;
         }
+        if (transformRafId) {
+          cancelAnimationFrame(transformRafId);
+          transformRafId = null;
+        }
       };
 
       updateOptions(binding.value);
@@ -196,7 +219,8 @@ export const hoverDistortion = {
     const handleResize = () => state.updateCachedRect();
     window.addEventListener("resize", handleResize);
 
-    el.style.transition = "transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)";
+    // Remove transform from transition to avoid lag - handled by RAF
+    el.style.transition = "opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1)";
     el.style.transformOrigin = "center center";
 
     el._hoverDistortion = {
