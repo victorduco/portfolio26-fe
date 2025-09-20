@@ -9,6 +9,7 @@ import {
   watch,
 } from "vue";
 import { ShaderDisplacementGenerator } from "./shader-generator.ts";
+import { createGlassRefs, loadGlassValues } from "./defaults.js";
 import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo() {
@@ -29,49 +30,32 @@ export default function useGlassDemo() {
     return defaultBackgroundImageUrl;
   });
 
-  // Core displacement parameters
-  const displacementScale = ref(defaultOptions.displacementScale ?? 65);
-  const aberrationIntensity = ref(defaultOptions.aberrationIntensity ?? 2.8);
-  const displacementCurvature = ref(
-    defaultOptions.displacementCurvature ?? defaultOptions.surfaceCurvature ?? 1.8
-  );
-
-  // Glass material properties
-  const glassBlur = ref(defaultOptions.glassBlur ?? 25);
-  const glassSaturation = ref(defaultOptions.glassSaturation ?? 185);
-  const refractionDepth = ref(defaultOptions.refractionDepth ?? 2.0);
-  const surfaceReflection = ref(defaultOptions.surfaceReflection ?? 0.45);
-
-  // Light and shadow
-  const highlightIntensity = ref(0.68);
-  const highlightSpread = ref(1.05);
-  const highlightHue = ref(210);
-  const shadowDepth = ref(defaultOptions.shadowDepth ?? 0.4);
-
-  // Advanced effects
-  const glassBrightness = ref(110);
-  const glassContrast = ref(112);
-  const glassTintHue = ref(210);
-  const glassTintOpacity = ref(0.32);
-  const noiseStrength = ref(0.18);
-
-  // Shader distortion parameters
-  const shaderCornerRadius = ref(defaultOptions.shaderCornerRadius ?? 0.2);
-  const shaderDistortionStart = ref(
-    defaultOptions.distortion?.start ?? defaultOptions.shaderDistortionStart ?? 0.3
-  );
-  const shaderDistortionEnd = ref(
-    defaultOptions.distortion?.end ?? defaultOptions.shaderDistortionEnd ?? 0.2
-  );
-  const shaderDistortionOffset = ref(
-    defaultOptions.distortion?.offset ?? defaultOptions.shaderDistortionOffset ?? 0.15
-  );
-  const shaderScalingStart = ref(
-    defaultOptions.scaling?.start ?? defaultOptions.shaderScalingStart ?? 0
-  );
-  const shaderScalingEnd = ref(
-    defaultOptions.scaling?.end ?? defaultOptions.shaderScalingEnd ?? 1
-  );
+  // Create all glass effect refs
+  const glassRefs = createGlassRefs();
+  const {
+    displacementScale,
+    aberrationIntensity,
+    displacementCurvature,
+    glassBlur,
+    glassSaturation,
+    refractionDepth,
+    surfaceReflection,
+    highlightIntensity,
+    highlightSpread,
+    highlightHue,
+    shadowDepth,
+    glassBrightness,
+    glassContrast,
+    glassTintHue,
+    glassTintOpacity,
+    noiseStrength,
+    shaderCornerRadius,
+    shaderDistortionStart,
+    shaderDistortionEnd,
+    shaderDistortionOffset,
+    shaderScalingStart,
+    shaderScalingEnd,
+  } = glassRefs;
 
   // Core system
   const cornerRadius = 32;
@@ -323,76 +307,15 @@ export default function useGlassDemo() {
 
   // Apple Liquid Glass Presets
 
+  // Load default values
+  loadGlassValues(defaultOptions, glassRefs);
+
   // Lifecycle
   onMounted(() => {
     filterReady.value = true;
     updateGlassSize();
     scheduleShaderGeneration();
     window.addEventListener("resize", updateGlassSize);
-    // Значения по умолчанию
-    if (defaultOptions.displacementScale !== undefined) {
-      displacementScale.value = defaultOptions.displacementScale;
-    } else {
-      displacementScale.value = 65;
-    }
-    if (defaultOptions.aberrationIntensity !== undefined) {
-      aberrationIntensity.value = defaultOptions.aberrationIntensity;
-    } else {
-      aberrationIntensity.value = 2.8;
-    }
-    if (defaultOptions.surfaceCurvature !== undefined) {
-      displacementCurvature.value = defaultOptions.surfaceCurvature;
-    } else if (defaultOptions.displacementCurvature !== undefined) {
-      displacementCurvature.value = defaultOptions.displacementCurvature;
-    } else {
-      displacementCurvature.value = 1.8;
-    }
-    if (defaultOptions.glassBlur !== undefined) {
-      glassBlur.value = defaultOptions.glassBlur;
-    } else {
-      glassBlur.value = 25;
-    }
-    if (defaultOptions.glassSaturation !== undefined) {
-      glassSaturation.value = defaultOptions.glassSaturation;
-    } else {
-      glassSaturation.value = 185;
-    }
-    // glassOpacity removed, always 100%
-    if (defaultOptions.refractionDepth !== undefined) {
-      refractionDepth.value = defaultOptions.refractionDepth;
-    } else {
-      refractionDepth.value = 2.0;
-    }
-    if (defaultOptions.surfaceReflection !== undefined) {
-      surfaceReflection.value = defaultOptions.surfaceReflection;
-    } else {
-      surfaceReflection.value = 0.45;
-    }
-    if (defaultOptions.highlightIntensity !== undefined) {
-      highlightIntensity.value = defaultOptions.highlightIntensity;
-    } else {
-      highlightIntensity.value = 0.75;
-    }
-    if (defaultOptions.highlightSpread !== undefined) {
-      highlightSpread.value = defaultOptions.highlightSpread;
-    } else {
-      highlightSpread.value = 1.1;
-    }
-    if (defaultOptions.highlightHue !== undefined) {
-      highlightHue.value = defaultOptions.highlightHue;
-    } else {
-      highlightHue.value = 210;
-    }
-    if (defaultOptions.shadowDepth !== undefined) {
-      shadowDepth.value = defaultOptions.shadowDepth;
-    } else {
-      shadowDepth.value = 0.4;
-    }
-    glassBrightness.value = 115;
-    glassContrast.value = 118;
-    glassTintHue.value = 210;
-    glassTintOpacity.value = 0.38;
-    noiseStrength.value = 0.22;
   });
 
   onBeforeUnmount(() => {
