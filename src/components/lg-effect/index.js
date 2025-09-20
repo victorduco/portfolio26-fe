@@ -9,53 +9,22 @@ import {
   watch,
 } from "vue";
 import { ShaderDisplacementGenerator } from "./shader-generator.ts";
-import { createGlassRefs, loadGlassValues } from "./defaults.js";
+import { createGlassRefs } from "./defaults.js";
 import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
-export default function useGlassDemo() {
-  // Режим Apple Liquid Glass (только один)
-  const defaultOptions = typeof arguments[0] === "object" ? arguments[0] : {};
+export default function useGlassDemo({
+  backgroundImageUrl: backgroundImageOption,
+  ...userOptions
+} = {}) {
   const mode = ref("shader");
 
-  const backgroundImageOption = defaultOptions.backgroundImageUrl;
-  const backgroundImageUrl = computed(() => {
-    if (isRef(backgroundImageOption)) {
-      return backgroundImageOption.value || defaultBackgroundImageUrl;
-    }
-
-    if (typeof backgroundImageOption === "string" && backgroundImageOption) {
-      return backgroundImageOption;
-    }
-
-    return defaultBackgroundImageUrl;
-  });
-
-  // Create all glass effect refs
-  const glassRefs = createGlassRefs();
-  const {
-    displacementScale,
-    aberrationIntensity,
-    displacementCurvature,
-    glassBlur,
-    glassSaturation,
-    refractionDepth,
-    surfaceReflection,
-    highlightIntensity,
-    highlightSpread,
-    highlightHue,
-    shadowDepth,
-    glassBrightness,
-    glassContrast,
-    glassTintHue,
-    glassTintOpacity,
-    noiseStrength,
-    shaderCornerRadius,
-    shaderDistortionStart,
-    shaderDistortionEnd,
-    shaderDistortionOffset,
-    shaderScalingStart,
-    shaderScalingEnd,
-  } = glassRefs;
+  // Input handling
+  const backgroundImageUrl = computed(() =>
+    isRef(backgroundImageOption)
+      ? backgroundImageOption.value || defaultBackgroundImageUrl
+      : "none"
+  );
+  const options = createGlassRefs(userOptions);
 
   // Core system
   const cornerRadius = 32;
@@ -82,23 +51,23 @@ export default function useGlassDemo() {
 
   // Enhanced displacement scaling with surface curvature
   const redScale = computed(
-    () => displacementScale * displacementCurvature
+    () => options.displacementScale * options.displacementCurvature
   );
   const greenScale = computed(
     () =>
-      displacementScale *
-      displacementCurvature *
-      (1 - aberrationIntensity * 0.05)
+      options.displacementScale *
+      options.displacementCurvature *
+      (1 - options.aberrationIntensity * 0.05)
   );
 
   // Apple Liquid Glass specific blur
   const liquidGlassBlur = computed(() =>
-    Math.max(0.12, glassBlur * 0.02 * refractionDepth)
+    Math.max(0.12, options.glassBlur * 0.02 * options.refractionDepth)
   );
 
   // Enhanced edge intensity matrix
   const edgeIntensityMatrix = computed(() => {
-    const intensity = surfaceReflection;
+    const intensity = options.surfaceReflection;
     return `${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
             ${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
             ${0.3 * intensity} ${0.3 * intensity} ${0.3 * intensity} 0 0
@@ -107,8 +76,8 @@ export default function useGlassDemo() {
 
   // Surface enhancement matrix for glass realism
   const surfaceEnhancementMatrix = computed(() => {
-    const contrast = 1 + (glassSaturation - 180) / 300;
-    const brightness = 1 + surfaceReflection * 0.2;
+    const contrast = 1 + (options.glassSaturation - 180) / 300;
+    const brightness = 1 + options.surfaceReflection * 0.2;
     return `${contrast} 0 0 0 ${brightness * 0.1}
             0 ${contrast} 0 0 ${brightness * 0.1}
             0 0 ${contrast} 0 ${brightness * 0.1}
@@ -154,11 +123,11 @@ export default function useGlassDemo() {
   // Enhanced card style with better Apple Liquid Glass properties
   const cardStyle = computed(() => {
     const borderAlpha = 0.42;
-    const brightness = Math.max(0.5, glassBrightness / 100).toFixed(2);
-    const contrast = Math.max(0.5, glassContrast / 100).toFixed(2);
-    const tintHue = glassTintHue;
-    const tintOpacity = glassTintOpacity;
-    const shadowIntensity = shadowDepth * (isActive.value ? 1.3 : 1);
+    const brightness = Math.max(0.5, options.glassBrightness / 100).toFixed(2);
+    const contrast = Math.max(0.5, options.glassContrast / 100).toFixed(2);
+    const tintHue = options.glassTintHue;
+    const tintOpacity = options.glassTintOpacity;
+    const shadowIntensity = options.shadowDepth * (isActive.value ? 1.3 : 1);
 
     return {
       borderRadius: `${cornerRadius}px`,
@@ -174,7 +143,7 @@ export default function useGlassDemo() {
         0.55
       )})`,
       border: `1px solid hsla(${tintHue}, 92%, 86%, ${borderAlpha})`,
-      backdropFilter: `blur(${glassBlur}px) saturate(${glassSaturation}%) brightness(${brightness}) contrast(${contrast})`,
+      backdropFilter: `blur(${options.glassBlur}px) saturate(${options.glassSaturation}%) brightness(${brightness}) contrast(${contrast})`,
       backgroundImage: `linear-gradient(145deg,
         hsla(${tintHue}, 70%, ${Math.min(82, 60 + tintOpacity * 35)}%, ${clamp(
         tintOpacity * 1.25,
@@ -193,8 +162,8 @@ export default function useGlassDemo() {
   const surfaceHighlightStyle = computed(() => ({
     borderRadius: `${cornerRadius}px`,
     background: `linear-gradient(135deg,
-      rgba(255, 255, 255, ${surfaceReflection * 0.4}) 0%,
-      rgba(255, 255, 255, ${surfaceReflection * 0.1}) 50%,
+      rgba(255, 255, 255, ${options.surfaceReflection * 0.4}) 0%,
+      rgba(255, 255, 255, ${options.surfaceReflection * 0.1}) 50%,
       rgba(255, 255, 255, 0.02) 100%)`,
     opacity: "calc(0.7 + var(--distortion-hovered, 0) * 0.3)",
     transition: "opacity 0.3s ease",
@@ -209,16 +178,16 @@ export default function useGlassDemo() {
     backgroundImage: `url(${noiseTexture})`,
     backgroundSize: "180px",
     mixBlendMode: "soft-light",
-    opacity: clamp(noiseStrength * refractionDepth, 0, 1),
+    opacity: clamp(options.noiseStrength * options.refractionDepth, 0, 1),
   }));
 
   // Enhanced light style with temperature control
   const lightStyle = computed(() => {
-    const activeIntensity = highlightIntensity;
+    const activeIntensity = options.highlightIntensity;
     const baseIntensity = activeIntensity * 0.6;
-    const spread = Math.min(100, 48 + highlightSpread * 34);
-    const inner = Math.max(12, highlightSpread * 14);
-    const hue = highlightHue;
+    const spread = Math.min(100, 48 + options.highlightSpread * 34);
+    const inner = Math.max(12, options.highlightSpread * 14);
+    const hue = options.highlightHue;
 
     const idleOpacity = clamp(baseIntensity + 0.12, 0.18, 0.95);
     const hoverOpacity = clamp(activeIntensity + 0.12, 0.18, 0.95);
@@ -233,23 +202,37 @@ export default function useGlassDemo() {
     const midAlphaDelta = hoverMidAlpha - idleMidAlpha;
 
     return {
-      opacity: `calc(${idleOpacity.toFixed(3)} + var(--distortion-hovered, 0) * ${
-        opacityDelta.toFixed(3)
-      })`,
+      opacity: `calc(${idleOpacity.toFixed(
+        3
+      )} + var(--distortion-hovered, 0) * ${opacityDelta.toFixed(3)})`,
       background: `radial-gradient(circle at calc(50% + var(--distortion-light-x, 0%)) calc(30% + var(--distortion-light-y, 0%)),
-        hsla(${hue}, 96%, 82%, calc(${idleStartAlpha.toFixed(3)} + var(--distortion-hovered, 0) * ${startAlphaDelta.toFixed(3)})) 0%,
-        hsla(${hue}, 98%, 74%, calc(${idleMidAlpha.toFixed(3)} + var(--distortion-hovered, 0) * ${midAlphaDelta.toFixed(3)})) ${inner}%,
+        hsla(${hue}, 96%, 82%, calc(${idleStartAlpha.toFixed(
+        3
+      )} + var(--distortion-hovered, 0) * ${startAlphaDelta.toFixed(3)})) 0%,
+        hsla(${hue}, 98%, 74%, calc(${idleMidAlpha.toFixed(
+        3
+      )} + var(--distortion-hovered, 0) * ${midAlphaDelta.toFixed(
+        3
+      )})) ${inner}%,
         rgba(255, 255, 255, 0) ${spread}%)`,
     };
   });
 
   // Enhanced outline with surface curvature
   const outlineStyle = computed(() => {
-    const hue = glassTintHue;
-    const idleOpacity = clamp(0.18 + highlightIntensity * 0.28, 0.22, 0.6);
-    const hoverOpacity = clamp(0.28 + highlightIntensity * 0.38, 0.3, 0.75);
-    const baseOpacity = idleOpacity * surfaceReflection;
-    const hoverOpacityTotal = hoverOpacity * surfaceReflection;
+    const hue = options.glassTintHue;
+    const idleOpacity = clamp(
+      0.18 + options.highlightIntensity * 0.28,
+      0.22,
+      0.6
+    );
+    const hoverOpacity = clamp(
+      0.28 + options.highlightIntensity * 0.38,
+      0.3,
+      0.75
+    );
+    const baseOpacity = idleOpacity * options.surfaceReflection;
+    const hoverOpacityTotal = hoverOpacity * options.surfaceReflection;
     const opacityDelta = hoverOpacityTotal - baseOpacity;
     return {
       borderRadius: `${cornerRadius}px`,
@@ -258,12 +241,12 @@ export default function useGlassDemo() {
       transform:
         "var(--distortion-transform, scaleX(1) scaleY(1) translate(0px, 0px))",
       transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
-      opacity: `calc(${baseOpacity.toFixed(3)} + var(--distortion-hovered, 0) * ${
-        opacityDelta.toFixed(3)
-      })`,
+      opacity: `calc(${baseOpacity.toFixed(
+        3
+      )} + var(--distortion-hovered, 0) * ${opacityDelta.toFixed(3)})`,
       background: `linear-gradient(calc(135deg + var(--distortion-outline-rotation, 0deg)),
         hsla(${hue}, 95%, 86%, 0.08) 0%,
-        hsla(${hue}, 96%, 78%, ${0.52 * surfaceReflection}) 50%,
+        hsla(${hue}, 96%, 78%, ${0.52 * options.surfaceReflection}) 50%,
         hsla(${hue}, 92%, 68%, 0.16) 100%)`,
     };
   });
@@ -285,12 +268,12 @@ export default function useGlassDemo() {
     const generator = new ShaderDisplacementGenerator({
       width: Math.max(1, Math.floor(glassSize.width)),
       height: Math.max(1, Math.floor(glassSize.height)),
-      cornerRadius: shaderCornerRadius,
-      distortionStart: shaderDistortionStart,
-      distortionEnd: shaderDistortionEnd,
-      distortionOffset: shaderDistortionOffset,
-      scalingStart: shaderScalingStart,
-      scalingEnd: shaderScalingEnd,
+      cornerRadius: options.shaderCornerRadius,
+      distortionStart: options.shaderDistortionStart,
+      distortionEnd: options.shaderDistortionEnd,
+      distortionOffset: options.shaderDistortionOffset,
+      scalingStart: options.shaderScalingStart,
+      scalingEnd: options.shaderScalingEnd,
     });
     shaderMapUrl.value = generator.updateShader();
     generator.destroy();
@@ -306,9 +289,6 @@ export default function useGlassDemo() {
   };
 
   // Apple Liquid Glass Presets
-
-  // Load default values
-  loadGlassValues(defaultOptions, glassRefs);
 
   // Lifecycle
   onMounted(() => {
@@ -326,12 +306,12 @@ export default function useGlassDemo() {
     () => [
       glassSize.width,
       glassSize.height,
-      shaderCornerRadius,
-      shaderDistortionStart,
-      shaderDistortionEnd,
-      shaderDistortionOffset,
-      shaderScalingStart,
-      shaderScalingEnd
+      options.shaderCornerRadius,
+      options.shaderDistortionStart,
+      options.shaderDistortionEnd,
+      options.shaderDistortionOffset,
+      options.shaderScalingStart,
+      options.shaderScalingEnd,
     ],
     () => {
       scheduleShaderGeneration();
@@ -340,20 +320,7 @@ export default function useGlassDemo() {
 
   return {
     mode,
-    displacementScale,
-    aberrationIntensity,
-    displacementCurvature,
-    glassBlur,
-    glassSaturation,
-    refractionDepth,
-    surfaceReflection,
-    shadowDepth,
-    shaderCornerRadius,
-    shaderDistortionStart,
-    shaderDistortionEnd,
-    shaderDistortionOffset,
-    shaderScalingStart,
-    shaderScalingEnd,
+    ...options,
     filterReady,
     glassSize,
     filterId,

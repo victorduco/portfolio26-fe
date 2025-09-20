@@ -2,10 +2,11 @@ import { reactive } from "vue";
 
 /**
  * Create all glass effect refs with default values
+ * @param {Object} options - User options to override defaults
  * @returns {Object} Object containing all glass effect refs
  */
-export function createGlassRefs() {
-  return reactive({
+export function createGlassRefs(options = {}) {
+  const refs = reactive({
     // Core displacement parameters
     displacementScale: 65,
     aberrationIntensity: 2.8,
@@ -38,6 +39,9 @@ export function createGlassRefs() {
     shaderScalingStart: 0,
     shaderScalingEnd: 1,
   });
+
+  loadGlassValues(options, refs);
+  return refs;
 }
 
 /**
@@ -45,71 +49,27 @@ export function createGlassRefs() {
  * @param {Object} options - User provided options
  * @param {Object} refs - Vue refs object to update
  */
-export function loadGlassValues(options, refs) {
-  // Simple property mapping
-  const simpleProps = [
-    "displacementScale",
-    "aberrationIntensity",
-    "glassBlur",
-    "glassSaturation",
-    "refractionDepth",
-    "surfaceReflection",
-    "highlightIntensity",
-    "highlightSpread",
-    "highlightHue",
-    "shadowDepth",
-    "shaderCornerRadius",
-  ];
+function loadGlassValues(options, refs) {
+  Object.assign(refs, options);
 
-  simpleProps.forEach((prop) => {
-    if (options[prop] !== undefined) {
-      refs[prop] = options[prop];
-    }
-  });
-
-  // Handle legacy aliases for surfaceCurvature
+  // Handle legacy aliases
   if (options.surfaceCurvature !== undefined) {
     refs.displacementCurvature = options.surfaceCurvature;
-  } else if (options.displacementCurvature !== undefined) {
-    refs.displacementCurvature = options.displacementCurvature;
   }
 
-  // Nested object mapping
-  const nestedProps = [
-    {
-      ref: "shaderDistortionStart",
-      nested: "distortion.start",
-      legacy: "shaderDistortionStart",
-    },
-    {
-      ref: "shaderDistortionEnd",
-      nested: "distortion.end",
-      legacy: "shaderDistortionEnd",
-    },
-    {
-      ref: "shaderDistortionOffset",
-      nested: "distortion.offset",
-      legacy: "shaderDistortionOffset",
-    },
-    {
-      ref: "shaderScalingStart",
-      nested: "scaling.start",
-      legacy: "shaderScalingStart",
-    },
-    {
-      ref: "shaderScalingEnd",
-      nested: "scaling.end",
-      legacy: "shaderScalingEnd",
-    },
-  ];
+  // Handle nested object support
+  if (options.distortion) {
+    Object.assign(refs, {
+      shaderDistortionStart: options.distortion.start,
+      shaderDistortionEnd: options.distortion.end,
+      shaderDistortionOffset: options.distortion.offset,
+    });
+  }
 
-  nestedProps.forEach(({ ref, nested, legacy }) => {
-    const [obj, prop] = nested.split(".");
-    const nestedValue = options[obj]?.[prop];
-    const legacyValue = options[legacy];
-
-    if (nestedValue !== undefined || legacyValue !== undefined) {
-      refs[ref] = nestedValue ?? legacyValue;
-    }
-  });
+  if (options.scaling) {
+    Object.assign(refs, {
+      shaderScalingStart: options.scaling.start,
+      shaderScalingEnd: options.scaling.end,
+    });
+  }
 }
