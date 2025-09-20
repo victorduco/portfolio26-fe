@@ -200,13 +200,16 @@ const {
   refractionDepth: 2.0,
   surfaceReflection: 0.45,
   shadowDepth: 0.4,
-  parallaxIntensity: 0.35,
   shaderCornerRadius: 0.2,
-  shaderDistortionStart: 0.3,
-  shaderDistortionEnd: 0,
-  shaderDistortionOffset: 0.15,
-  shaderScalingStart: 0,
-  shaderScalingEnd: 1,
+  distortion: {
+    start: 0.3,
+    end: 0.2,
+    offset: 0.15,
+  },
+  scaling: {
+    start: 0,
+    end: 1,
+  },
   backgroundImageUrl,
 });
 </script>

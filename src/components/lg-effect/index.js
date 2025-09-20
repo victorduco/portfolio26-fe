@@ -30,7 +30,7 @@ export default function useGlassDemo() {
   });
 
   // Core displacement parameters
-  const displacementScale = ref(defaultOptions.displacementScale ?? 60);
+  const displacementScale = ref(defaultOptions.displacementScale ?? 65);
   const aberrationIntensity = ref(defaultOptions.aberrationIntensity ?? 2.8);
   const displacementCurvature = ref(
     defaultOptions.displacementCurvature ?? defaultOptions.surfaceCurvature ?? 1.8
@@ -39,14 +39,14 @@ export default function useGlassDemo() {
   // Glass material properties
   const glassBlur = ref(defaultOptions.glassBlur ?? 25);
   const glassSaturation = ref(defaultOptions.glassSaturation ?? 185);
-  const refractionDepth = ref(defaultOptions.refractionDepth ?? 1.8);
-  const surfaceReflection = ref(defaultOptions.surfaceReflection ?? 0.4);
+  const refractionDepth = ref(defaultOptions.refractionDepth ?? 2.0);
+  const surfaceReflection = ref(defaultOptions.surfaceReflection ?? 0.45);
 
   // Light and shadow
   const highlightIntensity = ref(0.68);
   const highlightSpread = ref(1.05);
   const highlightHue = ref(210);
-  const shadowDepth = ref(defaultOptions.shadowDepth ?? 0.35);
+  const shadowDepth = ref(defaultOptions.shadowDepth ?? 0.4);
 
   // Advanced effects
   const glassBrightness = ref(110);
@@ -57,11 +57,21 @@ export default function useGlassDemo() {
 
   // Shader distortion parameters
   const shaderCornerRadius = ref(defaultOptions.shaderCornerRadius ?? 0.2);
-  const shaderDistortionStart = ref(defaultOptions.shaderDistortionStart ?? 0.3);
-  const shaderDistortionEnd = ref(defaultOptions.shaderDistortionEnd ?? 0);
-  const shaderDistortionOffset = ref(defaultOptions.shaderDistortionOffset ?? 0.15);
-  const shaderScalingStart = ref(defaultOptions.shaderScalingStart ?? 0);
-  const shaderScalingEnd = ref(defaultOptions.shaderScalingEnd ?? 1);
+  const shaderDistortionStart = ref(
+    defaultOptions.distortion?.start ?? defaultOptions.shaderDistortionStart ?? 0.3
+  );
+  const shaderDistortionEnd = ref(
+    defaultOptions.distortion?.end ?? defaultOptions.shaderDistortionEnd ?? 0
+  );
+  const shaderDistortionOffset = ref(
+    defaultOptions.distortion?.offset ?? defaultOptions.shaderDistortionOffset ?? 0.15
+  );
+  const shaderScalingStart = ref(
+    defaultOptions.scaling?.start ?? defaultOptions.shaderScalingStart ?? 0
+  );
+  const shaderScalingEnd = ref(
+    defaultOptions.scaling?.end ?? defaultOptions.shaderScalingEnd ?? 1
+  );
 
   // Core system
   const cornerRadius = 32;

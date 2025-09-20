@@ -6,23 +6,41 @@
 | ------------------- | -------------------------------- | ------- | --------- |
 | displacementScale   | Liquid glass distortion strength | 65      | 10 - 120  |
 | aberrationIntensity | Chromatic aberration intensity   | 2.8     | 0 - 8     |
-| aberrationIntensity | Chromatic aberration intensity   | 2.8     | 0 - 8     |
-| surfaceCurvature    | Surface curvature                | 1.8     | 0.5 - 3.0 |
 | surfaceCurvature    | Surface curvature                | 1.8     | 0.5 - 3.0 |
 | glassBlur           | Backdrop blur                    | 25      | 8 - 40    |
 | glassSaturation     | Material saturation              | 185     | 120 - 280 |
 | refractionDepth     | Refraction depth                 | 2.0     | 0.8 - 2.5 |
 | surfaceReflection   | Surface reflection intensity     | 0.45    | 0.1 - 0.8 |
-| highlightIntensity  | Highlight intensity              | 0.75    | 0.1 - 1.0 |
-| highlightSpread     | Highlight spread                 | 1.1     | 0.5 - 1.5 |
-| highlightHue        | Highlight hue                    | 210     | 180 - 240 |
 | shadowDepth         | Shadow depth                     | 0.4     | 0.1 - 0.8 |
-| glassBrightness     | Glass brightness                 | 115     | 80 - 140  |
-| glassContrast       | Glass contrast                   | 118     | 80 - 140  |
-| glassTintHue        | Glass tint hue                   | 210     | 180 - 240 |
-| glassTintOpacity    | Glass tint opacity               | 0.38    | 0.1 - 0.6 |
-| noiseStrength       | Noise strength                   | 0.22    | 0 - 0.5   |
-| parallaxIntensity   | Parallax intensity               | 0.4     | 0 - 0.8   |
+| shaderCornerRadius  | Shader corner radius             | 0.2     | 0 - 0.5   |
+| backgroundImageUrl  | Background image URL             | default | string    |
+
+## Shader Parameters
+
+### Distortion Object
+| Parameter           | Description                      | Default | Range     |
+| ------------------- | -------------------------------- | ------- | --------- |
+| distortion.start    | Distortion start position        | 0.3     | 0 - 1.0   |
+| distortion.end      | Distortion end position          | 0       | 0 - 1.0   |
+| distortion.offset   | Distortion offset                | 0.15    | 0 - 0.5   |
+
+### Scaling Object
+| Parameter           | Description                      | Default | Range     |
+| ------------------- | -------------------------------- | ------- | --------- |
+| scaling.start       | Scaling start position           | 0       | 0 - 1.0   |
+| scaling.end         | Scaling end position             | 1       | 0 - 1.0   |
+
+## Internal Parameters (not configurable)
+| Parameter           | Description                      | Default |
+| ------------------- | -------------------------------- | ------- |
+| highlightIntensity  | Highlight intensity              | 0.68    |
+| highlightSpread     | Highlight spread                 | 1.05    |
+| highlightHue        | Highlight hue                    | 210     |
+| glassBrightness     | Glass brightness                 | 110     |
+| glassContrast       | Glass contrast                   | 112     |
+| glassTintHue        | Glass tint hue                   | 210     |
+| glassTintOpacity    | Glass tint opacity               | 0.32    |
+| noiseStrength       | Noise strength                   | 0.18    |
 
 ## Usage
 
@@ -35,7 +53,32 @@ const {
   displacementScale: 80, // example
   aberrationIntensity: 3.5,
   surfaceCurvature: 2.0,
-  // other parameters
+  glassBlur: 30,
+  shaderCornerRadius: 0.3,
+  distortion: {
+    start: 0.4,
+    end: 0.1,
+    offset: 0.2,
+  },
+  scaling: {
+    start: 0.1,
+    end: 0.9,
+  },
+  backgroundImageUrl: '/path/to/image.jpg',
+});
+```
+
+### Legacy Support
+
+Old shader parameter format is still supported for backward compatibility:
+
+```js
+useGlassDemo({
+  shaderDistortionStart: 0.4,  // equivalent to distortion.start
+  shaderDistortionEnd: 0.1,    // equivalent to distortion.end
+  shaderDistortionOffset: 0.2, // equivalent to distortion.offset
+  shaderScalingStart: 0.1,     // equivalent to scaling.start
+  shaderScalingEnd: 0.9,       // equivalent to scaling.end
 });
 ```
 
