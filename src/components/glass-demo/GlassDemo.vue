@@ -9,7 +9,7 @@
       class="tmp-background"
       :style="{ '--bg-img': imgUrl ? `url(${imgUrl})` : 'none' }"
     />
-    <div style="position: relative">
+    <div style="position: relative" class="card__wrapper">
       <LiquidGlass
         :background-image-url="imgUrl"
         :glass-config="glassConfig"
@@ -28,23 +28,27 @@
       <!-- PNG preview removed: image is not inserted into DOM -->
     </div>
 
-    <LiquidGlass :background-image-url="imgUrl" :glass-config="glassConfig">
-      <div class="card__content">
-        <h2 v-hover-distortion="hoverDistortionOptions">Apple Liquid Glass</h2>
-        <p>
-          Experience the revolutionary liquid glass with real refraction
-          physics. Notice how the background distorts through the glass while
-          text stays crystal clear.
-        </p>
-        <button
-          v-hover-distortion="hoverDistortionOptions"
-          type="button"
-          class="demo__button"
-        >
-          Explore Magic
-        </button>
-      </div>
-    </LiquidGlass>
+    <div class="card__wrapper">
+      <LiquidGlass :background-image-url="imgUrl" :glass-config="glassConfig">
+        <div class="card__content">
+          <h2 v-hover-distortion="hoverDistortionOptions">
+            Apple Liquid Glass
+          </h2>
+          <p>
+            Experience the revolutionary liquid glass with real refraction
+            physics. Notice how the background distorts through the glass while
+            text stays crystal clear.
+          </p>
+          <button
+            v-hover-distortion="hoverDistortionOptions"
+            type="button"
+            class="demo__button"
+          >
+            Explore Magic
+          </button>
+        </div>
+      </LiquidGlass>
+    </div>
   </div>
 </template>
 
@@ -81,9 +85,14 @@ const glassConfig = {
 </script>
 
 <style scoped>
+.card__wrapper {
+  max-width: 600px;
+  margin: 40px;
+  position: relative;
+  border-radius: 16px;
+}
 .card__content {
   width: 100%;
-  max-width: 1000px;
   padding: 32px;
   box-sizing: border-box;
   display: flex;

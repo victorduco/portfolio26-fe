@@ -9,7 +9,7 @@ import {
   watch,
 } from "vue";
 import { ShaderDisplacementGenerator } from "./shader-generator.ts";
-import { createEffectOptions } from "./defaults.js";
+import { createEffectOptions } from "./effect-options.js";
 import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo({
@@ -25,7 +25,6 @@ export default function useGlassDemo({
   const options = createEffectOptions(userOptions);
 
   // ===== REMAINING CODE TODO: REFACTOR =====
-  const cornerRadius = 32;
   const glassElementRef = ref(null);
   const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
   const filterReady = ref(false);
@@ -82,7 +81,6 @@ export default function useGlassDemo({
     const parallaxX = posX + dx;
     const parallaxY = posY + dy;
     return {
-      borderRadius: `${cornerRadius}px`,
       backgroundImage: backgroundImageUrl.value
         ? `url(${backgroundImageUrl.value})`
         : "none",
@@ -102,7 +100,6 @@ export default function useGlassDemo({
     const shadowIntensity = options.shadowDepth;
 
     return {
-      borderRadius: `${cornerRadius}px`,
       transform:
         "var(--distortion-transform, scaleX(1) scaleY(1) translate(0px, 0px))",
       transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
@@ -129,7 +126,6 @@ export default function useGlassDemo({
   });
 
   const surfaceHighlightStyle = computed(() => ({
-    borderRadius: `${cornerRadius}px`,
     background: `linear-gradient(135deg,
       rgba(255, 255, 255, ${options.surfaceReflection * 0.4}) 0%,
       rgba(255, 255, 255, ${options.surfaceReflection * 0.1}) 50%,
@@ -142,7 +138,6 @@ export default function useGlassDemo({
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E";
 
   const noiseStyle = computed(() => ({
-    borderRadius: `${cornerRadius}px`,
     backgroundImage: `url(${noiseTexture})`,
     backgroundSize: "180px",
     mixBlendMode: "soft-light",
@@ -201,7 +196,6 @@ export default function useGlassDemo({
     const hoverOpacityTotal = hoverOpacity * options.surfaceReflection;
     const opacityDelta = hoverOpacityTotal - baseOpacity;
     return {
-      borderRadius: `${cornerRadius}px`,
       width: `${glassSize.width}px`,
       height: `${glassSize.height}px`,
       transform:
@@ -279,7 +273,6 @@ export default function useGlassDemo({
   );
 
   return {
-    ...options,
     filterReady,
     glassSize,
     filterId,
