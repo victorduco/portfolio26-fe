@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import LiquidGlass from "../lg-effect/GlassEffect.vue";
+import LiquidGlass from "../glass-effect/GlassEffect.vue";
 import ExportBgImg from "../bg-img/ExportBgImg.vue";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 const imgUrl = ref("");

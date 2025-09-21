@@ -8,15 +8,15 @@ import {
   ref,
   watch,
 } from "vue";
-import { ShaderDisplacementGenerator } from "./shader-generator.ts";
+import { ShaderDisplacementGenerator } from "./filter-displacement-generator.ts";
 import { createEffectOptions } from "./effect-options.js";
-import { createFilterProps } from "./lg-filter-props.js";
-import { createLiquidStyle } from "./lg-liquid-style.js";
-import { createCardStyle } from "./lg-card-style.js";
-import { createSurfaceHighlightStyle } from "./lg-surface-highlight-style.js";
-import { createNoiseStyle } from "./lg-noise-style.js";
-import { createLightStyle } from "./lg-light-style.js";
-import { createOutlineStyle } from "./lg-outline-style.js";
+import { createFilterProps } from "./layer-filter-props.js";
+import { createLiquidStyle } from "./layer-liquid.js";
+import { createCardStyle } from "./layer-card.js";
+import { createSurfaceHighlightStyle } from "./layer-highlight.js";
+import { createNoiseStyle } from "./layer-noise.js";
+import { createLightStyle } from "./layer-light.js";
+import { createOutlineStyle } from "./layer-outline.js";
 import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo({

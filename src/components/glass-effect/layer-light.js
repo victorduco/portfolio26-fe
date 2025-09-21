@@ -1,4 +1,4 @@
-import { clamp } from "./lg-utils.js";
+import { clamp } from "./utils.js";
 
 /**
  * Creates light style object for the glass effect

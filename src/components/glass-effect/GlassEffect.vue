@@ -1,6 +1,6 @@
 <template>
   <section class="liquid-glass">
-    <LiquidGlassFilter v-bind="filterProps" />
+    <SvgFilter v-bind="filterProps" />
 
     <div
       ref="glassElementRef"
@@ -22,7 +22,7 @@
 <script setup>
 import { computed, toRef } from "vue";
 import useGlassDemo from "./index.js";
-import LiquidGlassFilter from "./LiquidGlassFilter.vue";
+import SvgFilter from "./SvgFilter.vue";
 
 const props = defineProps({
   backgroundImageUrl: {
