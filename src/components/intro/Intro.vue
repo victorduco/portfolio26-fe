@@ -1,115 +1,51 @@
 <template>
   <div ref="containerRef" class="w-full h-screen bg-image"></div>
   <section class="intro-hero">
-    <div class="intro-hero__text">
-      <h1 class="h1">Rectangles That Rules Numbers</h1>
-      <p class="body1">
-        This is story of me and how UX can change things around us. Something
-        else to write here.
-      </p>
-
-      <ul class="intro-list" layout :transition="{ spring }">
-        <motion.li
-          v-for="(block, idx) in blocks"
-          :key="idx"
-          layout
-          :custom="idx"
-          :variants="boxVariants"
-          :animate="
-            block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-          "
-          :transition="getLayoutSpring(idx)"
-          initial="default"
-          class="intro-square"
-          :class="[
-            `intro-square--${block.slug}`,
-            { 'is-active': block.isActive },
-          ]"
-          @mouseenter="hovered[idx] = true"
-          @mouseleave="hovered[idx] = false"
-          @click="toggleState(idx)"
-          :data-state="block.isActive"
-        >
-          <motion.div
-            class="intro-square-bg"
-            :custom="{ slug: block.slug }"
-            :variants="squareBgVariants"
-            :animate="
-              block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-            "
-            :transition="spring"
-          >
-            <motion.div
-              class="intro-square-highlight"
-              :variants="squareHighlightVariants"
-              :animate="
-                block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-              "
-              :transition="spring"
-            />
-          </motion.div>
-
-          <motion.div
-            class="intro-square-overlay"
-            :variants="squareContentVariants"
-            :animate="
-              block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-            "
-            :transition="spring"
-          >
-            <motion.div
-              class="intro-content-number"
-              :variants="squareContentNumVariants"
-              :custom="{ slug: block.slug }"
-              :animate="
-                block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-              "
-              style="
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: relative;
-                z-index: 2;
-              "
-            >
-              {{ block.number }}
-            </motion.div>
-            <motion.div
-              class="intro-content-bullet"
-              :variants="squareContentBulletVariants"
-              :animate="
-                block.isActive ? 'active' : hovered[idx] ? 'hover' : 'default'
-              "
-            >
-              •
-            </motion.div>
-          </motion.div>
-        </motion.li>
-      </ul>
-    </div>
-
+    <IntroText />
     <div class="intro-hero__stage"></div>
   </section>
 </template>
 
 <script setup>
-import { motion } from "motion-v";
-import { LiquidGlass } from "@wxperia/liquid-glass-vue";
-
-const handleClick = () => {};
-import { blocks, hovered, getLayoutSpring, toggleState } from "./index.js";
-
-import {
-  spring,
-  boxVariants,
-  squareBgVariants,
-  squareContentVariants,
-  squareHighlightVariants,
-  squareContentNumVariants,
-  squareContentBulletVariants,
-} from "./variants.js";
+import IntroText from "./IntroText.vue";
 </script>
 
-<style src="./index.css"></style>
+<style scoped>
+.intro-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  justify-items: start;
+  width: 100%;
+  max-width: 1440px;
+  min-height: 100vh;
+  padding-block: clamp(48px, 12vh, 96px);
+  padding-inline-start: clamp(32px, 12vw, 120px);
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.intro-hero__stage {
+  grid-area: 1 / 1;
+  align-self: stretch;
+  justify-self: stretch;
+  padding-top: clamp(120px, 22vh, 260px);
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .intro-hero {
+    min-height: auto;
+    padding-block: clamp(40px, 12vh, 72px);
+    padding-inline-start: clamp(24px, 16vw, 72px);
+    padding-inline-end: clamp(16px, 8vw, 48px);
+  }
+
+  .intro-hero__stage {
+    padding-top: clamp(96px, 24vh, 200px);
+  }
+}
+</style>
