@@ -14,7 +14,7 @@
         :background-image-url="imgUrl"
         :glass-config="glassConfig"
         v-hover-distortion="hoverDistortionOptions"
-        :intensity="0.5"
+        :intensity="animatedIntensity"
       >
         <div class="card__content">
           <h2>Apple Liquid Glass</h2>
@@ -56,8 +56,31 @@
 <script setup>
 import LiquidGlass from "../lg-effect/GlassEffect.vue";
 import ExportBgImg from "../bg-img/ExportBgImg.vue";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 const imgUrl = ref("");
+const animatedIntensity = ref(0);
+
+let animationId = null;
+let startTime = null;
+
+const animate = (timestamp) => {
+  if (!startTime) startTime = timestamp;
+  const elapsed = timestamp - startTime;
+  const progress = (elapsed % 10000) / 10000; // 10 секунд цикл
+  const intensity = Math.abs(Math.sin(progress * Math.PI)); // 0 -> 1 -> 0
+  animatedIntensity.value = intensity;
+  animationId = requestAnimationFrame(animate);
+};
+
+onMounted(() => {
+  animationId = requestAnimationFrame(animate);
+});
+
+onUnmounted(() => {
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+  }
+});
 const hoverDistortionOptions = computed(() => ({
   curvature: 1.8,
   parallaxIntensity: 0.35,
