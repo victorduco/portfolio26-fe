@@ -88,7 +88,11 @@ export const introVariants = {
     },
   },
   squareContentNumVariants: {
-    default: { opacity: 0 },
+    default: {
+      opacity: 0,
+      "--glow-color": "rgba(255,255,255,0)",
+      color: "rgba(255,255,255,0.7)",
+    },
     hover: ({ slug }) => {
       const colorMap = {
         one: "rgba(28,100,255,0.9)",
@@ -102,7 +106,11 @@ export const introVariants = {
         color: colorMap[slug] || colorMap.one,
       };
     },
-    active: { opacity: 0 },
+    active: {
+      opacity: 0,
+      "--glow-color": "rgba(255,255,255,0)",
+      color: "rgba(255,255,255,0.7)",
+    },
   },
   squareContentBulletVariants: {
     default: { opacity: 1 },
@@ -129,12 +137,22 @@ export const introVariants = {
       y: "-50%",
     },
   },
+  glassIntensityVariants: {
+    default: { intensity: 0 },
+    hover: { intensity: 0 },
+    active: { intensity: 1.0 },
+  },
 };
 
 export const boxVariants = introVariants.boxVariants;
 export const squareBgVariants = introVariants.squareBgVariants;
-export const squareContentVariants = introVariants.squareContentVariants;
+export const squareContentVariants = {
+  default: { opacity: 1 },
+  hover: { opacity: 1 },
+  active: { opacity: 1 },
+};
 export const squareHighlightVariants = introVariants.squareHighlightVariants;
 export const squareContentNumVariants = introVariants.squareContentNumVariants;
 export const squareContentBulletVariants =
   introVariants.squareContentBulletVariants;
+export const glassIntensityVariants = introVariants.glassIntensityVariants;

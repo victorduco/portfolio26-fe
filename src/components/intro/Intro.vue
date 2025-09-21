@@ -11,4 +11,3 @@
 import IntroText from "./IntroText.vue";
 import IntroRectangles from "./IntroRectangles.vue";
 </script>
-

@@ -35,6 +35,7 @@ import {
   squareContentBulletVariants,
 } from "./variants.js";
 
+
 const baseBlocks = [
   { slug: "one", number: "1" },
   { slug: "two", number: "2" },
@@ -45,9 +46,7 @@ const baseBlocks = [
 const blocks = reactive(
   baseBlocks.map((block) => ({ ...block, isActive: false }))
 );
-const hovered = reactive(
-  Array.from({ length: blocks.length }, () => false)
-);
+const hovered = reactive(Array.from({ length: blocks.length }, () => false));
 const lastToggledIdx = ref(-1);
 
 function toggleState(idx) {

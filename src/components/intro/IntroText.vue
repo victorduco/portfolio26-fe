@@ -1,15 +1,15 @@
 <template>
   <section class="intro-hero">
     <div class="intro-hero__text">
-      <h1 class="h1">Rectangles That Rules Numbers</h1>
-      <p class="body1">
-        This is story of me and how UX can change things around us. Something
-        else to write here.
-      </p>
+      <div id="intro-text-export-node">
+        <h1 class="h1">Rectangles That Rules Numbers</h1>
+        <p class="body1">
+          This is story of me and how UX can change things around us. Something
+          else to write here.
+        </p>
+      </div>
 
-      <slot name="rectangles">
-        <IntroRectangles />
-      </slot>
+      <slot name="rectangles"> <IntroRectangles /></slot>
     </div>
 
     <div class="intro-hero__stage"></div>
