@@ -10,7 +10,8 @@ export function createLiquidStyle(
   backgroundImageUrl,
   glassElementRef,
   glassSize,
-  filterId
+  filterId,
+  intensity = 1
 ) {
   let offsetX = 0;
   let offsetY = 0;
@@ -35,6 +36,6 @@ export function createLiquidStyle(
     backgroundSize: backgroundImageUrl.value ? `${winW * scale}%` : "cover",
     backgroundPosition: `var(--distortion-background-position, ${parallaxX}% ${parallaxY}%)`,
     filter: backgroundImageUrl.value ? `url(#${filterId})` : "none",
-    opacity: backgroundImageUrl.value ? 1 : 0.3,
+    opacity: backgroundImageUrl.value ? intensity : 0.3 * intensity,
   };
 }

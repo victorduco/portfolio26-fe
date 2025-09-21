@@ -6,7 +6,7 @@ import { clamp } from "./lg-utils.js";
  * @param {Object} glassSize - Reactive glass size object
  * @returns {Object} Outline style properties
  */
-export function createOutlineStyle(options) {
+export function createOutlineStyle(options, intensity = 1) {
   const hue = options.glassTintHue;
   const idleOpacity = clamp(
     0.18 + options.highlightIntensity * 0.28,
@@ -27,9 +27,9 @@ export function createOutlineStyle(options) {
     transform:
       "var(--distortion-transform, scaleX(1) scaleY(1) translate(0px, 0px))",
     transition: `transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)`,
-    opacity: `calc(${baseOpacity.toFixed(
+    opacity: `calc(${(baseOpacity * intensity).toFixed(
       3
-    )} + var(--distortion-hovered, 0) * ${opacityDelta.toFixed(3)})`,
+    )} + var(--distortion-hovered, 0) * ${(opacityDelta * intensity).toFixed(3)})`,
     background: `linear-gradient(calc(135deg + var(--distortion-outline-rotation, 0deg)),
       hsla(${hue}, 95%, 86%, 0.08) 0%,
       hsla(${hue}, 96%, 78%, ${0.52 * options.surfaceReflection}) 50%,

@@ -5,7 +5,7 @@ import { clamp } from "./lg-utils.js";
  * @param {Object} options - Effect options object
  * @returns {Object} Light style properties
  */
-export function createLightStyle(options) {
+export function createLightStyle(options, intensity = 1) {
   const activeIntensity = options.highlightIntensity;
   const baseIntensity = activeIntensity * 0.6;
   const spread = Math.min(100, 48 + options.highlightSpread * 34);
@@ -25,9 +25,9 @@ export function createLightStyle(options) {
   const midAlphaDelta = hoverMidAlpha - idleMidAlpha;
 
   return {
-    opacity: `calc(${idleOpacity.toFixed(
+    opacity: `calc(${(idleOpacity * intensity).toFixed(
       3
-    )} + var(--distortion-hovered, 0) * ${opacityDelta.toFixed(3)})`,
+    )} + var(--distortion-hovered, 0) * ${(opacityDelta * intensity).toFixed(3)})`,
     background: `radial-gradient(circle at calc(50% + var(--distortion-light-x, 0%)) calc(30% + var(--distortion-light-y, 0%)),
       hsla(${hue}, 96%, 82%, calc(${idleStartAlpha.toFixed(
       3

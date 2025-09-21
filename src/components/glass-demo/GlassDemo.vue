@@ -14,6 +14,7 @@
         :background-image-url="imgUrl"
         :glass-config="glassConfig"
         v-hover-distortion="hoverDistortionOptions"
+        :intensity="0.5"
       >
         <div class="card__content">
           <h2>Apple Liquid Glass</h2>

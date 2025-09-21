@@ -21,6 +21,7 @@ import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo({
   backgroundImageUrl: backgroundImageOption,
+  intensity: intensityOption,
   ...userOptions
 } = {}) {
   //
@@ -30,6 +31,9 @@ export default function useGlassDemo({
     isRef(backgroundImageOption)
       ? backgroundImageOption.value || defaultBackgroundImageUrl
       : "none"
+  );
+  const intensity = computed(() =>
+    isRef(intensityOption) ? intensityOption.value : 1
   );
   const options = createEffectOptions(userOptions);
 
@@ -65,7 +69,7 @@ export default function useGlassDemo({
   };
 
   const filterProps = computed(() =>
-    createFilterProps(options, {
+    createFilterProps(options, intensity.value, {
       filterReady: filterReady.value,
       filterId,
       shaderMapUrl: shaderMapUrl.value,
@@ -76,15 +80,15 @@ export default function useGlassDemo({
   // =====  STYLES  =====
   //
   const liquidStyle = computed(() =>
-    createLiquidStyle(backgroundImageUrl, glassElementRef, glassSize, filterId)
+    createLiquidStyle(backgroundImageUrl, glassElementRef, glassSize, filterId, intensity.value)
   );
-  const cardStyle = computed(() => createCardStyle(options, backgroundImageUrl.value));
+  const cardStyle = computed(() => createCardStyle(options, backgroundImageUrl.value, intensity.value));
   const surfaceHighlightStyle = computed(() =>
-    createSurfaceHighlightStyle(options)
+    createSurfaceHighlightStyle(options, intensity.value)
   );
-  const noiseStyle = computed(() => createNoiseStyle(options));
-  const lightStyle = computed(() => createLightStyle(options));
-  const outlineStyle = computed(() => createOutlineStyle(options));
+  const noiseStyle = computed(() => createNoiseStyle(options, intensity.value));
+  const lightStyle = computed(() => createLightStyle(options, intensity.value));
+  const outlineStyle = computed(() => createOutlineStyle(options, intensity.value));
 
   //
   // =====  LIFECYCLE & WATCHERS  =====

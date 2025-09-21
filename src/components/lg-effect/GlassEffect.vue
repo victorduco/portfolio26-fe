@@ -33,6 +33,11 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  intensity: {
+    type: Number,
+    default: 1,
+    validator: (value) => value >= 0 && value <= 1,
+  },
 });
 
 const backgroundImageUrl = toRef(props, "backgroundImageUrl");
@@ -49,6 +54,7 @@ const {
 } = useGlassDemo({
   ...props.glassConfig,
   backgroundImageUrl,
+  intensity: toRef(props, "intensity"),
 });
 
 const combinedCardStyle = computed(() => {
