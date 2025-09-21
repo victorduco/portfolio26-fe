@@ -75,7 +75,6 @@ const combinedCardStyle = computed(() => {
     "--outline-height": outline.height,
     "--outline-gradient": outline.background,
     "--outline-opacity": outline.opacity,
-    "--outline-transform": outline.transform,
   };
 });
 </script>

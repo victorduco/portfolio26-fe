@@ -31,6 +31,10 @@
   height: 100%;
   pointer-events: none;
   border-radius: inherit;
+  /* Ensure consistent transform origin for all layers */
+  transform-origin: center center;
+  /* Use box-sizing to handle any padding/border consistently */
+  box-sizing: border-box;
 }
 
 .liquid-glass__layer--liquid {
@@ -64,12 +68,14 @@
 
 .liquid-glass__layer--light {
   z-index: 3;
-  inset: -30% 0 0;
+  inset: 0;
   background: var(--light-gradient);
   mix-blend-mode: screen;
   opacity: var(--light-opacity);
   transition: opacity 0.3s ease;
   border-radius: inherit;
+  /* Use transform to offset instead of inset for consistent scaling */
+  transform: translateY(-30%);
 }
 
 .liquid-glass__content {
@@ -81,15 +87,16 @@
 
 .liquid-glass__outline {
   position: absolute;
-  padding: 1.5px;
+  inset: -1.5px;
   border-radius: inherit;
   mix-blend-mode: screen;
   pointer-events: none;
-  width: var(--outline-width);
-  height: var(--outline-height);
+  /* Ensure consistent transform origin and box-sizing */
+  transform-origin: center center;
+  box-sizing: border-box;
+  /* Use negative inset to compensate for border size instead of padding */
   background: var(--outline-gradient);
   opacity: var(--outline-opacity);
-  transform: var(--outline-transform);
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4) inset,
     0 1px 4px rgba(0, 0, 0, 0.45) inset;
