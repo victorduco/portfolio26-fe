@@ -43,9 +43,20 @@
   background-position: var(--liquid-bg-position, center);
   background-size: var(--liquid-bg-size, cover);
   background-image: var(--liquid-bg-image);
-  filter: var(--liquid-filter);
+  /* Fallback for Firefox - ensure background shows even without filter */
+  filter: var(--liquid-filter, none);
   opacity: var(--liquid-opacity, 1);
   border-radius: inherit;
+}
+
+/* Firefox specific fixes */
+@supports (-moz-appearance: none) {
+  .liquid-glass__layer--liquid {
+    /* Force background to display in Firefox */
+    background-attachment: local;
+    /* Ensure filter doesn't break background */
+    will-change: filter, transform;
+  }
 }
 
 .liquid-glass__layer--highlight {

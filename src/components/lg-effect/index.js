@@ -78,7 +78,7 @@ export default function useGlassDemo({
   const liquidStyle = computed(() =>
     createLiquidStyle(backgroundImageUrl, glassElementRef, glassSize, filterId)
   );
-  const cardStyle = computed(() => createCardStyle(options));
+  const cardStyle = computed(() => createCardStyle(options, backgroundImageUrl.value));
   const surfaceHighlightStyle = computed(() =>
     createSurfaceHighlightStyle(options)
   );

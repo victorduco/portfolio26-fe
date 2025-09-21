@@ -32,9 +32,9 @@ export function createLiquidStyle(
     backgroundImage: backgroundImageUrl.value
       ? `url(${backgroundImageUrl.value})`
       : "none",
-    backgroundSize: `${winW * scale}%`,
+    backgroundSize: backgroundImageUrl.value ? `${winW * scale}%` : "cover",
     backgroundPosition: `var(--distortion-background-position, ${parallaxX}% ${parallaxY}%)`,
-    filter: `url(#${filterId})`,
-    opacity: 1,
+    filter: backgroundImageUrl.value ? `url(#${filterId})` : "none",
+    opacity: backgroundImageUrl.value ? 1 : 0.3,
   };
 }
