@@ -5,7 +5,7 @@
     background-color="#000"
   />
   <motion.ul class="intro-list" layout :transition="{ spring }">
-    <IntroRectangle v-for="(rect, index) in rects" :key="index" :index="index" />
+    <IntroRectangle v-for="(rect, index) in rects" :key="index" :index="index" :captured-image-url="capturedImageUrl" />
   </motion.ul>
 </template>
 

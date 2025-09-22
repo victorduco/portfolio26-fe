@@ -26,7 +26,7 @@
         :transition="spring"
       >
         <LiquidGlass
-          :background-image-url="capturedImageUrl"
+          :background-image-url="props.capturedImageUrl"
           :glass-config="rectangleGlassConfig"
           :intensity="glassIntensity"
           class="intro-square-glass"
@@ -99,6 +99,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  capturedImageUrl: {
+    type: String,
+    default: "",
+  },
 });
 const isActive = ref(false);
 const isHovered = ref(false);
@@ -109,8 +113,6 @@ function toggleState() {
 }
 
 // mess
-
-const capturedImageUrl = ref("");
 
 defineEmits(["mouseenter", "mouseleave", "click"]);
 
