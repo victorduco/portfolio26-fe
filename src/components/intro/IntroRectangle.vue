@@ -100,6 +100,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  houseRef: {
+    type: Object,
+    default: null,
+  },
 });
 const isActive = ref(false);
 const isHovered = ref(false);
