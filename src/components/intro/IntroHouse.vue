@@ -4,15 +4,23 @@
     class="intro-house"
     :class="{ 'intro-house--visible': isVisible }"
   >
+    <svg v-if="showFilterPreview" class="intro-house__filters" aria-hidden="true">
+      <filter :id="filterId" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur :stdDeviation="blurIntensity" />
+      </filter>
+    </svg>
+
     <div
+      id="intro-house-clone"
       class="intro-house__content"
+      :style="contentStyle"
       v-html="clonedContent"
     ></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 
 const props = defineProps({
   sourceSelector: {
@@ -25,12 +33,36 @@ const props = defineProps({
   },
   excludeSelectors: {
     type: Array,
-    default: () => ['.intro-list', '.house-toggle', 'motion-ul', 'ul']
+    default: () => [
+      '.intro-list',
+      '.house-toggle',
+      'motion-ul',
+      'ul',
+      '.intro-square',
+      '.intro-distortion'
+    ]
+  },
+  showFilterPreview: {
+    type: Boolean,
+    default: false,
+  },
+  blurIntensity: {
+    type: Number,
+    default: 8,
   }
 });
 
 const houseRef = ref(null);
 const clonedContent = ref("");
+const filterId = `intro-house-filter-${Math.random().toString(36).slice(2, 8)}`;
+
+const contentStyle = computed(() => {
+  if (!props.showFilterPreview) return {};
+
+  return {
+    filter: `url(#${filterId}) saturate(160%) contrast(120%)`,
+  };
+});
 
 const cloneSourceElement = () => {
   const sourceElement = document.querySelector(props.sourceSelector);
@@ -56,7 +88,7 @@ watch(() => props.sourceSelector, () => {
   cloneSourceElement();
 });
 
-defineExpose({ houseRef });
+defineExpose({ houseRef, clonedContent, cloneSourceElement });
 </script>
 
 <style scoped>
@@ -84,6 +116,13 @@ defineExpose({ houseRef });
   height: 100%;
   position: relative;
   will-change: transform;
+}
+
+.intro-house__filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }
 
 /* Убираем интерактивность у клонированного контента */
