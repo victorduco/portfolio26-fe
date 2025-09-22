@@ -13,9 +13,6 @@
       initial="default"
       class="intro-square"
       :class="[`intro-square-`, { 'is-active': isActive }]"
-      @mouseenter="$emit('mouseenter')"
-      @mouseleave="$emit('mouseleave')"
-      @click="$emit('click')"
       :data-state="isActive"
     >
       <motion.div
@@ -111,10 +108,6 @@ const isHovered = ref(false);
 function toggleState() {
   isActive.value = !isActive.value;
 }
-
-// mess
-
-defineEmits(["mouseenter", "mouseleave", "click"]);
 
 // Glass config для прямоугольника
 const rectangleGlassConfig = {
