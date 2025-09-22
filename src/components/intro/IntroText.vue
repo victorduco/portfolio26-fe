@@ -11,8 +11,6 @@
 
       <slot name="rectangles"> <IntroRectangles /></slot>
     </div>
-
-    <div class="intro-hero__stage"></div>
   </section>
 </template>
 
@@ -46,26 +44,12 @@ import IntroRectangles from "./IntroRectangles.vue";
   margin-bottom: 160px;
 }
 
-.intro-hero__stage {
-  grid-area: 1 / 1;
-  align-self: stretch;
-  justify-self: stretch;
-  padding-top: clamp(120px, 22vh, 260px);
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-}
-
 @media (max-width: 768px) {
   .intro-hero {
     min-height: auto;
     padding-block: clamp(40px, 12vh, 72px);
     padding-inline-start: clamp(24px, 16vw, 72px);
     padding-inline-end: clamp(16px, 8vw, 48px);
-  }
-
-  .intro-hero__stage {
-    padding-top: clamp(96px, 24vh, 200px);
   }
 }
 </style>

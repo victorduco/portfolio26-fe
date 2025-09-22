@@ -1,12 +1,17 @@
 <template>
+  <ExportBgImg
+    dom-id="intro-text-export-node"
+    v-model="capturedImageUrl"
+    background-color="#000"
+  />
   <motion.ul class="intro-list" layout :transition="{ spring }">
     <IntroRectangle
-      v-for="(block, idx) in blocks"
-      :key="idx"
-      :block="block"
-      :index="idx"
-      :is-hovered="hovered[idx]"
-      :layout-spring="getLayoutSpring(idx)"
+      v-for="(rect, rect_id) in rects"
+      :key="rect.slug"
+      :block="rect"
+      :index="rect_id"
+      :is-hovered="rect.isHovered"
+      :layout-spring="getLayoutSpring(rect_id)"
       :spring="spring"
       :box-variants="boxVariants"
       :square-bg-variants="squareBgVariants"
@@ -14,9 +19,9 @@
       :square-highlight-variants="squareHighlightVariants"
       :square-content-num-variants="squareContentNumVariants"
       :square-content-bullet-variants="squareContentBulletVariants"
-      @mouseenter="hovered[idx] = true"
-      @mouseleave="hovered[idx] = false"
-      @click="toggleState(idx)"
+      @mouseenter="rect.isHovered = true"
+      @mouseleave="rect.isHovered = false"
+      @click="toggleState(rect_id)"
     />
   </motion.ul>
 </template>
@@ -25,6 +30,7 @@
 import { reactive, ref } from "vue";
 import { motion } from "motion-v";
 import IntroRectangle from "./IntroRectangle.vue";
+import ExportBgImg from "../bg-img/ExportBgImg.vue";
 import {
   spring,
   boxVariants,
@@ -35,28 +41,29 @@ import {
   squareContentBulletVariants,
 } from "./variants.js";
 
+// Recangle list
+const rects = reactive([
+  { slug: "one", number: "1", isActive: false, isHovered: false },
+  { slug: "two", number: "2", isActive: false, isHovered: false },
+  { slug: "three", number: "3", isActive: false, isHovered: false },
+  { slug: "four", number: "4", isActive: false, isHovered: false },
+]);
 
-const baseBlocks = [
-  { slug: "one", number: "1" },
-  { slug: "two", number: "2" },
-  { slug: "three", number: "3" },
-  { slug: "four", number: "4" },
-];
+// Initital variables
+const lastToggledRect = ref(-1);
+const capturedImageUrl = ref("");
+const hovered = reactive(Array.from({ length: rects.length }, () => false));
 
-const blocks = reactive(
-  baseBlocks.map((block) => ({ ...block, isActive: false }))
-);
-const hovered = reactive(Array.from({ length: blocks.length }, () => false));
-const lastToggledIdx = ref(-1);
-
-function toggleState(idx) {
-  blocks[idx].isActive = !blocks[idx].isActive;
-  lastToggledIdx.value = idx;
+function toggleState(rect_id) {
+  rects[rect_id].isActive = !rects[rect_id].isActive;
+  lastToggledRect.value = rect_id;
 }
 
-function getLayoutSpring(idx) {
+function getLayoutSpring(rect_id) {
   const d =
-    lastToggledIdx.value === -1 ? 0 : Math.abs(idx - lastToggledIdx.value);
+    lastToggledRect.value === -1
+      ? 0
+      : Math.abs(rect_id - lastToggledRect.value);
   return { ...spring, delay: d * 0.5 };
 }
 </script>

@@ -1,9 +1,4 @@
 <template>
-  <ExportBgImg
-    dom-id="intro-text-export-node"
-    v-model="capturedImageUrl"
-    background-color="#000"
-  />
   <motion.li
     layout
     :custom="index"
@@ -80,7 +75,6 @@
 import { motion } from "motion-v";
 import { computed, ref } from "vue";
 import LiquidGlass from "../glass-effect/GlassEffect.vue";
-import ExportBgImg from "../bg-img/ExportBgImg.vue";
 import { glassIntensityVariants } from "./variants.js";
 
 const props = defineProps({
