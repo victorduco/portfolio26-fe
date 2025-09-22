@@ -1,74 +1,79 @@
 <template>
-  <motion.li
-    layout
-    :custom="index"
-    :variants="boxVariants"
-    :animate="block.isActive ? 'active' : isHovered ? 'hover' : 'default'"
-    :transition="layoutSpring"
-    initial="default"
-    class="intro-square"
-    :class="[`intro-square--${block.slug}`, { 'is-active': block.isActive }]"
-    @mouseenter="$emit('mouseenter')"
-    @mouseleave="$emit('mouseleave')"
-    @click="$emit('click')"
-    :data-state="block.isActive"
+  <div
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
+    @click="toggleState()"
   >
-    <motion.div
-      class="intro-square-bg"
-      :custom="{ slug: block.slug }"
-      :variants="squareBgVariants"
-      :animate="block.isActive ? 'active' : isHovered ? 'hover' : 'default'"
+    <motion.li
+      layout
+      :custom="index"
+      :variants="boxVariants"
+      :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
       :transition="spring"
+      initial="default"
+      class="intro-square"
+      :class="[`intro-square-`, { 'is-active': isActive }]"
+      @mouseenter="$emit('mouseenter')"
+      @mouseleave="$emit('mouseleave')"
+      @click="$emit('click')"
+      :data-state="isActive"
     >
-      <LiquidGlass
-        :background-image-url="capturedImageUrl"
-        :glass-config="rectangleGlassConfig"
-        :intensity="glassIntensity"
-        class="intro-square-glass"
-        :id="captureId"
-      >
-      </LiquidGlass>
-
       <motion.div
-        class="intro-square-highlight"
-        :variants="squareHighlightVariants"
-        :animate="block.isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        class="intro-square-bg"
+        :variants="squareBgVariants"
+        :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        :custom="index"
         :transition="spring"
-      />
-    </motion.div>
+      >
+        <LiquidGlass
+          :background-image-url="capturedImageUrl"
+          :glass-config="rectangleGlassConfig"
+          :intensity="glassIntensity"
+          class="intro-square-glass"
+        >
+        </LiquidGlass>
 
-    <motion.div
-      class="intro-square-overlay"
-      :variants="squareContentVariants"
-      :animate="block.isActive ? 'active' : isHovered ? 'hover' : 'default'"
-      :transition="spring"
-    >
-      <motion.div
-        class="intro-content-number"
-        :variants="squareContentNumVariants"
-        :custom="{ slug: block.slug }"
-        :animate="block.isActive ? 'active' : isHovered ? 'hover' : 'default'"
-        style="
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          z-index: 2;
-        "
-      >
-        {{ block.number }}
+        <motion.div
+          class="intro-square-highlight"
+          :variants="squareHighlightVariants"
+          :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+          :transition="spring"
+        />
       </motion.div>
+
       <motion.div
-        class="intro-content-bullet"
-        :variants="squareContentBulletVariants"
-        :animate="block.isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        class="intro-square-overlay"
+        :variants="squareContentVariants"
+        :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        :transition="spring"
       >
-        •
+        <motion.div
+          class="intro-content-number"
+          :variants="squareContentNumVariants"
+          :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+          :custom="index"
+          style="
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+          "
+        >
+          {{ index + 1 }}
+        </motion.div>
+        <motion.div
+          class="intro-content-bullet"
+          :variants="squareContentBulletVariants"
+          :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        >
+          •
+        </motion.div>
       </motion.div>
-    </motion.div>
-  </motion.li>
+    </motion.li>
+  </div>
 </template>
 
 <script setup>
@@ -77,55 +82,35 @@ import { computed, ref } from "vue";
 import LiquidGlass from "../glass-effect/GlassEffect.vue";
 import { glassIntensityVariants } from "./variants.js";
 
+import {
+  spring,
+  boxVariants,
+  squareBgVariants,
+  squareContentVariants,
+  squareHighlightVariants,
+  squareContentNumVariants,
+  squareContentBulletVariants,
+} from "./variants.js";
+
+// Initital variables
+
 const props = defineProps({
-  block: {
-    type: Object,
-    required: true,
-  },
   index: {
     type: Number,
     required: true,
   },
-  isHovered: {
-    type: Boolean,
-    required: true,
-  },
-  layoutSpring: {
-    type: Object,
-    required: true,
-  },
-  spring: {
-    type: Object,
-    required: true,
-  },
-  boxVariants: {
-    type: Object,
-    required: true,
-  },
-  squareBgVariants: {
-    type: Object,
-    required: true,
-  },
-  squareContentVariants: {
-    type: Object,
-    required: true,
-  },
-  squareHighlightVariants: {
-    type: Object,
-    required: true,
-  },
-  squareContentNumVariants: {
-    type: Object,
-    required: true,
-  },
-  squareContentBulletVariants: {
-    type: Object,
-    required: true,
-  },
 });
+const isActive = ref(false);
+const isHovered = ref(false);
+
+// Events
+function toggleState() {
+  isActive.value = !isActive.value;
+}
+
+// mess
 
 const capturedImageUrl = ref("");
-const captureId = `intro-rectangle-${props.index}`;
 
 defineEmits(["mouseenter", "mouseleave", "click"]);
 
@@ -153,8 +138,8 @@ const rectangleGlassConfig = {
 
 // Динамическая интенсивность по состояниям с анимированными переходами
 const glassIntensity = computed(() => {
-  if (props.block.isActive) return glassIntensityVariants.active.intensity;
-  if (props.isHovered) return glassIntensityVariants.hover.intensity;
+  if (isActive.value) return glassIntensityVariants.active.intensity;
+  if (isHovered.value) return glassIntensityVariants.hover.intensity;
   return glassIntensityVariants.default.intensity;
 });
 </script>

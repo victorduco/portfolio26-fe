@@ -29,57 +29,57 @@ export const introVariants = {
     }),
   },
   squareBgVariants: {
-    default: ({ slug }) => ({
+    default: () => ({
       rotate: 0,
       scale: 1,
       background: "#2A2A2A",
     }),
-    hover: ({ slug }) => {
-      const colorMap = {
-        one: {
+    hover: (index) => {
+      const colorMap = [
+        {
           hoverStart: "#000000",
           hoverEnd: "#215C82",
         },
-        two: {
+        {
           hoverStart: "#000000",
           hoverEnd: "#822139",
         },
-        three: {
+        {
           hoverStart: "#000000",
           hoverEnd: "#218268",
         },
-        four: {
+        {
           hoverStart: "#000000",
           hoverEnd: "#528221",
         },
-      };
-      const c = colorMap[slug] || colorMap.one;
+      ];
+      const c = colorMap[index] || colorMap[0];
       return {
         rotate: 45,
         scale: 1,
         background: `linear-gradient(135deg, ${c.hoverStart}80, ${c.hoverEnd}80)`,
       };
     },
-    active: ({ slug }) => {
-      const colorMap = {
-        one: {
+    active: (index) => {
+      const colorMap = [
+        {
           activeStart: "#1C64FF",
           activeEnd: "#2AB6FF",
         },
-        two: {
+        {
           activeStart: "#FF6F9F",
           activeEnd: "#FFBED7",
         },
-        three: {
+        {
           activeStart: "#16F2C7",
           activeEnd: "#5CFFE3",
         },
-        four: {
+        {
           activeStart: "#FFE676",
           activeEnd: "#FFF7B8",
         },
-      };
-      const c = colorMap[slug] || colorMap.one;
+      ];
+      const c = colorMap[index] || colorMap[0];
       return {
         rotate: 45,
         scale: 1,
@@ -93,17 +93,18 @@ export const introVariants = {
       "--glow-color": "rgba(255,255,255,0)",
       color: "rgba(255,255,255,0.7)",
     },
-    hover: ({ slug }) => {
-      const colorMap = {
-        one: "rgba(28,100,255,0.9)",
-        two: "rgba(255,111,159,0.9)",
-        three: "rgba(22,242,199,0.9)",
-        four: "rgba(255,230,118,0.9)",
-      };
+    hover: (index) => {
+      const colorMap = [
+        "rgba(28,100,255,0.9)",
+        "rgba(255,111,159,0.9)",
+        "rgba(22,242,199,0.9)",
+        "rgba(255,230,118,0.9)",
+      ];
+      const color = colorMap[index] || colorMap[0];
       return {
         opacity: 1,
-        "--glow-color": colorMap[slug] || colorMap.one,
-        color: colorMap[slug] || colorMap.one,
+        "--glow-color": color,
+        color: color,
       };
     },
     active: {
