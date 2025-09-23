@@ -11,6 +11,21 @@
       </filter>
     </svg>
 
+    <!-- Статичная лупа -->
+    <div
+      v-if="enabled"
+      class="intro-distortion__static-window"
+      :style="staticGlassStyle"
+      aria-hidden="true"
+    >
+      <div
+        class="intro-distortion__static-content"
+        :style="staticCloneStyle"
+        v-html="clonedContent"
+      ></div>
+    </div>
+
+    <!-- Курсорная лупа -->
     <div
       v-if="enabled"
       class="intro-distortion__window"
@@ -57,6 +72,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  magnificationState: {
+    type: String,
+    default: 'normal', // 'normal' | 'scaled' | 'rotated'
+  },
 });
 
 const filterId = `intro-distortion-${Math.random().toString(36).slice(2, 8)}`;
@@ -77,13 +96,72 @@ const cloneMetrics = reactive({
 let rafId = 0;
 let mutationObserver = null;
 
+const windowSize = ref({ width: window.innerWidth, height: window.innerHeight });
+
 const sourceElement = computed(() => document.getElementById(props.sourceElementId));
+
+const effectiveGlassSize = computed(() => {
+  const baseSize = props.glassSize;
+  return props.magnificationState === 'scaled' || props.magnificationState === 'rotated'
+    ? baseSize * 1.3
+    : baseSize;
+});
+
+const glassRotation = computed(() => {
+  return props.magnificationState === 'rotated' ? 25 : 0;
+});
+
+// Статичная лупа - фиксированная позиция
+const staticGlassStyle = computed(() => ({
+  width: `${effectiveGlassSize.value}px`,
+  height: `${effectiveGlassSize.value}px`,
+  transform: `translate3d(${windowSize.value.width - effectiveGlassSize.value - 70}px, 150px, 0) rotate(${45 + glassRotation.value}deg)`,
+  transformOrigin: "0 0",
+}));
+
+const staticCloneStyle = computed(() => {
+  const filterValue = props.enabled
+    ? `url(#${filterId}) saturate(160%) contrast(120%)`
+    : "none";
+
+  // Позиция статичной лупы
+  const staticX = windowSize.value.width - effectiveGlassSize.value - 70;
+  const staticY = 150;
+
+  const rect = sourceElement.value?.getBoundingClientRect?.();
+  let offsetX = 0;
+  let offsetY = 0;
+  let width = 0;
+  let height = 0;
+
+  if (rect) {
+    offsetX = staticX - rect.left;
+    offsetY = staticY - rect.top;
+    width = rect.width;
+    height = rect.height;
+  }
+
+  const styles = {
+    transform: `rotate(${-45 - glassRotation.value}deg) translate3d(${-offsetX}px, ${-offsetY}px, 0)`,
+    transformOrigin: "0 0",
+    filter: filterValue,
+  };
+
+  if (width) {
+    styles.width = `${width}px`;
+  }
+  if (height) {
+    styles.minHeight = `${height}px`;
+  }
+
+  return styles;
+});
 
 const scheduleUpdate = () => {
   if (rafId) return;
   rafId = requestAnimationFrame(() => {
     rafId = 0;
-    const half = props.glassSize / 2;
+    const half = effectiveGlassSize.value / 2;
     const glassX = pointer.x - half;
     const glassY = pointer.y - half;
 
@@ -135,6 +213,7 @@ const handleScroll = () => {
 };
 
 const handleResize = () => {
+  windowSize.value = { width: window.innerWidth, height: window.innerHeight };
   if (!isPointerActive.value) {
     pointer.x = window.innerWidth / 2;
     pointer.y = window.innerHeight / 2;
@@ -150,9 +229,9 @@ const updateClonedContent = () => {
 };
 
 const glassStyle = computed(() => ({
-  width: `${props.glassSize}px`,
-  height: `${props.glassSize}px`,
-  transform: `translate3d(${cloneMetrics.glassX}px, ${cloneMetrics.glassY}px, 0) rotate(45deg)`,
+  width: `${effectiveGlassSize.value}px`,
+  height: `${effectiveGlassSize.value}px`,
+  transform: `translate3d(${cloneMetrics.glassX}px, ${cloneMetrics.glassY}px, 0) rotate(${45 + glassRotation.value}deg)`,
   opacity: isPointerActive.value ? 1 : 0,
   transformOrigin: "0 0",
 }));
@@ -163,7 +242,7 @@ const cloneStyle = computed(() => {
     : "none";
 
   const styles = {
-    transform: `rotate(-45deg) translate3d(${-cloneMetrics.offsetX}px, ${-cloneMetrics.offsetY}px, 0)`,
+    transform: `rotate(${-45 - glassRotation.value}deg) translate3d(${-cloneMetrics.offsetX}px, ${-cloneMetrics.offsetY}px, 0)`,
     transformOrigin: "0 0",
     filter: filterValue,
   };
@@ -276,6 +355,22 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 
+.intro-distortion__static-window {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(15, 15, 25, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: #171717;
+  will-change: transform;
+  mix-blend-mode: normal;
+  opacity: 1;
+  z-index: 8;
+}
+
 .intro-distortion__content {
   position: absolute;
   top: 0;
@@ -283,6 +378,20 @@ onBeforeUnmount(() => {
   margin: 0;
   pointer-events: none;
   will-change: transform;
+}
+
+.intro-distortion__static-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.intro-distortion__static-content * {
+  pointer-events: none !important;
+  user-select: none !important;
 }
 
 .intro-distortion__content * {
