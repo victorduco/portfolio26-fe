@@ -1,41 +1,7 @@
 <template>
-  <IntroControls
-    :source-element-id="'intro-house-clone'"
-    @update:showHouse="handleShowHouseUpdate"
-    @update:hideOriginalContent="handleHideContentUpdate"
-    @update:showDistortion="handleShowDistortionUpdate"
-    ref="controlsRef"
-  />
-
-  <!-- Временная панель для тестирования новых функций -->
-  <div
-    v-if="showHouse || showDistortion"
-    style="
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.8);
-      color: white;
-      padding: 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      z-index: 1001;
-      backdrop-filter: blur(8px);
-    "
-  >
-    <div style="margin-bottom: 8px; font-weight: bold;">🎮 Тестирование новых анимаций:</div>
-    <div style="margin-bottom: 4px;">• Клик - toggle активность</div>
-    <div style="margin-bottom: 4px;">• Ctrl+клик - toggle эффект</div>
-    <div style="margin-bottom: 4px;">• Двойной клик - смена анимации</div>
-    <div style="color: #888; font-size: 12px;">Теперь фон берется из #intro-house-clone</div>
-  </div>
-
   <section class="intro-hero" id="intro-text-export-node">
     <div class="intro-hero__text">
-      <div
-        class="intro-hero__original-content"
-        :class="{ 'intro-hero__original-content--hidden': hideOriginalContent }"
-      >
+      <div class="intro-hero__original-content">
         <h1 class="h1">Rectangles That Rules Numbers</h1>
         <p class="body1">
           This is story of me and how UX can change things around us. Something
@@ -45,47 +11,11 @@
 
       <IntroRectangles />
     </div>
-
-    <IntroHouse
-      v-if="showHouse || showDistortion"
-      :source-selector="'#intro-text-export-node'"
-      :is-visible="showHouse"
-      :exclude-selectors="[
-        '.intro-distortion',
-        '.intro-list',
-        'ul',
-        'motion-ul',
-        'li',
-        '.intro-square',
-      ]"
-      :show-filter-preview="showHouse"
-      :blur-intensity="8"
-    />
   </section>
 </template>
 
 <script setup>
-import { ref } from "vue";
 import IntroRectangles from "./IntroRectangles.vue";
-import IntroHouse from "./IntroHouse.vue";
-import IntroControls from "./IntroControls.vue";
-
-const controlsRef = ref(null);
-const showHouse = ref(false);
-const showDistortion = ref(false);
-const hideOriginalContent = ref(false);
-
-function handleShowHouseUpdate(value) {
-  showHouse.value = value;
-}
-
-function handleHideContentUpdate(value) {
-  hideOriginalContent.value = value;
-}
-
-function handleShowDistortionUpdate(value) {
-  showDistortion.value = value;
-}
 </script>
 
 <style scoped>
@@ -111,11 +41,6 @@ function handleShowDistortionUpdate(value) {
   position: relative;
   z-index: 3;
   margin-bottom: 160px;
-}
-
-.intro-hero__original-content--hidden {
-  opacity: 0;
-  pointer-events: none;
 }
 
 @media (max-width: 768px) {

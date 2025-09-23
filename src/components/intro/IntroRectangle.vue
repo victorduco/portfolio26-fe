@@ -25,7 +25,7 @@
       >
         <LiquidGlass
           :source-element-id="props.sourceElementId"
-          :glass-config="rectangleGlassConfig"
+          :glass-config="glassConfig"
           :intensity="glassIntensity"
           class="intro-square-glass"
         >
@@ -104,23 +104,23 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  houseRef: {
-    type: Object,
-    default: null,
-  },
 });
 const isActive = ref(false);
 const isHovered = ref(false);
 
 // Новые состояния анимации (из IntroControls)
-const animationState = ref('normal'); // 'normal' | 'scaled' | 'rotated'
+const animationState = ref("normal"); // 'normal' | 'scaled' | 'rotated'
 const showEffect = ref(false);
 
 // Объединенное состояние
 const combinedState = computed(() => ({
-  interactive: isActive.value ? 'active' : isHovered.value ? 'hover' : 'default',
+  interactive: isActive.value
+    ? "active"
+    : isHovered.value
+    ? "hover"
+    : "default",
   effect: animationState.value,
-  enabled: showEffect.value
+  enabled: showEffect.value,
 }));
 
 // События
@@ -130,12 +130,12 @@ function toggleState() {
 
 // Переключение анимационных состояний (из IntroControls)
 function cycleAnimationState() {
-  if (animationState.value === 'normal') {
-    animationState.value = 'scaled';
-  } else if (animationState.value === 'scaled') {
-    animationState.value = 'rotated';
+  if (animationState.value === "normal") {
+    animationState.value = "scaled";
+  } else if (animationState.value === "scaled") {
+    animationState.value = "rotated";
   } else {
-    animationState.value = 'normal';
+    animationState.value = "normal";
   }
 }
 
@@ -160,44 +160,45 @@ function handleClick(event) {
 // Определение состояния анимации
 function getAnimationState() {
   // Если включены эффекты, используем их состояния
-  if (showEffect.value && animationState.value !== 'normal') {
+  if (showEffect.value && animationState.value !== "normal") {
     return animationState.value;
   }
 
   // Обычные интерактивные состояния
-  if (isActive.value) return 'active';
-  if (isHovered.value) return 'hover';
-  return 'default';
+  if (isActive.value) return "active";
+  if (isHovered.value) return "hover";
+  return "default";
 }
 
 // Определение состояния анимации фона с компенсацией
 function getBackgroundAnimationState() {
   // Если включены эффекты с трансформацией, используем компенсированные состояния
-  if (showEffect.value && animationState.value !== 'normal') {
+  if (showEffect.value && animationState.value !== "normal") {
     return animationState.value;
   }
 
   // Обычные интерактивные состояния
-  if (isActive.value) return 'active';
-  if (isHovered.value) return 'hover';
-  return 'default';
+  if (isActive.value) return "active";
+  if (isHovered.value) return "hover";
+  return "default";
 }
 
 // Glass config для прямоугольника
-const rectangleGlassConfig = {
-  displacementScale: 45,
-  aberrationIntensity: 2.0,
-  surfaceCurvature: 1.5,
-  glassBlur: 15,
-  glassSaturation: 160,
-  refractionDepth: 1.5,
-  surfaceReflection: 0.3,
-  shadowDepth: 0.3,
-  shaderCornerRadius: 0.23,
+const glassConfig = {
+  displacementScale: 65,
+  glassTintHue: 250,
+  aberrationIntensity: 90,
+  surfaceCurvature: 1.8,
+  glassBlur: 2,
+  glassSaturation: 185,
+  refractionDepth: 2.0,
+  surfaceReflection: 0.45,
+  shadowDepth: 3,
+  shaderCornerRadius: 2,
   distortion: {
-    start: 0.2,
-    end: 0.15,
-    offset: 0.1,
+    start: 0.3,
+    end: 0.2,
+    offset: 0.15,
   },
   scaling: {
     start: 0,
@@ -208,7 +209,7 @@ const rectangleGlassConfig = {
 // Динамическая интенсивность по состояниям с анимированными переходами
 const glassIntensity = computed(() => {
   // Если включены эффекты, используем их интенсивность
-  if (showEffect.value && animationState.value !== 'normal') {
+  if (showEffect.value && animationState.value !== "normal") {
     const effectVariant = glassEffectVariants[animationState.value];
     return effectVariant ? effectVariant.glassIntensity : 1;
   }

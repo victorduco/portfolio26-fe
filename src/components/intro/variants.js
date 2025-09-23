@@ -62,20 +62,20 @@ export const squareBgVariants = {
   active: (index) => {
     const colorMap = [
       {
-        activeStart: "#1C64FF",
-        activeEnd: "#2AB6FF",
+        activeStart: "#1C64FF00",
+        activeEnd: "#2AB6FF00",
       },
       {
-        activeStart: "#FF6F9F",
-        activeEnd: "#FFBED7",
+        activeStart: "#FF6F9F00",
+        activeEnd: "#FFBED700",
       },
       {
-        activeStart: "#16F2C7",
-        activeEnd: "#5CFFE3",
+        activeStart: "#16F2C700",
+        activeEnd: "#5CFFE300",
       },
       {
-        activeStart: "#FFE676",
-        activeEnd: "#FFF7B8",
+        activeStart: "#FFE67600",
+        activeEnd: "#FFF7B800",
       },
     ];
     const c = colorMap[index] || colorMap[0];
@@ -157,7 +157,7 @@ export const glassIntensityVariants = {
 export const glassEffectVariants = {
   normal: { scale: 1, rotate: 0, glassIntensity: 1 },
   scaled: { scale: 1.3, rotate: 0, glassIntensity: 1.2 },
-  rotated: { scale: 1.3, rotate: 25, glassIntensity: 1.2 }
+  rotated: { scale: 1.3, rotate: 25, glassIntensity: 1.2 },
 };
 
 // Расширенные варианты для коробки с поддержкой анимационных эффектов
