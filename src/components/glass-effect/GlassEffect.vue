@@ -7,7 +7,16 @@
       class="liquid-glass__card"
       :style="combinedCardStyle"
     >
-      <div class="liquid-glass__layer liquid-glass__layer--liquid" />
+      <!-- DOM источник для фона -->
+      <div
+        v-if="sourceElementId"
+        class="liquid-glass__layer liquid-glass__layer--dom-source"
+        v-html="domSourceContent"
+        :style="domSourceStyle"
+      />
+      <!-- Fallback к PNG фону -->
+      <div v-else class="liquid-glass__layer liquid-glass__layer--liquid" />
+
       <div class="liquid-glass__layer liquid-glass__layer--highlight" />
       <div class="liquid-glass__layer liquid-glass__layer--noise" />
       <div class="liquid-glass__content">
@@ -20,12 +29,16 @@
 </template>
 
 <script setup>
-import { computed, toRef } from "vue";
+import { computed, toRef, ref, onMounted, onBeforeUnmount, watch } from "vue";
 import useGlassDemo from "./index.js";
 import SvgFilter from "./SvgFilter.vue";
 
 const props = defineProps({
   backgroundImageUrl: {
+    type: String,
+    default: "",
+  },
+  sourceElementId: {
     type: String,
     default: "",
   },
@@ -41,6 +54,7 @@ const props = defineProps({
 });
 
 const backgroundImageUrl = toRef(props, "backgroundImageUrl");
+const sourceElementId = toRef(props, "sourceElementId");
 
 const {
   filterProps,
@@ -54,7 +68,85 @@ const {
 } = useGlassDemo({
   ...props.glassConfig,
   backgroundImageUrl,
+  sourceElementId,
   intensity: toRef(props, "intensity"),
+});
+
+// DOM источник контента
+const domSourceContent = ref("");
+let rafId = 0;
+
+const getDomSourceContent = () => {
+  if (props.sourceElementId) {
+    const sourceElement = document.getElementById(props.sourceElementId);
+    if (sourceElement) {
+      domSourceContent.value = sourceElement.outerHTML;
+    }
+  }
+};
+
+// Обновление позиции с RAF для плавности (как в IntroDistortion)
+const scheduleUpdate = () => {
+  if (rafId) return;
+  rafId = requestAnimationFrame(() => {
+    rafId = 0;
+    // Принудительное обновление computed
+    if (glassElementRef.value) {
+      glassElementRef.value.getBoundingClientRect();
+    }
+  });
+};
+
+// Стили для DOM источника с логикой из IntroDistortion
+const domSourceStyle = computed(() => {
+  if (!props.sourceElementId || !glassElementRef.value) return {};
+
+  const sourceElement = document.getElementById(props.sourceElementId);
+  if (!sourceElement) return {};
+
+  const glassRect = glassElementRef.value.getBoundingClientRect();
+  const sourceRect = sourceElement.getBoundingClientRect();
+
+  const offsetX = glassRect.left - sourceRect.left;
+  const offsetY = glassRect.top - sourceRect.top;
+
+  return {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: `${sourceRect.width}px`,
+    height: `${sourceRect.height}px`,
+    transform: `translate3d(${-offsetX}px, ${-offsetY}px, 0)`,
+    filter: liquidStyle.value.filter,
+    opacity: liquidStyle.value.opacity,
+    overflow: "hidden",
+    pointerEvents: "none",
+    userSelect: "none",
+    willChange: "transform",
+  };
+});
+
+onMounted(() => {
+  getDomSourceContent();
+
+  // Добавляем обработчики событий для обновления позиции (как в IntroDistortion)
+  if (props.sourceElementId) {
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+  }
+});
+
+onBeforeUnmount(() => {
+  if (rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+  window.removeEventListener("scroll", scheduleUpdate);
+  window.removeEventListener("resize", scheduleUpdate);
+});
+
+watch(() => props.sourceElementId, () => {
+  getDomSourceContent();
 });
 
 const combinedCardStyle = computed(() => {

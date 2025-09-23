@@ -21,6 +21,7 @@ import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
 export default function useGlassDemo({
   backgroundImageUrl: backgroundImageOption,
+  sourceElementId: sourceElementIdOption,
   intensity: intensityOption,
   ...userOptions
 } = {}) {
@@ -31,6 +32,11 @@ export default function useGlassDemo({
     isRef(backgroundImageOption)
       ? backgroundImageOption.value || defaultBackgroundImageUrl
       : "none"
+  );
+  const sourceElementId = computed(() =>
+    isRef(sourceElementIdOption)
+      ? sourceElementIdOption.value
+      : ""
   );
   const intensity = computed(() =>
     isRef(intensityOption) ? intensityOption.value : 1
@@ -80,7 +86,7 @@ export default function useGlassDemo({
   // =====  STYLES  =====
   //
   const liquidStyle = computed(() =>
-    createLiquidStyle(backgroundImageUrl, glassElementRef, glassSize, filterId, intensity.value)
+    createLiquidStyle(backgroundImageUrl, sourceElementId, glassElementRef, glassSize, filterId, intensity.value)
   );
   const cardStyle = computed(() => createCardStyle(options, backgroundImageUrl.value, intensity.value));
   const surfaceHighlightStyle = computed(() =>

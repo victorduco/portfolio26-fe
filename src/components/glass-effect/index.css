@@ -49,6 +49,16 @@
   border-radius: inherit;
 }
 
+.liquid-glass__layer--dom-source {
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.liquid-glass__layer--dom-source * {
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
 /* Firefox specific fixes */
 @supports (-moz-appearance: none) {
   .liquid-glass__layer--liquid {

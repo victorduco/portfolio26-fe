@@ -2,13 +2,14 @@
   <div
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
-    @click="toggleState()"
+    @click="handleClick"
+    @dblclick="handleDoubleClick"
   >
     <motion.li
       layout
       :custom="index"
-      :variants="boxVariants"
-      :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+      :variants="enhancedBoxVariants"
+      :animate="getAnimationState()"
       :transition="spring"
       initial="default"
       class="intro-square"
@@ -17,13 +18,13 @@
     >
       <motion.div
         class="intro-square-bg"
-        :variants="squareBgVariants"
-        :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        :variants="enhancedSquareBgVariants"
+        :animate="getBackgroundAnimationState()"
         :custom="index"
         :transition="spring"
       >
         <LiquidGlass
-          :background-image-url="props.capturedImageUrl"
+          :source-element-id="props.sourceElementId"
           :glass-config="rectangleGlassConfig"
           :intensity="glassIntensity"
           class="intro-square-glass"
@@ -87,6 +88,9 @@ import {
   squareHighlightVariants,
   squareContentNumVariants,
   squareContentBulletVariants,
+  enhancedBoxVariants,
+  enhancedSquareBgVariants,
+  glassEffectVariants,
 } from "./variants.js";
 
 // Initital variables
@@ -96,7 +100,7 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  capturedImageUrl: {
+  sourceElementId: {
     type: String,
     default: "",
   },
@@ -108,9 +112,75 @@ const props = defineProps({
 const isActive = ref(false);
 const isHovered = ref(false);
 
-// Events
+// Новые состояния анимации (из IntroControls)
+const animationState = ref('normal'); // 'normal' | 'scaled' | 'rotated'
+const showEffect = ref(false);
+
+// Объединенное состояние
+const combinedState = computed(() => ({
+  interactive: isActive.value ? 'active' : isHovered.value ? 'hover' : 'default',
+  effect: animationState.value,
+  enabled: showEffect.value
+}));
+
+// События
 function toggleState() {
   isActive.value = !isActive.value;
+}
+
+// Переключение анимационных состояний (из IntroControls)
+function cycleAnimationState() {
+  if (animationState.value === 'normal') {
+    animationState.value = 'scaled';
+  } else if (animationState.value === 'scaled') {
+    animationState.value = 'rotated';
+  } else {
+    animationState.value = 'normal';
+  }
+}
+
+function toggleEffect() {
+  showEffect.value = !showEffect.value;
+}
+
+// Обработчик двойного клика для тестирования анимаций
+function handleDoubleClick() {
+  cycleAnimationState();
+}
+
+// Ctrl+click для переключения эффекта
+function handleClick(event) {
+  if (event.ctrlKey || event.metaKey) {
+    toggleEffect();
+  } else {
+    toggleState();
+  }
+}
+
+// Определение состояния анимации
+function getAnimationState() {
+  // Если включены эффекты, используем их состояния
+  if (showEffect.value && animationState.value !== 'normal') {
+    return animationState.value;
+  }
+
+  // Обычные интерактивные состояния
+  if (isActive.value) return 'active';
+  if (isHovered.value) return 'hover';
+  return 'default';
+}
+
+// Определение состояния анимации фона с компенсацией
+function getBackgroundAnimationState() {
+  // Если включены эффекты с трансформацией, используем компенсированные состояния
+  if (showEffect.value && animationState.value !== 'normal') {
+    return animationState.value;
+  }
+
+  // Обычные интерактивные состояния
+  if (isActive.value) return 'active';
+  if (isHovered.value) return 'hover';
+  return 'default';
 }
 
 // Glass config для прямоугольника
@@ -137,6 +207,13 @@ const rectangleGlassConfig = {
 
 // Динамическая интенсивность по состояниям с анимированными переходами
 const glassIntensity = computed(() => {
+  // Если включены эффекты, используем их интенсивность
+  if (showEffect.value && animationState.value !== 'normal') {
+    const effectVariant = glassEffectVariants[animationState.value];
+    return effectVariant ? effectVariant.glassIntensity : 1;
+  }
+
+  // Обычная логика интенсивности
   if (isActive.value) return glassIntensityVariants.active.intensity;
   if (isHovered.value) return glassIntensityVariants.hover.intensity;
   return glassIntensityVariants.default.intensity;

@@ -1,32 +1,25 @@
 <template>
-  <ExportBgImg
-    dom-id="intro-text-export-node"
-    v-model="capturedImageUrl"
-    background-color="#000"
-  />
   <motion.ul class="intro-list" layout :transition="{ spring }">
     <IntroRectangle
       v-for="(_, index) in rects"
       :key="index"
       :index="index"
-      :captured-image-url="capturedImageUrl"
+      :source-element-id="'intro-house-clone'"
     />
   </motion.ul>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 import { motion } from "motion-v";
 import { spring } from "./variants";
 import IntroRectangle from "./IntroRectangle.vue";
-import ExportBgImg from "../bg-img/ExportBgImg.vue";
 
 const rects = reactive(
   Array.from("1234", (item) => ({
     number: item,
   }))
 );
-const capturedImageUrl = ref("");
 </script>
 
 <style scoped>

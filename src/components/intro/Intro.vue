@@ -7,6 +7,29 @@
     ref="controlsRef"
   />
 
+  <!-- Временная панель для тестирования новых функций -->
+  <div
+    v-if="showHouse || showDistortion"
+    style="
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      z-index: 1001;
+      backdrop-filter: blur(8px);
+    "
+  >
+    <div style="margin-bottom: 8px; font-weight: bold;">🎮 Тестирование новых анимаций:</div>
+    <div style="margin-bottom: 4px;">• Клик - toggle активность</div>
+    <div style="margin-bottom: 4px;">• Ctrl+клик - toggle эффект</div>
+    <div style="margin-bottom: 4px;">• Двойной клик - смена анимации</div>
+    <div style="color: #888; font-size: 12px;">Теперь фон берется из #intro-house-clone</div>
+  </div>
+
   <section class="intro-hero" id="intro-text-export-node">
     <div class="intro-hero__text">
       <div

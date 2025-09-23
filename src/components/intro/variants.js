@@ -152,3 +152,65 @@ export const glassIntensityVariants = {
   hover: { intensity: 0 },
   active: { intensity: 1.0 },
 };
+
+// Новые варианты эффектов (из IntroControls/IntroDistortion)
+export const glassEffectVariants = {
+  normal: { scale: 1, rotate: 0, glassIntensity: 1 },
+  scaled: { scale: 1.3, rotate: 0, glassIntensity: 1.2 },
+  rotated: { scale: 1.3, rotate: 25, glassIntensity: 1.2 }
+};
+
+// Расширенные варианты для коробки с поддержкой анимационных эффектов
+export const enhancedBoxVariants = {
+  ...boxVariants,
+  // Обычные состояния
+  default: (custom) => ({
+    ...boxVariants.default,
+    scale: 1,
+    rotate: 0,
+    transition: spring,
+  }),
+  hover: (custom) => ({
+    ...boxVariants.hover,
+    scale: 1,
+    rotate: 0,
+    transition: spring,
+  }),
+  active: (custom) => ({
+    ...boxVariants.active(custom),
+    scale: 1,
+    rotate: 0,
+    transition: spring,
+  }),
+  // Увеличенные состояния (как в IntroDistortion)
+  scaled: (custom) => ({
+    ...boxVariants.hover,
+    scale: 1.3,
+    rotate: 0,
+    transition: spring,
+  }),
+  // Повернутые состояния (как в IntroDistortion)
+  rotated: (custom) => ({
+    ...boxVariants.hover,
+    scale: 1.3,
+    rotate: 25,
+    transition: spring,
+  }),
+};
+
+// Варианты фона с компенсацией трансформаций
+export const enhancedSquareBgVariants = {
+  ...squareBgVariants,
+  // Компенсация для увеличенного состояния
+  scaled: (index) => ({
+    ...squareBgVariants.hover(index),
+    scale: 1 / 1.3, // Компенсируем увеличение
+    rotate: 45,
+  }),
+  // Компенсация для повернутого состояния
+  rotated: (index) => ({
+    ...squareBgVariants.hover(index),
+    scale: 1 / 1.3, // Компенсируем увеличение
+    rotate: 45 - 25, // Компенсируем поворот (45 - 25 = 20)
+  }),
+};

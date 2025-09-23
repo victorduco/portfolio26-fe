@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 
 const props = defineProps({
   sourceSelector: {
@@ -49,12 +49,17 @@ const props = defineProps({
   blurIntensity: {
     type: Number,
     default: 8,
+  },
+  realTimeUpdates: {
+    type: Boolean,
+    default: true,
   }
 });
 
 const houseRef = ref(null);
 const clonedContent = ref("");
 const filterId = `intro-house-filter-${Math.random().toString(36).slice(2, 8)}`;
+let mutationObserver = null;
 
 const contentStyle = computed(() => {
   if (!props.showFilterPreview) return {};
@@ -80,12 +85,50 @@ const cloneSourceElement = () => {
   }
 };
 
+const setupMutationObserver = (element) => {
+  if (mutationObserver) {
+    mutationObserver.disconnect();
+  }
+
+  if (!element || !props.realTimeUpdates) return;
+
+  mutationObserver = new MutationObserver(() => {
+    cloneSourceElement();
+  });
+
+  mutationObserver.observe(element, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeOldValue: true,
+    characterData: true,
+    characterDataOldValue: true
+  });
+};
+
 onMounted(() => {
   cloneSourceElement();
+
+  if (props.realTimeUpdates) {
+    const sourceElement = document.querySelector(props.sourceSelector);
+    setupMutationObserver(sourceElement);
+  }
 });
 
 watch(() => props.sourceSelector, () => {
   cloneSourceElement();
+
+  if (props.realTimeUpdates) {
+    const sourceElement = document.querySelector(props.sourceSelector);
+    setupMutationObserver(sourceElement);
+  }
+});
+
+onBeforeUnmount(() => {
+  if (mutationObserver) {
+    mutationObserver.disconnect();
+    mutationObserver = null;
+  }
 });
 
 defineExpose({ houseRef, clonedContent, cloneSourceElement });
