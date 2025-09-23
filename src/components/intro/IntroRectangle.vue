@@ -2,13 +2,12 @@
   <div
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
-    @click="handleClick"
-    @dblclick="handleDoubleClick"
+    @click="toggleState"
   >
     <motion.li
       layout
       :custom="index"
-      :variants="enhancedBoxVariants"
+      :variants="boxVariants"
       :animate="getAnimationState()"
       :transition="spring"
       initial="default"
@@ -16,32 +15,17 @@
       :class="[`intro-square-`, { 'is-active': isActive }]"
       :data-state="isActive"
     >
-      <motion.div
-        class="intro-square-bg"
-        :variants="enhancedSquareBgVariants"
-        :animate="getBackgroundAnimationState()"
-        :custom="index"
-        :transition="spring"
+      <LiquidGlass
+        :source-element-id="props.sourceElementId"
+        :glass-config="glassConfig"
+        :intensity="glassIntensity"
+        class="intro-square-glass"
       >
-        <LiquidGlass
-          :source-element-id="props.sourceElementId"
-          :glass-config="glassConfig"
-          :intensity="glassIntensity"
-          class="intro-square-glass"
-        >
-        </LiquidGlass>
-
-        <motion.div
-          class="intro-square-highlight"
-          :variants="squareHighlightVariants"
-          :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
-          :transition="spring"
-        />
-      </motion.div>
+      </LiquidGlass>
 
       <motion.div
-        class="intro-square-overlay"
-        :variants="squareContentVariants"
+        class="intro-square-content-wrap"
+        :variants="contentWrapVariants"
         :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
         :transition="spring"
       >
@@ -83,13 +67,9 @@ import { glassIntensityVariants } from "./variants.js";
 import {
   spring,
   boxVariants,
-  squareBgVariants,
-  squareContentVariants,
-  squareHighlightVariants,
+  contentWrapVariants,
   squareContentNumVariants,
   squareContentBulletVariants,
-  enhancedBoxVariants,
-  enhancedSquareBgVariants,
   glassEffectVariants,
 } from "./variants.js";
 
@@ -123,64 +103,15 @@ const combinedState = computed(() => ({
   enabled: showEffect.value,
 }));
 
-// События
-function toggleState() {
-  isActive.value = !isActive.value;
-}
-
-// Переключение анимационных состояний (из IntroControls)
-function cycleAnimationState() {
-  if (animationState.value === "normal") {
-    animationState.value = "scaled";
-  } else if (animationState.value === "scaled") {
-    animationState.value = "rotated";
-  } else {
-    animationState.value = "normal";
-  }
-}
-
-function toggleEffect() {
-  showEffect.value = !showEffect.value;
-}
-
-// Обработчик двойного клика для тестирования анимаций
-function handleDoubleClick() {
-  cycleAnimationState();
-}
-
-// Ctrl+click для переключения эффекта
-function handleClick(event) {
-  if (event.ctrlKey || event.metaKey) {
-    toggleEffect();
-  } else {
-    toggleState();
-  }
-}
-
 // Определение состояния анимации
 function getAnimationState() {
-  // Если включены эффекты, используем их состояния
-  if (showEffect.value && animationState.value !== "normal") {
-    return animationState.value;
-  }
-
   // Обычные интерактивные состояния
   if (isActive.value) return "active";
   if (isHovered.value) return "hover";
   return "default";
 }
-
-// Определение состояния анимации фона с компенсацией
-function getBackgroundAnimationState() {
-  // Если включены эффекты с трансформацией, используем компенсированные состояния
-  if (showEffect.value && animationState.value !== "normal") {
-    return animationState.value;
-  }
-
-  // Обычные интерактивные состояния
-  if (isActive.value) return "active";
-  if (isHovered.value) return "hover";
-  return "default";
+function toggleState() {
+  isActive.value = !isActive.value;
 }
 
 // Glass config для прямоугольника
@@ -233,26 +164,19 @@ const glassIntensity = computed(() => {
   box-sizing: border-box;
   cursor: pointer;
   z-index: 1;
+  inset: 0;
+  border-radius: 28px;
+  transform-origin: 50% 50%;
+  border-radius: 28px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  z-index: 0;
 }
 
 .intro-square[data-state="true"],
 .intro-square:hover {
   z-index: 4;
-}
-
-.intro-square-bg,
-.intro-square-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 28px;
-  transform-origin: 50% 50%;
-}
-
-.intro-square-bg {
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  z-index: 0;
 }
 
 .intro-square-glass {
@@ -263,23 +187,20 @@ const glassIntensity = computed(() => {
   border-radius: inherit;
 }
 
-.intro-square-overlay {
+.intro-square-content-wrap {
   display: grid;
   place-items: center;
   pointer-events: none;
   z-index: 1;
-}
-
-.intro-square-highlight {
   position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  transform-origin: 50% 50%;
   top: 50%;
   left: 50%;
   width: 34%;
   aspect-ratio: 1;
   border-radius: 50%;
-
-  transform-origin: 50% 50%;
-  pointer-events: none;
 }
 
 .intro-content-number {
