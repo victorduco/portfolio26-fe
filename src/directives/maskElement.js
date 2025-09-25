@@ -50,11 +50,16 @@ export const maskElement = {
         // Get current transform values if any
         const transform = getComputedStyle(el).transform;
         let scale = 1;
+        let rotateZ = 0;
         if (transform && transform !== "none") {
           const matrix = transform.match(/matrix.*\((.+)\)/);
           if (matrix) {
             const values = matrix[1].split(", ");
             scale = parseFloat(values[0]) || 1;
+            // Calculate rotation from matrix values
+            const a = parseFloat(values[0]) || 1;
+            const b = parseFloat(values[1]) || 0;
+            rotateZ = Math.atan2(b, a) * (180 / Math.PI);
           }
         }
 
@@ -70,7 +75,10 @@ export const maskElement = {
         el.style.setProperty("--bg-size", bgSize);
         el.style.setProperty("--bg-pos-x", `${bgPosX}px`);
         el.style.setProperty("--bg-pos-y", `${bgPosY}px`);
-        el.style.setProperty("--bg-rotation", "0deg");
+
+        // Compensate rotation for pseudo-element (opposite direction)
+        const compensatedRotation = -rotateZ;
+        el.style.setProperty("--bg-rotation", `${compensatedRotation}deg`);
 
         // Set background image from source element
         if (sourceElement.value) {
