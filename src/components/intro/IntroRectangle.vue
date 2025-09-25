@@ -16,7 +16,7 @@
       :data-state="isActive"
     >
       <LiquidGlass
-        :source-element-id="props.sourceElementId"
+        :source-element-id="sourceElementId"
         :glass-config="glassConfig"
         :intensity="glassIntensity"
         class="intro-square-glass"
@@ -60,7 +60,7 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { computed, ref } from "vue";
+import { computed, ref, inject } from "vue";
 import LiquidGlass from "../glass-effect/GlassEffect.vue";
 import { glassIntensityVariants } from "./variants.js";
 
@@ -80,11 +80,9 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  sourceElementId: {
-    type: String,
-    default: "",
-  },
 });
+
+const sourceElementId = inject('sourceElementId', 'intro-house-clone');
 const isActive = ref(false);
 const isHovered = ref(false);
 

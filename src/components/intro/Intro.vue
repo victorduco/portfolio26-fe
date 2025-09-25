@@ -13,7 +13,6 @@
         v-for="(_, index) in rects"
         :key="index"
         :index="index"
-        :source-element-id="'intro-house-clone'"
       />
     </motion.ul>
   </section>

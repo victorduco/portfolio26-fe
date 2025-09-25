@@ -1,6 +1,6 @@
 <template>
   <div
-    :id="resultSelectorId"
+    :id="resultSelector"
     class="bg-to-svg__content"
     :style="backgroundStyle"
   ></div>
@@ -34,7 +34,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  resultSelectorId: {
+  resultSelector: {
     type: String,
     required: true,
   },
