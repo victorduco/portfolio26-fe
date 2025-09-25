@@ -51,19 +51,22 @@ const rects = reactive(
   max-width: 1000px;
   display: grid;
   gap: 24px;
-  position: rel ative;
+  position: relative;
   z-index: 3;
-  margin-bottom: 160px;
+  margin-bottom: 20vh;
+  anchor-name: --title;
 }
 
 .intro-list {
   position: absolute;
-  top: 100%;
+  position-anchor: --title;
+  top: anchor(bottom);
+  left: clamp(32px, 12vw, 120px);
+  margin-top: 64px;
   display: flex;
   gap: 80px;
   align-items: top;
-  margin: 58px 0 0 0;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0;
   list-style: none;
   pointer-events: auto;
