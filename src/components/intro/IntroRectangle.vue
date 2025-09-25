@@ -5,6 +5,7 @@
     @click="toggleState"
   >
     <motion.li
+      ref="motionElement"
       layout
       :custom="index"
       :variants="boxVariants"
@@ -12,16 +13,19 @@
       :transition="spring"
       initial="default"
       class="intro-square"
-      :class="[`intro-square-`, { 'is-active': isActive }]"
+      :class="[`mask-element intro-square-`, { 'is-active': isActive }]"
       :data-state="isActive"
+      v-mask-element="{
+        sourceElementId: masterClone,
+      }"
     >
-      <LiquidGlass
-        :source-element-id="sourceElementId"
+      <!-- <LiquidGlass
+        :source-element-id="masterClone"
         :glass-config="glassConfig"
         :intensity="glassIntensity"
         class="intro-square-glass"
       >
-      </LiquidGlass>
+      </LiquidGlass> -->
 
       <motion.div
         class="intro-square-content-wrap"
@@ -81,10 +85,9 @@ const props = defineProps({
   },
 });
 
-const sourceElementId = inject('sourceElementId', 'intro-house-clone');
+const masterClone = inject("masterClone", "intro-house-clone");
 const isActive = ref(false);
 const isHovered = ref(false);
-
 
 // Определение состояния анимации
 function getAnimationState() {

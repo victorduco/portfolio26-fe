@@ -4,15 +4,15 @@ import Intro from "./components/intro/Intro.vue";
 import BgToSvg from "./components/bg-to-svg/BgToSvg.vue";
 
 const sourceSelector = ref("intro-text-export-node");
-const resultElementId = ref("intro-house-clone");
+const resultSelector = ref("intro-house-clone");
 
-provide("sourceElementId", resultElementId);
+provide("masterClone", resultSelector);
 </script>
 
 <template>
   <BgToSvg
     :source-selector="sourceSelector"
-    :result-selector="resultElementId"
+    :result-selector="resultSelector"
   />
   <Intro />
 </template>
