@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { toSvg } from "html-to-image";
 
 const props = defineProps({
@@ -37,10 +37,6 @@ const props = defineProps({
   resultSelectorId: {
     type: String,
     required: true,
-  },
-  excludeSelectors: {
-    type: Array,
-    default: () => [".intro-list", ".intro-square", ".intro-distortion"],
   },
 });
 
@@ -54,8 +50,6 @@ const backgroundStyle = computed(() => ({
 
 const generateBackground = async () => {
   const source = document.getElementById(props.sourceSelector);
-  // Даем время на рендер
-  await new Promise((resolve) => setTimeout(resolve, 100));
 
   // Получаем фон из body
   const bodyBgColor =
@@ -69,17 +63,23 @@ const generateBackground = async () => {
   });
 
   bgImage.value = bgElement;
-  console.log(bgImage.value);
-  console.log(backgroundStyle.value);
 };
 
 const toggleBackground = () => {
   backgroundEnabled.value = !backgroundEnabled.value;
-  console.log("Background toggled:", backgroundEnabled.value);
+};
+
+const handleResize = () => {
+  generateBackground();
 };
 
 onMounted(async () => {
   generateBackground();
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
@@ -88,15 +88,13 @@ onMounted(async () => {
   width: 100vw;
   height: 100vh;
   background-size: auto;
+  background-position: calc(0% + 1px) 0%;
+  background-repeat: no-repeat;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   visibility: hidden;
-  background-size: auto;
-  background-position: calc(0% + 1px) 0%;
-  background-repeat: no-repeat;
-  box-sizing: border-box;
 }
 
 .bg-to-svg__content * {
