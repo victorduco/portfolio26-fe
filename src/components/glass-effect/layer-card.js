@@ -8,8 +8,8 @@ import { clamp } from "./utils.js";
  */
 export function createCardStyle(
   options,
-  backgroundImageUrl = null,
-  intensity = 1
+  intensity = 1,
+  backgroundImageUrl = null
 ) {
   const borderAlpha = 0.42;
   const brightness = Math.max(0.5, options.glassBrightness / 100).toFixed(2);

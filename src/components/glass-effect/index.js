@@ -17,10 +17,8 @@ import { createSurfaceHighlightStyle } from "./layer-highlight.js";
 import { createNoiseStyle } from "./layer-noise.js";
 import { createLightStyle } from "./layer-light.js";
 import { createOutlineStyle } from "./layer-outline.js";
-import defaultBackgroundImageUrl from "../../assets/grd3.png";
 
-export default function useGlassDemo({
-  backgroundImageUrl: backgroundImageOption,
+export default function getGlassEffects({
   sourceElementId: sourceElementIdOption,
   intensity: intensityOption,
   ...userOptions
@@ -28,15 +26,9 @@ export default function useGlassDemo({
   //
   // =====  INPUT HANDLING  =====
   //
-  const backgroundImageUrl = computed(() =>
-    isRef(backgroundImageOption)
-      ? backgroundImageOption.value || defaultBackgroundImageUrl
-      : "none"
-  );
+
   const sourceElementId = computed(() =>
-    isRef(sourceElementIdOption)
-      ? sourceElementIdOption.value
-      : ""
+    isRef(sourceElementIdOption) ? sourceElementIdOption.value : ""
   );
   const intensity = computed(() =>
     isRef(intensityOption) ? intensityOption.value : 1
@@ -86,15 +78,23 @@ export default function useGlassDemo({
   // =====  STYLES  =====
   //
   const liquidStyle = computed(() =>
-    createLiquidStyle(backgroundImageUrl, sourceElementId, glassElementRef, glassSize, filterId, intensity.value)
+    createLiquidStyle(
+      sourceElementId,
+      glassElementRef,
+      glassSize,
+      filterId,
+      intensity.value
+    )
   );
-  const cardStyle = computed(() => createCardStyle(options, backgroundImageUrl.value, intensity.value));
+  const cardStyle = computed(() => createCardStyle(options, intensity.value));
   const surfaceHighlightStyle = computed(() =>
     createSurfaceHighlightStyle(options, intensity.value)
   );
   const noiseStyle = computed(() => createNoiseStyle(options, intensity.value));
   const lightStyle = computed(() => createLightStyle(options, intensity.value));
-  const outlineStyle = computed(() => createOutlineStyle(options, intensity.value));
+  const outlineStyle = computed(() =>
+    createOutlineStyle(options, intensity.value)
+  );
 
   //
   // =====  LIFECYCLE & WATCHERS  =====

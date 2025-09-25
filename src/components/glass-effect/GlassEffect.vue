@@ -7,15 +7,12 @@
       class="liquid-glass__card"
       :style="combinedCardStyle"
     >
-      <!-- DOM источник для фона -->
+      <!-- DOM источник для фона для sourceElementId -->
       <div
-        v-if="sourceElementId"
         class="liquid-glass__layer liquid-glass__layer--dom-source"
         v-html="domSourceContent"
         :style="domSourceStyle"
       />
-      <!-- Fallback к PNG фону -->
-      <div v-else class="liquid-glass__layer liquid-glass__layer--liquid" />
 
       <div class="liquid-glass__layer liquid-glass__layer--highlight" />
       <div class="liquid-glass__layer liquid-glass__layer--noise" />
@@ -30,14 +27,10 @@
 
 <script setup>
 import { computed, toRef, ref, onMounted, onBeforeUnmount, watch } from "vue";
-import useGlassDemo from "./index.js";
+import getGlassEffects from "./index.js";
 import SvgFilter from "./SvgFilter.vue";
 
 const props = defineProps({
-  backgroundImageUrl: {
-    type: String,
-    default: "",
-  },
   sourceElementId: {
     type: String,
     default: "",
@@ -53,7 +46,6 @@ const props = defineProps({
   },
 });
 
-const backgroundImageUrl = toRef(props, "backgroundImageUrl");
 const sourceElementId = toRef(props, "sourceElementId");
 
 const {
@@ -65,24 +57,27 @@ const {
   surfaceHighlightStyle,
   lightStyle,
   outlineStyle,
-} = useGlassDemo({
+} = getGlassEffects({
   ...props.glassConfig,
-  backgroundImageUrl,
   sourceElementId,
   intensity: toRef(props, "intensity"),
 });
+
+// Debug
+console.log("---------------------------------");
+console.log("DEBUG - GlassEffect.vue");
+console.log("filterReady: ", filterProps.value.filterReady);
+console.log("---------------------------------");
 
 // DOM источник контента
 const domSourceContent = ref("");
 let rafId = 0;
 
 const getDomSourceContent = () => {
-  if (props.sourceElementId) {
-    const sourceElement = document.getElementById(props.sourceElementId);
-    if (sourceElement) {
-      domSourceContent.value = sourceElement.outerHTML;
-    }
-  }
+  console.log("glassElementRef", glassElementRef.value);
+
+  const sourceElement = document.getElementById(props.sourceElementId);
+  domSourceContent.value = sourceElement.outerHTML;
 };
 
 // Обновление позиции с RAF для плавности (как в IntroDistortion)
@@ -99,10 +94,9 @@ const scheduleUpdate = () => {
 
 // Стили для DOM источника с логикой из IntroDistortion
 const domSourceStyle = computed(() => {
-  if (!props.sourceElementId || !glassElementRef.value) return {};
-
   const sourceElement = document.getElementById(props.sourceElementId);
-  if (!sourceElement) return {};
+  console.log("sourceElement", sourceElement);
+  console.log("glassElementRef", glassElementRef.value);
 
   const glassRect = glassElementRef.value.getBoundingClientRect();
   const sourceRect = sourceElement.getBoundingClientRect();
@@ -145,9 +139,12 @@ onBeforeUnmount(() => {
   window.removeEventListener("resize", scheduleUpdate);
 });
 
-watch(() => props.sourceElementId, () => {
-  getDomSourceContent();
-});
+watch(
+  () => props.sourceElementId,
+  () => {
+    getDomSourceContent();
+  }
+);
 
 const combinedCardStyle = computed(() => {
   const liquid = liquidStyle.value;
