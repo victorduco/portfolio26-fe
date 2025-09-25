@@ -59,10 +59,15 @@ const rects = reactive(
 
 .intro-list {
   position: absolute;
+  /* Fallback for browsers without anchor support */
+  top: calc(50vh + 50px);
+  left: clamp(32px, 12vw, 120px);
+
+  /* Anchor positioning for supported browsers */
   position-anchor: --title;
   top: anchor(bottom);
-  left: clamp(32px, 12vw, 120px);
   margin-top: 64px;
+
   display: flex;
   gap: 80px;
   align-items: top;
