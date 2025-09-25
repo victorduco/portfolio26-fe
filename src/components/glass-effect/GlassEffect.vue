@@ -98,6 +98,10 @@ const domSourceStyle = computed(() => {
   console.log("sourceElement", sourceElement);
   console.log("glassElementRef", glassElementRef.value);
 
+  if (!glassElementRef.value || !sourceElement) {
+    return {};
+  }
+
   const glassRect = glassElementRef.value.getBoundingClientRect();
   const sourceRect = sourceElement.getBoundingClientRect();
 

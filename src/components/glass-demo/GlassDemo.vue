@@ -1,9 +1,10 @@
 <template>
-  <ExportBgImg
+  <!-- TODO: Replace with new BgToSvg component when ready -->
+  <!-- <ExportBgImg
     :dom-id="'glass-export-node'"
     v-model="imgUrl"
     background-color="#000"
-  />
+  /> -->
   <div id="glass-export-node">
     <div
       class="tmp-background"
@@ -55,9 +56,11 @@
 
 <script setup>
 import LiquidGlass from "../glass-effect/GlassEffect.vue";
-import ExportBgImg from "../bg-img/ExportBgImg.vue";
+// TODO: Replace with new BgToSvg component when ready
+// import ExportBgImg from "../bg-img/ExportBgImg.vue";
 import { ref, computed, onMounted, onUnmounted } from "vue";
-const imgUrl = ref("");
+// TODO: Replace with BgToSvg component logic when ready
+const imgUrl = ref(""); // Stub - will be replaced with BgToSvg v-model
 const animatedIntensity = ref(0);
 
 let animationId = null;
