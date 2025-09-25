@@ -70,10 +70,9 @@ import {
   contentWrapVariants,
   squareContentNumVariants,
   squareContentBulletVariants,
-  glassEffectVariants,
 } from "./variants.js";
 
-// Initital variables
+// Initial variables
 
 const props = defineProps({
   index: {
@@ -86,20 +85,6 @@ const sourceElementId = inject('sourceElementId', 'intro-house-clone');
 const isActive = ref(false);
 const isHovered = ref(false);
 
-// Новые состояния анимации (из IntroControls)
-const animationState = ref("normal"); // 'normal' | 'scaled' | 'rotated'
-const showEffect = ref(false);
-
-// Объединенное состояние
-const combinedState = computed(() => ({
-  interactive: isActive.value
-    ? "active"
-    : isHovered.value
-    ? "hover"
-    : "default",
-  effect: animationState.value,
-  enabled: showEffect.value,
-}));
 
 // Определение состояния анимации
 function getAnimationState() {
@@ -135,15 +120,8 @@ const glassConfig = {
   },
 };
 
-// Динамическая интенсивность по состояниям с анимированными переходами
+// Динамическая интенсивность по состояниям
 const glassIntensity = computed(() => {
-  // Если включены эффекты, используем их интенсивность
-  if (showEffect.value && animationState.value !== "normal") {
-    const effectVariant = glassEffectVariants[animationState.value];
-    return effectVariant ? effectVariant.glassIntensity : 1;
-  }
-
-  // Обычная логика интенсивности
   if (isActive.value) return glassIntensityVariants.active.intensity;
   if (isHovered.value) return glassIntensityVariants.hover.intensity;
   return glassIntensityVariants.default.intensity;
@@ -161,15 +139,11 @@ const glassIntensity = computed(() => {
   list-style: none;
   box-sizing: border-box;
   cursor: pointer;
-  z-index: 1;
+  z-index: 0;
   inset: 0;
   border-radius: 28px;
   transform-origin: 50% 50%;
-  border-radius: 28px;
-  display: grid;
-  place-items: center;
   overflow: hidden;
-  z-index: 0;
 }
 
 .intro-square[data-state="true"],
