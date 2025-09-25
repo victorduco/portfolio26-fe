@@ -1,21 +1,35 @@
 <template>
-  <section class="intro-hero" id="intro-text-export-node">
-    <div class="intro-hero__text">
-      <div class="intro-hero__original-content">
-        <h1 class="h1">Rectangles That Rules Numbers</h1>
-        <p class="body1">
-          This is story of me and how UX can change things around us. Something
-          else to write here.
-        </p>
-      </div>
-
-      <IntroRectangles />
+  <section class="intro-hero">
+    <div id="intro-text-export-node" class="intro-hero__title">
+      <h1 class="h1">Rectangles That Rules Numbers</h1>
+      <p class="body1">
+        This is story of me and how UX can change things around us. Something
+        else to write here.
+      </p>
     </div>
+
+    <motion.ul class="intro-list" layout :transition="{ spring }">
+      <IntroRectangle
+        v-for="(_, index) in rects"
+        :key="index"
+        :index="index"
+        :source-element-id="'intro-house-clone'"
+      />
+    </motion.ul>
   </section>
 </template>
 
 <script setup>
-import IntroRectangles from "./IntroRectangles.vue";
+import { reactive } from "vue";
+import { motion } from "motion-v";
+import { spring } from "./variants";
+import IntroRectangle from "./IntroRectangle.vue";
+
+const rects = reactive(
+  Array.from("1234", (item) => ({
+    number: item,
+  }))
+);
 </script>
 
 <style scoped>
@@ -33,14 +47,26 @@ import IntroRectangles from "./IntroRectangles.vue";
   overflow: visible;
 }
 
-.intro-hero__text {
-  grid-area: 1 / 1;
+.intro-hero__title {
   max-width: 1000px;
   display: grid;
   gap: 24px;
-  position: relative;
+  position: rel ative;
   z-index: 3;
   margin-bottom: 160px;
+}
+
+.intro-list {
+  position: absolute;
+  top: 100%;
+  display: flex;
+  gap: 80px;
+  align-items: top;
+  margin: 58px 0 0 0;
+  justify-content: center;
+  padding: 0;
+  list-style: none;
+  pointer-events: auto;
 }
 
 @media (max-width: 768px) {
