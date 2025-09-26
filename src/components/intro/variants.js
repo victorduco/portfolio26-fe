@@ -1,13 +1,22 @@
-export const spring = { type: "spring", stiffness: 20, damping: 4, mass: 0.1 };
+export const spring = {
+  type: "spring",
+  stiffness: 12, // достаточно жёсткая пружина
+  damping: 10, // небольшое затухание → несколько колебаний
+  mass: 0.8, // инерция побольше для реализма
+};
 
+export const marginSpring = {
+  type: "spring",
+  stiffness: 12, // пожёстче → быстрее возвращается
+  damping: 12, // чуть сильнее демпфирование → 2–3 колебания
+  mass: 0.8,
+};
 export const boxVariants = {
   default: {
-    width: 120,
-    height: 120,
-    marginLeft: 0,
-    marginRight: 0,
+    "--element-side-size": "120px",
+    marginLeft: "0",
+    marginRight: "0",
     y: 0,
-    transition: spring,
     rotate: 0,
     scale: 1,
     background: "#2A2A2A",
@@ -21,12 +30,11 @@ export const boxVariants = {
     ];
     const color = colorMap[index] || colorMap[0];
     return {
-      width: 300,
-      height: 300,
-      marginLeft: 10,
-      marginRight: 10,
+      "--element-side-size": "300px",
+      marginLeft: "0",
+      marginRight: "0",
+      // margin: "calc(-1 * 300px)",
       y: "-30%",
-      transition: spring,
       rotate: 45,
       scale: 1,
       backgroundColor: color,
@@ -41,12 +49,10 @@ export const boxVariants = {
     ];
     const color = colorMap[index] || colorMap[0];
     return {
-      width: 600,
-      height: 600,
-      marginLeft: -100,
-      marginRight: 0,
+      "--element-side-size": "600px",
+      marginLeft: "-110px",
+      marginRight: "-110px",
       y: index % 2 === 0 ? "-25%" : "-115%",
-      transition: spring,
       rotate: 45,
       scale: 1,
       backgroundColor: color,

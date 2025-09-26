@@ -63,10 +63,15 @@ const rects = reactive(
   top: anchor(bottom);
   margin-top: 64px;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+
+  max-width: 110vw;
+  max-height: 110vh;
   gap: 80px;
-  align-items: top;
-  justify-content: flex-start;
+  height: -100px;
+
   padding: 0;
   list-style: none;
   pointer-events: auto;
@@ -85,6 +90,12 @@ const rects = reactive(
     /* Adjust fallback calculation for mobile padding */
     top: calc(50vh + 50px + clamp(40px, 12vh, 72px));
     left: clamp(24px, 16vw, 72px);
+
+    /* Adaptive grid for mobile */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    column-gap: 50px;
+    row-gap: -100px;
   }
 }
 </style>
