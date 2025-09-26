@@ -16,6 +16,18 @@ export function createFilterProps(options, intensity, state) {
     options.glassBlur * 0.02 * options.refractionDepth * intensity
   );
 
+  // Debug logging for filter scale values
+  console.log('🔧 Filter Props Debug:', {
+    displacementScale: options.displacementScale,
+    displacementCurvature: options.displacementCurvature,
+    aberrationIntensity: options.aberrationIntensity,
+    intensity,
+    redScale: red,
+    greenScale: green,
+    blur,
+    shaderMapUrl: state.shaderMapUrl?.slice(0, 50) + '...'
+  });
+
   const surfaceIntensity = options.surfaceReflection;
   const edgeMatrix = `${0.3 * surfaceIntensity} ${0.3 * surfaceIntensity} ${
     0.3 * surfaceIntensity

@@ -117,6 +117,17 @@ function toggleState() {
 
 // Glass config для прямоугольника
 const glassConfig = {
+  // Core displacement parameters - REQUIRED for distortion map
+  displacementScale: 65,
+  aberrationIntensity: 2.8,
+  displacementCurvature: 1.8,
+
+  // Glass material properties
+  glassBlur: 25,
+  glassSaturation: 185,
+  refractionDepth: 2.0,
+  surfaceReflection: 0.45,
+
   // GeLight
   lightIntensity: 0.2,
   lightSpread: 4,
@@ -133,23 +144,16 @@ const glassConfig = {
   outlineIntensity: 1,
   outlineGlassTintHue: 250,
 
-  // Остальные параметры (для будущих этапов)
-  // displacementScale: 65,
-  // aberrationIntensity: 90,
-  // surfaceCurvature: 1.8,
-  // glassBlur: 2,
-  // glassSaturation: 185,
-  // shadowDepth: 3,
-  // shaderCornerRadius: 2,
-  // distortion: {
-  //   start: 0.3,
-  //   end: 0.2,
-  //   offset: 0.15,
-  // },
-  // scaling: {
-  //   start: 0,
-  //   end: 1,
-  // },
+  // Shadow and advanced effects
+  shadowDepth: 0.4,
+
+  // Shader distortion parameters
+  shaderCornerRadius: 0.2,
+  shaderDistortionStart: 0.3,
+  shaderDistortionEnd: 0.2,
+  shaderDistortionOffset: 0.15,
+  shaderScalingStart: 0,
+  shaderScalingEnd: 1,
 };
 
 // Динамическая интенсивность по состояниям
