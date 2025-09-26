@@ -94,7 +94,7 @@ CSS КЛАССЫ:
 -->
 <template>
   <div class="glass-effect">
-    <!-- <GeFilter ... /> -->
+    <GeFilter :filterProps="filterProps" />
 
     <div class="glass-effect__content">
       <slot />
@@ -119,7 +119,11 @@ CSS КЛАССЫ:
 </template>
 
 <script setup>
+import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 import { createEffectOptions } from "./GlassEffectDefaults.js";
+import { createFilterProps } from "../layer-filter-props.js";
+import { ShaderDisplacementGenerator } from "../filter-displacement-generator.ts";
+import GeFilter from "./GeFilter.vue";
 import GeHighlight from "./GeHighlight.vue";
 import GeNoise from "./GeNoise.vue";
 import GeLight from "./GeLight.vue";
@@ -142,6 +146,60 @@ const props = defineProps({
 });
 
 const opts = createEffectOptions(props.userOptions);
+
+// Filter state
+const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
+const filterReady = ref(false);
+const shaderMapUrl = ref("");
+
+// Generate shader displacement map
+const generateShaderDisplacementMap = () => {
+  console.log('🎨 Generating shader displacement map...');
+  console.log('Shader options:', {
+    width: 400,
+    height: 400,
+    cornerRadius: opts.shaderCornerRadius,
+    distortionStart: opts.shaderDistortionStart,
+    distortionEnd: opts.shaderDistortionEnd,
+    distortionOffset: opts.shaderDistortionOffset,
+    scalingStart: opts.shaderScalingStart,
+    scalingEnd: opts.shaderScalingEnd,
+  });
+
+  const generator = new ShaderDisplacementGenerator({
+    width: 400,
+    height: 400,
+    cornerRadius: opts.shaderCornerRadius,
+    distortionStart: opts.shaderDistortionStart,
+    distortionEnd: opts.shaderDistortionEnd,
+    distortionOffset: opts.shaderDistortionOffset,
+    scalingStart: opts.shaderScalingStart,
+    scalingEnd: opts.shaderScalingEnd,
+  });
+  const url = generator.updateShader();
+  console.log('🎨 Generated shader URL length:', url.length);
+  console.log('🎨 Setting filterReady to true');
+
+  filterReady.value = true;
+  shaderMapUrl.value = url;
+  generator.destroy();
+};
+
+// Create filter props
+const filterProps = computed(() =>
+  createFilterProps(opts, props.intensity, {
+    filterReady: filterReady.value,
+    filterId,
+    shaderMapUrl: shaderMapUrl.value,
+  })
+);
+
+// Initialize shader on mount
+onMounted(() => {
+  console.log('🚀 GlassEffect mounted, generating shader...');
+  generateShaderDisplacementMap();
+  console.log('🚀 GlassEffect shader generation complete');
+});
 
 const {
   lightIntensity,

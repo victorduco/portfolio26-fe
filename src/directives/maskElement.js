@@ -128,6 +128,7 @@ export const maskElement = {
             pointer-events: none;
             opacity: 1;
             z-index: 1;
+            filter: var(--glass-filter, none);
           }
         `;
         document.head.appendChild(style);

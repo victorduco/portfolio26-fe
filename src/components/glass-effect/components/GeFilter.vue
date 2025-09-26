@@ -4,6 +4,7 @@ SVG фильтр для стеклянного эффекта
 -->
 <template>
   <div class="glass-filter">
+    <!-- Debug: filterReady = {{ filterProps.filterReady }}, filterId = {{ filterProps.filterId }} -->
     <svg v-if="filterProps.filterReady" class="glass-filter__svg" aria-hidden="true">
       <defs>
         <filter
@@ -142,7 +143,7 @@ SVG фильтр для стеклянного эффекта
 </template>
 
 <script setup>
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted, watch, nextTick } from 'vue'
 
 const props = defineProps({
   filterProps: {
@@ -154,13 +155,26 @@ const props = defineProps({
 const glassFilterCss = computed(() => `url(#${props.filterProps.filterId})`)
 
 const applyFilterToMaskElement = () => {
-  const maskElement = document.querySelector('.mask-element')
-  if (maskElement && props.filterProps.filterReady) {
-    maskElement.style.setProperty('--glass-filter', glassFilterCss.value)
+  console.log('🔍 GeFilter: Trying to apply filter')
+  console.log('filterReady:', props.filterProps.filterReady)
+  console.log('filterId:', props.filterProps.filterId)
+  console.log('glassFilterCss:', glassFilterCss.value)
+
+  const maskElements = document.querySelectorAll('.mask-element')
+  console.log('maskElements found:', maskElements.length)
+
+  if (maskElements.length > 0 && props.filterProps.filterReady) {
+    maskElements.forEach((maskElement, index) => {
+      maskElement.style.setProperty('--glass-filter', glassFilterCss.value)
+      console.log(`✅ CSS variable --glass-filter set for element ${index + 1}:`, glassFilterCss.value)
+    })
+  } else {
+    console.log('❌ Filter not applied. maskElements count:', maskElements.length, 'filterReady:', props.filterProps.filterReady)
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick()
   applyFilterToMaskElement()
 })
 

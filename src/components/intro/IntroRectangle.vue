@@ -20,6 +20,7 @@
     initial="default"
     class="mask-element intro-square"
     :data-state="isActive"
+    v-mask-element="{ sourceElementId: masterClone }"
   >
     <GlassEffect
       :source-element-id="masterClone"
