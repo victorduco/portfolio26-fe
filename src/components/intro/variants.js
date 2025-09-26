@@ -1,27 +1,33 @@
+import { delay } from "motion-v";
+
 export const spring = {
   type: "spring",
-  stiffness: 12, // достаточно жёсткая пружина
-  damping: 10, // небольшое затухание → несколько колебаний
-  mass: 0.8, // инерция побольше для реализма
+  stiffness: 57, // достаточно жёсткая пружина
+  damping: 13, // небольшое затухание → несколько колебаний
+  mass: 1.5, // инерция побольше для реализма
 };
 
 export const marginSpring = {
   type: "spring",
-  stiffness: 12, // пожёстче → быстрее возвращается
-  damping: 12, // чуть сильнее демпфирование → 2–3 колебания
-  mass: 0.8,
+  stiffness: 100, // достаточно жёсткая пружина
+  damping: 13, // небольшое затухание → несколько колебаний
+  mass: 1.5, // инерция побольше для реализма
+  delay: 0.1,
 };
 export const boxVariants = {
-  default: {
-    "--element-side-size": "120px",
-    marginLeft: "0",
-    marginRight: "0",
-    y: 0,
-    rotate: 0,
-    scale: 1,
-    background: "#2A2A2A",
+  default: ({ index, additionalMargin }) => {
+    const baseMargin = 0;
+    return {
+      "--element-side-size": "120px",
+      marginLeft: `${baseMargin + additionalMargin}px`,
+      marginRight: `${baseMargin}px`,
+      y: 0,
+      rotate: 0,
+      scale: 1,
+      background: "#2A2A2A",
+    };
   },
-  hover: (index) => {
+  hover: ({ index, additionalMargin }) => {
     const colorMap = [
       "rgba(33, 92, 130, 0.5)",
       "rgba(130, 33, 57, 0.5)",
@@ -29,18 +35,18 @@ export const boxVariants = {
       "rgba(82, 130, 33, 0.5)",
     ];
     const color = colorMap[index] || colorMap[0];
+    const baseMargin = 50;
     return {
-      "--element-side-size": "300px",
-      marginLeft: "0",
-      marginRight: "0",
-      // margin: "calc(-1 * 300px)",
-      y: "-30%",
+      "--element-side-size": "220px",
+      marginLeft: `${baseMargin + additionalMargin}px`,
+      marginRight: `${baseMargin}px`,
+      marginTop: "-55px",
       rotate: 45,
       scale: 1,
       backgroundColor: color,
     };
   },
-  active: (index) => {
+  active: ({ index, additionalMargin }) => {
     const colorMap = [
       "rgba(28, 100, 255, 0.1)",
       "rgba(255, 111, 159, 0.1)",
@@ -48,10 +54,11 @@ export const boxVariants = {
       "rgba(255, 230, 118, 0.1)",
     ];
     const color = colorMap[index] || colorMap[0];
+    const baseMargin = -50;
     return {
       "--element-side-size": "600px",
-      marginLeft: "-110px",
-      marginRight: "-110px",
+      marginLeft: `${baseMargin + additionalMargin}px`,
+      marginRight: `${baseMargin}px`,
       y: index % 2 === 0 ? "-25%" : "-115%",
       rotate: 45,
       scale: 1,

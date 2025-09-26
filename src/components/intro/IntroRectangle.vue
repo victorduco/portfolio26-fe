@@ -6,22 +6,17 @@
   >
     <motion.li
       ref="motionElement"
-      layout
-      :custom="index"
+      :custom="{ index, additionalMargin }"
       :variants="boxVariants"
       :animate="getAnimationState()"
       :transition="{
         default: spring,
-        margin: marginSpring
+        marginLeft: marginSpring,
+        marginRight: marginSpring,
       }"
       initial="default"
-      class="intro-square"
-      :class="[`mask-element intro-square-`, { 'is-active': isActive }]"
+      class="mask-element intro-square"
       :data-state="isActive"
-      :style="{
-        gridColumn: getGridColumn(index),
-        gridRow: getGridRow(index),
-      }"
     >
       <GlassEffect
         :source-element-id="masterClone"
@@ -88,6 +83,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  activeCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const masterClone = inject("masterClone", "intro-house-clone");
@@ -101,8 +100,11 @@ function getAnimationState() {
   if (isHovered.value) return "hover";
   return "default";
 }
+const emit = defineEmits(["activeChange"]);
+
 function toggleState() {
   isActive.value = !isActive.value;
+  emit("activeChange", isActive.value);
 }
 
 // Glass config для прямоугольника
@@ -148,6 +150,9 @@ const glassIntensity = computed(() => {
   if (isHovered.value) return glassIntensityVariants.hover.intensity;
   return glassIntensityVariants.default.intensity;
 });
+
+// Computed additional margin
+const additionalMargin = computed(() => props.activeCount * -30);
 
 // Grid positioning functions
 function getGridColumn(index) {

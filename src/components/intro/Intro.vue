@@ -9,13 +9,19 @@
     </div>
   </section>
 
-  <motion.ul class="intro-list" layout :transition="{ spring }">
-    <IntroRectangle v-for="(_, index) in rects" :key="index" :index="index" />
+  <motion.ul class="intro-list" :transition="{ spring }">
+    <IntroRectangle
+      v-for="(_, index) in rects"
+      :key="index"
+      :index="index"
+      :active-count="activeCount"
+      @active-change="handleActiveChange"
+    />
   </motion.ul>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { motion } from "motion-v";
 import { spring } from "./variants";
 import IntroRectangle from "./IntroRectangle.vue";
@@ -25,6 +31,16 @@ const rects = reactive(
     number: item,
   }))
 );
+
+const activeCount = ref(0);
+
+function handleActiveChange(isActive) {
+  if (isActive) {
+    activeCount.value++;
+  } else {
+    activeCount.value--;
+  }
+}
 </script>
 
 <style scoped>
