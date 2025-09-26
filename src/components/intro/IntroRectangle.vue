@@ -19,13 +19,13 @@
         sourceElementId: masterClone,
       }"
     >
-      <!-- <LiquidGlass
+      <GlassEffect
         :source-element-id="masterClone"
-        :glass-config="glassConfig"
+        :user-options="glassConfig"
         :intensity="glassIntensity"
         class="intro-square-glass"
       >
-      </LiquidGlass> -->
+      </GlassEffect>
 
       <motion.div
         class="intro-square-content-wrap"
@@ -65,7 +65,7 @@
 <script setup>
 import { motion } from "motion-v";
 import { computed, ref, inject } from "vue";
-import LiquidGlass from "../glass-effect/GlassEffect.vue";
+import GlassEffect from "../glass-effect/components/GlassEffect.vue";
 import { glassIntensityVariants } from "./variants.js";
 
 import {

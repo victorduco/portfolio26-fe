@@ -29,7 +29,6 @@ export const maskElement = {
 
       // Sync background based on useMaskElement.js logic (lines 68-101)
       const syncBackground = () => {
-        console.log("syncBackground called");
         if (!sourceElement.value || !el) return;
 
         // Use motionElement ref if available, otherwise use el

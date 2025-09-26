@@ -97,18 +97,16 @@ CSS КЛАССЫ:
     <!-- <GeFilter ... /> -->
 
     <div class="glass-effect__content">
-      <slot name="default" />
-      <slot name="hover" />
-      <slot name="active" />
+      <slot />
     </div>
 
-    <GeHighlight :options="{ highlightReflection }" :intensity />
+    <!-- <GeHighlight :options="{ highlightReflection }" :intensity /> -->
 
-    <GeNoise :options="{ noiseStrength, noiseRefractionDepth }" :intensity />
+    <!-- <GeNoise :options="{ noiseStrength, noiseRefractionDepth }" :intensity /> -->
 
     <GeLight :options="{ lightIntensity, lightSpread, lightHue }" :intensity />
 
-    <GeOutline
+    <!-- <GeOutline
       :options="{
         glassTintHue,
         outlineIntensity,
@@ -116,36 +114,36 @@ CSS КЛАССЫ:
         shadowDepth,
       }"
       :intensity
-    />
+    /> -->
   </div>
 </template>
 
 <script setup>
 import { createEffectOptions } from "./GlassEffectDefaults.js";
-import GeHighlight from "./GeHighlight.vue";
-import GeNoise from "./GeNoise.vue";
 import GeLight from "./GeLight.vue";
-import GeOutline from "./GeOutline.vue";
 
 const props = defineProps({
-  sourceElementId: String,
-  userOptions: Object,
-  intensity: Number,
+  sourceElementId: {
+    type: String,
+    default: "",
+  },
+  userOptions: {
+    type: Object,
+    default: () => ({}),
+  },
+  intensity: {
+    type: Number,
+    default: 1,
+    validator: (value) => value >= 0 && value <= 1,
+  },
 });
 
 const opts = createEffectOptions(props.userOptions);
 
 const {
-  highlightReflection,
-  noiseStrength,
-  noiseRefractionDepth,
   lightIntensity,
   lightSpread,
   lightHue,
-  glassTintHue,
-  outlineIntensity,
-  surfaceReflection,
-  shadowDepth,
 } = opts;
 </script>
 

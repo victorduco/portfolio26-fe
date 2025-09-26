@@ -1,13 +1,70 @@
-/**
- * TODO: Создание конфигурации стеклянного эффекта с дефолтными значениями
- * - Принимает userOptions для переопределения дефолтов
- * - Экспортирует функцию createEffectOptions(userOptions)
- * - Заменяет логику из ../effect-options.js для новой архитектуры компонентов
- * - Обрабатывает все glass effect параметры и возвращает reactive объект
- */
+import { reactive } from "vue";
 
+/**
+ * Create reactive glass effect configuration with default values
+ * @param {Object} userOptions - User options to override defaults
+ * @returns {Object} Reactive object containing all glass effect configuration
+ */
 export function createEffectOptions(userOptions = {}) {
-  // TODO: Переписать логику из ../effect-options.js
-  // TODO: Обработать userOptions и merged с defaults
-  // TODO: Вернуть reactive объект с конфигурацией
+  const config = reactive({
+    // Core displacement parameters
+    displacementScale: 65,
+    aberrationIntensity: 2.8,
+    displacementCurvature: 1.8,
+
+    // Glass material properties
+    glassBlur: 25,
+    glassSaturation: 185,
+    refractionDepth: 2.0,
+    surfaceReflection: 0.45,
+
+    // Light and shadow
+    lightIntensity: 0.75,
+    lightSpread: 1.1,
+    lightHue: 210,
+    shadowDepth: 0.4,
+
+    // Advanced effects
+    glassBrightness: 115,
+    glassContrast: 118,
+    glassTintHue: 210,
+    glassTintOpacity: 0.38,
+    noiseStrength: 0.22,
+
+    // Shader distortion parameters
+    shaderCornerRadius: 0.2,
+    shaderDistortionStart: 0.3,
+    shaderDistortionEnd: 0.2,
+    shaderDistortionOffset: 0.15,
+    shaderScalingStart: 0,
+    shaderScalingEnd: 1,
+  });
+
+  loadGlassValues(userOptions, config);
+  return config;
+}
+
+/**
+ * Override glass refs with user options (refs already have defaults)
+ * @param {Object} options - User provided options
+ * @param {Object} refs - Vue refs object to update
+ */
+function loadGlassValues(options, refs) {
+  Object.assign(refs, options);
+
+  // Handle nested object support
+  if (options.distortion) {
+    Object.assign(refs, {
+      shaderDistortionStart: options.distortion.start,
+      shaderDistortionEnd: options.distortion.end,
+      shaderDistortionOffset: options.distortion.offset,
+    });
+  }
+
+  if (options.scaling) {
+    Object.assign(refs, {
+      shaderScalingStart: options.scaling.start,
+      shaderScalingEnd: options.scaling.end,
+    });
+  }
 }
