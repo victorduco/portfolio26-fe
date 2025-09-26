@@ -147,4 +147,30 @@ const {
 } = opts;
 </script>
 
-<style scoped src="../index.css"></style>
+<style scoped>
+.glass-effect {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.glass-effect__content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-radius: inherit;
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+  will-change: transform;
+  transition: box-shadow 0.25s ease, border 0.25s ease, background 0.25s ease;
+  z-index: 1;
+}
+</style>

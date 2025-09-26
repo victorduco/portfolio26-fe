@@ -109,14 +109,7 @@ export const squareContentBulletVariants = {
 };
 
 export const glassIntensityVariants = {
-  default: { intensity: 0 },
-  hover: { intensity: 0 },
+  default: { intensity: 1 },
+  hover: { intensity: 1 },
   active: { intensity: 1 },
-};
-
-// Новые варианты эффектов (из IntroControls/IntroDistortion)
-export const glassEffectVariants = {
-  normal: { scale: 1, rotate: 0, glassIntensity: 1 },
-  scaled: { scale: 1.3, rotate: 0, glassIntensity: 1.2 },
-  rotated: { scale: 1.3, rotate: 25, glassIntensity: 1.2 },
 };
