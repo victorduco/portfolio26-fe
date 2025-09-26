@@ -6,8 +6,8 @@
 <template>
   <motion.li
     ref="motionElement"
-    @mouseenter="isHovered = true"
-    @mouseleave="isHovered = false"
+    @hoverStart="isHovered = true"
+    @hoverEnd="isHovered = false"
     @click="toggleState"
     :custom="{ index, additionalMargin }"
     :variants="boxVariants"
@@ -32,13 +32,13 @@
     <motion.div
       class="intro-square-content-wrap"
       :variants="contentWrapVariants"
-      :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+      :animate="getAnimationState()"
       :transition="spring"
     >
       <motion.div
         class="intro-content-number"
         :variants="squareContentNumVariants"
-        :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        :animate="getAnimationState()"
         :custom="index"
         style="
           width: 100%;
@@ -55,7 +55,7 @@
       <motion.div
         class="intro-content-bullet"
         :variants="squareContentBulletVariants"
-        :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+        :animate="getAnimationState()"
       >
         •
       </motion.div>
@@ -105,7 +105,9 @@ function getAnimationState() {
 const emit = defineEmits(["activeChange"]);
 
 function toggleState() {
+  isHovered.value = false;
   isActive.value = !isActive.value;
+
   emit("activeChange", isActive.value);
 }
 
