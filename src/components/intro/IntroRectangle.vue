@@ -191,7 +191,7 @@ function getGridRow(index) {
   list-style: none;
   box-sizing: border-box;
   cursor: pointer;
-  z-index: 0;
+  z-index: 5;
   inset: 0;
   border-radius: 28px;
   transform-origin: 50% 50%;
@@ -200,7 +200,7 @@ function getGridRow(index) {
 
 .intro-square[data-state="true"],
 .intro-square:hover {
-  z-index: 4;
+  z-index: 6;
 }
 
 .intro-square-glass {

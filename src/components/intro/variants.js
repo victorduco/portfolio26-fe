@@ -1,3 +1,5 @@
+// TODO Понять приоритет между стилями стекла и теми что тут
+
 export const spring = {
   type: "spring",
   stiffness: 57, // достаточно жёсткая пружина
@@ -45,6 +47,13 @@ export const boxVariants = {
     };
   },
   active: ({ index, additionalMargin }) => {
+    // const colorMap = [
+    //   "rgba(28, 100, 255, 1)",
+    //   "rgba(255, 111, 159, 1)",
+    //   "rgba(22, 242, 199, 1)",
+    //   "rgba(255, 230, 118, 1)",
+    // ];
+
     const colorMap = [
       "rgba(28, 100, 255, 0.1)",
       "rgba(255, 111, 159, 0.1)",
@@ -120,7 +129,7 @@ export const squareContentBulletVariants = {
 };
 
 export const glassIntensityVariants = {
-  default: { intensity: 0 },
-  hover: { intensity: 0 },
-  active: { intensity: 0 },
+  default: { intensity: 1 },
+  hover: { intensity: 1 },
+  active: { intensity: 1 },
 };

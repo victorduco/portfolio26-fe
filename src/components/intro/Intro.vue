@@ -64,7 +64,7 @@ function handleActiveChange(isActive) {
   display: grid;
   gap: 24px;
   position: relative;
-  z-index: 3;
+  z-index: 1;
   margin-bottom: 20vh;
   anchor-name: --title;
   place-items: start start;
@@ -94,7 +94,7 @@ function handleActiveChange(isActive) {
   padding: 0;
   list-style: none;
   pointer-events: auto;
-  z-index: 1;
+  z-index: 5;
   grid-template-columns:
     fit-content(100px) fit-content(100px) fit-content(100px)
     fit-content(100px);
