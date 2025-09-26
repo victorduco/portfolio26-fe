@@ -15,9 +15,6 @@
       class="intro-square"
       :class="[`mask-element intro-square-`, { 'is-active': isActive }]"
       :data-state="isActive"
-      v-mask-element="{
-        sourceElementId: masterClone,
-      }"
     >
       <GlassEffect
         :source-element-id="masterClone"
