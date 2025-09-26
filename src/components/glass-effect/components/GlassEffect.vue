@@ -152,6 +152,11 @@ const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
 const filterReady = ref(false);
 const shaderMapUrl = ref("");
 
+// Expose filterId to parent component
+defineExpose({
+  filterId
+});
+
 // Generate shader displacement map
 const generateShaderDisplacementMap = () => {
   console.log('🎨 Generating shader displacement map...');

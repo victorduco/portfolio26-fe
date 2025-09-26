@@ -3,7 +3,7 @@ SVG фильтр для стеклянного эффекта
 Упрощенная архитектура без DOM клонирования - используем готовый ::before псевдоэлемент
 -->
 <template>
-  <div class="glass-filter">
+  <div ref="glassFilterEl" class="glass-filter">
     <!-- Debug: filterReady = {{ filterProps.filterReady }}, filterId = {{ filterProps.filterId }} -->
     <svg v-if="filterProps.filterReady" class="glass-filter__svg" aria-hidden="true">
       <defs>
@@ -143,7 +143,7 @@ SVG фильтр для стеклянного эффекта
 </template>
 
 <script setup>
-import { computed, onMounted, watch, nextTick } from 'vue'
+import { computed, onMounted, watch, nextTick, ref } from 'vue'
 
 const props = defineProps({
   filterProps: {
@@ -152,6 +152,7 @@ const props = defineProps({
   },
 })
 
+const glassFilterEl = ref(null)
 const glassFilterCss = computed(() => `url(#${props.filterProps.filterId})`)
 
 const applyFilterToMaskElement = () => {
@@ -159,17 +160,31 @@ const applyFilterToMaskElement = () => {
   console.log('filterReady:', props.filterProps.filterReady)
   console.log('filterId:', props.filterProps.filterId)
   console.log('glassFilterCss:', glassFilterCss.value)
+  console.log('glassFilterEl.value:', glassFilterEl.value)
 
-  const maskElements = document.querySelectorAll('.mask-element')
-  console.log('maskElements found:', maskElements.length)
+  // Start from the GeFilter element and traverse up to find mask-element
+  let currentEl = glassFilterEl.value?.parentElement
+  let maskElement = null
 
-  if (maskElements.length > 0 && props.filterProps.filterReady) {
-    maskElements.forEach((maskElement, index) => {
-      maskElement.style.setProperty('--glass-filter', glassFilterCss.value)
-      console.log(`✅ CSS variable --glass-filter set for element ${index + 1}:`, glassFilterCss.value)
-    })
+  console.log('Starting traversal from:', currentEl?.className)
+
+  // Traverse up the DOM tree to find the mask-element
+  while (currentEl && currentEl !== document.body) {
+    console.log('Checking element:', currentEl.className, 'has mask-element:', currentEl.classList?.contains('mask-element'))
+    if (currentEl.classList && currentEl.classList.contains('mask-element')) {
+      maskElement = currentEl
+      break
+    }
+    currentEl = currentEl.parentElement
+  }
+
+  console.log('maskElement found:', !!maskElement)
+
+  if (maskElement && props.filterProps.filterReady) {
+    maskElement.style.setProperty('--glass-filter', glassFilterCss.value)
+    console.log('✅ CSS variable --glass-filter set to:', glassFilterCss.value)
   } else {
-    console.log('❌ Filter not applied. maskElements count:', maskElements.length, 'filterReady:', props.filterProps.filterReady)
+    console.log('❌ Filter not applied. maskElement:', !!maskElement, 'filterReady:', props.filterProps.filterReady)
   }
 }
 

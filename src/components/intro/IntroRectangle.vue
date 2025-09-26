@@ -23,6 +23,7 @@
     v-mask-element="{ sourceElementId: masterClone }"
   >
     <GlassEffect
+      ref="glassEffectRef"
       :source-element-id="masterClone"
       :user-options="glassConfig"
       :intensity="glassIntensity"
@@ -95,6 +96,8 @@ const props = defineProps({
 const masterClone = inject("masterClone", "intro-house-clone");
 const isActive = ref(false);
 const isHovered = ref(false);
+const glassEffectRef = ref(null);
+const motionElement = ref(null);
 
 // Определение состояния анимации
 function getAnimationState() {
