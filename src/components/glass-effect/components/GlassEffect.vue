@@ -100,27 +100,30 @@ CSS КЛАССЫ:
       <slot />
     </div>
 
-    <!-- <GeHighlight :options="{ highlightReflection }" :intensity /> -->
+    <GeHighlight :options="{ highlightReflection }" :intensity />
 
-    <!-- <GeNoise :options="{ noiseStrength, noiseRefractionDepth }" :intensity /> -->
+    <GeNoise :options="{ noiseStrength, noiseRefractionDepth }" :intensity />
 
     <GeLight :options="{ lightIntensity, lightSpread, lightHue }" :intensity />
 
-    <!-- <GeOutline
+    <GeOutline
       :options="{
-        glassTintHue,
         outlineIntensity,
+        outlineGlassTintHue,
         surfaceReflection,
         shadowDepth,
       }"
       :intensity
-    /> -->
+    />
   </div>
 </template>
 
 <script setup>
 import { createEffectOptions } from "./GlassEffectDefaults.js";
+import GeHighlight from "./GeHighlight.vue";
+import GeNoise from "./GeNoise.vue";
 import GeLight from "./GeLight.vue";
+import GeOutline from "./GeOutline.vue";
 
 const props = defineProps({
   sourceElementId: {
@@ -144,6 +147,13 @@ const {
   lightIntensity,
   lightSpread,
   lightHue,
+  highlightReflection,
+  noiseStrength,
+  noiseRefractionDepth,
+  outlineIntensity,
+  outlineGlassTintHue,
+  surfaceReflection,
+  shadowDepth,
 } = opts;
 </script>
 

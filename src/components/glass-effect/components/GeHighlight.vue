@@ -1,7 +1,8 @@
 <!--
-TODO: Поверхностное отражение света на стекле
+TODO: Поверхностные блики стекла
 - Получает { highlightReflection } из options + intensity
-- Нужно переписать код из старого компонента layer-highlight.js
+- Использует layer-highlight.js
+- Маппинг: highlightReflection → surfaceReflection
 -->
 <template>
   <div class="glass-highlight" :style="highlightStyle" />
@@ -36,8 +37,6 @@ const highlightStyle = computed(() =>
 .glass-highlight {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
   border-radius: inherit;
   z-index: 1;

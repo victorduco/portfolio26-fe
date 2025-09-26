@@ -102,20 +102,28 @@ function toggleState() {
 
 // Glass config для прямоугольника
 const glassConfig = {
-  // Light parameters
+  // GeLight
   lightIntensity: 0.2,
   lightSpread: 4,
   lightHue: 250,
 
-  // Параметры для будущих этапов (закомментированы)
+  // GeHighlight
+  highlightReflection: 0.3,
+
+  // GeNoise
+  noiseStrength: 0.15,
+  noiseRefractionDepth: 1.5,
+
+  // GeOutline
+  outlineIntensity: 1,
+  outlineGlassTintHue: 250,
+
+  // Остальные параметры (для будущих этапов)
   // displacementScale: 65,
-  // glassTintHue: 250,
   // aberrationIntensity: 90,
   // surfaceCurvature: 1.8,
   // glassBlur: 2,
   // glassSaturation: 185,
-  // refractionDepth: 2.0,
-  // surfaceReflection: 0.45,
   // shadowDepth: 3,
   // shaderCornerRadius: 2,
   // distortion: {

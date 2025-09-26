@@ -24,12 +24,22 @@ export function createEffectOptions(userOptions = {}) {
     lightHue: 210,
     shadowDepth: 0.4,
 
+    // Highlight parameters
+    highlightReflection: 0.45,
+
+    // Noise parameters
+    noiseStrength: 0.22,
+    noiseRefractionDepth: 2.0,
+
+    // Outline parameters
+    outlineIntensity: 0.4,
+    outlineGlassTintHue: 210,
+
     // Advanced effects
     glassBrightness: 115,
     glassContrast: 118,
     glassTintHue: 210,
     glassTintOpacity: 0.38,
-    noiseStrength: 0.22,
 
     // Shader distortion parameters
     shaderCornerRadius: 0.2,
