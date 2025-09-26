@@ -47,7 +47,7 @@ function handleActiveChange(isActive) {
 .intro-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+
   align-content: center;
   justify-items: start;
   width: 100vw;
@@ -56,6 +56,7 @@ function handleActiveChange(isActive) {
   padding-inline-start: clamp(32px, 12vw, 120px);
   box-sizing: border-box;
   overflow: visible;
+  grid-template-columns: repeat(auto-fill, min-content);
 }
 
 .intro-hero__title {
@@ -66,6 +67,7 @@ function handleActiveChange(isActive) {
   z-index: 3;
   margin-bottom: 20vh;
   anchor-name: --title;
+  place-items: start start;
 }
 
 .intro-list {
@@ -87,11 +89,15 @@ function handleActiveChange(isActive) {
   max-height: 110vh;
   gap: 80px;
   height: -100px;
+  place-items: start start;
 
   padding: 0;
   list-style: none;
   pointer-events: auto;
   z-index: 1;
+  grid-template-columns:
+    fit-content(100px) fit-content(100px) fit-content(100px)
+    fit-content(100px);
 }
 
 @media (max-width: 768px) {

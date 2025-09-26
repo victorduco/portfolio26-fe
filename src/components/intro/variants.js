@@ -1,5 +1,3 @@
-import { delay } from "motion-v";
-
 export const spring = {
   type: "spring",
   stiffness: 57, // достаточно жёсткая пружина
@@ -35,7 +33,7 @@ export const boxVariants = {
       "rgba(82, 130, 33, 0.5)",
     ];
     const color = colorMap[index] || colorMap[0];
-    const baseMargin = 50;
+    const baseMargin = 0;
     return {
       "--element-side-size": "220px",
       marginLeft: `${baseMargin + additionalMargin}px`,

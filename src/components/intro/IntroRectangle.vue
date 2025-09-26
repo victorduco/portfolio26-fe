@@ -1,64 +1,61 @@
 <template>
-  <div
+  <motion.li
+    ref="motionElement"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
     @click="toggleState"
+    :custom="{ index, additionalMargin }"
+    :variants="boxVariants"
+    :animate="getAnimationState()"
+    :transition="{
+      default: spring,
+      marginLeft: marginSpring,
+      marginRight: marginSpring,
+    }"
+    initial="default"
+    class="mask-element intro-square"
+    :data-state="isActive"
   >
-    <motion.li
-      ref="motionElement"
-      :custom="{ index, additionalMargin }"
-      :variants="boxVariants"
-      :animate="getAnimationState()"
-      :transition="{
-        default: spring,
-        marginLeft: marginSpring,
-        marginRight: marginSpring,
-      }"
-      initial="default"
-      class="mask-element intro-square"
-      :data-state="isActive"
+    <GlassEffect
+      :source-element-id="masterClone"
+      :user-options="glassConfig"
+      :intensity="glassIntensity"
+      class="intro-square-glass"
     >
-      <GlassEffect
-        :source-element-id="masterClone"
-        :user-options="glassConfig"
-        :intensity="glassIntensity"
-        class="intro-square-glass"
-      >
-      </GlassEffect>
+    </GlassEffect>
 
+    <motion.div
+      class="intro-square-content-wrap"
+      :variants="contentWrapVariants"
+      :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+      :transition="spring"
+    >
       <motion.div
-        class="intro-square-content-wrap"
-        :variants="contentWrapVariants"
+        class="intro-content-number"
+        :variants="squareContentNumVariants"
         :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
-        :transition="spring"
+        :custom="index"
+        style="
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          z-index: 2;
+        "
       >
-        <motion.div
-          class="intro-content-number"
-          :variants="squareContentNumVariants"
-          :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
-          :custom="index"
-          style="
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-          "
-        >
-          {{ index + 1 }}
-        </motion.div>
-        <motion.div
-          class="intro-content-bullet"
-          :variants="squareContentBulletVariants"
-          :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
-        >
-          •
-        </motion.div>
+        {{ index + 1 }}
       </motion.div>
-    </motion.li>
-  </div>
+      <motion.div
+        class="intro-content-bullet"
+        :variants="squareContentBulletVariants"
+        :animate="isActive ? 'active' : isHovered ? 'hover' : 'default'"
+      >
+        •
+      </motion.div>
+    </motion.div>
+  </motion.li>
 </template>
 
 <script setup>
@@ -183,6 +180,7 @@ function getGridRow(index) {
   position: relative;
   display: grid;
   place-items: center;
+  place-self: start start;
   width: var(--element-side-size);
   height: var(--element-side-size);
   list-style: none;
@@ -193,9 +191,6 @@ function getGridRow(index) {
   border-radius: 28px;
   transform-origin: 50% 50%;
   overflow: hidden;
-
-  justify-self: center;
-  align-self: center;
 }
 
 .intro-square[data-state="true"],
@@ -213,7 +208,6 @@ function getGridRow(index) {
 
 .intro-square-content-wrap {
   display: grid;
-  place-items: center;
   pointer-events: none;
   z-index: 1;
   position: absolute;
