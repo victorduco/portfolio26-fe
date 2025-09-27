@@ -102,12 +102,12 @@ export const maskElement = {
       findSourceElement();
 
       // Add CSS class for pseudoelement
-      el.classList.add('mask-element');
+      el.classList.add("mask-element");
 
       // Create CSS rule for ::before pseudoelement
-      if (!document.querySelector('#mask-element-styles')) {
-        const style = document.createElement('style');
-        style.id = 'mask-element-styles';
+      if (!document.querySelector("#mask-element-styles")) {
+        const style = document.createElement("style");
+        style.id = "mask-element-styles";
         style.textContent = `
           .mask-element {
             position: relative;
@@ -122,7 +122,6 @@ export const maskElement = {
             background-image: var(--bg-image);
             background-size: var(--bg-size, 100vw auto);
             background-position: var(--bg-pos-x, 0px) var(--bg-pos-y, 0px);
-            background-repeat: no-repeat;
             transform: rotate(var(--bg-rotation, 0deg));
             transform-origin: center;
             pointer-events: none;
@@ -196,7 +195,7 @@ export const maskElement = {
     instance.scope?.stop();
 
     // Remove CSS class
-    el.classList.remove('mask-element');
+    el.classList.remove("mask-element");
 
     // Clean up CSS properties
     el.style.removeProperty("--bg-size");

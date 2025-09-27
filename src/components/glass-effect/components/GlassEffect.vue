@@ -183,6 +183,17 @@ const generateShaderDisplacementMap = () => {
   });
   const url = generator.updateShader();
   console.log('🎨 Generated shader URL length:', url.length);
+  console.log('🎨 Displacement map data URL preview:', url.slice(0, 100) + '...');
+
+  // Create a visual preview in console
+  const img = new Image();
+  img.onload = () => {
+    console.log('🖼️ Displacement map loaded as image:', img.width + 'x' + img.height);
+    // You can inspect this in console by expanding the image object
+    console.log('🖼️ Displacement map image object:', img);
+  };
+  img.src = url;
+
   console.log('🎨 Setting filterReady to true');
 
   filterReady.value = true;

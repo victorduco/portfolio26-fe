@@ -5,7 +5,8 @@
  * @returns {Object} Filter properties for the glass effect
  */
 export function createFilterProps(options, intensity, state) {
-  const red = options.displacementScale * options.displacementCurvature * intensity;
+  const red =
+    options.displacementScale * options.displacementCurvature * intensity;
   const green =
     options.displacementScale *
     options.displacementCurvature *
@@ -16,16 +17,23 @@ export function createFilterProps(options, intensity, state) {
     options.glassBlur * 0.02 * options.refractionDepth * intensity
   );
 
+  // Edge mask table for EDGE_MASK creation (like original version)
+  // Using safer values that are closer to original working version
+  const edgeMaskTable = `0 0.1 1`;
+  const blueScale = 0; // Start with 0 like before, then adjust if needed
+
   // Debug logging for filter scale values
-  console.log('🔧 Filter Props Debug:', {
+  console.log("🔧 Filter Props Debug:", {
     displacementScale: options.displacementScale,
     displacementCurvature: options.displacementCurvature,
     aberrationIntensity: options.aberrationIntensity,
     intensity,
     redScale: red,
     greenScale: green,
+    blueScale,
     blur,
-    shaderMapUrl: state.shaderMapUrl?.slice(0, 50) + '...'
+    edgeMaskTable,
+    shaderMapUrl: state.shaderMapUrl?.slice(0, 50) + "...",
   });
 
   const surfaceIntensity = options.surfaceReflection;
@@ -42,15 +50,9 @@ export function createFilterProps(options, intensity, state) {
 
   const contrast = 1 + (options.glassSaturation - 180) / 300;
   const brightness = 1 + options.surfaceReflection * 0.2;
-  const surfaceMatrix = `${contrast} 0 0 0 ${
-    brightness * 0.1
-  }
-            0 ${contrast} 0 0 ${
-    brightness * 0.1
-  }
-            0 0 ${contrast} 0 ${
-    brightness * 0.1
-  }
+  const surfaceMatrix = `${contrast} 0 0 0 ${brightness * 0.1}
+            0 ${contrast} 0 0 ${brightness * 0.1}
+            0 0 ${contrast} 0 ${brightness * 0.1}
             0 0 0 1 0`;
 
   return {
@@ -58,8 +60,10 @@ export function createFilterProps(options, intensity, state) {
     filterId: state.filterId,
     currentMap: state.shaderMapUrl,
     edgeIntensityMatrix: edgeMatrix,
+    edgeMaskTable,
     redScale: red,
     greenScale: green,
+    blueScale,
     liquidGlassBlur: blur,
     surfaceEnhancementMatrix: surfaceMatrix,
   };

@@ -5,6 +5,27 @@ SVG фильтр для стеклянного эффекта
 <template>
   <div ref="glassFilterEl" class="glass-filter">
     <!-- Debug: filterReady = {{ filterProps.filterReady }}, filterId = {{ filterProps.filterId }} -->
+
+    <!-- Displacement карта как визуальный debug (видимая карта) -->
+    <div
+      v-if="filterProps.filterReady"
+      class="displacement-map-visual"
+      :style="{
+        backgroundImage: `url(${filterProps.currentMap})`,
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        opacity: 0.3,
+        zIndex: 10,
+        pointerEvents: 'none',
+        mixBlendMode: 'overlay'
+      }"
+    ></div>
+
+    <!-- SVG фильтр для displacement эффекта -->
     <svg v-if="filterProps.filterReady" class="glass-filter__svg" aria-hidden="true">
       <defs>
         <filter
@@ -31,6 +52,9 @@ SVG фильтр для стеклянного эффекта
             :values="filterProps.edgeIntensityMatrix"
             result="EDGE_INTENSITY"
           />
+          <feComponentTransfer in="EDGE_INTENSITY" result="EDGE_MASK">
+            <feFuncA type="discrete" :tableValues="filterProps.edgeMaskTable" />
+          </feComponentTransfer>
 
           <feOffset in="SourceGraphic" dx="0" dy="0" result="CENTER_ORIGINAL" />
 
@@ -75,7 +99,7 @@ SVG фильтр для стеклянного эффекта
             in2="DISPLACEMENT_MAP"
             xChannelSelector="R"
             yChannelSelector="B"
-            :scale="0"
+            :scale="filterProps.blueScale"
             result="BLUE_DISPLACED"
           />
           <feColorMatrix
@@ -155,6 +179,7 @@ const props = defineProps({
 const glassFilterEl = ref(null)
 const glassFilterCss = computed(() => `url(#${props.filterProps.filterId})`)
 
+
 const applyFilterToMaskElement = () => {
   console.log('🔍 GeFilter: Trying to apply filter')
   console.log('filterReady:', props.filterProps.filterReady)
@@ -181,8 +206,19 @@ const applyFilterToMaskElement = () => {
   console.log('maskElement found:', !!maskElement)
 
   if (maskElement && props.filterProps.filterReady) {
+    // Применяем SVG фильтр к :before псевдоэлементу через CSS переменную
     maskElement.style.setProperty('--glass-filter', glassFilterCss.value)
-    console.log('✅ CSS variable --glass-filter set to:', glassFilterCss.value)
+    console.log('✅ CSS variable --glass-filter applied to :before element:', glassFilterCss.value)
+
+    // Log SVG filter details
+    console.log('🔍 SVG Filter Debug:', {
+      filterId: props.filterProps.filterId,
+      redScale: props.filterProps.redScale,
+      greenScale: props.filterProps.greenScale,
+      blueScale: props.filterProps.blueScale,
+      edgeMaskTable: props.filterProps.edgeMaskTable,
+      currentMapLength: props.filterProps.currentMap?.length
+    });
   } else {
     console.log('❌ Filter not applied. maskElement:', !!maskElement, 'filterReady:', props.filterProps.filterReady)
   }
