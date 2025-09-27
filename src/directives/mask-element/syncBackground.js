@@ -4,16 +4,14 @@
 import {
   resolveComputedStyleProps,
   resolveRealProps,
-  resolveComputedBgImage,
 } from "./utlis";
 
-export function syncBackground(el, sourceElement) {
-  if (!sourceElement.value || !el) return;
+export function syncBackground(el) {
+  if (!el) return;
 
   // получение из функций
   const { s, r, bw } = resolveComputedStyleProps(el);
   const { l, t, w, h } = resolveRealProps(el);
-  const { bgImg } = resolveComputedBgImage(sourceElement.value);
 
   // вычисление
   const w0 = w + 2 * bw;
@@ -28,5 +26,4 @@ export function syncBackground(el, sourceElement) {
   el.style.setProperty("--bg-pos-x", `${bgPosX}px`);
   el.style.setProperty("--bg-pos-y", `${bgPosY}px`);
   el.style.setProperty("--bg-rotation", `${compensatedRotation}deg`);
-  el.style.setProperty("--bg-image", bgImg ?? "none");
 }

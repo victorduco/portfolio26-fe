@@ -20,15 +20,14 @@
     initial="default"
     class="mask-element intro-square"
     :data-state="isActive"
-    v-mask-element="{ sourceElementId: masterClone }"
+    v-mask-element
   >
     <!-- <GlassEffect
       ref="glassEffectRef"
-      :source-element-id="masterClone"
       :user-options="glassConfig"
       :intensity="glassIntensity"
       class="intro-square-glass"
-    >
+  >
     </GlassEffect> -->
 
     <motion.div
@@ -165,26 +164,26 @@ const glassIntensity = computed(() => {
 // Computed additional margin
 const additionalMargin = computed(() => props.activeCount * -30);
 
-// Grid positioning functions
-function getGridColumn(index) {
-  const positions = [
-    "1 / 4", // Элемент 1: колонки 1-3
-    "3 / 6", // Элемент 2: колонки 3-5
-    "5 / 8", // Элемент 3: колонки 5-7
-    "7 / 10", // Элемент 4: колонки 7-9
-  ];
-  return positions[index] || "auto";
-}
+// // Grid positioning functions
+// function getGridColumn(index) {
+//   const positions = [
+//     "1 / 4", // Элемент 1: колонки 1-3
+//     "3 / 6", // Элемент 2: колонки 3-5
+//     "5 / 8", // Элемент 3: колонки 5-7
+//     "7 / 10", // Элемент 4: колонки 7-9
+//   ];
+//   return positions[index] || "auto";
+// }
 
-function getGridRow(index) {
-  const positions = [
-    "1 / 4", // Элемент 1: ряды 1-3
-    "3 / 6", // Элемент 2: ряды 3-5
-    "1 / 4", // Элемент 3: ряды 1-3
-    "3 / 6", // Элемент 4: ряды 3-5
-  ];
-  return positions[index] || "auto";
-}
+// function getGridRow(index) {
+//   const positions = [
+//     "1 / 4", // Элемент 1: ряды 1-3
+//     "3 / 6", // Элемент 2: ряды 3-5
+//     "1 / 4", // Элемент 3: ряды 1-3
+//     "3 / 6", // Элемент 4: ряды 3-5
+//   ];
+//   return positions[index] || "auto";
+// }
 </script>
 
 <style scoped>

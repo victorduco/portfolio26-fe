@@ -1,25 +1,15 @@
-import { effectScope, ref } from "vue";
+import { effectScope } from "vue";
 import { syncBackground } from "./syncBackground";
 
 let STYLES_INJECTED = false;
 
 export const maskElement = {
-  mounted(el, binding) {
+  mounted(el) {
     console.log("maskeffect mounted");
     const { document: doc, requestAnimationFrame: raf } = globalThis;
 
     const scope = effectScope();
     const state = scope.run(() => {
-      const sourceElementId = binding.value?.sourceElementId;
-      if (!sourceElementId) {
-        console.warn("maskElement: sourceElementId is required");
-        return {};
-      }
-
-      const sourceElement = ref(doc.getElementById(sourceElementId));
-      if (!sourceElement.value)
-        console.warn(`maskElement: #${sourceElementId} not found`);
-
       el.classList.add("mask-element");
 
       if (!STYLES_INJECTED) {
@@ -44,7 +34,7 @@ export const maskElement = {
       const throttledSync = () => {
         if (rafId) return;
         rafId = raf(() => {
-          syncBackground(el, sourceElement);
+          syncBackground(el);
           rafId = null;
         });
       };
@@ -62,13 +52,12 @@ export const maskElement = {
       const ro = new ResizeObserver(throttledSync);
       ro.observe(el);
 
-      return { throttledSync, observer, ro, sourceElement, sourceElementId };
+      return { throttledSync, observer, ro };
     });
 
     el._maskElement = { scope, ...state };
   },
 
-  // (при желании можно обработать смену sourceElementId в updated)
 
   unmounted(el) {
     const inst = el._maskElement;
@@ -83,7 +72,6 @@ export const maskElement = {
       "--bg-size",
       "--bg-pos-x",
       "--bg-pos-y",
-      "--bg-image",
       "--bg-rotation",
     ].forEach((p) => el.style.removeProperty(p));
 
