@@ -83,7 +83,7 @@ export const contentWrapVariants = {
   },
   hover: {
     opacity: 1,
-    scale: 1.05,
+    scale: 1,
     x: "-50%",
     y: "-50%",
   },

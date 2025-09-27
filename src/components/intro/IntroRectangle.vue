@@ -22,14 +22,14 @@
     :data-state="isActive"
     v-mask-element="{ sourceElementId: masterClone }"
   >
-    <GlassEffect
+    <!-- <GlassEffect
       ref="glassEffectRef"
       :source-element-id="masterClone"
       :user-options="glassConfig"
       :intensity="glassIntensity"
       class="intro-square-glass"
     >
-    </GlassEffect>
+    </GlassEffect> -->
 
     <motion.div
       class="intro-square-content-wrap"

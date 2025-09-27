@@ -1,4 +1,9 @@
 import { effectScope, ref } from "vue";
+import {
+  resolveComputedStyleProps,
+  resolveRealProps,
+  resolveComputedBgImage,
+} from "./utlis";
 
 export const maskElement = {
   mounted(el, binding) {
@@ -25,11 +30,12 @@ export const maskElement = {
         }
       };
 
-      // TODO: make a copy of source element
-
-      // Sync background based on useMaskElement.js logic (lines 68-101)
       const syncBackground = () => {
         if (!sourceElement.value || !el) return;
+
+        console.log(resolveComputedStyleProps(el));
+        console.log(resolveRealProps(el));
+        console.log(resolveComputedBgImage(sourceElement.value));
 
         // Use motionElement ref if available, otherwise use el
 
@@ -70,6 +76,8 @@ export const maskElement = {
 
         // Update CSS custom properties for background positioning
         const bgSize = `${(100 / scale).toFixed(1)}vw auto`;
+        console.log(bgSize);
+        console.log("Old scale: ", scale);
 
         el.style.setProperty("--bg-size", bgSize);
         el.style.setProperty("--bg-pos-x", `${bgPosX}px`);
