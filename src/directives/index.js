@@ -1,2 +1,2 @@
-export { hoverDistortion } from './hoverDistortion.js';
-export { maskElement } from './maskElement.js';
+export { hoverDistortion } from "./hover-distortion/hoverDistortion.js";
+export { maskElement } from "./mask-element/maskElement.js";

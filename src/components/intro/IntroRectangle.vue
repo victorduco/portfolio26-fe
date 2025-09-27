@@ -67,7 +67,7 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { computed, ref, inject } from "vue";
+import { computed, ref } from "vue";
 import GlassEffect from "../glass-effect/components/GlassEffect.vue";
 import { glassIntensityVariants } from "./variants.js";
 
@@ -93,7 +93,6 @@ const props = defineProps({
   },
 });
 
-const masterClone = inject("masterClone", "intro-house-clone");
 const isActive = ref(false);
 const isHovered = ref(false);
 const glassEffectRef = ref(null);

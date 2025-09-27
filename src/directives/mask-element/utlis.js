@@ -35,6 +35,6 @@ export function resolveRealProps(el) {
 
 export function resolveComputedBgImage(el) {
   const style = getComputedStyle(el);
-  const bgImg = style.backgroundImage;
+  const bgImg = style.backgroundImage || "none";
   return { bgImg };
 }

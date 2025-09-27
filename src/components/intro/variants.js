@@ -25,6 +25,7 @@ export const boxVariants = {
       rotate: 0,
       scale: 1,
       background: "#2A2A2A",
+      border: "1px solid #333333",
     };
   },
   hover: ({ index, additionalMargin }) => {
@@ -41,9 +42,10 @@ export const boxVariants = {
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
       marginTop: "-55px",
-      rotate: 45,
+      rotate: 0,
       scale: 1,
       backgroundColor: color,
+      border: "1px solid #333333",
     };
   },
   active: ({ index, additionalMargin }) => {
@@ -67,9 +69,10 @@ export const boxVariants = {
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
       y: index % 2 === 0 ? "-25%" : "-115%",
-      rotate: 45,
+      rotate: 0,
       scale: 1,
       backgroundColor: color,
+      border: "1px solid #333333",
     };
   },
 };

@@ -14,6 +14,10 @@ body {
   min-height: 100vh;
 }
 
+:root {
+  --global-bg: none;
+}
+
 #app {
   width: 100%;
   min-height: 100vh;
