@@ -5,11 +5,7 @@ SVG фильтр для стеклянного эффекта
 <template>
   <div ref="glassFilterEl" class="glass-filter">
     <!-- SVG фильтр для displacement эффекта -->
-    <svg
-      v-if="filterReady"
-      class="glass-filter__svg"
-      aria-hidden="true"
-    >
+    <svg v-if="filterReady" class="glass-filter__svg" aria-hidden="true">
       <defs>
         <filter
           :id="filterId"
@@ -146,6 +142,12 @@ SVG фильтр для стеклянного эффекта
         </filter>
       </defs>
     </svg>
+
+    <!-- <div
+      v-if="shaderMapUrl"
+      class="glass-filter__shader-map"
+      :style="{ backgroundImage: `url(${shaderMapUrl})` }"
+    /> -->
   </div>
 </template>
 
@@ -202,13 +204,17 @@ const filterProps = computed(() =>
 );
 
 // Extract computed filter properties
-const edgeIntensityMatrix = computed(() => filterProps.value.edgeIntensityMatrix);
+const edgeIntensityMatrix = computed(
+  () => filterProps.value.edgeIntensityMatrix
+);
 const edgeMaskTable = computed(() => filterProps.value.edgeMaskTable);
 const redScale = computed(() => filterProps.value.redScale);
 const greenScale = computed(() => filterProps.value.greenScale);
 const blueScale = computed(() => filterProps.value.blueScale);
 const liquidGlassBlur = computed(() => filterProps.value.liquidGlassBlur);
-const surfaceEnhancementMatrix = computed(() => filterProps.value.surfaceEnhancementMatrix);
+const surfaceEnhancementMatrix = computed(
+  () => filterProps.value.surfaceEnhancementMatrix
+);
 
 const applyFilterToMaskElement = () => {
   // Start from the GeFilter element and traverse up to find mask-element
@@ -255,9 +261,10 @@ watch(
   }
 );
 
-// Expose filterId to parent component
+// Expose filterId and shaderMapUrl to parent component
 defineExpose({
   filterId,
+  shaderMapUrl,
 });
 </script>
 
@@ -266,5 +273,17 @@ defineExpose({
   position: absolute;
   inset: 0;
   z-index: 0;
+}
+
+.glass-filter__shader-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 9999;
 }
 </style>
