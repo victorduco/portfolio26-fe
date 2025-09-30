@@ -36,6 +36,16 @@ SVG фильтр для стеклянного эффекта
           primitiveUnits="userSpaceOnUse"
         >
           <!-- ВАЖНО: кормим тем же URL, что и ::before; позиционируем в координатах страницы -->
+          <feImage
+            :x="maskRect.left"
+            :y="maskRect.top"
+            :width="maskRect.width"
+            :height="maskRect.height"
+            result="DISPLACEMENT_MAP"
+            preserveAspectRatio="xMidYMid slice"
+            :href="shaderMapUrl"
+            :xlink:href="shaderMapUrl"
+          />
 
           <feColorMatrix
             in="DISPLACEMENT_MAP"
@@ -236,10 +246,10 @@ const updateMaskRect = () => {
   rafId = requestAnimationFrame(() => {
     const r = maskElement.getBoundingClientRect();
     maskRect.value = {
-      left: Math.round(r.left + window.scrollX),
-      top: Math.round(r.top + window.scrollY),
-      width: Math.round(r.width),
-      height: Math.round(r.height),
+      left: r.left + window.scrollX,
+      top: r.top + window.scrollY,
+      width: r.width,
+      height: r.height,
     };
     rafId = 0;
   });
