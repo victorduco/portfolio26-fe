@@ -196,9 +196,26 @@ const applyFilterToMaskElement = () => {
     // Применяем SVG фильтр к :before псевдоэлементу через CSS переменную
     maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
     console.log(
-      "✅ CSS variable --glass-filter applied to :before element:",
+      "✅ CSS variable --glass-filter applied to mask-element:",
       glassFilterCss.value
     );
+
+    // Find .mask-element-inner and check if filter is applied
+    const innerElement = maskElement.querySelector('.mask-element-inner');
+    if (innerElement) {
+      const computedStyle = getComputedStyle(innerElement);
+      console.log("🔍 .mask-element-inner found! Computed filter:", computedStyle.filter);
+      console.log("🔍 .mask-element-inner visibility:", {
+        display: computedStyle.display,
+        opacity: computedStyle.opacity,
+        zIndex: computedStyle.zIndex,
+        position: computedStyle.position,
+        width: computedStyle.width,
+        height: computedStyle.height,
+      });
+    } else {
+      console.log("❌ .mask-element-inner NOT FOUND in", maskElement);
+    }
 
     // Log SVG filter details
     console.log("🔍 SVG Filter Debug:", {
