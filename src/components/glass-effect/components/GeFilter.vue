@@ -4,6 +4,24 @@ SVG фильтр для стеклянного эффекта
 -->
 <template>
   <div ref="glassFilterEl" class="glass-filter">
+    <!-- SVG с displacement картой как отдельный элемент (источник пикселей тот же, что и в feImage) -->
+    <svg
+      v-if="filterReady"
+      class="glass-filter__displacement-svg"
+      aria-hidden="true"
+    >
+      <image
+        :id="`${filterId}-displacement-image`"
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid slice"
+        :href="shaderMapUrl"
+        :xlink:href="shaderMapUrl"
+      />
+    </svg>
+
     <!-- SVG фильтр для displacement эффекта -->
     <svg v-if="filterReady" class="glass-filter__svg" aria-hidden="true">
       <defs>
@@ -14,16 +32,10 @@ SVG фильтр для стеклянного эффекта
           width="170%"
           height="170%"
           color-interpolation-filters="sRGB"
+          filterUnits="userSpaceOnUse"
+          primitiveUnits="userSpaceOnUse"
         >
-          <feImage
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            result="DISPLACEMENT_MAP"
-            preserveAspectRatio="xMidYMid slice"
-            :href="shaderMapUrl"
-          />
+          <!-- ВАЖНО: кормим тем же URL, что и ::before; позиционируем в координатах страницы -->
 
           <feColorMatrix
             in="DISPLACEMENT_MAP"
@@ -49,9 +61,9 @@ SVG фильтр для стеклянного эффекта
             in="RED_DISPLACED"
             type="matrix"
             values="1 0 0 0 0
-                        0 0 0 0 0
-                        0 0 0 0 0
-                        0 0 0 1 0"
+                    0 0 0 0 0
+                    0 0 0 0 0
+                    0 0 0 1 0"
             result="RED_CHANNEL"
           />
 
@@ -67,9 +79,9 @@ SVG фильтр для стеклянного эффекта
             in="GREEN_DISPLACED"
             type="matrix"
             values="0 0 0 0 0
-                        0 1 0 0 0
-                        0 0 0 0 0
-                        0 0 0 1 0"
+                    0 1 0 0 0
+                    0 0 0 0 0
+                    0 0 0 1 0"
             result="GREEN_CHANNEL"
           />
 
@@ -85,9 +97,9 @@ SVG фильтр для стеклянного эффекта
             in="BLUE_DISPLACED"
             type="matrix"
             values="0 0 0 0 0
-                        0 0 0 0 0
-                        0 0 1 0 0
-                        0 0 0 1 0"
+                    0 0 0 0 0
+                    0 0 1 0 0
+                    0 0 0 1 0"
             result="BLUE_CHANNEL"
           />
 
@@ -142,29 +154,24 @@ SVG фильтр для стеклянного эффекта
         </filter>
       </defs>
     </svg>
-
-    <!-- <div
-      v-if="shaderMapUrl"
-      class="glass-filter__shader-map"
-      :style="{ backgroundImage: `url(${shaderMapUrl})` }"
-    /> -->
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, watch, nextTick, ref } from "vue";
+import {
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  nextTick,
+  ref,
+} from "vue";
 import { ShaderDisplacementGenerator } from "../filter-displacement-generator.ts";
 import { createFilterProps } from "../layer-filter-props.js";
 
 const props = defineProps({
-  options: {
-    type: Object,
-    required: true,
-  },
-  intensity: {
-    type: Number,
-    required: true,
-  },
+  options: { type: Object, required: true },
+  intensity: { type: Number, required: true },
 });
 
 // Filter state
@@ -174,6 +181,13 @@ const shaderMapUrl = ref("");
 
 const glassFilterEl = ref(null);
 const glassFilterCss = computed(() => `url(#${filterId})`);
+
+// Mask element rect tracking
+const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
+let maskElement = null;
+let resizeObserver = null;
+let listenersAttached = false;
+let rafId = 0;
 
 // Generate shader displacement map
 const generateShaderDisplacementMap = () => {
@@ -188,7 +202,6 @@ const generateShaderDisplacementMap = () => {
     scalingEnd: props.options.shaderScalingEnd,
   });
   const url = generator.updateShader();
-
   filterReady.value = true;
   shaderMapUrl.value = url;
   generator.destroy();
@@ -216,56 +229,96 @@ const surfaceEnhancementMatrix = computed(
   () => filterProps.value.surfaceEnhancementMatrix
 );
 
-const applyFilterToMaskElement = () => {
-  // Start from the GeFilter element and traverse up to find mask-element
-  let currentEl = glassFilterEl.value?.parentElement;
-  let maskElement = null;
+// rAF-throttle rect read
+const updateMaskRect = () => {
+  if (!maskElement) return;
+  if (rafId) return;
+  rafId = requestAnimationFrame(() => {
+    const r = maskElement.getBoundingClientRect();
+    maskRect.value = {
+      left: Math.round(r.left + window.scrollX),
+      top: Math.round(r.top + window.scrollY),
+      width: Math.round(r.width),
+      height: Math.round(r.height),
+    };
+    rafId = 0;
+  });
+};
 
-  // Traverse up the DOM tree to find the mask-element
+function attachListeners() {
+  if (listenersAttached) return;
+  window.addEventListener("scroll", updateMaskRect, { passive: true });
+  window.addEventListener("resize", updateMaskRect);
+  listenersAttached = true;
+}
+function detachListeners() {
+  if (!listenersAttached) return;
+  window.removeEventListener("scroll", updateMaskRect);
+  window.removeEventListener("resize", updateMaskRect);
+  listenersAttached = false;
+}
+
+const applyFilterToMaskElement = () => {
+  // Идём вверх от glassFilterEl и ищем .mask-element
+  let currentEl = glassFilterEl.value?.parentElement;
+  maskElement = null;
   while (currentEl && currentEl !== document.body) {
-    if (currentEl.classList && currentEl.classList.contains("mask-element")) {
+    if (currentEl.classList?.contains("mask-element")) {
       maskElement = currentEl;
       break;
     }
     currentEl = currentEl.parentElement;
   }
 
-  if (maskElement && filterReady.value) {
-    // Применяем SVG фильтр к mask-element-inner через CSS переменную
+  if (maskElement) {
+    // Применяем SVG фильтр к целевому слою через CSS-переменную
     maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
+    // И URL карты для ::before
+    maskElement.style.setProperty(
+      "--displacement-map-url",
+      `url(${shaderMapUrl.value})`
+    );
+
+    updateMaskRect();
+
+    // Обновление по изменениям размера
+    resizeObserver?.disconnect();
+    resizeObserver = new ResizeObserver(updateMaskRect);
+    resizeObserver.observe(maskElement);
+
+    attachListeners();
   }
 };
 
-// Initialize shader on mount
+// Initialize
 onMounted(async () => {
-  generateShaderDisplacementMap();
   await nextTick();
+  // 1) Сначала найдём цель и измерим rect (чтобы первый кадр был ровный)
   applyFilterToMaskElement();
+  // 2) Потом генерим карту (источник пикселей единый для ::before и feImage)
+  generateShaderDisplacementMap();
 });
 
 watch(
   () => filterId,
-  (newFilterId) => {
-    if (newFilterId) {
-      applyFilterToMaskElement();
-    }
-  }
+  () => applyFilterToMaskElement()
 );
-
 watch(
   () => filterReady.value,
   (ready) => {
-    if (ready) {
-      applyFilterToMaskElement();
-    }
+    if (ready) applyFilterToMaskElement();
   }
 );
 
-// Expose filterId and shaderMapUrl to parent component
-defineExpose({
-  filterId,
-  shaderMapUrl,
+// Cleanup
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
+  detachListeners();
+  if (rafId) cancelAnimationFrame(rafId);
 });
+
+// Expose to parent
+defineExpose({ filterId, shaderMapUrl });
 </script>
 
 <style scoped>
@@ -275,15 +328,13 @@ defineExpose({
   z-index: 0;
 }
 
-.glass-filter__shader-map {
+.glass-filter__displacement-svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   pointer-events: none;
-  z-index: 9999;
+  z-index: -1;
+  opacity: 0;
 }
 </style>
