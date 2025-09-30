@@ -4,29 +4,12 @@ SVG фильтр для стеклянного эффекта
 -->
 <template>
   <div ref="glassFilterEl" class="glass-filter">
-    <!-- Debug: filterReady = {{ filterProps.filterReady }}, filterId = {{ filterProps.filterId }} -->
-
-    <!-- Displacement карта как визуальный debug (видимая карта) -->
-    <div
-      v-if="filterProps.filterReady"
-      class="displacement-map-visual"
-      :style="{
-        backgroundImage: `url(${filterProps.currentMap})`,
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        opacity: 0.3,
-        zIndex: 10,
-        pointerEvents: 'none',
-        mixBlendMode: 'overlay'
-      }"
-    ></div>
-
     <!-- SVG фильтр для displacement эффекта -->
-    <svg v-if="filterProps.filterReady" class="glass-filter__svg" aria-hidden="true">
+    <svg
+      v-if="filterProps.filterReady"
+      class="glass-filter__svg"
+      aria-hidden="true"
+    >
       <defs>
         <filter
           :id="filterProps.filterId"
@@ -167,85 +150,97 @@ SVG фильтр для стеклянного эффекта
 </template>
 
 <script setup>
-import { computed, onMounted, watch, nextTick, ref } from 'vue'
+import { computed, onMounted, watch, nextTick, ref } from "vue";
 
 const props = defineProps({
   filterProps: {
     type: Object,
     required: true,
   },
-})
+});
 
-const glassFilterEl = ref(null)
-const glassFilterCss = computed(() => `url(#${props.filterProps.filterId})`)
-
+const glassFilterEl = ref(null);
+const glassFilterCss = computed(() => `url(#${props.filterProps.filterId})`);
 
 const applyFilterToMaskElement = () => {
-  console.log('🔍 GeFilter: Trying to apply filter')
-  console.log('filterReady:', props.filterProps.filterReady)
-  console.log('filterId:', props.filterProps.filterId)
-  console.log('glassFilterCss:', glassFilterCss.value)
-  console.log('glassFilterEl.value:', glassFilterEl.value)
+  console.log("🔍 GeFilter: Trying to apply filter");
+  console.log("filterReady:", props.filterProps.filterReady);
+  console.log("filterId:", props.filterProps.filterId);
+  console.log("glassFilterCss:", glassFilterCss.value);
+  console.log("glassFilterEl.value:", glassFilterEl.value);
 
   // Start from the GeFilter element and traverse up to find mask-element
-  let currentEl = glassFilterEl.value?.parentElement
-  let maskElement = null
+  let currentEl = glassFilterEl.value?.parentElement;
+  let maskElement = null;
 
-  console.log('Starting traversal from:', currentEl?.className)
+  console.log("Starting traversal from:", currentEl?.className);
 
   // Traverse up the DOM tree to find the mask-element
   while (currentEl && currentEl !== document.body) {
-    console.log('Checking element:', currentEl.className, 'has mask-element:', currentEl.classList?.contains('mask-element'))
-    if (currentEl.classList && currentEl.classList.contains('mask-element')) {
-      maskElement = currentEl
-      break
+    console.log(
+      "Checking element:",
+      currentEl.className,
+      "has mask-element:",
+      currentEl.classList?.contains("mask-element")
+    );
+    if (currentEl.classList && currentEl.classList.contains("mask-element")) {
+      maskElement = currentEl;
+      break;
     }
-    currentEl = currentEl.parentElement
+    currentEl = currentEl.parentElement;
   }
 
-  console.log('maskElement found:', !!maskElement)
+  console.log("maskElement found:", !!maskElement);
 
   if (maskElement && props.filterProps.filterReady) {
     // Применяем SVG фильтр к :before псевдоэлементу через CSS переменную
-    maskElement.style.setProperty('--glass-filter', glassFilterCss.value)
-    console.log('✅ CSS variable --glass-filter applied to :before element:', glassFilterCss.value)
+    maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
+    console.log(
+      "✅ CSS variable --glass-filter applied to :before element:",
+      glassFilterCss.value
+    );
 
     // Log SVG filter details
-    console.log('🔍 SVG Filter Debug:', {
+    console.log("🔍 SVG Filter Debug:", {
       filterId: props.filterProps.filterId,
       redScale: props.filterProps.redScale,
       greenScale: props.filterProps.greenScale,
       blueScale: props.filterProps.blueScale,
       edgeMaskTable: props.filterProps.edgeMaskTable,
-      currentMapLength: props.filterProps.currentMap?.length
+      currentMapLength: props.filterProps.currentMap?.length,
     });
   } else {
-    console.log('❌ Filter not applied. maskElement:', !!maskElement, 'filterReady:', props.filterProps.filterReady)
+    console.log(
+      "❌ Filter not applied. maskElement:",
+      !!maskElement,
+      "filterReady:",
+      props.filterProps.filterReady
+    );
   }
-}
+};
 
 onMounted(async () => {
-  await nextTick()
-  applyFilterToMaskElement()
-})
+  await nextTick();
+  applyFilterToMaskElement();
+});
 
 watch(
   () => props.filterProps.filterId,
   (newFilterId) => {
     if (newFilterId) {
-      applyFilterToMaskElement()
+      applyFilterToMaskElement();
     }
   }
-)
+);
 
 watch(
   () => props.filterProps.filterReady,
   (ready) => {
     if (ready) {
-      applyFilterToMaskElement()
+      applyFilterToMaskElement();
     }
   }
-)
+);
 </script>
 
 <style scoped>

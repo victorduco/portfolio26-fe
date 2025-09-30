@@ -22,13 +22,13 @@
     :data-state="isActive"
     v-mask-element
   >
-    <!-- <GlassEffect
+    <GlassEffect
       ref="glassEffectRef"
       :user-options="glassConfig"
       :intensity="glassIntensity"
       class="intro-square-glass"
     >
-    </GlassEffect> -->
+    </GlassEffect>
 
     <motion.div
       class="intro-square-content-wrap"
