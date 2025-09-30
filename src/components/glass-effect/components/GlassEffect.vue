@@ -1,97 +1,3 @@
-<!--
-TODO: Главный координатор стеклянного эффекта
-
-ВХОДЯЩИЕ ПРОПСЫ:
-- sourceElementId: String - ID DOM элемента для клонирования в фильтре
-- userOptions: Object - пользовательские опции для переопределения дефолтов:
-  {
-    // Core displacement parameters
-    displacementScale: 65,
-    aberrationIntensity: 2.8,
-    displacementCurvature: 1.8,
-
-    // Glass material properties
-    glassBlur: 25,
-    glassSaturation: 185,
-    refractionDepth: 2.0,
-    surfaceReflection: 0.45,
-
-    // Light and shadow
-    highlightIntensity: 0.75,
-    highlightSpread: 1.1,
-    highlightHue: 210,
-    shadowDepth: 0.4,
-
-    // Advanced effects
-    glassBrightness: 115,
-    glassContrast: 118,
-    glassTintHue: 210,
-    glassTintOpacity: 0.38,
-    noiseStrength: 0.22,
-
-    // Shader distortion parameters
-    shaderCornerRadius: 0.2,
-    shaderDistortionStart: 0.3,
-    shaderDistortionEnd: 0.2,
-    shaderDistortionOffset: 0.15,
-    shaderScalingStart: 0,
-    shaderScalingEnd: 1
-  }
-- intensity: Number (0-1) - общая интенсивность эффекта
-
-СЛОТЫ:
-- default: обычное состояние контента
-- hover: состояние при наведении
-- active: активное состояние
-
-ФУНКЦИОНАЛЬНОСТЬ:
-- Создает конфигурацию через createEffectOptions(userOptions)
-- Деструктурирует опции и передает подкомпонентам
-- Координирует все слои стеклянного эффекта
-
-КАРТА СООТВЕТСТВИЯ (старое → новое):
-
-КОМПОНЕНТЫ:
-- GlassEffect.vue (монолит) → GlassEffect.vue + 5 подкомпонентов
-- SvgFilter.vue → GeFilter.vue (+ DOM source логика)
-- effect-options.js → GlassEffectDefaults.js
-
-СТРУКТУРА СЛОЕВ:
-Старое:
-  <section class="liquid-glass">
-    <SvgFilter />
-    <div class="liquid-glass__card" ref="glassElementRef">
-      <div class="liquid-glass__layer--dom-source" />
-      <div class="liquid-glass__layer--highlight" />
-      <div class="liquid-glass__layer--noise" />
-      <div class="liquid-glass__content"><slot /></div>
-      <div class="liquid-glass__layer--light" />
-      <div class="liquid-glass__outline" />
-    </div>
-  </section>
-
-Новое:
-  <div class="glass-effect">
-    <GeFilter /> 
-    <div class="glass-effect__content"> - 3 слота вместо 1 
-
-    </div>
-    <GeHighlight /> - было liquid-glass__layer--highlight
-    <GeNoise />  - было liquid-glass__layer--noise
-    <GeLight /> - было liquid-glass__layer--light 
-    <GeOutline - было liquid-glass__outline + card shadow 
-
-
-
-    ПРОПСЫ:
-- glassConfig → userOptions
-- Отдельные пропсы → объекты { options, intensity }
-
-CSS КЛАССЫ:
-- .liquid-glass → .glass-effect
-- .liquid-glass__layer--* → .glass-* в отдельных компонентах
-- .liquid-glass__card → удален (логика перенесена в GeOutline)
--->
 <template>
   <div class="glass-effect">
     <GeFilter :filterProps="filterProps" />
@@ -154,7 +60,7 @@ const shaderMapUrl = ref("");
 
 // Expose filterId to parent component
 defineExpose({
-  filterId
+  filterId,
 });
 
 // Generate shader displacement map
