@@ -1,40 +1,52 @@
-// styles with transfromation applied
-export function resolveComputedStyleProps(el) {
+// Extract rotation and scale from element's computed transform
+export function getTransformProps(el) {
   const style = getComputedStyle(el);
 
-  // transform: scale and rotation
-  let s, r;
+  let rotation = 0;
+  let scale = 1;
+
   if (style.transform && style.transform !== "none") {
     const m = new DOMMatrixReadOnly(style.transform);
-    s = Math.round(Math.hypot(m.a, m.b) * 100) / 100;
-    r = Math.atan2(m.b, m.a) * (180 / Math.PI);
-  } else {
-    s = 1;
-    r = 0;
+    scale = Math.round(Math.hypot(m.a, m.b) * 100) / 100;
+    rotation = Math.atan2(m.b, m.a) * (180 / Math.PI);
   }
 
-  // border width
-  const bw = parseFloat(style.borderWidth) || 0;
-
-  return { s, r, bw };
+  return { rotation, scale };
 }
 
-// visual values of the rectangle
-export function resolveRealProps(el) {
-  const win = window;
-  const scrollX = win.scrollX || win.pageXOffset;
-  const scrollY = win.scrollY || win.pageYOffset;
-  const rect = el.getBoundingClientRect();
+// Get center coordinates of an element
+export function getCenter(element) {
+  if (!element) {
+    return { x: 0, y: 0 };
+  }
+  const rect = element.getBoundingClientRect();
+  const x = (rect.left + rect.right) / 2;
+  const y = (rect.top + rect.bottom) / 2;
+  return { x, y };
+}
+
+// Get center of the viewport
+export function getPageCenter() {
   return {
-    l: rect.left + scrollX,
-    t: rect.top + scrollY,
-    w: rect.width,
-    h: rect.height,
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
   };
 }
 
-export function resolveComputedBgImage(el) {
-  const style = getComputedStyle(el);
-  const bgImg = style.backgroundImage || "none";
-  return { bgImg };
+// Calculate offset between page center and element center
+export function getOuterOffset(pageCenter, outerCenter) {
+  return {
+    x: pageCenter.x - outerCenter.x,
+    y: pageCenter.y - outerCenter.y,
+  };
+}
+
+// Apply offset compensation to inner element
+export function applyOuterOffset(innerElement, offset, rotation, scale) {
+  if (!innerElement || !offset) return;
+
+  innerElement.style.setProperty("--x-offset", offset.x + "px");
+  innerElement.style.setProperty("--y-offset", offset.y + "px");
+  innerElement.style.setProperty("--rotation", -rotation + "deg");
+  innerElement.style.setProperty("--scale", 1 / scale);
 }

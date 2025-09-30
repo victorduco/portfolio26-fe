@@ -27,7 +27,7 @@
       :user-options="glassConfig"
       :intensity="glassIntensity"
       class="intro-square-glass"
-  >
+    >
     </GlassEffect> -->
 
     <motion.div

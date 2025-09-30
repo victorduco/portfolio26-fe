@@ -17,24 +17,41 @@ export const maskElement = {
         const st = doc.createElement("style");
         st.id = "mask-element-styles";
         st.textContent = `
-          .mask-element{position:relative}
-          .mask-element::before{
-            content:"";position:absolute;top:-50%;left:-50%;
-            width:200%;height:200%;
+          .mask-element{
+            position:relative;
+            overflow:hidden
+          }
+          .mask-element-inner{
+            transform:rotate(var(--rotation,0deg)) scale(var(--scale,1)) translateX(var(--x-offset,0px)) translateY(var(--y-offset,0px));
+            transform-origin:center center;
+            width:100vw;
+            height:100vh;
+
             background-image:var(--global-bg);
-            background-size:var(--bg-size,100vw auto);
-            background-position:var(--bg-pos-x,0px) var(--bg-pos-y,0px);
-            transform:rotate(var(--bg-rotation,0deg));transform-origin:center;
-            pointer-events:none;opacity:1;z-index:1;filter:var(--glass-filter,none)
+            background-position:50% 50%;
+            background-size:100vw auto;
+            background-repeat:no-repeat;
+            pointer-events:none;
+            opacity:1;
+            filter:var(--glass-filter,none);
+            position:absolute;
+            z-index:1
           }`;
         doc.head.appendChild(st);
       }
+
+      // Create inner element for background compensation
+      const innerElement = doc.createElement("div");
+      innerElement.className = "mask-element-inner";
+
+      // Insert as first child so it's behind existing content
+      el.insertBefore(innerElement, el.firstChild);
 
       let rafId = null;
       const throttledSync = () => {
         if (rafId) return;
         rafId = raf(() => {
-          syncBackground(el);
+          syncBackground(el, innerElement);
           rafId = null;
         });
       };
@@ -52,12 +69,11 @@ export const maskElement = {
       const ro = new ResizeObserver(throttledSync);
       ro.observe(el);
 
-      return { throttledSync, observer, ro };
+      return { throttledSync, observer, ro, innerElement };
     });
 
     el._maskElement = { scope, ...state };
   },
-
 
   unmounted(el) {
     const inst = el._maskElement;
@@ -67,13 +83,12 @@ export const maskElement = {
     inst.ro?.disconnect();
     inst.scope?.stop();
 
+    // Remove inner element
+    if (inst.innerElement && inst.innerElement.parentNode) {
+      inst.innerElement.remove();
+    }
+
     el.classList.remove("mask-element");
-    [
-      "--bg-size",
-      "--bg-pos-x",
-      "--bg-pos-y",
-      "--bg-rotation",
-    ].forEach((p) => el.style.removeProperty(p));
 
     delete el._maskElement;
   },
