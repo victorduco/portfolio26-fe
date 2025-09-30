@@ -22,19 +22,6 @@ export function createFilterProps(options, intensity, state) {
   const edgeMaskTable = `0 0.1 1`;
   const blueScale = 0; // Start with 0 like before, then adjust if needed
 
-  // Debug logging for filter scale values
-  console.log("🔧 Filter Props Debug:", {
-    displacementScale: options.displacementScale,
-    displacementCurvature: options.displacementCurvature,
-    aberrationIntensity: options.aberrationIntensity,
-    intensity,
-    redScale: red,
-    greenScale: green,
-    blueScale,
-    blur,
-    edgeMaskTable,
-    shaderMapUrl: state.shaderMapUrl?.slice(0, 50) + "...",
-  });
 
   const surfaceIntensity = options.surfaceReflection;
   const edgeMatrix = `${0.3 * surfaceIntensity} ${0.3 * surfaceIntensity} ${

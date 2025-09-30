@@ -159,18 +159,6 @@ defineExpose({
 
 // Generate shader displacement map
 const generateShaderDisplacementMap = () => {
-  console.log('🎨 Generating shader displacement map...');
-  console.log('Shader options:', {
-    width: 400,
-    height: 400,
-    cornerRadius: opts.shaderCornerRadius,
-    distortionStart: opts.shaderDistortionStart,
-    distortionEnd: opts.shaderDistortionEnd,
-    distortionOffset: opts.shaderDistortionOffset,
-    scalingStart: opts.shaderScalingStart,
-    scalingEnd: opts.shaderScalingEnd,
-  });
-
   const generator = new ShaderDisplacementGenerator({
     width: 400,
     height: 400,
@@ -182,19 +170,6 @@ const generateShaderDisplacementMap = () => {
     scalingEnd: opts.shaderScalingEnd,
   });
   const url = generator.updateShader();
-  console.log('🎨 Generated shader URL length:', url.length);
-  console.log('🎨 Displacement map data URL preview:', url.slice(0, 100) + '...');
-
-  // Create a visual preview in console
-  const img = new Image();
-  img.onload = () => {
-    console.log('🖼️ Displacement map loaded as image:', img.width + 'x' + img.height);
-    // You can inspect this in console by expanding the image object
-    console.log('🖼️ Displacement map image object:', img);
-  };
-  img.src = url;
-
-  console.log('🎨 Setting filterReady to true');
 
   filterReady.value = true;
   shaderMapUrl.value = url;
@@ -212,9 +187,7 @@ const filterProps = computed(() =>
 
 // Initialize shader on mount
 onMounted(() => {
-  console.log('🚀 GlassEffect mounted, generating shader...');
   generateShaderDisplacementMap();
-  console.log('🚀 GlassEffect shader generation complete');
 });
 
 const {

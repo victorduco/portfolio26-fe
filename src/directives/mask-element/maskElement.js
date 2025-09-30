@@ -5,7 +5,6 @@ let STYLES_INJECTED = false;
 
 export const maskElement = {
   mounted(el) {
-    console.log("maskeffect mounted");
     const { document: doc, requestAnimationFrame: raf } = globalThis;
 
     const scope = effectScope();

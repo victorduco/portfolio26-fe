@@ -63,19 +63,11 @@ const {
   intensity: toRef(props, "intensity"),
 });
 
-// Debug
-console.log("---------------------------------");
-console.log("DEBUG - GlassEffect.vue");
-console.log("filterReady: ", filterProps.value.filterReady);
-console.log("---------------------------------");
-
 // DOM источник контента
 const domSourceContent = ref("");
 let rafId = 0;
 
 const getDomSourceContent = () => {
-  console.log("glassElementRef", glassElementRef.value);
-
   const sourceElement = document.getElementById(props.sourceElementId);
   domSourceContent.value = sourceElement.outerHTML;
 };
@@ -95,8 +87,6 @@ const scheduleUpdate = () => {
 // Стили для DOM источника с логикой из IntroDistortion
 const domSourceStyle = computed(() => {
   const sourceElement = document.getElementById(props.sourceElementId);
-  console.log("sourceElement", sourceElement);
-  console.log("glassElementRef", glassElementRef.value);
 
   if (!glassElementRef.value || !sourceElement) {
     return {};
