@@ -95,15 +95,15 @@ const domSourceStyle = computed(() => {
   const glassRect = glassElementRef.value.getBoundingClientRect();
   const sourceRect = sourceElement.getBoundingClientRect();
 
-  const offsetX = glassRect.left - sourceRect.left;
-  const offsetY = glassRect.top - sourceRect.top;
+  const offsetX = Math.round(glassRect.left - sourceRect.left);
+  const offsetY = Math.round(glassRect.top - sourceRect.top);
 
   return {
     position: "absolute",
     top: 0,
     left: 0,
-    width: `${sourceRect.width}px`,
-    height: `${sourceRect.height}px`,
+    width: `${Math.round(sourceRect.width)}px`,
+    height: `${Math.round(sourceRect.height)}px`,
     transform: `translate3d(${-offsetX}px, ${-offsetY}px, 0)`,
     filter: liquidStyle.value.filter,
     opacity: liquidStyle.value.opacity,

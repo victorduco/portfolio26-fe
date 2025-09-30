@@ -20,8 +20,8 @@ export function getCenter(element) {
     return { x: 0, y: 0 };
   }
   const rect = element.getBoundingClientRect();
-  const x = (rect.left + rect.right) / 2;
-  const y = (rect.top + rect.bottom) / 2;
+  const x = Math.round((rect.left + rect.right) / 2);
+  const y = Math.round((rect.top + rect.bottom) / 2);
   return { x, y };
 }
 

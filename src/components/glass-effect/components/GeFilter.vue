@@ -239,18 +239,29 @@ const surfaceEnhancementMatrix = computed(
   () => filterProps.value.surfaceEnhancementMatrix
 );
 
-// rAF-throttle rect read
+// rAF-throttle rect read with change detection
+let lastRect = null;
 const updateMaskRect = () => {
   if (!maskElement) return;
   if (rafId) return;
   rafId = requestAnimationFrame(() => {
     const r = maskElement.getBoundingClientRect();
-    maskRect.value = {
+    const newRect = {
       left: Math.round(r.left + window.scrollX),
       top: Math.round(r.top + window.scrollY),
       width: Math.round(r.width),
       height: Math.round(r.height),
     };
+
+    // Only update if values actually changed
+    if (!lastRect ||
+        lastRect.left !== newRect.left ||
+        lastRect.top !== newRect.top ||
+        lastRect.width !== newRect.width ||
+        lastRect.height !== newRect.height) {
+      maskRect.value = newRect;
+      lastRect = newRect;
+    }
     rafId = 0;
   });
 };
