@@ -246,10 +246,10 @@ const updateMaskRect = () => {
   rafId = requestAnimationFrame(() => {
     const r = maskElement.getBoundingClientRect();
     maskRect.value = {
-      left: r.left + window.scrollX,
-      top: r.top + window.scrollY,
-      width: r.width,
-      height: r.height,
+      left: Math.round(r.left + window.scrollX),
+      top: Math.round(r.top + window.scrollY),
+      width: Math.round(r.width),
+      height: Math.round(r.height),
     };
     rafId = 0;
   });

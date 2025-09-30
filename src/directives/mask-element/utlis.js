@@ -45,8 +45,8 @@ export function getOuterOffset(pageCenter, outerCenter) {
 export function applyOuterOffset(innerElement, offset, rotation, scale) {
   if (!innerElement || !offset) return;
 
-  innerElement.style.setProperty("--x-offset", offset.x + "px");
-  innerElement.style.setProperty("--y-offset", offset.y + "px");
+  innerElement.style.setProperty("--x-offset", Math.round(offset.x) + "px");
+  innerElement.style.setProperty("--y-offset", Math.round(offset.y) + "px");
   innerElement.style.setProperty("--rotation", -rotation + "deg");
   innerElement.style.setProperty("--scale", 1 / scale);
 }
