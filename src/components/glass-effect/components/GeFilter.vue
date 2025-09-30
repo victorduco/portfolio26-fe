@@ -6,13 +6,13 @@ SVG фильтр для стеклянного эффекта
   <div ref="glassFilterEl" class="glass-filter">
     <!-- SVG фильтр для displacement эффекта -->
     <svg
-      v-if="filterProps.filterReady"
+      v-if="filterReady"
       class="glass-filter__svg"
       aria-hidden="true"
     >
       <defs>
         <filter
-          :id="filterProps.filterId"
+          :id="filterId"
           x="-35%"
           y="-35%"
           width="170%"
@@ -26,17 +26,17 @@ SVG фильтр для стеклянного эффекта
             height="100%"
             result="DISPLACEMENT_MAP"
             preserveAspectRatio="xMidYMid slice"
-            :href="filterProps.currentMap"
+            :href="shaderMapUrl"
           />
 
           <feColorMatrix
             in="DISPLACEMENT_MAP"
             type="matrix"
-            :values="filterProps.edgeIntensityMatrix"
+            :values="edgeIntensityMatrix"
             result="EDGE_INTENSITY"
           />
           <feComponentTransfer in="EDGE_INTENSITY" result="EDGE_MASK">
-            <feFuncA type="discrete" :tableValues="filterProps.edgeMaskTable" />
+            <feFuncA type="discrete" :tableValues="edgeMaskTable" />
           </feComponentTransfer>
 
           <feOffset in="SourceGraphic" dx="0" dy="0" result="CENTER_ORIGINAL" />
@@ -46,7 +46,7 @@ SVG фильтр для стеклянного эффекта
             in2="DISPLACEMENT_MAP"
             xChannelSelector="R"
             yChannelSelector="B"
-            :scale="filterProps.redScale"
+            :scale="redScale"
             result="RED_DISPLACED"
           />
           <feColorMatrix
@@ -64,7 +64,7 @@ SVG фильтр для стеклянного эффекта
             in2="DISPLACEMENT_MAP"
             xChannelSelector="R"
             yChannelSelector="B"
-            :scale="filterProps.greenScale"
+            :scale="greenScale"
             result="GREEN_DISPLACED"
           />
           <feColorMatrix
@@ -82,7 +82,7 @@ SVG фильтр для стеклянного эффекта
             in2="DISPLACEMENT_MAP"
             xChannelSelector="R"
             yChannelSelector="B"
-            :scale="filterProps.blueScale"
+            :scale="blueScale"
             result="BLUE_DISPLACED"
           />
           <feColorMatrix
@@ -109,7 +109,7 @@ SVG фильтр для стеклянного эффекта
           />
 
           <feGaussianBlur
-            :stdDeviation="filterProps.liquidGlassBlur"
+            :stdDeviation="liquidGlassBlur"
             in="RGB_COMBINED"
             result="ABERRATED_BLURRED"
           />
@@ -141,7 +141,7 @@ SVG фильтр для стеклянного эффекта
           <feColorMatrix
             in="FINAL_EFFECT"
             type="matrix"
-            :values="filterProps.surfaceEnhancementMatrix"
+            :values="surfaceEnhancementMatrix"
           />
         </filter>
       </defs>
@@ -151,16 +151,64 @@ SVG фильтр для стеклянного эффекта
 
 <script setup>
 import { computed, onMounted, watch, nextTick, ref } from "vue";
+import { ShaderDisplacementGenerator } from "../filter-displacement-generator.ts";
+import { createFilterProps } from "../layer-filter-props.js";
 
 const props = defineProps({
-  filterProps: {
+  options: {
     type: Object,
+    required: true,
+  },
+  intensity: {
+    type: Number,
     required: true,
   },
 });
 
+// Filter state
+const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
+const filterReady = ref(false);
+const shaderMapUrl = ref("");
+
 const glassFilterEl = ref(null);
-const glassFilterCss = computed(() => `url(#${props.filterProps.filterId})`);
+const glassFilterCss = computed(() => `url(#${filterId})`);
+
+// Generate shader displacement map
+const generateShaderDisplacementMap = () => {
+  const generator = new ShaderDisplacementGenerator({
+    width: 400,
+    height: 400,
+    cornerRadius: props.options.shaderCornerRadius,
+    distortionStart: props.options.shaderDistortionStart,
+    distortionEnd: props.options.shaderDistortionEnd,
+    distortionOffset: props.options.shaderDistortionOffset,
+    scalingStart: props.options.shaderScalingStart,
+    scalingEnd: props.options.shaderScalingEnd,
+  });
+  const url = generator.updateShader();
+
+  filterReady.value = true;
+  shaderMapUrl.value = url;
+  generator.destroy();
+};
+
+// Create filter props
+const filterProps = computed(() =>
+  createFilterProps(props.options, props.intensity, {
+    filterReady: filterReady.value,
+    filterId,
+    shaderMapUrl: shaderMapUrl.value,
+  })
+);
+
+// Extract computed filter properties
+const edgeIntensityMatrix = computed(() => filterProps.value.edgeIntensityMatrix);
+const edgeMaskTable = computed(() => filterProps.value.edgeMaskTable);
+const redScale = computed(() => filterProps.value.redScale);
+const greenScale = computed(() => filterProps.value.greenScale);
+const blueScale = computed(() => filterProps.value.blueScale);
+const liquidGlassBlur = computed(() => filterProps.value.liquidGlassBlur);
+const surfaceEnhancementMatrix = computed(() => filterProps.value.surfaceEnhancementMatrix);
 
 const applyFilterToMaskElement = () => {
   // Start from the GeFilter element and traverse up to find mask-element
@@ -176,19 +224,21 @@ const applyFilterToMaskElement = () => {
     currentEl = currentEl.parentElement;
   }
 
-  if (maskElement && props.filterProps.filterReady) {
+  if (maskElement && filterReady.value) {
     // Применяем SVG фильтр к mask-element-inner через CSS переменную
     maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
   }
 };
 
+// Initialize shader on mount
 onMounted(async () => {
+  generateShaderDisplacementMap();
   await nextTick();
   applyFilterToMaskElement();
 });
 
 watch(
-  () => props.filterProps.filterId,
+  () => filterId,
   (newFilterId) => {
     if (newFilterId) {
       applyFilterToMaskElement();
@@ -197,13 +247,18 @@ watch(
 );
 
 watch(
-  () => props.filterProps.filterReady,
+  () => filterReady.value,
   (ready) => {
     if (ready) {
       applyFilterToMaskElement();
     }
   }
 );
+
+// Expose filterId to parent component
+defineExpose({
+  filterId,
+});
 </script>
 
 <style scoped>
