@@ -4,6 +4,7 @@
     v-hover-distortion="1.2"
     v-mask-element="'#171717'"
     static-displacement-map="/src/assets/mp1.png"
+    :options="glassEffectConfig"
     @mousedown="currentState = 'pressed'"
     @mouseup="currentState = isHovered ? 'hover' : 'default'"
     @mouseleave="handleMouseLeave"
@@ -29,6 +30,7 @@ import {
   spring,
   numberVariants,
 } from "./keypadVariants.js";
+import { glassEffectConfig } from "./glassEffectConfig.js";
 
 const props = defineProps({
   value: {
