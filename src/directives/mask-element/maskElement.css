@@ -1,7 +1,6 @@
 .mask-element {
   position: relative;
   overflow: hidden;
-  background: red;
 }
 
 .mask-element-inner {
@@ -11,7 +10,7 @@
   width: 100vw;
   height: 100vh;
 
-  background-image: var(--global-bg);
+  background-image: var(--global-keypad-bg);
   background-position: 50% 50%;
   background-size: 100vw auto;
   background-repeat: no-repeat;

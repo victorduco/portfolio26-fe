@@ -8,7 +8,7 @@ const sourceSelector = ref("intro-text-export-node");
 </script>
 
 <template>
-  <BgToSvg :source-selector="sourceSelector" />
+  <!-- <BgToSvg :source-selector="sourceSelector" /> -->
   <!-- <Intro /> -->
   <Keypad />
 </template>

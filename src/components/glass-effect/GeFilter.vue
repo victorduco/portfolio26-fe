@@ -126,7 +126,16 @@ const cleanup = () => {
 };
 
 const applyFilterToMaskElement = () => {
-  maskElement = glassFilterEl.value?.parentElement?.closest(".mask-element");
+  // Try to find .mask-element - it can be a parent or the wrapper itself
+  let el = glassFilterEl.value?.parentElement;
+  while (el) {
+    if (el.classList?.contains("mask-element")) {
+      maskElement = el;
+      break;
+    }
+    el = el.parentElement;
+  }
+
   if (!maskElement) return;
 
   maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);

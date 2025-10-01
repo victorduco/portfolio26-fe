@@ -1,5 +1,20 @@
 <template>
   <div class="keypad-container">
+    <BgToSvg source-selector="keypad-bg-export" :watch-data="enteredDigits" />
+
+    <!-- Фоновый слой с введенными цифрами -->
+    <div class="background-numbers" id="keypad-bg-export">
+      <div
+        v-for="(digit, index) in enteredDigits"
+        :key="index"
+        class="background-digit"
+        :style="{ color: colors[index % colors.length] }"
+      >
+        {{ digit }}
+      </div>
+    </div>
+
+    <!-- Сетка кнопок -->
     <div class="keypad-grid">
       <KeypadButton
         v-for="num in [1, 2, 3, 4, 5, 6, 7, 8, 9]"
@@ -17,10 +32,30 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import KeypadButton from "./KeypadButton.vue";
+import BgToSvg from "../bg-to-svg/BgToSvg.vue";
+
+// Массив введенных цифр
+const enteredDigits = ref([]);
+
+// Массив цветов для каждой последующей цифры
+const colors = [
+  "#FF6B6B", // красный
+  "#4ECDC4", // бирюзовый
+  "#FFE66D", // желтый
+  "#A8E6CF", // мятный
+  "#FF8B94", // розовый
+  "#C7CEEA", // лавандовый
+  "#FFDAC1", // персиковый
+  "#B4F8C8", // светло-зеленый
+  "#FBE7C6", // кремовый
+  "#A0C4FF", // голубой
+];
 
 function handleButtonClick(value) {
-  console.log("Clicked:", value);
+  enteredDigits.value.push(value);
+  console.log("Clicked:", value, "Total digits:", enteredDigits.value);
 }
 </script>
 
@@ -32,6 +67,30 @@ function handleButtonClick(value) {
   align-items: center;
   justify-content: center;
   background: #171717;
+  position: relative;
+}
+
+.background-numbers {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.background-digit {
+  font-size: 500px;
+  font-weight: 400;
+  line-height: 1;
+  opacity: 1;
+  user-select: none;
 }
 
 .keypad-grid {
@@ -40,6 +99,8 @@ function handleButtonClick(value) {
   grid-template-rows: repeat(4, 1fr);
   gap: 32px;
   padding: 40px;
+  position: relative;
+  z-index: 10;
 }
 
 .keypad-zero {
