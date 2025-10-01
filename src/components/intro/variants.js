@@ -3,15 +3,22 @@ import { transform } from "typescript";
 
 // Color mappings for different states
 const COLOR_MAP = [
-  { r: 28, g: 100, b: 255 },
-  { r: 255, g: 111, b: 159 },
-  { r: 22, g: 242, b: 199 },
-  { r: 255, g: 230, b: 118 },
+  "#27A9FF",
+  "#FF83A2",
+  "#00FFBC",
+  "#FFFF78",
 ];
+
+const hexToRgba = (hex, alpha) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 const getColorWithAlpha = (index, alpha) => {
   const color = COLOR_MAP[index] || COLOR_MAP[0];
-  return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+  return hexToRgba(color, alpha);
 };
 
 export const spring = {
@@ -92,37 +99,67 @@ export const contentWrapVariants = {
   },
 };
 
-export const squareContentNumVariants = {
-  default: {
-    opacity: 0,
-    scale: 1,
-    // "--glow-color": "rgba(255,255,255,0)",
-    color: "rgba(255,255,255,0)",
+// Объединенные варианты для контента (цифра и точка)
+export const squareContentVariants = {
+  number: {
+    default: {
+      opacity: 0,
+      scale: 1,
+      color: "rgba(255,255,255,0)",
+    },
+    hover: (index) => {
+      const color = getColorWithAlpha(index, 1);
+      return {
+        opacity: 1,
+        rotate: -15,
+        "--glow-color": color,
+        color: color,
+      };
+    },
+    active: {
+      opacity: 0,
+      color: "rgba(255,255,255,0)",
+    },
   },
-  hover: (index) => {
-    const color = getColorWithAlpha(index, 1);
-    return {
-      opacity: 1,
-      rotate: -15,
-      "--glow-color": color,
-      color: color,
-    };
+  bullet: {
+    default: { opacity: 1 },
+    hover: { opacity: 0 },
+    active: { opacity: 0 },
   },
-  active: {
-    opacity: 0,
-    "--glow-color": "rgba(255,255,255,0)",
-    color: "rgba(0,0,255,0)",
-  },
-};
-
-export const squareContentBulletVariants = {
-  default: { opacity: 1 },
-  hover: { opacity: 0 },
-  active: { opacity: 0 },
 };
 
 export const glassIntensityVariants = {
   default: { intensity: 1 },
   hover: { intensity: 1 },
   active: { intensity: 1 },
+};
+
+// Варианты для активного ромба
+export const activeDiamondVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.8,
+  },
+  active: (index) => {
+    const color = COLOR_MAP[index] || COLOR_MAP[0];
+    return {
+      opacity: 1,
+      scale: 1,
+      backgroundColor: color,
+    };
+  },
+};
+
+// Варианты для контента внутри активного ромба
+export const activeContentVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    rotate: -45,
+  },
+  active: {
+    opacity: 1,
+    scale: 1,
+    rotate: -45,
+  },
 };

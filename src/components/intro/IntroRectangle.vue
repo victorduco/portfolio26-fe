@@ -33,7 +33,7 @@
     >
       <motion.div
         class="intro-content-number"
-        :variants="squareContentNumVariants"
+        :variants="squareContentVariants.number"
         :animate="getAnimationState()"
         :custom="index"
       >
@@ -41,11 +41,13 @@
       </motion.div>
       <motion.div
         class="intro-content-bullet"
-        :variants="squareContentBulletVariants"
+        :variants="squareContentVariants.bullet"
         :animate="getAnimationState()"
         >•
       </motion.div>
     </motion.div>
+
+    <IntroRectangleActive :index="index" :is-active="isActive" />
   </motion.li>
 </template>
 
@@ -53,14 +55,14 @@
 import { motion } from "motion-v";
 import { computed, ref } from "vue";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
+import IntroRectangleActive from "./IntroRectangleActive.vue";
 import { INTRO_GLASS_CONFIG } from "./glassConfig.js";
 import {
   spring,
   marginSpring,
   boxVariants,
   contentWrapVariants,
-  squareContentNumVariants,
-  squareContentBulletVariants,
+  squareContentVariants,
   glassIntensityVariants,
 } from "./variants.js";
 
