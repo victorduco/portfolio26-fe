@@ -5,13 +5,11 @@
  * @returns {Object} Filter properties for the glass effect
  */
 export function createFilterProps(options, intensity, state) {
-  const red =
-    options.displacementScale * options.displacementCurvature * intensity;
-  const green =
-    options.displacementScale *
-    options.displacementCurvature *
-    (1 - options.aberrationIntensity * 0.05) *
-    intensity;
+  const baseScale = options.displacementScale * options.displacementCurvature * intensity;
+  const red = baseScale * (1 + options.aberrationIntensity * 0.01);
+  const green = baseScale;
+  const blueScale = baseScale * (1 - options.aberrationIntensity * 0.01);
+
   const blur = Math.max(
     0.12,
     options.glassBlur * 0.02 * options.refractionDepth * intensity
@@ -20,7 +18,6 @@ export function createFilterProps(options, intensity, state) {
   // Edge mask table for EDGE_MASK creation (like original version)
   // Using safer values that are closer to original working version
   const edgeMaskTable = `0 0.1 1`;
-  const blueScale = 0; // Start with 0 like before, then adjust if needed
 
 
   const surfaceIntensity = options.surfaceReflection;

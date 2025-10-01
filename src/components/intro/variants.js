@@ -25,15 +25,15 @@ export const boxVariants = {
       rotate: 0,
       scale: 1,
       background: "#2A2A2A",
-      border: "1px solid #333333",
+      border: "0px solid #333333",
     };
   },
   hover: ({ index, additionalMargin }) => {
     const colorMap = [
-      "rgba(33, 92, 130, 0.5)",
-      "rgba(130, 33, 57, 0.5)",
-      "rgba(33, 130, 104, 0.5)",
-      "rgba(82, 130, 33, 0.5)",
+      "rgba(33, 92, 130, 0)",
+      "rgba(130, 33, 57, 0)",
+      "rgba(33, 130, 104, 0)",
+      "rgba(82, 130, 33, 0)",
     ];
     const color = colorMap[index] || colorMap[0];
     const baseMargin = 0;
@@ -45,7 +45,7 @@ export const boxVariants = {
       rotate: 45,
       scale: 1,
       backgroundColor: color,
-      border: "1px solid #333333",
+      border: "0px solid #333333",
     };
   },
   active: ({ index, additionalMargin }) => {
@@ -57,10 +57,10 @@ export const boxVariants = {
     // ];
 
     const colorMap = [
-      "rgba(28, 100, 255, 0.1)",
-      "rgba(255, 111, 159, 0.1)",
-      "rgba(22, 242, 199, 0.1)",
-      "rgba(255, 230, 118, 0.1)",
+      "rgba(28, 100, 255, 0)",
+      "rgba(255, 111, 159, 0)",
+      "rgba(22, 242, 199, 0)",
+      "rgba(255, 230, 118, 0)",
     ];
     const color = colorMap[index] || colorMap[0];
     const baseMargin = -50;
@@ -72,7 +72,7 @@ export const boxVariants = {
       rotate: 45,
       scale: 1,
       backgroundColor: color,
-      border: "1px solid #333333",
+      border: "0px solid #333333",
     };
   },
 };
@@ -92,7 +92,7 @@ export const contentWrapVariants = {
   },
   active: {
     opacity: 1,
-    scale: 1.1,
+    scale: 1,
     x: "-50%",
     y: "-50%",
   },
@@ -102,14 +102,14 @@ export const squareContentNumVariants = {
   default: {
     opacity: 0,
     "--glow-color": "rgba(255,255,255,0)",
-    color: "rgba(255,255,255,0.7)",
+    color: "rgba(255,255,255,0)",
   },
   hover: (index) => {
     const colorMap = [
-      "rgba(28,100,255,0.9)",
-      "rgba(255,111,159,0.9)",
-      "rgba(22,242,199,0.9)",
-      "rgba(255,230,118,0.9)",
+      "rgba(28,100,255,0)",
+      "rgba(255,111,159,0)",
+      "rgba(22,242,199,0)",
+      "rgba(255,230,118,0)",
     ];
     const color = colorMap[index] || colorMap[0];
     return {
@@ -121,7 +121,7 @@ export const squareContentNumVariants = {
   active: {
     opacity: 0,
     "--glow-color": "rgba(255,255,255,0)",
-    color: "rgba(255,255,255,0.7)",
+    color: "rgba(255,255,255,0)",
   },
 };
 
