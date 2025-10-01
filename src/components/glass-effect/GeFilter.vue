@@ -219,17 +219,14 @@ const liquidGlassBlur = computed(() => {
 const edgeMaskTable = "0 0.1 1";
 
 const edgeIntensityMatrix = computed(() => {
-  const si = o.surfaceReflection * props.intensity;
-  const sv = 0.3 * si;
+  const sv = o.surfaceReflection * props.intensity * 0.3;
   return `${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 0 0 0 1 0`;
 });
 
 const surfaceEnhancementMatrix = computed(() => {
-  const si = o.surfaceReflection * props.intensity;
   const contrastEffect = (o.glassSaturation - 180) / 300;
-  const contrast = 1 + contrastEffect * props.intensity;
-  const brightness = 1 + si * 0.2;
-  const bv = brightness * 0.1;
+  const contrast = 1 - contrastEffect * props.intensity;
+  const bv = o.surfaceReflection * 0.02 * props.intensity;
   return `${contrast} 0 0 0 ${bv} 0 ${contrast} 0 0 ${bv} 0 0 ${contrast} 0 ${bv} 0 0 0 1 0`;
 });
 
@@ -296,6 +293,31 @@ watch(
   ],
   () => generateShaderDisplacementMap(),
   { deep: true }
+);
+
+watch(
+  () => [
+    props.intensity,
+    baseScale.value,
+    redScale.value,
+    greenScale.value,
+    blueScale.value,
+    liquidGlassBlur.value,
+    edgeIntensityMatrix.value,
+    surfaceEnhancementMatrix.value,
+  ],
+  ([intensity, base, red, green, blue, blur, edge, surface]) => {
+    console.log('GeFilter computed values:', {
+      intensity,
+      baseScale: base,
+      redScale: red,
+      greenScale: green,
+      blueScale: blue,
+      liquidGlassBlur: blur,
+      edgeIntensityMatrix: edge,
+      surfaceEnhancementMatrix: surface,
+    });
+  }
 );
 
 onBeforeUnmount(() => {
