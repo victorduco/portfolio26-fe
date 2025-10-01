@@ -8,7 +8,7 @@ export const glassEffectConfig = {
   glassContrast: 118,
   glassTintHue: 210,
   glassTintOpacity: 50,
-  refractionDepth: 2.0,
+  refractionDepth: 1.0,
   surfaceReflection: 0.45,
   lightIntensity: 0.75,
   lightSpread: 1.1,
