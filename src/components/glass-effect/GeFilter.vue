@@ -6,7 +6,7 @@ SVG фильтр для стеклянного эффекта
   <div ref="glassFilterEl" class="glass-filter">
     <!-- SVG с displacement картой как отдельный элемент (источник пикселей тот же, что и в feImage) -->
     <svg
-      v-if="filterReady"
+      v-if="filterReady && props.intensity > 0"
       class="glass-filter__displacement-svg"
       aria-hidden="true"
     >
@@ -23,7 +23,7 @@ SVG фильтр для стеклянного эффекта
     </svg>
 
     <!-- SVG фильтр для displacement эффекта -->
-    <svg v-if="filterReady" class="glass-filter__svg" aria-hidden="true">
+    <svg v-if="filterReady && props.intensity > 0" class="glass-filter__svg" aria-hidden="true">
       <defs>
         <filter
           :id="filterId"

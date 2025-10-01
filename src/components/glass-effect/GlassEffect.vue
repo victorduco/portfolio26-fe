@@ -8,13 +8,37 @@
       <slot />
     </div>
 
-    <GeHighlight :options="{ highlightReflection: opts.highlightReflection }" :intensity />
+    <GeHighlight
+      :options="{ highlightReflection: opts.highlightReflection }"
+      :intensity
+    />
 
-    <GeNoise :options="{ noiseStrength: opts.noiseStrength, noiseRefractionDepth: opts.noiseRefractionDepth }" :intensity />
+    <GeNoise
+      :options="{
+        noiseStrength: opts.noiseStrength,
+        noiseRefractionDepth: opts.noiseRefractionDepth,
+      }"
+      :intensity
+    />
 
-    <GeLight :options="{ lightIntensity: opts.lightIntensity, lightSpread: opts.lightSpread, lightHue: opts.lightHue }" :intensity />
+    <GeLight
+      :options="{
+        lightIntensity: opts.lightIntensity,
+        lightSpread: opts.lightSpread,
+        lightHue: opts.lightHue,
+      }"
+      :intensity
+    />
 
-    <GeOutline :options="{ outlineIntensity: opts.outlineIntensity, outlineGlassTintHue: opts.outlineGlassTintHue, surfaceReflection: opts.surfaceReflection, shadowDepth: opts.shadowDepth }" :intensity />
+    <GeOutline
+      :options="{
+        outlineIntensity: opts.outlineIntensity,
+        outlineGlassTintHue: opts.outlineGlassTintHue,
+        surfaceReflection: opts.surfaceReflection,
+        shadowDepth: opts.shadowDepth,
+      }"
+      :intensity
+    />
   </div>
 </template>
 

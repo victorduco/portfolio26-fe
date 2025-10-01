@@ -1,5 +1,5 @@
 <template>
-  <div class="glass-noise" :style="noiseStyle" />
+  <div v-if="props.intensity > 0" class="glass-noise" :style="noiseStyle" />
 </template>
 
 <script setup>

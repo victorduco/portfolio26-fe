@@ -1,5 +1,5 @@
 <template>
-  <div class="glass-light" :style="lightStyle" />
+  <div v-if="props.intensity > 0" class="glass-light" :style="lightStyle" />
 </template>
 
 <script setup>

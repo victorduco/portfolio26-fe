@@ -1,5 +1,5 @@
 <template>
-  <div class="glass-outline" :style="outlineStyle" />
+  <div v-if="props.intensity > 0" class="glass-outline" :style="outlineStyle" />
 </template>
 
 <script setup>
