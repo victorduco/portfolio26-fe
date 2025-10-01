@@ -8,21 +8,13 @@
       <slot />
     </div>
 
-    <GeHighlight :options="{ highlightReflection }" :intensity />
+    <GeHighlight :options="{ highlightReflection: opts.highlightReflection }" :intensity />
 
-    <GeNoise :options="{ noiseStrength, noiseRefractionDepth }" :intensity />
+    <GeNoise :options="{ noiseStrength: opts.noiseStrength, noiseRefractionDepth: opts.noiseRefractionDepth }" :intensity />
 
-    <GeLight :options="{ lightIntensity, lightSpread, lightHue }" :intensity />
+    <GeLight :options="{ lightIntensity: opts.lightIntensity, lightSpread: opts.lightSpread, lightHue: opts.lightHue }" :intensity />
 
-    <GeOutline
-      :options="{
-        outlineIntensity,
-        outlineGlassTintHue,
-        surfaceReflection,
-        shadowDepth,
-      }"
-      :intensity
-    />
+    <GeOutline :options="{ outlineIntensity: opts.outlineIntensity, outlineGlassTintHue: opts.outlineGlassTintHue, surfaceReflection: opts.surfaceReflection, shadowDepth: opts.shadowDepth }" :intensity />
   </div>
 </template>
 
@@ -36,31 +28,11 @@ import GeLight from "./GeLight.vue";
 import GeOutline from "./GeOutline.vue";
 
 const props = defineProps({
-  userOptions: {
-    type: Object,
-    default: () => ({}),
-  },
-  intensity: {
-    type: Number,
-    default: 1,
-    validator: (value) => value >= 0 && value <= 1,
-  },
+  userOptions: { type: Object, default: () => ({}) },
+  intensity: { type: Number, default: 1, validator: (v) => v >= 0 && v <= 1 },
 });
 
 const opts = createEffectOptions(props.userOptions);
-
-const {
-  lightIntensity,
-  lightSpread,
-  lightHue,
-  highlightReflection,
-  noiseStrength,
-  noiseRefractionDepth,
-  outlineIntensity,
-  outlineGlassTintHue,
-  surfaceReflection,
-  shadowDepth,
-} = opts;
 </script>
 
 <style scoped>

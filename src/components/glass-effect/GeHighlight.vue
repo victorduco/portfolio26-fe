@@ -10,17 +10,15 @@ const props = defineProps({
   intensity: { type: Number, default: 1 },
 });
 
-const r = props.options.highlightReflection;
-const i = props.intensity;
-
-const highlightStyle = computed(() => ({
-  background: `linear-gradient(135deg,
-    rgba(255, 255, 255, ${r * 0.4 * i}) 0%,
-    rgba(255, 255, 255, ${r * 0.1 * i}) 50%,
-    rgba(255, 255, 255, ${0.02 * i}) 100%)`,
-  opacity: "calc(0.7 + var(--distortion-hovered, 0) * 0.3)",
-  transition: "opacity 0.3s ease",
-}));
+const highlightStyle = computed(() => {
+  const r = props.options.highlightReflection;
+  const i = props.intensity;
+  return {
+    background: `linear-gradient(135deg, rgba(255, 255, 255, ${r * 0.4 * i}) 0%, rgba(255, 255, 255, ${r * 0.1 * i}) 50%, rgba(255, 255, 255, ${0.02 * i}) 100%)`,
+    opacity: "calc(0.7 + var(--distortion-hovered, 0) * 0.3)",
+    transition: "opacity 0.3s ease",
+  };
+});
 </script>
 
 <style scoped>

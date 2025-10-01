@@ -176,162 +176,112 @@ const props = defineProps({
   intensity: { type: Number, required: true },
 });
 
-// Filter state
 const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
 const filterReady = ref(false);
 const shaderMapUrl = ref("");
-
 const glassFilterEl = ref(null);
 const glassFilterCss = computed(() => `url(#${filterId})`);
-
-// Mask element rect tracking
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
+
 let maskElement = null;
 let resizeObserver = null;
 let listenersAttached = false;
 let rafId = 0;
 
-// Generate shader displacement map
 const generateShaderDisplacementMap = () => {
+  const o = props.options;
   const generator = new ShaderDisplacementGenerator({
     width: 400,
     height: 400,
-    cornerRadius: props.options.shaderCornerRadius,
-    distortionStart: props.options.shaderDistortionStart,
-    distortionEnd: props.options.shaderDistortionEnd,
-    distortionOffset: props.options.shaderDistortionOffset,
-    scalingStart: props.options.shaderScalingStart,
-    scalingEnd: props.options.shaderScalingEnd,
+    cornerRadius: o.shaderCornerRadius,
+    distortionStart: o.shaderDistortionStart,
+    distortionEnd: o.shaderDistortionEnd,
+    distortionOffset: o.shaderDistortionOffset,
+    scalingStart: o.shaderScalingStart,
+    scalingEnd: o.shaderScalingEnd,
   });
-  const url = generator.updateShader();
+  shaderMapUrl.value = generator.updateShader();
   filterReady.value = true;
-  shaderMapUrl.value = url;
   generator.destroy();
 };
 
-// Inline filter props calculation
 const o = props.options;
 const i = props.intensity;
 const baseScale = o.displacementScale * o.displacementCurvature * i;
+
 const redScale = computed(() => baseScale * (1 + o.aberrationIntensity * 0.01));
 const greenScale = computed(() => baseScale);
 const blueScale = computed(() => baseScale * (1 - o.aberrationIntensity * 0.01));
 const liquidGlassBlur = computed(() => Math.max(0.12, o.glassBlur * 0.02 * o.refractionDepth * i));
-const edgeMaskTable = computed(() => "0 0.1 1");
+const edgeMaskTable = "0 0.1 1";
 
 const si = o.surfaceReflection;
-const edgeIntensityMatrix = computed(() =>
-  `${0.3 * si} ${0.3 * si} ${0.3 * si} 0 0
-   ${0.3 * si} ${0.3 * si} ${0.3 * si} 0 0
-   ${0.3 * si} ${0.3 * si} ${0.3 * si} 0 0
-   0 0 0 1 0`
-);
+const sv = 0.3 * si;
+const edgeIntensityMatrix = `${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 0 0 0 1 0`;
 
 const contrast = 1 + (o.glassSaturation - 180) / 300;
 const brightness = 1 + si * 0.2;
-const surfaceEnhancementMatrix = computed(() =>
-  `${contrast} 0 0 0 ${brightness * 0.1}
-   0 ${contrast} 0 0 ${brightness * 0.1}
-   0 0 ${contrast} 0 ${brightness * 0.1}
-   0 0 0 1 0`
-);
+const bv = brightness * 0.1;
+const surfaceEnhancementMatrix = `${contrast} 0 0 0 ${bv} 0 ${contrast} 0 0 ${bv} 0 0 ${contrast} 0 ${bv} 0 0 0 1 0`;
 
-// rAF-throttle rect read with change detection
-let lastRect = null;
 const updateMaskRect = () => {
-  if (!maskElement) return;
-  if (rafId) return;
+  if (!maskElement || rafId) return;
   rafId = requestAnimationFrame(() => {
     const r = maskElement.getBoundingClientRect();
-    const newRect = {
+    maskRect.value = {
       left: Math.round(r.left + window.scrollX),
       top: Math.round(r.top + window.scrollY),
       width: Math.round(r.width),
       height: Math.round(r.height),
     };
-
-    // Only update if values actually changed
-    if (!lastRect ||
-        lastRect.left !== newRect.left ||
-        lastRect.top !== newRect.top ||
-        lastRect.width !== newRect.width ||
-        lastRect.height !== newRect.height) {
-      maskRect.value = newRect;
-      lastRect = newRect;
-    }
     rafId = 0;
   });
 };
 
-function attachListeners() {
+const attachListeners = () => {
   if (listenersAttached) return;
-  window.addEventListener("scroll", updateMaskRect, { passive: true });
-  window.addEventListener("resize", updateMaskRect);
+  ["scroll", "resize"].forEach(e => window.addEventListener(e, updateMaskRect, e === "scroll" ? { passive: true } : undefined));
   listenersAttached = true;
-}
-function detachListeners() {
+};
+
+const detachListeners = () => {
   if (!listenersAttached) return;
-  window.removeEventListener("scroll", updateMaskRect);
-  window.removeEventListener("resize", updateMaskRect);
+  ["scroll", "resize"].forEach(e => window.removeEventListener(e, updateMaskRect));
   listenersAttached = false;
-}
+};
 
 const applyFilterToMaskElement = () => {
-  // Идём вверх от glassFilterEl и ищем .mask-element
-  let currentEl = glassFilterEl.value?.parentElement;
-  maskElement = null;
-  while (currentEl && currentEl !== document.body) {
-    if (currentEl.classList?.contains("mask-element")) {
-      maskElement = currentEl;
+  let el = glassFilterEl.value?.parentElement;
+  while (el && el !== document.body) {
+    if (el.classList?.contains("mask-element")) {
+      maskElement = el;
+      maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
+      maskElement.style.setProperty("--displacement-map-url", `url(${shaderMapUrl.value})`);
+      updateMaskRect();
+      resizeObserver?.disconnect();
+      resizeObserver = new ResizeObserver(updateMaskRect);
+      resizeObserver.observe(maskElement);
+      attachListeners();
       break;
     }
-    currentEl = currentEl.parentElement;
-  }
-
-  if (maskElement) {
-    // Применяем SVG фильтр к целевому слою через CSS-переменную
-    maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
-    // И URL карты для ::before
-    maskElement.style.setProperty(
-      "--displacement-map-url",
-      `url(${shaderMapUrl.value})`
-    );
-
-    updateMaskRect();
-
-    // Обновление по изменениям размера
-    resizeObserver?.disconnect();
-    resizeObserver = new ResizeObserver(updateMaskRect);
-    resizeObserver.observe(maskElement);
-
-    attachListeners();
+    el = el.parentElement;
   }
 };
 
-// Initialize
 onMounted(async () => {
   await nextTick();
-  // 1) Сначала найдём цель и измерим rect (чтобы первый кадр был ровный)
   applyFilterToMaskElement();
-  // 2) Потом генерим карту (источник пикселей единый для ::before и feImage)
   generateShaderDisplacementMap();
 });
 
-watch(
-  () => filterReady.value,
-  (ready) => {
-    if (ready) applyFilterToMaskElement();
-  }
-);
+watch(() => filterReady.value, (ready) => ready && applyFilterToMaskElement());
 
-// Cleanup
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();
   detachListeners();
-  if (rafId) cancelAnimationFrame(rafId);
+  rafId && cancelAnimationFrame(rafId);
 });
 
-// Expose to parent
 defineExpose({ filterId, shaderMapUrl });
 </script>
 

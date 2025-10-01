@@ -15,78 +15,58 @@ export interface ShaderOptions {
 }
 
 export class ShaderDisplacementGenerator {
+  private static readonly CANVAS_DPI = 2;
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
-  private canvasDPI = 2;
 
   constructor(private options: ShaderOptions) {
     this.canvas = document.createElement("canvas");
-    this.canvas.width = options.width * this.canvasDPI;
-    this.canvas.height = options.height * this.canvasDPI;
+    this.canvas.width = options.width * ShaderDisplacementGenerator.CANVAS_DPI;
+    this.canvas.height = options.height * ShaderDisplacementGenerator.CANVAS_DPI;
     this.canvas.style.display = "none";
 
     const context = this.canvas.getContext("2d");
-    if (!context) {
-      throw new Error("Could not get 2D context");
-    }
+    if (!context) throw new Error("Could not get 2D context");
     this.context = context;
   }
 
   updateShader(): string {
-    const w = this.options.width * this.canvasDPI;
-    const h = this.options.height * this.canvasDPI;
+    const dpi = ShaderDisplacementGenerator.CANVAS_DPI;
+    const w = this.options.width * dpi;
+    const h = this.options.height * dpi;
 
     let maxScale = 0;
     const rawValues: number[] = [];
 
-    // Calculate displacement values
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        const uv: Vec2 = { x: x / w, y: y / h };
-
-        const pos = this.getFragment(uv);
+        const pos = this.getFragment({ x: x / w, y: y / h });
         const dx = pos.x * w - x;
         const dy = pos.y * h - y;
-
         maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
         rawValues.push(dx, dy);
       }
     }
 
-    // Improved normalization to prevent artifacts while maintaining intensity
-    if (maxScale > 0) {
-      maxScale = Math.max(maxScale, 1); // Ensure minimum scale to prevent over-normalization
-    } else {
-      maxScale = 1;
-    }
-    // ...existing code...
+    maxScale = maxScale > 0 ? Math.max(maxScale, 1) : 1;
 
-    // Create ImageData and fill it
     const imageData = this.context.createImageData(w, h);
     const data = imageData.data;
 
-    // Convert to image data with smoother normalization
     let rawIndex = 0;
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        const dx = rawValues[rawIndex++];
-        const dy = rawValues[rawIndex++];
+        const edgeFactor = Math.min(1, Math.min(x, y, w - x - 1, h - y - 1) / 2);
+        const smoothedDx = rawValues[rawIndex++] * edgeFactor;
+        const smoothedDy = rawValues[rawIndex++] * edgeFactor;
+        const r = Math.max(0, Math.min(255, (smoothedDx / maxScale + 0.5) * 255));
+        const g = Math.max(0, Math.min(255, (smoothedDy / maxScale + 0.5) * 255));
 
-        // Smooth the displacement values at edges to prevent hard transitions
-        const edgeDistance = Math.min(x, y, w - x - 1, h - y - 1);
-        const edgeFactor = Math.min(1, edgeDistance / 2); // Smooth within 2 pixels of edge
-
-        const smoothedDx = dx * edgeFactor;
-        const smoothedDy = dy * edgeFactor;
-
-        const r = smoothedDx / maxScale + 0.5;
-        const g = smoothedDy / maxScale + 0.5;
-
-        const pixelIndex = (y * w + x) * 4;
-        data[pixelIndex] = Math.max(0, Math.min(255, r * 255)); // Red channel (X displacement)
-        data[pixelIndex + 1] = Math.max(0, Math.min(255, g * 255)); // Green channel (Y displacement)
-        data[pixelIndex + 2] = Math.max(0, Math.min(255, g * 255)); // Blue channel (Y displacement for SVG filter compatibility)
-        data[pixelIndex + 3] = 255; // Alpha channel
+        const pi = (y * w + x) * 4;
+        data[pi] = r;
+        data[pi + 1] = g;
+        data[pi + 2] = g;
+        data[pi + 3] = 255;
       }
     }
 
@@ -95,50 +75,25 @@ export class ShaderDisplacementGenerator {
     return this.canvas.toDataURL();
   }
 
-  smoothStep(a: number, b: number, t: number): number {
-    t = Math.max(0, Math.min(1, (t - a) / (b - a)));
-    return t * t * (3 - 2 * t);
+  private smoothStep(a: number, b: number, t: number): number {
+    const clamped = Math.max(0, Math.min(1, (t - a) / (b - a)));
+    return clamped * clamped * (3 - 2 * clamped);
   }
 
-  length(x: number, y: number): number {
-    return Math.sqrt(x * x + y * y);
-  }
-
-  roundedRectSDF(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    radius: number
-  ): number {
+  private roundedRectSDF(x: number, y: number, width: number, height: number, radius: number): number {
     const qx = Math.abs(x) - width + radius;
     const qy = Math.abs(y) - height + radius;
-    return (
-      Math.min(Math.max(qx, qy), 0) +
-      this.length(Math.max(qx, 0), Math.max(qy, 0)) -
-      radius
-    );
+    return Math.min(Math.max(qx, qy), 0) + Math.sqrt(Math.max(qx, 0) ** 2 + Math.max(qy, 0) ** 2) - radius;
   }
 
-  texture(x: number, y: number): Vec2 {
-    return { x, y };
-  }
-
-  getFragment(uv: Vec2): Vec2 {
+  private getFragment(uv: Vec2): Vec2 {
     const ix = uv.x - 0.5;
     const iy = uv.y - 0.5;
-    const cornerRadius = this.options.cornerRadius ?? 0.2;
-    const distortionStart = this.options.distortionStart ?? 0.3;
-    const distortionEnd = this.options.distortionEnd ?? 0;
-    const distortionOffset = this.options.distortionOffset ?? 0.15;
-    const scalingStart = this.options.scalingStart ?? 0;
-    const scalingEnd = this.options.scalingEnd ?? 1;
-
-    const distanceToEdge = this.roundedRectSDF(ix, iy, 0, 0, cornerRadius);
-    const displacement = this.smoothStep(distortionStart, distortionEnd, distanceToEdge - distortionOffset);
-    const scaled = this.smoothStep(scalingStart, scalingEnd, displacement);
-    const texCoords = this.texture(ix * scaled + 0.5, iy * scaled + 0.5);
-    return texCoords;
+    const o = this.options;
+    const distanceToEdge = this.roundedRectSDF(ix, iy, 0, 0, o.cornerRadius ?? 0.2);
+    const displacement = this.smoothStep(o.distortionStart ?? 0.3, o.distortionEnd ?? 0, distanceToEdge - (o.distortionOffset ?? 0.15));
+    const scaled = this.smoothStep(o.scalingStart ?? 0, o.scalingEnd ?? 1, displacement);
+    return { x: ix * scaled + 0.5, y: iy * scaled + 0.5 };
   }
 
   destroy(): void {
