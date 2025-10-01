@@ -1,5 +1,7 @@
 <template>
   <div class="glass-effect">
+    <GeCard :options="opts" :intensity />
+
     <GeFilter :options="opts" :intensity />
 
     <div class="glass-effect__content">
@@ -26,6 +28,7 @@
 
 <script setup>
 import { createEffectOptions } from "./GlassEffectDefaults.js";
+import GeCard from "./GeCard.vue";
 import GeFilter from "./GeFilter.vue";
 import GeHighlight from "./GeHighlight.vue";
 import GeNoise from "./GeNoise.vue";

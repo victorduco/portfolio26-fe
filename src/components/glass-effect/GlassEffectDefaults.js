@@ -15,6 +15,10 @@ export function createEffectOptions(userOptions = {}) {
     // Glass material properties
     glassBlur: 25,
     glassSaturation: 185,
+    glassBrightness: 115,
+    glassContrast: 118,
+    glassTintHue: 210,
+    glassTintOpacity: 0.38,
     refractionDepth: 2.0,
     surfaceReflection: 0.45,
 

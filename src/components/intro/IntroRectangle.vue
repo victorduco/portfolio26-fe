@@ -123,6 +123,10 @@ const glassConfig = {
   // Glass material properties
   glassBlur: 0,
   glassSaturation: 180,
+  glassBrightness: 100,
+  glassContrast: 100,
+  glassTintHue: 250,
+  glassTintOpacity: 0,
   refractionDepth: 0,
   surfaceReflection: 0,
 
