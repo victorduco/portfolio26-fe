@@ -67,7 +67,7 @@
 <script setup>
 import { motion } from "motion-v";
 import { computed, ref } from "vue";
-import GlassEffect from "../glass-effect/components/GlassEffect.vue";
+import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { glassIntensityVariants } from "./variants.js";
 
 import {
