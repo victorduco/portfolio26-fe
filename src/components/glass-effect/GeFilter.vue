@@ -1,11 +1,16 @@
 <template>
   <div ref="glassFilterEl" class="glass-filter">
     <GeFilterDisplacementMapImg
-      v-if="!staticDisplacementMap"
+      v-if="props.displacementMode === 'dynamic'"
       ref="displacementMapImg"
       :filter-id="filterId"
       :intensity="props.intensity"
       :shader-corner-radius="o.shaderCornerRadius"
+      :shader-rect-width="o.shaderRectWidth"
+      :shader-rect-height="o.shaderRectHeight"
+      :shader-center-offset-x="o.shaderCenterOffsetX"
+      :shader-center-offset-y="o.shaderCenterOffsetY"
+      :shader-edge-softness="o.shaderEdgeSoftness"
       :shader-distortion-start="o.shaderDistortionStart"
       :shader-distortion-end="o.shaderDistortionEnd"
       :shader-distortion-offset="o.shaderDistortionOffset"
@@ -79,13 +84,14 @@ import GeFilterEdgeProcessing from "./GeFilterEdgeProcessing.vue";
 import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
 import GeFilterComposite from "./GeFilterComposite.vue";
 import GeFilterEnhancement from "./GeFilterEnhancement.vue";
-import mp1Image from "@/assets/mp1.png";
-import mp2Image from "@/assets/mp2.png";
-import mp3TstImage from "@/assets/mp3-34-thin.png";
+import mp1Image from "@/assets/distmaps/mp1.png";
+import mp2Image from "@/assets/distmaps/mp2.png";
+import mp3TstImage from "@/assets/distmaps/mp3-34-thin.png";
 const props = defineProps({
   options: { type: Object, required: true },
   intensity: { type: Number, required: true },
   staticDisplacementMap: { type: String, default: null },
+  displacementMode: { type: String, default: 'static' },
 });
 
 const { options: o } = props;
@@ -98,10 +104,13 @@ const shaderMapUrl = computed(
 );
 
 const displacementMapUrl = computed(() => {
-  if (props.staticDisplacementMap) {
+  if (props.displacementMode === 'static' && props.staticDisplacementMap) {
     return props.staticDisplacementMap;
   }
-  return shaderMapUrl.value || mp3TstImage;
+  if (props.displacementMode === 'dynamic') {
+    return shaderMapUrl.value || mp3TstImage;
+  }
+  return props.staticDisplacementMap || mp3TstImage;
 });
 
 let maskElement = null;

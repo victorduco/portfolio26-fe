@@ -7,11 +7,16 @@ export interface ShaderOptions {
   width: number;
   height: number;
   cornerRadius?: number;
+  rectWidth?: number;
+  rectHeight?: number;
   distortionStart?: number;
   distortionEnd?: number;
   distortionOffset?: number;
   scalingStart?: number;
   scalingEnd?: number;
+  centerOffsetX?: number;
+  centerOffsetY?: number;
+  edgeSoftness?: number;
 }
 
 export class ShaderDisplacementGenerator {
@@ -53,10 +58,11 @@ export class ShaderDisplacementGenerator {
     const imageData = this.context.createImageData(w, h);
     const data = imageData.data;
 
+    const edgeSoftness = this.options.edgeSoftness ?? 2;
     let rawIndex = 0;
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        const edgeFactor = Math.min(1, Math.min(x, y, w - x - 1, h - y - 1) / 2);
+        const edgeFactor = Math.min(1, Math.min(x, y, w - x - 1, h - y - 1) / edgeSoftness);
         const smoothedDx = rawValues[rawIndex++] * edgeFactor;
         const smoothedDy = rawValues[rawIndex++] * edgeFactor;
         const r = Math.max(0, Math.min(255, (smoothedDx / maxScale + 0.5) * 255));
@@ -87,13 +93,17 @@ export class ShaderDisplacementGenerator {
   }
 
   private getFragment(uv: Vec2): Vec2 {
-    const ix = uv.x - 0.5;
-    const iy = uv.y - 0.5;
     const o = this.options;
-    const distanceToEdge = this.roundedRectSDF(ix, iy, 0, 0, o.cornerRadius ?? 0.2);
+    const centerX = 0.5 + (o.centerOffsetX ?? 0);
+    const centerY = 0.5 + (o.centerOffsetY ?? 0);
+    const ix = uv.x - centerX;
+    const iy = uv.y - centerY;
+    const rectW = o.rectWidth ?? 0;
+    const rectH = o.rectHeight ?? 0;
+    const distanceToEdge = this.roundedRectSDF(ix, iy, rectW, rectH, o.cornerRadius ?? 0.2);
     const displacement = this.smoothStep(o.distortionStart ?? 0.3, o.distortionEnd ?? 0, distanceToEdge - (o.distortionOffset ?? 0.15));
     const scaled = this.smoothStep(o.scalingStart ?? 0, o.scalingEnd ?? 1, displacement);
-    return { x: ix * scaled + 0.5, y: iy * scaled + 0.5 };
+    return { x: ix * scaled + centerX, y: iy * scaled + centerY };
   }
 
   destroy(): void {

@@ -2,9 +2,14 @@
   <div class="glass-effect">
     <GeCard :options="opts" :intensity="finalIntensity" />
 
-    <GeFilter :options="opts" :intensity="finalIntensity" :static-displacement-map="finalStaticMap" />
+    <GeFilter
+      :options="opts"
+      :intensity="finalIntensity"
+      :static-displacement-map="finalStaticMap"
+      :displacement-mode="finalMode"
+    />
 
-    <div class="glass-effect__content">
+    <div class="glass-effect__content" :style="contentBackdropStyle">
       <slot />
     </div>
 
@@ -51,6 +56,7 @@ const props = defineProps({
 const debuggerOptions = inject('glassDebuggerOptions', null);
 const debuggerIntensity = inject('glassDebuggerIntensity', null);
 const debuggerStaticMap = inject('glassDebuggerStaticMap', null);
+const debuggerMode = inject('glassDebuggerMode', null);
 
 // Use debugger options if available, otherwise use user options
 // debuggerOptions is already reactive, so we can use it directly
@@ -68,6 +74,27 @@ const finalStaticMap = computed(() => {
   const value = debuggerStaticMap !== null ? debuggerStaticMap.value : props.staticDisplacementMap;
   console.log('GlassEffect finalStaticMap:', value);
   return value;
+});
+
+const finalMode = computed(() => {
+  const value = debuggerMode !== null ? debuggerMode.value : 'static';
+  console.log('GlassEffect finalMode:', value);
+  return value;
+});
+
+// Create backdrop filter style for content
+const contentBackdropStyle = computed(() => {
+  const i = finalIntensity.value;
+  const brightness = opts.glassBrightness / 100;
+  const contrast = opts.glassContrast / 100;
+  const finalBrightness = 1 + (brightness - 1) * i;
+  const finalContrast = 1 + (contrast - 1) * i;
+
+  // Additional filters available:
+  // hue-rotate(deg), invert(0-1), sepia(0-1), grayscale(0-1), opacity(0-1)
+  return {
+    backdropFilter: `brightness(${finalBrightness}) contrast(${finalContrast})`
+  };
 });
 </script>
 

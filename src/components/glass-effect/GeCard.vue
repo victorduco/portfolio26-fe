@@ -40,13 +40,18 @@ const combinedStyle = computed(() => {
   const base = clamp(0.18 + oi * 0.28, 0.22, 0.6) * sr;
   const hover = clamp(0.28 + oi * 0.38, 0.3, 0.75) * sr;
 
+  const finalBrightness = 1 + (brightness - 1) * i;
+  const finalContrast = 1 + (contrast - 1) * i;
+
+  const backdropFilterValue = `blur(${glassBlur * i}px) saturate(${
+    100 + (glassSaturation - 100) * i
+  }%) brightness(${finalBrightness}) contrast(${finalContrast})`;
+
+  console.log('GeCard backdrop-filter:', backdropFilterValue);
+
   return {
     boxShadow: `0 24px 70px rgba(6, 10, 24, ${shadowDepth * i})`,
-    backdropFilter: `blur(${glassBlur * i}px) saturate(${
-      100 + (glassSaturation - 100) * i
-    }%) brightness(${1 + (brightness - 1) * i}) contrast(${
-      1 + (contrast - 1) * i
-    })`,
+    backdropFilter: backdropFilterValue,
     "--outline-opacity": `calc(${(base * i).toFixed(
       3
     )} + var(--distortion-hovered, 0) * ${((hover - base) * i).toFixed(3)})`,

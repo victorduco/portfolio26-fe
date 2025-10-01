@@ -18,8 +18,12 @@ const globalIntensity = ref(1);
 provide('glassDebuggerIntensity', globalIntensity);
 
 // Global static displacement map control
-const globalStaticMap = ref("/src/assets/mp1.png");
+const globalStaticMap = ref("/src/assets/distmaps/mp1.png");
 provide('glassDebuggerStaticMap', globalStaticMap);
+
+// Displacement mode: 'static' or 'dynamic'
+const displacementMode = ref('static');
+provide('glassDebuggerMode', displacementMode);
 </script>
 
 <template>
@@ -32,5 +36,6 @@ provide('glassDebuggerStaticMap', globalStaticMap);
     :options="globalGlassOptions"
     :intensity="globalIntensity"
     :static-map="globalStaticMap"
+    :mode="displacementMode"
   />
 </template>
