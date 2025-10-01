@@ -1,0 +1,22 @@
+.mask-element {
+  position: relative;
+  overflow: hidden;
+}
+
+.mask-element-inner {
+  transform: rotate(var(--rotation, 0deg)) scale(var(--scale, 1))
+    translateX(var(--x-offset, 0px)) translateY(var(--y-offset, 0px));
+  transform-origin: center center;
+  width: 100vw;
+  height: 100vh;
+
+  background-image: var(--global-bg);
+  background-position: 50% 50%;
+  background-size: 100vw auto;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  opacity: 1;
+  filter: var(--glass-filter, none);
+  position: absolute;
+  z-index: 1;
+}

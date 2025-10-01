@@ -1,22 +1,25 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
-import { toSvg, toPng } from "html-to-image";
+import { toSvg } from "html-to-image";
 
 const props = defineProps({
   sourceSelector: { type: String, required: true },
 });
 
+// Wait for layout and fonts to be ready before generating
+const RENDER_DELAY = 500;
+
 async function generateBackground() {
   const src = document.getElementById(props.sourceSelector);
   if (!src) return;
   const bodyBg = getComputedStyle(document.body).backgroundColor || "#000";
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  await delay(500);
 
+  await new Promise((resolve) => setTimeout(resolve, RENDER_DELAY));
   await document.fonts.ready;
+
   const img = await toSvg(src, {
-    width: Math.max(src.offsetWidth),
-    height: Math.max(src.offsetHeight),
+    width: src.offsetWidth,
+    height: src.offsetHeight,
     backgroundColor: bodyBg,
     pixelRatio: 1,
   });

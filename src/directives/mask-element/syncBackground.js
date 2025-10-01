@@ -4,7 +4,7 @@ import {
   getOuterOffset,
   getTransformProps,
   applyOuterOffset,
-} from "./utlis";
+} from "./utils";
 
 export function syncBackground(el, innerElement) {
   if (!el || !innerElement) return;

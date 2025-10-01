@@ -21,25 +21,16 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { motion } from "motion-v";
 import { spring } from "./variants";
 import IntroRectangle from "./IntroRectangle.vue";
 
-const rects = reactive(
-  Array.from("1234", (item) => ({
-    number: item,
-  }))
-);
-
+const rects = Array(4).fill(null);
 const activeCount = ref(0);
 
 function handleActiveChange(isActive) {
-  if (isActive) {
-    activeCount.value++;
-  } else {
-    activeCount.value--;
-  }
+  activeCount.value += isActive ? 1 : -1;
 }
 </script>
 
@@ -82,22 +73,20 @@ function handleActiveChange(isActive) {
   margin-top: 64px;
 
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns:
+    fit-content(100px) fit-content(100px) fit-content(100px)
+    fit-content(100px);
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
 
   max-width: 110vw;
   max-height: 110vh;
   gap: 80px;
-  height: -100px;
   place-items: start start;
 
   padding: 0;
   list-style: none;
   pointer-events: auto;
   z-index: 5;
-  grid-template-columns:
-    fit-content(100px) fit-content(100px) fit-content(100px)
-    fit-content(100px);
 }
 
 @media (max-width: 768px) {

@@ -1,8 +1,3 @@
-<!-- 
- TODO
-Я выпилил присваивание сетки каждому квадрату - сейчас работает с помощью транзишенов - нужно или вернуть или убрать функции 
- -->
-
 <template>
   <motion.li
     ref="motionElement"
@@ -24,7 +19,7 @@
   >
     <GlassEffect
       ref="glassEffectRef"
-      :user-options="glassConfig"
+      :user-options="INTRO_GLASS_CONFIG"
       :intensity="glassIntensity"
       class="intro-square-glass"
     >
@@ -41,15 +36,6 @@
         :variants="squareContentNumVariants"
         :animate="getAnimationState()"
         :custom="index"
-        style="
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          z-index: 2;
-        "
       >
         {{ index + 1 }}
       </motion.div>
@@ -68,8 +54,7 @@
 import { motion } from "motion-v";
 import { computed, ref } from "vue";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
-import { glassIntensityVariants } from "./variants.js";
-
+import { INTRO_GLASS_CONFIG } from "./glassConfig.js";
 import {
   spring,
   marginSpring,
@@ -77,9 +62,8 @@ import {
   contentWrapVariants,
   squareContentNumVariants,
   squareContentBulletVariants,
+  glassIntensityVariants,
 } from "./variants.js";
-
-// Initial variables
 
 const props = defineProps({
   index: {
@@ -113,54 +97,6 @@ function toggleState() {
   emit("activeChange", isActive.value);
 }
 
-// Glass config для прямоугольника
-const glassConfig = {
-  // Core displacement parameters - REQUIRED for distortion map
-  displacementScale: 75,
-  aberrationIntensity: 0.1,
-  displacementCurvature: 1,
-
-  // Glass material properties
-  glassBlur: 0,
-  glassSaturation: 180,
-  glassBrightness: 100,
-  glassContrast: 100,
-  glassTintHue: 250,
-  glassTintOpacity: 0,
-  refractionDepth: 0,
-  surfaceReflection: 0,
-
-  // GeLight
-  lightIntensity: 0,
-  lightSpread: 0,
-  lightHue: 250,
-
-  // GeHighlight
-  highlightReflection: 0,
-
-  // GeNoise
-  // todo: не работает?
-  noiseStrength: 0,
-  noiseRefractionDepth: 0,
-
-  // GeOutline
-  // todo: не работает?
-  outlineIntensity: 0,
-  outlineGlassTintHue: 250,
-
-  // Shadow and advanced effects
-  // todo: не работает?
-  shadowDepth: 0,
-
-  // Shader distortion parameters
-  shaderCornerRadius: 2,
-  shaderDistortionStart: 0.3,
-  shaderDistortionEnd: 0.2,
-  shaderDistortionOffset: 0.15,
-  shaderScalingStart: 0,
-  shaderScalingEnd: 0.1,
-};
-
 // Динамическая интенсивность по состояниям
 const glassIntensity = computed(() => {
   if (isActive.value) return glassIntensityVariants.active.intensity;
@@ -170,27 +106,6 @@ const glassIntensity = computed(() => {
 
 // Computed additional margin
 const additionalMargin = computed(() => props.activeCount * -30);
-
-// // Grid positioning functions
-// function getGridColumn(index) {
-//   const positions = [
-//     "1 / 4", // Элемент 1: колонки 1-3
-//     "3 / 6", // Элемент 2: колонки 3-5
-//     "5 / 8", // Элемент 3: колонки 5-7
-//     "7 / 10", // Элемент 4: колонки 7-9
-//   ];
-//   return positions[index] || "auto";
-// }
-
-// function getGridRow(index) {
-//   const positions = [
-//     "1 / 4", // Элемент 1: ряды 1-3
-//     "3 / 6", // Элемент 2: ряды 3-5
-//     "1 / 4", // Элемент 3: ряды 1-3
-//     "3 / 6", // Элемент 4: ряды 3-5
-//   ];
-//   return positions[index] || "auto";
-// }
 </script>
 
 <style scoped>
@@ -242,15 +157,19 @@ const additionalMargin = computed(() => props.activeCount * -30);
 }
 
 .intro-content-number {
-  display: grid;
-  place-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
   color: var(--color-square-content);
   font-weight: 800;
   font-size: clamp(28px, 4vw, 42px);
   line-height: 1;
   user-select: none;
   pointer-events: none;
-  position: absolute;
   text-shadow: 0 0 6px var(--glow-color), 0 0 14px var(--glow-color),
     0 0 28px var(--glow-color);
 }

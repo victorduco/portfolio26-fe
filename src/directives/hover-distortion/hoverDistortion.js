@@ -1,5 +1,18 @@
 import { computed, effectScope, reactive, ref, watch } from "vue";
 
+// Animation constants
+const CLAMP_LIMIT_X = 0.2;
+const CLAMP_LIMIT_Y = 0.2;
+const CURVATURE_MULTIPLIER = 0.5;
+const TRANSFORM_DIVISOR_X = 120;
+const TRANSFORM_DIVISOR_Y = 160;
+const TRANSLATE_MULTIPLIER = 0.35;
+const LIGHT_X_MULTIPLIER = 0.35;
+const LIGHT_Y_MULTIPLIER = 0.22;
+const ROTATION_MULTIPLIER = 1.2;
+const PARALLAX_OFFSET_X = -5.7;
+const PARALLAX_OFFSET_Y = -24.9;
+
 const resolveDirectiveOptions = (value) => {
   if (value == null) {
     return {};
@@ -44,13 +57,21 @@ export const hoverDistortion = {
       const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
       const cardTransform = computed(() => {
-        const curvature = surfaceCurvature.value * 0.5;
-        const limitedX = clamp(mouseOffset.x / 120, -0.2, 0.2);
-        const limitedY = clamp(mouseOffset.y / 160, -0.2, 0.2);
+        const curvature = surfaceCurvature.value * CURVATURE_MULTIPLIER;
+        const limitedX = clamp(
+          mouseOffset.x / TRANSFORM_DIVISOR_X,
+          -CLAMP_LIMIT_X,
+          CLAMP_LIMIT_X
+        );
+        const limitedY = clamp(
+          mouseOffset.y / TRANSFORM_DIVISOR_Y,
+          -CLAMP_LIMIT_Y,
+          CLAMP_LIMIT_Y
+        );
         const scaleX = 1 + limitedX * curvature;
         const scaleY = 1 + limitedY * curvature;
-        const translateX = mouseOffset.x * 0.35;
-        const translateY = mouseOffset.y * 0.35;
+        const translateX = mouseOffset.x * TRANSLATE_MULTIPLIER;
+        const translateY = mouseOffset.y * TRANSLATE_MULTIPLIER;
 
         return `scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(
           3
@@ -105,24 +126,22 @@ export const hoverDistortion = {
         }
 
         // Batch all style updates together
-        const lightX = (mouseOffset.x * 0.35).toFixed(2);
-        const lightY = (mouseOffset.y * 0.22).toFixed(2);
-        const rotation = (mouseOffset.x * 1.2).toFixed(2);
+        const lightX = (mouseOffset.x * LIGHT_X_MULTIPLIER).toFixed(2);
+        const lightY = (mouseOffset.y * LIGHT_Y_MULTIPLIER).toFixed(2);
+        const rotation = (mouseOffset.x * ROTATION_MULTIPLIER).toFixed(2);
 
         const winW = window.innerWidth || rect.width;
         const winH = window.innerHeight || rect.height;
         const baseX = ((rect.left + rect.width / 2) / winW) * 100;
         const baseY = ((rect.top + rect.height / 2) / winH) * 100;
-        const dx = -5.7;
-        const dy = -24.9;
 
         const parallaxX = clamp(
-          baseX + dx - mouseOffset.x * parallaxIntensity.value,
+          baseX + PARALLAX_OFFSET_X - mouseOffset.x * parallaxIntensity.value,
           0,
           100
         );
         const parallaxY = clamp(
-          baseY + dy - mouseOffset.y * parallaxIntensity.value,
+          baseY + PARALLAX_OFFSET_Y - mouseOffset.y * parallaxIntensity.value,
           0,
           100
         );

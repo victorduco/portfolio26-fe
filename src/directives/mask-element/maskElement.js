@@ -1,7 +1,6 @@
 import { effectScope } from "vue";
 import { syncBackground } from "./syncBackground";
-
-let STYLES_INJECTED = false;
+import "./maskElement.css";
 
 export const maskElement = {
   mounted(el) {
@@ -10,34 +9,6 @@ export const maskElement = {
     const scope = effectScope();
     const state = scope.run(() => {
       el.classList.add("mask-element");
-
-      if (!STYLES_INJECTED) {
-        STYLES_INJECTED = true;
-        const st = doc.createElement("style");
-        st.id = "mask-element-styles";
-        st.textContent = `
-          .mask-element{
-            position:relative;
-            overflow:hidden
-          }
-          .mask-element-inner{
-            transform:rotate(var(--rotation,0deg)) scale(var(--scale,1)) translateX(var(--x-offset,0px)) translateY(var(--y-offset,0px));
-            transform-origin:center center;
-            width:100vw;
-            height:100vh;
-
-            background-image:var(--global-bg);
-            background-position:50% 50%;
-            background-size:100vw auto;
-            background-repeat:no-repeat;
-            pointer-events:none;
-            opacity:1;
-            filter:var(--glass-filter,none);
-            position:absolute;
-            z-index:1
-          }`;
-        doc.head.appendChild(st);
-      }
 
       // Create inner element for background compensation
       const innerElement = doc.createElement("div");

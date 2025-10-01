@@ -1,4 +1,15 @@
-// TODO Понять приоритет между стилями стекла и теми что тут
+// Color mappings for different states
+const COLOR_MAP = [
+  { r: 28, g: 100, b: 255 },
+  { r: 255, g: 111, b: 159 },
+  { r: 22, g: 242, b: 199 },
+  { r: 255, g: 230, b: 118 },
+];
+
+const getColorWithAlpha = (index, alpha) => {
+  const color = COLOR_MAP[index] || COLOR_MAP[0];
+  return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+};
 
 export const spring = {
   type: "spring",
@@ -29,13 +40,6 @@ export const boxVariants = {
     };
   },
   hover: ({ index, additionalMargin }) => {
-    const colorMap = [
-      "rgba(33, 92, 130, 0)",
-      "rgba(130, 33, 57, 0)",
-      "rgba(33, 130, 104, 0)",
-      "rgba(82, 130, 33, 0)",
-    ];
-    const color = colorMap[index] || colorMap[0];
     const baseMargin = 0;
     return {
       "--element-side-size": "220px",
@@ -44,25 +48,11 @@ export const boxVariants = {
       marginTop: "-55px",
       rotate: 45,
       scale: 1,
-      backgroundColor: color,
+      backgroundColor: getColorWithAlpha(index, 0),
       border: "0px solid #333333",
     };
   },
   active: ({ index, additionalMargin }) => {
-    // const colorMap = [
-    //   "rgba(28, 100, 255, 1)",
-    //   "rgba(255, 111, 159, 1)",
-    //   "rgba(22, 242, 199, 1)",
-    //   "rgba(255, 230, 118, 1)",
-    // ];
-
-    const colorMap = [
-      "rgba(28, 100, 255, 0)",
-      "rgba(255, 111, 159, 0)",
-      "rgba(22, 242, 199, 0)",
-      "rgba(255, 230, 118, 0)",
-    ];
-    const color = colorMap[index] || colorMap[0];
     const baseMargin = -50;
     return {
       "--element-side-size": "600px",
@@ -71,7 +61,7 @@ export const boxVariants = {
       y: index % 2 === 0 ? "-25%" : "-115%",
       rotate: 45,
       scale: 1,
-      backgroundColor: color,
+      backgroundColor: getColorWithAlpha(index, 0),
       border: "0px solid #333333",
     };
   },
@@ -105,13 +95,7 @@ export const squareContentNumVariants = {
     color: "rgba(255,255,255,0)",
   },
   hover: (index) => {
-    const colorMap = [
-      "rgba(28,100,255,0)",
-      "rgba(255,111,159,0)",
-      "rgba(22,242,199,0)",
-      "rgba(255,230,118,0)",
-    ];
-    const color = colorMap[index] || colorMap[0];
+    const color = getColorWithAlpha(index, 0);
     return {
       opacity: 1,
       "--glow-color": color,
