@@ -1,29 +1,22 @@
-<!--
-SVG фильтр для стеклянного эффекта
-Упрощенная архитектура без DOM клонирования - используем готовый ::before псевдоэлемент
--->
 <template>
   <div ref="glassFilterEl" class="glass-filter">
-    <!-- SVG с displacement картой как отдельный элемент (источник пикселей тот же, что и в feImage) -->
+    <GeFilterDisplacementMapImg
+      ref="displacementMapImg"
+      :filter-id="filterId"
+      :intensity="props.intensity"
+      :shader-corner-radius="o.shaderCornerRadius"
+      :shader-distortion-start="o.shaderDistortionStart"
+      :shader-distortion-end="o.shaderDistortionEnd"
+      :shader-distortion-offset="o.shaderDistortionOffset"
+      :shader-scaling-start="o.shaderScalingStart"
+      :shader-scaling-end="o.shaderScalingEnd"
+    />
+
     <svg
       v-if="filterReady && props.intensity >= 0.01"
-      class="glass-filter__displacement-svg"
+      class="glass-filter__svg"
       aria-hidden="true"
     >
-      <image
-        :id="`${filterId}-displacement-image`"
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMidYMid slice"
-        :href="shaderMapUrl"
-        :xlink:href="shaderMapUrl"
-      />
-    </svg>
-
-    <!-- SVG фильтр для displacement эффекта -->
-    <svg v-if="filterReady && props.intensity >= 0.01" class="glass-filter__svg" aria-hidden="true">
       <defs>
         <filter
           :id="filterId"
@@ -35,7 +28,6 @@ SVG фильтр для стеклянного эффекта
           filterUnits="userSpaceOnUse"
           primitiveUnits="userSpaceOnUse"
         >
-          <!-- ВАЖНО: кормим тем же URL, что и ::before; позиционируем в координатах страницы -->
           <feImage
             :x="maskRect.left"
             :y="maskRect.top"
@@ -47,119 +39,30 @@ SVG фильтр для стеклянного эффекта
             :xlink:href="shaderMapUrl"
           />
 
-          <feColorMatrix
-            in="DISPLACEMENT_MAP"
-            type="matrix"
-            :values="edgeIntensityMatrix"
-            result="EDGE_INTENSITY"
+          <GeFilterEdgeProcessing
+            :surface-reflection="o.surfaceReflection"
+            :intensity="props.intensity"
           />
-          <feComponentTransfer in="EDGE_INTENSITY" result="EDGE_MASK">
-            <feFuncA type="discrete" :tableValues="edgeMaskTable" />
-          </feComponentTransfer>
 
           <feOffset in="SourceGraphic" dx="0" dy="0" result="CENTER_ORIGINAL" />
 
-          <feDisplacementMap
-            in="SourceGraphic"
-            in2="DISPLACEMENT_MAP"
-            xChannelSelector="R"
-            yChannelSelector="B"
-            :scale="redScale"
-            result="RED_DISPLACED"
-          />
-          <feColorMatrix
-            in="RED_DISPLACED"
-            type="matrix"
-            values="1 0 0 0 0
-                    0 0 0 0 0
-                    0 0 0 0 0
-                    0 0 0 1 0"
-            result="RED_CHANNEL"
+          <GeFilterDisplacementMap
+            :displacement-scale="o.displacementScale"
+            :displacement-curvature="o.displacementCurvature"
+            :aberration-intensity="o.aberrationIntensity"
+            :intensity="props.intensity"
           />
 
-          <feDisplacementMap
-            in="SourceGraphic"
-            in2="DISPLACEMENT_MAP"
-            xChannelSelector="R"
-            yChannelSelector="B"
-            :scale="greenScale"
-            result="GREEN_DISPLACED"
-          />
-          <feColorMatrix
-            in="GREEN_DISPLACED"
-            type="matrix"
-            values="0 0 0 0 0
-                    0 1 0 0 0
-                    0 0 0 0 0
-                    0 0 0 1 0"
-            result="GREEN_CHANNEL"
+          <GeFilterComposite
+            :glass-blur="o.glassBlur"
+            :refraction-depth="o.refractionDepth"
+            :intensity="props.intensity"
           />
 
-          <feDisplacementMap
-            in="SourceGraphic"
-            in2="DISPLACEMENT_MAP"
-            xChannelSelector="R"
-            yChannelSelector="B"
-            :scale="blueScale"
-            result="BLUE_DISPLACED"
-          />
-          <feColorMatrix
-            in="BLUE_DISPLACED"
-            type="matrix"
-            values="0 0 0 0 0
-                    0 0 0 0 0
-                    0 0 1 0 0
-                    0 0 0 1 0"
-            result="BLUE_CHANNEL"
-          />
-
-          <feBlend
-            in="GREEN_CHANNEL"
-            in2="BLUE_CHANNEL"
-            mode="screen"
-            result="GB_COMBINED"
-          />
-          <feBlend
-            in="RED_CHANNEL"
-            in2="GB_COMBINED"
-            mode="screen"
-            result="RGB_COMBINED"
-          />
-
-          <feGaussianBlur
-            :stdDeviation="liquidGlassBlur"
-            in="RGB_COMBINED"
-            result="ABERRATED_BLURRED"
-          />
-
-          <feComposite
-            in="ABERRATED_BLURRED"
-            in2="EDGE_MASK"
-            operator="in"
-            result="EDGE_ABERRATION"
-          />
-
-          <feComponentTransfer in="EDGE_MASK" result="INVERTED_MASK">
-            <feFuncA type="table" tableValues="1 0" />
-          </feComponentTransfer>
-          <feComposite
-            in="CENTER_ORIGINAL"
-            in2="INVERTED_MASK"
-            operator="in"
-            result="CENTER_CLEAN"
-          />
-
-          <feComposite
-            in="EDGE_ABERRATION"
-            in2="CENTER_CLEAN"
-            operator="over"
-            result="FINAL_EFFECT"
-          />
-
-          <feColorMatrix
-            in="FINAL_EFFECT"
-            type="matrix"
-            :values="surfaceEnhancementMatrix"
+          <GeFilterEnhancement
+            :glass-saturation="o.glassSaturation"
+            :surface-reflection="o.surfaceReflection"
+            :intensity="props.intensity"
           />
         </filter>
       </defs>
@@ -168,8 +71,19 @@ SVG фильтр для стеклянного эффекта
 </template>
 
 <script setup>
-import { computed, onMounted, onBeforeUnmount, watch, nextTick, ref } from "vue";
-import { ShaderDisplacementGenerator } from "./ShaderDisplacementGenerator.ts";
+import {
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  nextTick,
+  ref,
+} from "vue";
+import GeFilterDisplacementMapImg from "./GeFilterDisplacementMapImg.vue";
+import GeFilterEdgeProcessing from "./GeFilterEdgeProcessing.vue";
+import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
+import GeFilterComposite from "./GeFilterComposite.vue";
+import GeFilterEnhancement from "./GeFilterEnhancement.vue";
 
 const props = defineProps({
   options: { type: Object, required: true },
@@ -177,57 +91,22 @@ const props = defineProps({
 });
 
 const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
-const filterReady = ref(false);
-const shaderMapUrl = ref("");
 const glassFilterEl = ref(null);
+const displacementMapImg = ref(null);
 const glassFilterCss = computed(() => `url(#${filterId})`);
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
+
+const shaderMapUrl = computed(
+  () => displacementMapImg.value?.shaderMapUrl || ""
+);
+const filterReady = computed(() => !!shaderMapUrl.value);
 
 let maskElement = null;
 let resizeObserver = null;
 let listenersAttached = false;
 let rafId = 0;
 
-const generateShaderDisplacementMap = () => {
-  const o = props.options;
-  const generator = new ShaderDisplacementGenerator({
-    width: 400,
-    height: 400,
-    cornerRadius: o.shaderCornerRadius,
-    distortionStart: o.shaderDistortionStart,
-    distortionEnd: o.shaderDistortionEnd,
-    distortionOffset: o.shaderDistortionOffset,
-    scalingStart: o.shaderScalingStart,
-    scalingEnd: o.shaderScalingEnd,
-  });
-  shaderMapUrl.value = generator.updateShader();
-  filterReady.value = true;
-  generator.destroy();
-};
-
 const o = props.options;
-
-const baseScale = computed(() => o.displacementScale * o.displacementCurvature * props.intensity);
-
-const redScale = computed(() => baseScale.value * (1 + o.aberrationIntensity * 0.01));
-const greenScale = computed(() => baseScale.value);
-const blueScale = computed(() => baseScale.value * (1 - o.aberrationIntensity * 0.01));
-const liquidGlassBlur = computed(() => {
-  return o.glassBlur * 0.02 * o.refractionDepth * props.intensity;
-});
-const edgeMaskTable = "0 0.1 1";
-
-const edgeIntensityMatrix = computed(() => {
-  const sv = o.surfaceReflection * props.intensity * 0.3;
-  return `${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 0 0 0 1 0`;
-});
-
-const surfaceEnhancementMatrix = computed(() => {
-  const contrastEffect = (o.glassSaturation - 180) / 300;
-  const contrast = 1 - contrastEffect * props.intensity;
-  const bv = o.surfaceReflection * 0.02 * props.intensity;
-  return `${contrast} 0 0 0 ${bv} 0 ${contrast} 0 0 ${bv} 0 0 ${contrast} 0 ${bv} 0 0 0 1 0`;
-});
 
 const updateMaskRect = () => {
   if (!maskElement || rafId) return;
@@ -245,13 +124,21 @@ const updateMaskRect = () => {
 
 const attachListeners = () => {
   if (listenersAttached) return;
-  ["scroll", "resize"].forEach(e => window.addEventListener(e, updateMaskRect, e === "scroll" ? { passive: true } : undefined));
+  ["scroll", "resize"].forEach((e) =>
+    window.addEventListener(
+      e,
+      updateMaskRect,
+      e === "scroll" ? { passive: true } : undefined
+    )
+  );
   listenersAttached = true;
 };
 
 const detachListeners = () => {
   if (!listenersAttached) return;
-  ["scroll", "resize"].forEach(e => window.removeEventListener(e, updateMaskRect));
+  ["scroll", "resize"].forEach((e) =>
+    window.removeEventListener(e, updateMaskRect)
+  );
   listenersAttached = false;
 };
 
@@ -261,7 +148,10 @@ const applyFilterToMaskElement = () => {
     if (el.classList?.contains("mask-element")) {
       maskElement = el;
       maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
-      maskElement.style.setProperty("--displacement-map-url", `url(${shaderMapUrl.value})`);
+      maskElement.style.setProperty(
+        "--displacement-map-url",
+        `url(${shaderMapUrl.value})`
+      );
       updateMaskRect();
       resizeObserver?.disconnect();
       resizeObserver = new ResizeObserver(updateMaskRect);
@@ -276,47 +166,11 @@ const applyFilterToMaskElement = () => {
 onMounted(async () => {
   await nextTick();
   applyFilterToMaskElement();
-  generateShaderDisplacementMap();
 });
 
-watch(() => filterReady.value, (ready) => ready && applyFilterToMaskElement());
-
 watch(
-  () => [
-    props.options.shaderCornerRadius,
-    props.options.shaderDistortionStart,
-    props.options.shaderDistortionEnd,
-    props.options.shaderDistortionOffset,
-    props.options.shaderScalingStart,
-    props.options.shaderScalingEnd,
-  ],
-  () => generateShaderDisplacementMap(),
-  { deep: true }
-);
-
-watch(
-  () => [
-    props.intensity,
-    baseScale.value,
-    redScale.value,
-    greenScale.value,
-    blueScale.value,
-    liquidGlassBlur.value,
-    edgeIntensityMatrix.value,
-    surfaceEnhancementMatrix.value,
-  ],
-  ([intensity, base, red, green, blue, blur, edge, surface]) => {
-    console.log('GeFilter computed values:', {
-      intensity,
-      baseScale: base,
-      redScale: red,
-      greenScale: green,
-      blueScale: blue,
-      liquidGlassBlur: blur,
-      edgeIntensityMatrix: edge,
-      surfaceEnhancementMatrix: surface,
-    });
-  }
+  () => filterReady.value,
+  (ready) => ready && applyFilterToMaskElement()
 );
 
 onBeforeUnmount(() => {
