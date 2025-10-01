@@ -43,8 +43,7 @@
         class="intro-content-bullet"
         :variants="squareContentBulletVariants"
         :animate="getAnimationState()"
-      >
-        •
+        >•
       </motion.div>
     </motion.div>
   </motion.li>
@@ -170,19 +169,18 @@ const additionalMargin = computed(() => props.activeCount * -30);
   line-height: 1;
   user-select: none;
   pointer-events: none;
-  text-shadow: 0 0 6px var(--glow-color), 0 0 14px var(--glow-color),
-    0 0 28px var(--glow-color);
 }
 
 .intro-content-bullet {
   display: grid;
   place-items: center;
-  color: #5f5f5f;
+  color: #3d3d3d;
   font-size: 60px;
   line-height: 1;
   user-select: none;
   pointer-events: none;
   position: absolute;
-  transform: translateY(-5%);
+  text-align: center;
+  transform: translateY(-25%) translateX(10%);
 }
 </style>

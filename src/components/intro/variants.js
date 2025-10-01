@@ -1,3 +1,6 @@
+import { scale } from "motion-v";
+import { transform } from "typescript";
+
 // Color mappings for different states
 const COLOR_MAP = [
   { r: 28, g: 100, b: 255 },
@@ -36,20 +39,20 @@ export const boxVariants = {
       rotate: 0,
       scale: 1,
       backgroundColor: getColorWithAlpha(index, 0),
-      border: "1px solid #333333",
+      border: "1px solid #111111",
     };
   },
   hover: ({ index, additionalMargin }) => {
     const baseMargin = 0;
     return {
-      "--element-side-size": "220px",
+      "--element-side-size": "400px",
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
-      marginTop: "-55px",
-      rotate: 45,
+      marginTop: "-150px",
+      rotate: 15,
       scale: 1,
       backgroundColor: getColorWithAlpha(index, 0),
-      border: "1px solid #333333",
+      border: "1px solid #222222",
     };
   },
   active: ({ index, additionalMargin }) => {
@@ -61,7 +64,8 @@ export const boxVariants = {
       y: index % 2 === 0 ? "-25%" : "-115%",
       rotate: 45,
       scale: 1,
-      backgroundColor: getColorWithAlpha("#000000", 0),
+      opacity: 1,
+      backgroundColor: getColorWithAlpha("#ff0000ff", 1),
       border: "2px solid #333333",
     };
   },
@@ -69,8 +73,8 @@ export const boxVariants = {
 
 export const contentWrapVariants = {
   default: {
-    opacity: 0,
-    scale: 20,
+    opacity: 1,
+    scale: 1,
     x: "-50%",
     y: "-50%",
   },
@@ -91,13 +95,15 @@ export const contentWrapVariants = {
 export const squareContentNumVariants = {
   default: {
     opacity: 0,
-    "--glow-color": "rgba(255,255,255,0)",
+    scale: 1,
+    // "--glow-color": "rgba(255,255,255,0)",
     color: "rgba(255,255,255,0)",
   },
   hover: (index) => {
-    const color = getColorWithAlpha(index, 0);
+    const color = getColorWithAlpha(index, 1);
     return {
       opacity: 1,
+      rotate: -15,
       "--glow-color": color,
       color: color,
     };
