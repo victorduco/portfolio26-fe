@@ -30,15 +30,6 @@
       :intensity
     />
 
-    <GeOutline
-      :options="{
-        outlineIntensity: opts.outlineIntensity,
-        outlineGlassTintHue: opts.outlineGlassTintHue,
-        surfaceReflection: opts.surfaceReflection,
-        shadowDepth: opts.shadowDepth,
-      }"
-      :intensity
-    />
   </div>
 </template>
 
@@ -49,7 +40,6 @@ import GeFilter from "./GeFilter.vue";
 import GeHighlight from "./GeHighlight.vue";
 import GeNoise from "./GeNoise.vue";
 import GeLight from "./GeLight.vue";
-import GeOutline from "./GeOutline.vue";
 
 const props = defineProps({
   userOptions: { type: Object, default: () => ({}) },

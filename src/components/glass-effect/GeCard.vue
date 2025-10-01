@@ -1,5 +1,5 @@
 <template>
-  <div class="glass-card" :style="cardStyle" />
+  <div class="glass-card" :style="combinedStyle" />
 </template>
 
 <script setup>
@@ -10,46 +10,46 @@ const props = defineProps({
   intensity: { type: Number, default: 1 },
 });
 
-const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
-const o = props.options;
-const i = props.intensity;
+const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+const { options: o, intensity: i } = props;
 
-const cardStyle = computed(() => {
-  if (i === 0) {
+const combinedStyle = computed(() => {
+  if (!i)
     return {
       boxShadow: "none",
-      backgroundColor: "#000000",
+      backgroundColor: "#000",
       border: "none",
       backdropFilter: "none",
       backgroundImage: "none",
     };
-  }
 
-  const brightness = o.glassBrightness / 100;
-  const contrast = o.glassContrast / 100;
-  const h = o.glassTintHue;
-  const opacity = o.glassTintOpacity;
+  const {
+    glassBrightness,
+    glassContrast,
+    glassTintHue: h,
+    glassTintOpacity: op,
+    shadowDepth,
+    glassBlur,
+    glassSaturation,
+    outlineGlassTintHue: oh,
+    outlineIntensity: oi,
+    surfaceReflection: sr,
+  } = o;
+  const brightness = glassBrightness / 100;
+  const contrast = glassContrast / 100;
+  const base = clamp(0.18 + oi * 0.28, 0.22, 0.6) * sr;
+  const hover = clamp(0.28 + oi * 0.38, 0.3, 0.75) * sr;
 
   return {
-    boxShadow: `0 24px 70px rgba(6, 10, 24, ${o.shadowDepth * i})`,
-    backgroundColor: `hsla(${h}, 50%, 14%, ${clamp(
-      1 - (1 - opacity * 0.8) * i,
-      0,
-      1
-    )})`,
-    border: `1px solid hsla(${h}, 92%, 86%, ${0.42 * i})`,
-    backdropFilter: `blur(${o.glassBlur * i}px) saturate(${
-      100 + (o.glassSaturation - 100) * i
+    boxShadow: `0 24px 70px rgba(6, 10, 24, ${shadowDepth * i})`,
+    backdropFilter: `blur(${glassBlur * i}px) saturate(${
+      100 + (glassSaturation - 100) * i
     }%) brightness(${1 + (brightness - 1) * i}) contrast(${
       1 + (contrast - 1) * i
     })`,
-    backgroundImage: `linear-gradient(145deg, hsla(${h}, 70%, ${Math.min(
-      82,
-      60 + opacity * 35
-    )}%, ${clamp(opacity * 1.25 * i, 0, 0.55)}) 0%, hsla(${h}, 50%, ${Math.max(
-      32,
-      46 + opacity * 18
-    )}%, ${clamp(opacity * 0.9 * i, 0, 0.42)}) 100%)`,
+    "--outline-opacity": `calc(${(base * i).toFixed(
+      3
+    )} + var(--distortion-hovered, 0) * ${((hover - base) * i).toFixed(3)})`,
   };
 });
 </script>
