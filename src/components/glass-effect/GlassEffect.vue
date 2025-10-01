@@ -87,11 +87,14 @@ const contentBackdropStyle = computed(() => {
   const i = finalIntensity.value;
   const brightness = opts.glassBrightness / 100;
   const contrast = opts.glassContrast / 100;
-  const finalBrightness = 1 + (brightness - 1) * i;
-  const finalContrast = 1 + (contrast - 1) * i;
 
-  // Additional filters available:
-  // hue-rotate(deg), invert(0-1), sepia(0-1), grayscale(0-1), opacity(0-1)
+  // Filter opacity controls the overall intensity of brightness/contrast
+  const filterOpacity = opts.contentFilterOpacity * i;
+
+  // Apply opacity to the effect strength, not as separate filter
+  const finalBrightness = 1 + (brightness - 1) * filterOpacity;
+  const finalContrast = 1 + (contrast - 1) * filterOpacity;
+
   return {
     backdropFilter: `brightness(${finalBrightness}) contrast(${finalContrast})`
   };

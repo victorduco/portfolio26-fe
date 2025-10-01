@@ -92,6 +92,66 @@
           </label>
         </section>
 
+        <!-- Content Filters Section -->
+        <section class="glass-debugger__section glass-debugger__section--content">
+          <h4>Content Filters</h4>
+
+          <label class="glass-debugger__field">
+            <span>Brightness</span>
+            <input
+              type="range"
+              min="0"
+              max="500"
+              step="1"
+              v-model.number="globalOptions.glassBrightness"
+            />
+            <input
+              type="number"
+              min="0"
+              max="500"
+              v-model.number="globalOptions.glassBrightness"
+              class="glass-debugger__number-input"
+            />
+          </label>
+
+          <label class="glass-debugger__field">
+            <span>Contrast</span>
+            <input
+              type="range"
+              min="0"
+              max="500"
+              step="1"
+              v-model.number="globalOptions.glassContrast"
+            />
+            <input
+              type="number"
+              min="0"
+              max="500"
+              v-model.number="globalOptions.glassContrast"
+              class="glass-debugger__number-input"
+            />
+          </label>
+
+          <label class="glass-debugger__field">
+            <span>Filter Opacity (mix of filtered/original)</span>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              v-model.number="globalOptions.contentFilterOpacity"
+            />
+            <input
+              type="number"
+              min="0"
+              max="1"
+              step="0.01"
+              v-model.number="globalOptions.contentFilterOpacity"
+              class="glass-debugger__number-input"
+            />
+          </label>
+        </section>
+
         <!-- Glass Material Section -->
         <section class="glass-debugger__section">
           <h4>Glass Material</h4>
@@ -128,42 +188,6 @@
               min="0"
               max="400"
               v-model.number="globalOptions.glassSaturation"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Glass Brightness</span>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              step="1"
-              v-model.number="globalOptions.glassBrightness"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              v-model.number="globalOptions.glassBrightness"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Glass Contrast</span>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              step="1"
-              v-model.number="globalOptions.glassContrast"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              v-model.number="globalOptions.glassContrast"
               class="glass-debugger__number-input"
             />
           </label>
@@ -1107,6 +1131,17 @@ onBeforeUnmount(() => {
 
 .glass-debugger__section--global h4 {
   color: rgba(150, 180, 255, 0.9);
+}
+
+.glass-debugger__section--content {
+  background: rgba(150, 100, 255, 0.08);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(150, 100, 255, 0.2);
+}
+
+.glass-debugger__section--content h4 {
+  color: rgba(180, 150, 255, 0.9);
 }
 
 .glass-debugger__section--displacement {

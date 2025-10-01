@@ -2,12 +2,7 @@ import { scale } from "motion-v";
 import { transform } from "typescript";
 
 // Color mappings for different states
-const COLOR_MAP = [
-  "#27A9FF",
-  "#FF83A2",
-  "#00FFBC",
-  "#FFFF78",
-];
+const COLOR_MAP = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
 const hexToRgba = (hex, alpha) => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -129,7 +124,7 @@ export const squareContentVariants = {
 };
 
 export const glassIntensityVariants = {
-  default: { intensity: 1 },
+  default: { intensity: 0 },
   hover: { intensity: 1 },
   active: { intensity: 1 },
 };
