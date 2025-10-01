@@ -15,7 +15,7 @@
     initial="default"
     class="mask-element intro-square"
     :data-state="isActive"
-    v-mask-element
+    v-mask-element="'#171717'"
   >
     <GlassEffect
       ref="glassEffectRef"

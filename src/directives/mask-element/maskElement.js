@@ -3,7 +3,7 @@ import { syncBackground } from "./syncBackground";
 import "./maskElement.css";
 
 export const maskElement = {
-  mounted(el) {
+  mounted(el, binding) {
     const { document: doc, requestAnimationFrame: raf } = globalThis;
 
     const scope = effectScope();
@@ -13,6 +13,11 @@ export const maskElement = {
       // Create inner element for background compensation
       const innerElement = doc.createElement("div");
       innerElement.className = "mask-element-inner";
+
+      // Apply custom color if provided
+      if (binding.value) {
+        innerElement.style.backgroundColor = binding.value;
+      }
 
       // Insert as first child so it's behind existing content
       el.insertBefore(innerElement, el.firstChild);
@@ -43,6 +48,18 @@ export const maskElement = {
     });
 
     el._maskElement = { scope, ...state };
+  },
+
+  updated(el, binding) {
+    const inst = el._maskElement;
+    if (!inst?.innerElement) return;
+
+    // Update color if changed
+    if (binding.value) {
+      inst.innerElement.style.backgroundColor = binding.value;
+    } else {
+      inst.innerElement.style.backgroundColor = "";
+    }
   },
 
   unmounted(el) {

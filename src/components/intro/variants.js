@@ -35,7 +35,7 @@ export const boxVariants = {
       y: 0,
       rotate: 0,
       scale: 1,
-      background: "#2A2A2A",
+      background: "transparent",
       border: "0px solid #333333",
     };
   },
