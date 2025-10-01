@@ -36,7 +36,7 @@
     <feFuncA type="table" tableValues="1 0" />
   </feComponentTransfer>
   <feComposite
-    in="CENTER_ORIGINAL"
+    in="SourceGraphic"
     in2="INVERTED_MASK"
     operator="in"
     result="CENTER_CLEAN"

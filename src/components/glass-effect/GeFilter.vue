@@ -13,21 +13,18 @@
     />
 
     <svg
-      v-if="filterReady && props.intensity >= 0.01"
+      v-if="shaderMapUrl && props.intensity >= 0.01"
       class="glass-filter__svg"
       aria-hidden="true"
     >
       <defs>
-        <filter
-          :id="filterId"
-          x="-35%"
+        <!-- вернуть если надо 
+         filterUnits="userSpaceOnUse"
+          primitiveUnits="userSpaceOnUse"           x="-35%"
           y="-35%"
           width="170%"
-          height="170%"
-          color-interpolation-filters="sRGB"
-          filterUnits="userSpaceOnUse"
-          primitiveUnits="userSpaceOnUse"
-        >
+          height="170%"-->
+        <filter :id="filterId" color-interpolation-filters="sRGB">
           <feImage
             :x="maskRect.left"
             :y="maskRect.top"
@@ -36,15 +33,12 @@
             result="DISPLACEMENT_MAP"
             preserveAspectRatio="xMidYMid slice"
             :href="shaderMapUrl"
-            :xlink:href="shaderMapUrl"
           />
 
           <GeFilterEdgeProcessing
             :surface-reflection="o.surfaceReflection"
             :intensity="props.intensity"
           />
-
-          <feOffset in="SourceGraphic" dx="0" dy="0" result="CENTER_ORIGINAL" />
 
           <GeFilterDisplacementMap
             :displacement-scale="o.displacementScale"
@@ -90,77 +84,60 @@ const props = defineProps({
   intensity: { type: Number, required: true },
 });
 
+const { options: o } = props;
 const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
 const glassFilterEl = ref(null);
 const displacementMapImg = ref(null);
-const glassFilterCss = computed(() => `url(#${filterId})`);
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
-
 const shaderMapUrl = computed(
   () => displacementMapImg.value?.shaderMapUrl || ""
 );
-const filterReady = computed(() => !!shaderMapUrl.value);
 
 let maskElement = null;
 let resizeObserver = null;
-let listenersAttached = false;
 let rafId = 0;
-
-const o = props.options;
 
 const updateMaskRect = () => {
   if (!maskElement || rafId) return;
   rafId = requestAnimationFrame(() => {
-    const r = maskElement.getBoundingClientRect();
+    const { left, top, width, height } = maskElement.getBoundingClientRect();
     maskRect.value = {
-      left: Math.round(r.left + window.scrollX),
-      top: Math.round(r.top + window.scrollY),
-      width: Math.round(r.width),
-      height: Math.round(r.height),
+      left: Math.round(left + window.scrollX),
+      top: Math.round(top + window.scrollY),
+      width: Math.round(width),
+      height: Math.round(height),
     };
     rafId = 0;
   });
 };
 
-const attachListeners = () => {
-  if (listenersAttached) return;
-  ["scroll", "resize"].forEach((e) =>
-    window.addEventListener(
-      e,
-      updateMaskRect,
-      e === "scroll" ? { passive: true } : undefined
-    )
-  );
-  listenersAttached = true;
+const toggleListeners = (attach) => {
+  const method = attach ? "addEventListener" : "removeEventListener";
+  window[method]("scroll", updateMaskRect, { passive: true });
+  window[method]("resize", updateMaskRect);
 };
 
-const detachListeners = () => {
-  if (!listenersAttached) return;
-  ["scroll", "resize"].forEach((e) =>
-    window.removeEventListener(e, updateMaskRect)
-  );
-  listenersAttached = false;
+const cleanup = () => {
+  resizeObserver?.disconnect();
+  toggleListeners(false);
+  rafId && cancelAnimationFrame(rafId);
 };
 
 const applyFilterToMaskElement = () => {
-  let el = glassFilterEl.value?.parentElement;
-  while (el && el !== document.body) {
-    if (el.classList?.contains("mask-element")) {
-      maskElement = el;
-      maskElement.style.setProperty("--glass-filter", glassFilterCss.value);
-      maskElement.style.setProperty(
-        "--displacement-map-url",
-        `url(${shaderMapUrl.value})`
-      );
-      updateMaskRect();
-      resizeObserver?.disconnect();
-      resizeObserver = new ResizeObserver(updateMaskRect);
-      resizeObserver.observe(maskElement);
-      attachListeners();
-      break;
-    }
-    el = el.parentElement;
-  }
+  maskElement = glassFilterEl.value?.parentElement?.closest(".mask-element");
+  if (!maskElement) return;
+
+  maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);
+  maskElement.style.setProperty(
+    "--displacement-map-url",
+    `url(${shaderMapUrl.value})`
+  );
+
+  updateMaskRect();
+  resizeObserver?.disconnect();
+  resizeObserver = new ResizeObserver(updateMaskRect);
+  resizeObserver.observe(maskElement);
+  toggleListeners(true);
 };
 
 onMounted(async () => {
@@ -168,16 +145,9 @@ onMounted(async () => {
   applyFilterToMaskElement();
 });
 
-watch(
-  () => filterReady.value,
-  (ready) => ready && applyFilterToMaskElement()
-);
+watch(shaderMapUrl, (url) => url && applyFilterToMaskElement());
 
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect();
-  detachListeners();
-  rafId && cancelAnimationFrame(rafId);
-});
+onBeforeUnmount(cleanup);
 
 defineExpose({ filterId, shaderMapUrl });
 </script>

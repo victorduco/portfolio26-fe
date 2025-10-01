@@ -1,11 +1,11 @@
 // Glass effect configuration for intro rectangles
 export const INTRO_GLASS_CONFIG = {
   // GeFilter - SVG displacement map
-  displacementScale: 0, // GeFilter: feDisplacementMap scale (baseScale)
-  aberrationIntensity: 0, // GeFilter: chromatic aberration offset (redScale/blueScale)
-  displacementCurvature: 0, // GeFilter: displacement curvature multiplier (baseScale)
-  refractionDepth: 0, // GeFilter: blur calculation (liquidGlassBlur)
-  surfaceReflection: 0, // GeFilter: feColorMatrix edge intensity & surface enhancement
+  displacementScale: 50, // GeFilter: feDisplacementMap scale (baseScale)
+  aberrationIntensity: 10, // GeFilter: chromatic aberration offset (redScale/blueScale)
+  displacementCurvature: 1, // GeFilter: displacement curvature multiplier (baseScale)
+  refractionDepth: 1, // GeFilter: blur calculation (liquidGlassBlur)
+  surfaceReflection: 1, // GeFilter: feColorMatrix edge intensity & surface enhancement
 
   // GeCard - backdrop filter & background
   glassBlur: 0, // GeCard: backdropFilter blur, GeFilter: liquidGlassBlur
