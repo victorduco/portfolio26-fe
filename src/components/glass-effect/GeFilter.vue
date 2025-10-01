@@ -213,8 +213,7 @@ const redScale = computed(() => baseScale.value * (1 + o.aberrationIntensity * 0
 const greenScale = computed(() => baseScale.value);
 const blueScale = computed(() => baseScale.value * (1 - o.aberrationIntensity * 0.01));
 const liquidGlassBlur = computed(() => {
-  const minBlur = 0.12 * props.intensity;
-  return Math.max(minBlur, o.glassBlur * 0.02 * o.refractionDepth * props.intensity);
+  return o.glassBlur * 0.02 * o.refractionDepth * props.intensity;
 });
 const edgeMaskTable = "0 0.1 1";
 

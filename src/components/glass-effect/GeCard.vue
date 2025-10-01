@@ -25,17 +25,17 @@ const cardStyle = computed(() => {
     };
   }
 
-  const brightness = Math.max(0.5, o.glassBrightness / 100);
-  const contrast = Math.max(0.5, o.glassContrast / 100);
+  const brightness = o.glassBrightness / 100;
+  const contrast = o.glassContrast / 100;
   const h = o.glassTintHue;
   const opacity = o.glassTintOpacity;
 
   return {
     boxShadow: `0 24px 70px rgba(6, 10, 24, ${o.shadowDepth * i})`,
-    backgroundColor: `hsla(${h}, 50%, 14%, ${clamp(1 - (1 - opacity * 0.8) * i, 0.4, 1)})`,
+    backgroundColor: `hsla(${h}, 50%, 14%, ${clamp(1 - (1 - opacity * 0.8) * i, 0, 1)})`,
     border: `1px solid hsla(${h}, 92%, 86%, ${0.42 * i})`,
     backdropFilter: `blur(${o.glassBlur * i}px) saturate(${100 + (o.glassSaturation - 100) * i}%) brightness(${1 + (brightness - 1) * i}) contrast(${1 + (contrast - 1) * i})`,
-    backgroundImage: `linear-gradient(145deg, hsla(${h}, 70%, ${Math.min(82, 60 + opacity * 35)}%, ${clamp(opacity * 1.25 * i, 0.01, 0.55)}) 0%, hsla(${h}, 50%, ${Math.max(32, 46 + opacity * 18)}%, ${clamp(opacity * 0.9 * i, 0.01, 0.42)}) 100%)`,
+    backgroundImage: `linear-gradient(145deg, hsla(${h}, 70%, ${Math.min(82, 60 + opacity * 35)}%, ${clamp(opacity * 1.25 * i, 0, 0.55)}) 0%, hsla(${h}, 50%, ${Math.max(32, 46 + opacity * 18)}%, ${clamp(opacity * 0.9 * i, 0, 0.42)}) 100%)`,
   };
 });
 </script>

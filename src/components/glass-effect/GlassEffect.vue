@@ -2,6 +2,8 @@
   <div class="glass-effect">
     <GeCard :options="opts" :intensity />
 
+    <GeFilter :options="opts" :intensity />
+
     <div class="glass-effect__content">
       <slot />
     </div>
