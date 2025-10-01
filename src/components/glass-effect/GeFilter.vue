@@ -318,10 +318,6 @@ onMounted(async () => {
 });
 
 watch(
-  () => filterId,
-  () => applyFilterToMaskElement()
-);
-watch(
   () => filterReady.value,
   (ready) => {
     if (ready) applyFilterToMaskElement();

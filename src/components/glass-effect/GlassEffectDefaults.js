@@ -35,12 +35,6 @@ export function createEffectOptions(userOptions = {}) {
     outlineIntensity: 0.4,
     outlineGlassTintHue: 210,
 
-    // Advanced effects
-    glassBrightness: 115,
-    glassContrast: 118,
-    glassTintHue: 210,
-    glassTintOpacity: 0.38,
-
     // Shader distortion parameters
     shaderCornerRadius: 0.2,
     shaderDistortionStart: 0.3,

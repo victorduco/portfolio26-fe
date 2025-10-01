@@ -1,6 +1,6 @@
 <template>
   <div class="glass-effect">
-    <GeFilter ref="filterRef" :options="opts" :intensity />
+    <GeFilter :options="opts" :intensity />
 
     <div class="glass-effect__content">
       <slot />
@@ -25,7 +25,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { createEffectOptions } from "./GlassEffectDefaults.js";
 import GeFilter from "./GeFilter.vue";
 import GeHighlight from "./GeHighlight.vue";
@@ -34,10 +33,6 @@ import GeLight from "./GeLight.vue";
 import GeOutline from "./GeOutline.vue";
 
 const props = defineProps({
-  sourceElementId: {
-    type: String,
-    default: "",
-  },
   userOptions: {
     type: Object,
     default: () => ({}),

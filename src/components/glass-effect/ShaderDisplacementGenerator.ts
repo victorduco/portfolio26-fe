@@ -32,7 +32,7 @@ export class ShaderDisplacementGenerator {
     this.context = context;
   }
 
-  updateShader(mousePosition?: Vec2): string {
+  updateShader(): string {
     const w = this.options.width * this.canvasDPI;
     const h = this.options.height * this.canvasDPI;
 
@@ -143,9 +143,5 @@ export class ShaderDisplacementGenerator {
 
   destroy(): void {
     this.canvas.remove();
-  }
-
-  getScale(): number {
-    return this.canvasDPI;
   }
 }
