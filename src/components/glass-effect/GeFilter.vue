@@ -6,7 +6,7 @@ SVG фильтр для стеклянного эффекта
   <div ref="glassFilterEl" class="glass-filter">
     <!-- SVG с displacement картой как отдельный элемент (источник пикселей тот же, что и в feImage) -->
     <svg
-      v-if="filterReady && props.intensity > 0"
+      v-if="filterReady && props.intensity >= 0.01"
       class="glass-filter__displacement-svg"
       aria-hidden="true"
     >
@@ -23,7 +23,7 @@ SVG фильтр для стеклянного эффекта
     </svg>
 
     <!-- SVG фильтр для displacement эффекта -->
-    <svg v-if="filterReady && props.intensity > 0" class="glass-filter__svg" aria-hidden="true">
+    <svg v-if="filterReady && props.intensity >= 0.01" class="glass-filter__svg" aria-hidden="true">
       <defs>
         <filter
           :id="filterId"
@@ -206,23 +206,32 @@ const generateShaderDisplacementMap = () => {
 };
 
 const o = props.options;
-const i = props.intensity;
-const baseScale = o.displacementScale * o.displacementCurvature * i;
 
-const redScale = computed(() => baseScale * (1 + o.aberrationIntensity * 0.01));
-const greenScale = computed(() => baseScale);
-const blueScale = computed(() => baseScale * (1 - o.aberrationIntensity * 0.01));
-const liquidGlassBlur = computed(() => Math.max(0.12, o.glassBlur * 0.02 * o.refractionDepth * i));
+const baseScale = computed(() => o.displacementScale * o.displacementCurvature * props.intensity);
+
+const redScale = computed(() => baseScale.value * (1 + o.aberrationIntensity * 0.01));
+const greenScale = computed(() => baseScale.value);
+const blueScale = computed(() => baseScale.value * (1 - o.aberrationIntensity * 0.01));
+const liquidGlassBlur = computed(() => {
+  const minBlur = 0.12 * props.intensity;
+  return Math.max(minBlur, o.glassBlur * 0.02 * o.refractionDepth * props.intensity);
+});
 const edgeMaskTable = "0 0.1 1";
 
-const si = o.surfaceReflection;
-const sv = 0.3 * si;
-const edgeIntensityMatrix = `${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 0 0 0 1 0`;
+const edgeIntensityMatrix = computed(() => {
+  const si = o.surfaceReflection * props.intensity;
+  const sv = 0.3 * si;
+  return `${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 ${sv} ${sv} ${sv} 0 0 0 0 0 1 0`;
+});
 
-const contrast = 1 + (o.glassSaturation - 180) / 300;
-const brightness = 1 + si * 0.2;
-const bv = brightness * 0.1;
-const surfaceEnhancementMatrix = `${contrast} 0 0 0 ${bv} 0 ${contrast} 0 0 ${bv} 0 0 ${contrast} 0 ${bv} 0 0 0 1 0`;
+const surfaceEnhancementMatrix = computed(() => {
+  const si = o.surfaceReflection * props.intensity;
+  const contrastEffect = (o.glassSaturation - 180) / 300;
+  const contrast = 1 + contrastEffect * props.intensity;
+  const brightness = 1 + si * 0.2;
+  const bv = brightness * 0.1;
+  return `${contrast} 0 0 0 ${bv} 0 ${contrast} 0 0 ${bv} 0 0 ${contrast} 0 ${bv} 0 0 0 1 0`;
+});
 
 const updateMaskRect = () => {
   if (!maskElement || rafId) return;
@@ -275,6 +284,19 @@ onMounted(async () => {
 });
 
 watch(() => filterReady.value, (ready) => ready && applyFilterToMaskElement());
+
+watch(
+  () => [
+    props.options.shaderCornerRadius,
+    props.options.shaderDistortionStart,
+    props.options.shaderDistortionEnd,
+    props.options.shaderDistortionOffset,
+    props.options.shaderScalingStart,
+    props.options.shaderScalingEnd,
+  ],
+  () => generateShaderDisplacementMap(),
+  { deep: true }
+);
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect();

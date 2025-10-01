@@ -117,6 +117,6 @@ export const squareContentBulletVariants = {
 
 export const glassIntensityVariants = {
   default: { intensity: 1 },
-  hover: { intensity: 1 },
-  active: { intensity: 0 },
+  hover: { intensity: 0.1 },
+  active: { intensity: 1 },
 };
