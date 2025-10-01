@@ -68,16 +68,14 @@ export const hoverDistortion = {
           -CLAMP_LIMIT_Y,
           CLAMP_LIMIT_Y
         );
-        const scaleX = 1 + limitedX * curvature;
-        const scaleY = 1 + limitedY * curvature;
+        const scaleX = 1 + Math.abs(limitedX) * curvature;
+        const scaleY = 1 + Math.abs(limitedY) * curvature;
         const translateX = mouseOffset.x * TRANSLATE_MULTIPLIER;
         const translateY = mouseOffset.y * TRANSLATE_MULTIPLIER;
 
         return `scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(
           3
-        )}) translate(${translateX.toFixed(2)}px, ${translateY.toFixed(
-          2
-        )}px)`;
+        )}) translate(${translateX.toFixed(2)}px, ${translateY.toFixed(2)}px)`;
       });
 
       const updateTransform = (value) => {
@@ -238,8 +236,9 @@ export const hoverDistortion = {
     const handleResize = () => state.updateCachedRect();
     window.addEventListener("resize", handleResize);
 
-    // Remove transform from transition to avoid lag - handled by RAF
-    el.style.transition = "opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1)";
+    // Add smooth transition with spring-like easing
+    el.style.transition =
+      "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1)";
     el.style.transformOrigin = "center center";
 
     el._hoverDistortion = {
