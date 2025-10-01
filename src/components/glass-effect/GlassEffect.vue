@@ -1,8 +1,8 @@
 <template>
   <div class="glass-effect">
-    <GeCard :options="opts" :intensity />
+    <GeCard :options="opts" :intensity="finalIntensity" />
 
-    <GeFilter :options="opts" :intensity :static-displacement-map="staticDisplacementMap" />
+    <GeFilter :options="opts" :intensity="finalIntensity" :static-displacement-map="finalStaticMap" />
 
     <div class="glass-effect__content">
       <slot />
@@ -10,7 +10,7 @@
 
     <GeHighlight
       :options="{ highlightReflection: opts.highlightReflection }"
-      :intensity
+      :intensity="finalIntensity"
     />
 
     <GeNoise
@@ -18,7 +18,7 @@
         noiseStrength: opts.noiseStrength,
         noiseRefractionDepth: opts.noiseRefractionDepth,
       }"
-      :intensity
+      :intensity="finalIntensity"
     />
 
     <GeLight
@@ -27,13 +27,13 @@
         lightSpread: opts.lightSpread,
         lightHue: opts.lightHue,
       }"
-      :intensity
+      :intensity="finalIntensity"
     />
-
   </div>
 </template>
 
 <script setup>
+import { inject, computed } from "vue";
 import { createEffectOptions } from "./GlassEffectDefaults.js";
 import GeCard from "./GeCard.vue";
 import GeFilter from "./GeFilter.vue";
@@ -47,7 +47,28 @@ const props = defineProps({
   staticDisplacementMap: { type: String, default: null },
 });
 
-const opts = createEffectOptions(props.userOptions);
+// Check if global debugger options are available
+const debuggerOptions = inject('glassDebuggerOptions', null);
+const debuggerIntensity = inject('glassDebuggerIntensity', null);
+const debuggerStaticMap = inject('glassDebuggerStaticMap', null);
+
+// Use debugger options if available, otherwise use user options
+// debuggerOptions is already reactive, so we can use it directly
+const opts = debuggerOptions ? debuggerOptions : createEffectOptions(props.userOptions);
+
+// Use global intensity and staticMap if debugger is active, otherwise use props
+// When debugger is active (not null), always use debugger values
+const finalIntensity = computed(() => {
+  const value = debuggerIntensity !== null ? debuggerIntensity.value : props.intensity;
+  console.log('GlassEffect finalIntensity:', value, 'debugger:', debuggerIntensity?.value, 'props:', props.intensity);
+  return value;
+});
+
+const finalStaticMap = computed(() => {
+  const value = debuggerStaticMap !== null ? debuggerStaticMap.value : props.staticDisplacementMap;
+  console.log('GlassEffect finalStaticMap:', value);
+  return value;
+});
 </script>
 
 <style scoped>
