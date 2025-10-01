@@ -2,7 +2,7 @@
   <div class="glass-effect">
     <GeCard :options="opts" :intensity />
 
-    <GeFilter :options="opts" :intensity />
+    <GeFilter :options="opts" :intensity :static-displacement-map="staticDisplacementMap" />
 
     <div class="glass-effect__content">
       <slot />
@@ -44,6 +44,7 @@ import GeLight from "./GeLight.vue";
 const props = defineProps({
   userOptions: { type: Object, default: () => ({}) },
   intensity: { type: Number, default: 1, validator: (v) => v >= 0 && v <= 1 },
+  staticDisplacementMap: { type: String, default: null },
 });
 
 const opts = createEffectOptions(props.userOptions);

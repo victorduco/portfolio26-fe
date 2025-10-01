@@ -21,6 +21,7 @@
       ref="glassEffectRef"
       :user-options="INTRO_GLASS_CONFIG"
       :intensity="glassIntensity"
+      static-displacement-map="/src/assets/mp3-34-thin.png"
       class="intro-square-glass"
     >
     </GlassEffect>

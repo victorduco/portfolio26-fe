@@ -1,6 +1,6 @@
 <template>
   <div class="keypad-container">
-    <BgToSvg source-selector="keypad-bg-export" :watch-data="enteredDigits" />
+    <BgToSvg source-selector="keypad-bg-export" :watch-data="enteredDigits" :render-delay="0" />
 
     <!-- Фоновый слой с введенными цифрами -->
     <div class="background-numbers" id="keypad-bg-export">

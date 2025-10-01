@@ -5,10 +5,8 @@ import { toSvg } from "html-to-image";
 const props = defineProps({
   sourceSelector: { type: String, required: true },
   watchData: { type: [Array, Object, String, Number], default: null },
+  renderDelay: { type: Number, default: 100 },
 });
-
-// Wait for layout and fonts to be ready before generating
-const RENDER_DELAY = 100;
 
 let isGenerating = false;
 
@@ -28,7 +26,7 @@ async function generateBackground() {
   const bodyBg = getComputedStyle(document.body).backgroundColor || "#000";
 
   console.log("[BgToSvg] Starting background generation...");
-  await new Promise((resolve) => setTimeout(resolve, RENDER_DELAY));
+  await new Promise((resolve) => setTimeout(resolve, props.renderDelay));
   await document.fonts.ready;
 
   const img = await toSvg(src, {

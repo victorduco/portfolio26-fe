@@ -1,6 +1,7 @@
 <template>
   <div ref="glassFilterEl" class="glass-filter">
     <GeFilterDisplacementMapImg
+      v-if="!staticDisplacementMap"
       ref="displacementMapImg"
       :filter-id="filterId"
       :intensity="props.intensity"
@@ -13,7 +14,7 @@
     />
 
     <svg
-      v-if="shaderMapUrl && props.intensity >= 0.01"
+      v-if="(shaderMapUrl || staticDisplacementMap) && props.intensity >= 0.01"
       class="glass-filter__svg"
       aria-hidden="true"
     >
@@ -32,7 +33,7 @@
             :height="maskRect.height"
             result="DISPLACEMENT_MAP"
             preserveAspectRatio="xMidYMid slice"
-            :href="mp3TstImage"
+            :href="displacementMapUrl"
           />
 
           <GeFilterEdgeProcessing
@@ -84,6 +85,7 @@ import mp3TstImage from "@/assets/mp3-34-thin.png";
 const props = defineProps({
   options: { type: Object, required: true },
   intensity: { type: Number, required: true },
+  staticDisplacementMap: { type: String, default: null },
 });
 
 const { options: o } = props;
@@ -94,6 +96,13 @@ const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
 const shaderMapUrl = computed(
   () => displacementMapImg.value?.shaderMapUrl || ""
 );
+
+const displacementMapUrl = computed(() => {
+  if (props.staticDisplacementMap) {
+    return props.staticDisplacementMap;
+  }
+  return shaderMapUrl.value || mp3TstImage;
+});
 
 let maskElement = null;
 let resizeObserver = null;
