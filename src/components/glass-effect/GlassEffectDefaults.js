@@ -20,7 +20,7 @@ export function createEffectOptions(userOptions = {}) {
     highlightReflection: 0.45,
     noiseStrength: 0.22,
     noiseRefractionDepth: 2.0,
-    outlineIntensity: 0.4,
+    outlineIntensity: 0,
     outlineGlassTintHue: 210,
     shaderCornerRadius: 0.2,
     shaderDistortionStart: 0.3,
@@ -30,7 +30,9 @@ export function createEffectOptions(userOptions = {}) {
     shaderScalingEnd: 1,
   });
 
-  Object.assign(config, userOptions,
+  Object.assign(
+    config,
+    userOptions,
     userOptions.distortion && {
       shaderDistortionStart: userOptions.distortion.start,
       shaderDistortionEnd: userOptions.distortion.end,

@@ -32,7 +32,7 @@
             :height="maskRect.height"
             result="DISPLACEMENT_MAP"
             preserveAspectRatio="xMidYMid slice"
-            :href="shaderMapUrl"
+            :href="mp3TstImage"
           />
 
           <GeFilterEdgeProcessing
@@ -78,7 +78,9 @@ import GeFilterEdgeProcessing from "./GeFilterEdgeProcessing.vue";
 import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
 import GeFilterComposite from "./GeFilterComposite.vue";
 import GeFilterEnhancement from "./GeFilterEnhancement.vue";
-
+import mp1Image from "@/assets/mp1.png";
+import mp2Image from "@/assets/mp2.png";
+import mp3TstImage from "@/assets/mp3-34-thin.png";
 const props = defineProps({
   options: { type: Object, required: true },
   intensity: { type: Number, required: true },

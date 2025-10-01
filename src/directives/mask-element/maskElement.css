@@ -1,6 +1,7 @@
 .mask-element {
   position: relative;
   overflow: hidden;
+  background: red;
 }
 
 .mask-element-inner {
@@ -18,5 +19,6 @@
   opacity: 1;
   filter: var(--glass-filter, none);
   position: absolute;
+  overflow: visible;
   z-index: 1;
 }

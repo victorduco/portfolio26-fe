@@ -35,8 +35,8 @@ export const boxVariants = {
       y: 0,
       rotate: 0,
       scale: 1,
-      background: "transparent",
-      border: "0px solid #333333",
+      backgroundColor: getColorWithAlpha(index, 0),
+      border: "1px solid #333333",
     };
   },
   hover: ({ index, additionalMargin }) => {
@@ -49,7 +49,7 @@ export const boxVariants = {
       rotate: 45,
       scale: 1,
       backgroundColor: getColorWithAlpha(index, 0),
-      border: "0px solid #333333",
+      border: "1px solid #333333",
     };
   },
   active: ({ index, additionalMargin }) => {
@@ -61,8 +61,8 @@ export const boxVariants = {
       y: index % 2 === 0 ? "-25%" : "-115%",
       rotate: 45,
       scale: 1,
-      backgroundColor: getColorWithAlpha(index, 0),
-      border: "0px solid #333333",
+      backgroundColor: getColorWithAlpha("#000000", 0),
+      border: "2px solid #333333",
     };
   },
 };
@@ -105,7 +105,7 @@ export const squareContentNumVariants = {
   active: {
     opacity: 0,
     "--glow-color": "rgba(255,255,255,0)",
-    color: "rgba(255,255,255,0)",
+    color: "rgba(0,0,255,0)",
   },
 };
 
