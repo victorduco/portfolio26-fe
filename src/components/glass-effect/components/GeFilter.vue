@@ -168,16 +168,8 @@ SVG фильтр для стеклянного эффекта
 </template>
 
 <script setup>
-import {
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  watch,
-  nextTick,
-  ref,
-} from "vue";
-import { ShaderDisplacementGenerator } from "../filter-displacement-generator.ts";
-import { createFilterProps } from "../layer-filter-props.js";
+import { computed, onMounted, onBeforeUnmount, watch, nextTick, ref } from "vue";
+import { ShaderDisplacementGenerator } from "./ShaderDisplacementGenerator.ts";
 
 const props = defineProps({
   options: { type: Object, required: true },
@@ -217,26 +209,31 @@ const generateShaderDisplacementMap = () => {
   generator.destroy();
 };
 
-// Create filter props
-const filterProps = computed(() =>
-  createFilterProps(props.options, props.intensity, {
-    filterReady: filterReady.value,
-    filterId,
-    shaderMapUrl: shaderMapUrl.value,
-  })
+// Inline filter props calculation
+const o = props.options;
+const i = props.intensity;
+const baseScale = o.displacementScale * o.displacementCurvature * i;
+const redScale = computed(() => baseScale * (1 + o.aberrationIntensity * 0.01));
+const greenScale = computed(() => baseScale);
+const blueScale = computed(() => baseScale * (1 - o.aberrationIntensity * 0.01));
+const liquidGlassBlur = computed(() => Math.max(0.12, o.glassBlur * 0.02 * o.refractionDepth * i));
+const edgeMaskTable = computed(() => "0 0.1 1");
+
+const si = o.surfaceReflection;
+const edgeIntensityMatrix = computed(() =>
+  `${0.3 * si} ${0.3 * si} ${0.3 * si} 0 0
+   ${0.3 * si} ${0.3 * si} ${0.3 * si} 0 0
+   ${0.3 * si} ${0.3 * si} ${0.3 * si} 0 0
+   0 0 0 1 0`
 );
 
-// Extract computed filter properties
-const edgeIntensityMatrix = computed(
-  () => filterProps.value.edgeIntensityMatrix
-);
-const edgeMaskTable = computed(() => filterProps.value.edgeMaskTable);
-const redScale = computed(() => filterProps.value.redScale);
-const greenScale = computed(() => filterProps.value.greenScale);
-const blueScale = computed(() => filterProps.value.blueScale);
-const liquidGlassBlur = computed(() => filterProps.value.liquidGlassBlur);
-const surfaceEnhancementMatrix = computed(
-  () => filterProps.value.surfaceEnhancementMatrix
+const contrast = 1 + (o.glassSaturation - 180) / 300;
+const brightness = 1 + si * 0.2;
+const surfaceEnhancementMatrix = computed(() =>
+  `${contrast} 0 0 0 ${brightness * 0.1}
+   0 ${contrast} 0 0 ${brightness * 0.1}
+   0 0 ${contrast} 0 ${brightness * 0.1}
+   0 0 0 1 0`
 );
 
 // rAF-throttle rect read with change detection
