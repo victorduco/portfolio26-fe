@@ -50,6 +50,7 @@ const props = defineProps({
   userOptions: { type: Object, default: () => ({}) },
   intensity: { type: Number, default: 1, validator: (v) => v >= 0 && v <= 1 },
   staticDisplacementMap: { type: String, default: null },
+  "static-displacement-map": { type: String, default: null },
 });
 
 // Check if global debugger options are available
@@ -71,7 +72,8 @@ const finalIntensity = computed(() => {
 });
 
 const finalStaticMap = computed(() => {
-  const value = debuggerStaticMap !== null ? debuggerStaticMap.value : props.staticDisplacementMap;
+  const propValue = props['static-displacement-map'] || props.staticDisplacementMap;
+  const value = debuggerStaticMap !== null ? debuggerStaticMap.value : propValue;
   console.log('GlassEffect finalStaticMap:', value);
   return value;
 });

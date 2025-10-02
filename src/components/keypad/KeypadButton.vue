@@ -1,35 +1,35 @@
 <template>
-  <GlassEffect
-    class="keypad-button-wrapper"
-    v-hover-distortion="1.2"
-    v-mask-element="'#171717'"
-    :user-options="glassEffectConfig"
-    @mousedown="currentState = 'pressed'"
-    @mouseup="currentState = isHovered ? 'hover' : 'default'"
-    @mouseleave="handleMouseLeave"
-    @mouseenter="handleMouseEnter"
-    @click="emit('click', value)"
-  >
-    <motion.div
-      class="keypad-number"
-      :variants="numberVariants"
-      :animate="currentState"
-      :transition="spring"
+  <div v-hover-distortion="4">
+    <GlassEffect
+      class="keypad-button-wrapper"
+      v-mask-element="'#171717'"
+      :user-options="glassEffectConfig"
+      @mousedown="currentState = 'pressed'"
+      @mouseup="currentState = isHovered ? 'hover' : 'default'"
+      @mouseleave="handleMouseLeave"
+      @mouseenter="handleMouseEnter"
+      @click="emit('click', value)"
+      :static-displacement-map="staticDisplacementMap"
     >
-      {{ value }}
-    </motion.div>
-  </GlassEffect>
+      <motion.div
+        class="keypad-number"
+        :variants="numberVariants"
+        :animate="currentState"
+        :transition="spring"
+      >
+        {{ value }}
+      </motion.div>
+    </GlassEffect>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { motion } from "motion-v";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
-import {
-  spring,
-  numberVariants,
-} from "./keypadVariants.js";
+import { spring, numberVariants } from "./keypadVariants.js";
 import { glassEffectConfig } from "./glassEffectConfig.js";
+import staticDisplacementMap from "../../assets/distmaps/nummp1.png";
 
 const props = defineProps({
   value: {
@@ -58,10 +58,14 @@ function handleMouseLeave() {
 
 <style scoped>
 .keypad-button-wrapper {
-  width: 130px !important;
-  height: 130px !important;
-  border-radius: 28px !important;
+  width: 110px;
+  height: 110px;
+  border-radius: 28px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(45deg);
 }
 
 .keypad-number {
@@ -71,5 +75,11 @@ function handleMouseLeave() {
   user-select: none;
   pointer-events: none;
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-45deg);
 }
 </style>

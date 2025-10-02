@@ -104,7 +104,9 @@ const shaderMapUrl = computed(
 );
 
 const displacementMapUrl = computed(() => {
+  console.log('GeFilter - mode:', props.displacementMode, 'staticMap:', props.staticDisplacementMap);
   if (props.displacementMode === 'static' && props.staticDisplacementMap) {
+    console.log('GeFilter - using static map:', props.staticDisplacementMap);
     return props.staticDisplacementMap;
   }
   if (props.displacementMode === 'dynamic') {

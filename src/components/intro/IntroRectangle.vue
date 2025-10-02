@@ -21,7 +21,7 @@
       ref="glassEffectRef"
       :user-options="INTRO_GLASS_CONFIG"
       :intensity="glassIntensity"
-      static-displacement-map="/src/assets/mp3-34-thin.png"
+      static-displacement-map="/src/assets/distmaps/nummp1.png"
       class="intro-square-glass"
     >
     </GlassEffect>
@@ -145,6 +145,7 @@ const additionalMargin = computed(() => props.activeCount * -30);
 
 .intro-square-content-wrap {
   display: grid;
+  place-items: center;
   pointer-events: none;
   z-index: 1;
   position: absolute;
@@ -153,6 +154,7 @@ const additionalMargin = computed(() => props.activeCount * -30);
   transform-origin: 50% 50%;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   width: 34%;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -184,6 +186,10 @@ const additionalMargin = computed(() => props.activeCount * -30);
   pointer-events: none;
   position: absolute;
   text-align: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
   transform: translateY(-25%) translateX(10%);
 }
 </style>

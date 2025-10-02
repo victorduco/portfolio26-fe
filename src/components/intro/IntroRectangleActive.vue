@@ -95,6 +95,10 @@ const contentData = [
   font-weight: 800;
   line-height: 1;
   color: #000000;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .intro-active-title {

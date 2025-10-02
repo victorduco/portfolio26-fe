@@ -1,6 +1,10 @@
 <template>
   <div class="keypad-container">
-    <BgToSvg source-selector="keypad-bg-export" :watch-data="enteredDigits" :render-delay="0" />
+    <BgToSvg
+      source-selector="keypad-bg-export"
+      :watch-data="enteredDigits"
+      :render-delay="0"
+    />
 
     <!-- Фоновый слой с введенными цифрами -->
     <div class="background-numbers" id="keypad-bg-export">
@@ -78,7 +82,7 @@ function handleButtonClick(value) {
   width: 100vw;
   height: 100vh;
   display: flex;
-  gap: 60px;
+  gap: 0px;
   align-items: center;
   justify-content: center;
   pointer-events: none;
@@ -86,18 +90,19 @@ function handleButtonClick(value) {
 }
 
 .background-digit {
-  font-size: 500px;
+  font-size: 700px;
   font-weight: 400;
   line-height: 1;
   opacity: 1;
   user-select: none;
+  margin: 0 -30px;
 }
 
 .keypad-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap: 32px;
+  gap: 80px;
   padding: 40px;
   position: relative;
   z-index: 10;
