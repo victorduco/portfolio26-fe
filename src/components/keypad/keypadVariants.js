@@ -4,34 +4,20 @@ export const spring = {
   damping: 20,
 };
 
-// Варианты для SVG ромба
-export const keypadButtonVariants = {
-  default: {
-    scale: 1,
-    opacity: 1,
-  },
-  hover: {
-    scale: 1.05,
-    opacity: 1,
-  },
-  pressed: {
-    scale: 0.95,
-    opacity: 1,
-  },
-};
-
-// Варианты для цифр внутри кнопок
 export const numberVariants = {
   default: {
     color: "#ffffff",
     opacity: 0.8,
+    rotate: -45,
   },
   hover: {
     color: "#ffffff",
     opacity: 1,
+    rotate: -45,
   },
   pressed: {
     color: "#ffffff",
     opacity: 1,
+    rotate: -45,
   },
 };

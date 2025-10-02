@@ -1,30 +1,36 @@
 <template>
-  <div v-hover-distortion="4">
-    <GlassEffect
-      class="keypad-button-wrapper"
-      v-mask-element="'#171717'"
-      :user-options="glassEffectConfig"
-      @mousedown="currentState = 'pressed'"
-      @mouseup="currentState = isHovered ? 'hover' : 'default'"
-      @mouseleave="handleMouseLeave"
-      @mouseenter="handleMouseEnter"
-      @click="emit('click', value)"
-      :static-displacement-map="staticDisplacementMap"
-    >
+  <div
+    v-hover-distortion="4"
+    class="keypad-button-hover-wrapper"
+    @mousedown="currentState = 'pressed'"
+    @mouseup="currentState = isHovered ? 'hover' : 'default'"
+    @mouseleave="handleMouseLeave"
+    @mouseenter="handleMouseEnter"
+    @click="emit('click', value)"
+  >
+    <div class="keypad-button-wrapper">
+      <GlassEffect
+        class="keypad-button-glass"
+        v-mask-element="'#171717'"
+        :user-options="glassEffectConfig"
+        :static-displacement-map="staticDisplacementMap"
+      >
+      </GlassEffect>
+
       <motion.div
         class="keypad-number"
         :variants="numberVariants"
         :animate="currentState"
-        :transition="spring"
+        :transition="isMounted ? spring : { duration: 0 }"
       >
         {{ value }}
       </motion.div>
-    </GlassEffect>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { motion } from "motion-v";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
@@ -42,6 +48,13 @@ const emit = defineEmits(["click"]);
 
 const currentState = ref("default");
 const isHovered = ref(false);
+const isMounted = ref(false);
+
+onMounted(() => {
+  requestAnimationFrame(() => {
+    isMounted.value = true;
+  });
+});
 
 function handleMouseEnter() {
   isHovered.value = true;
@@ -57,29 +70,40 @@ function handleMouseLeave() {
 </script>
 
 <style scoped>
+.keypad-button-hover-wrapper {
+  cursor: pointer;
+}
+
 .keypad-button-wrapper {
+  position: relative;
   width: 110px;
   height: 110px;
   border-radius: 28px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
   transform: rotate(45deg);
 }
 
+.keypad-button-glass {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
 .keypad-number {
-  font-size: 42px;
-  font-weight: 800;
+  position: absolute;
+  inset: 0;
+  font-size: 30px;
+  font-weight: 600;
   line-height: 1;
   user-select: none;
   pointer-events: none;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-45deg);
+  color: #eeeeee;
+  display: grid;
+  place-items: center;
+  z-index: 1;
 }
 </style>

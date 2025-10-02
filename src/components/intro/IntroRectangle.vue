@@ -44,8 +44,8 @@
         class="intro-content-bullet"
         :variants="squareContentVariants.bullet"
         :animate="getAnimationState()"
-        >•
-      </motion.div>
+        >•</motion.div
+      >
     </motion.div>
 
     <IntroRectangleActive :index="index" :is-active="isActive" />
@@ -150,45 +150,22 @@ const additionalMargin = computed(() => props.activeCount * -30);
   z-index: 1;
   position: absolute;
   inset: 0;
-  border-radius: 28px;
-  transform-origin: 50% 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 34%;
-  aspect-ratio: 1;
-  border-radius: 50%;
 }
 
 .intro-content-number {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
+  position: absolute;
   color: var(--color-square-content);
   font-weight: 600;
   font-size: clamp(28px, 5vw, 56px);
   line-height: 1;
   user-select: none;
-  pointer-events: none;
 }
 
 .intro-content-bullet {
-  display: grid;
-  place-items: center;
+  position: absolute;
   color: #3d3d3d;
   font-size: 60px;
   line-height: 1;
   user-select: none;
-  pointer-events: none;
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
 }
 </style>

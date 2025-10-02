@@ -71,24 +71,9 @@ export const boxVariants = {
 };
 
 export const contentWrapVariants = {
-  default: {
-    opacity: 1,
-    scale: 1,
-    x: "-50%",
-    y: "-50%",
-  },
-  hover: {
-    opacity: 1,
-    scale: 1,
-    x: "-50%",
-    y: "-50%",
-  },
-  active: {
-    opacity: 1,
-    scale: 1,
-    x: "-50%",
-    y: "-50%",
-  },
+  default: {},
+  hover: {},
+  active: {},
 };
 
 // Объединенные варианты для контента (цифра и точка)

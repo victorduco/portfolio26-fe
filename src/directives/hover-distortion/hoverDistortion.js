@@ -54,6 +54,10 @@ export const hoverDistortion = {
       let transformRafId = null;
       let pendingUpdate = false;
 
+      // Save the initial transform to preserve it
+      const initialTransform = window.getComputedStyle(el).transform;
+      const baseTransform = initialTransform !== 'none' ? initialTransform : '';
+
       const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
       const cardTransform = computed(() => {
@@ -73,25 +77,31 @@ export const hoverDistortion = {
         const translateX = mouseOffset.x * TRANSLATE_MULTIPLIER;
         const translateY = mouseOffset.y * TRANSLATE_MULTIPLIER;
 
-        return `scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(
+        const distortionTransform = `scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(
           3
         )}) translate(${translateX.toFixed(2)}px, ${translateY.toFixed(2)}px)`;
+
+        // Combine base transform with distortion
+        return baseTransform ? `${baseTransform} ${distortionTransform}` : distortionTransform;
       });
 
       const updateTransform = (value) => {
+        console.log('[HoverDistortion] updateTransform called with:', value);
         // Debounce transform updates to avoid conflicts with CSS transitions
         if (transformRafId) {
+          console.log('[HoverDistortion] Canceling previous transformRafId');
           cancelAnimationFrame(transformRafId);
         }
         transformRafId = requestAnimationFrame(() => {
+          console.log('[HoverDistortion] Applying transform:', value);
           el.style.setProperty("--distortion-transform", value);
           el.style.transform = value;
           transformRafId = null;
         });
       };
 
-      // Remove immediate watcher to avoid performance issues
-      watch(cardTransform, updateTransform);
+      // Watch with sync flush to ensure immediate updates on value changes
+      watch(cardTransform, updateTransform, { flush: 'sync' });
 
       watch(
         isHovered,
@@ -173,11 +183,24 @@ export const hoverDistortion = {
       let mouseMoveThrottled = false;
 
       const handleMouseMove = (event) => {
+        // Ignore mousemove if not hovered (prevents race conditions on leave)
+        if (!isHovered.value) {
+          console.log('[HoverDistortion] MouseMove ignored - not hovered');
+          return;
+        }
+
         // Throttle mousemove for better performance
         if (mouseMoveThrottled) return;
         mouseMoveThrottled = true;
 
         requestAnimationFrame(() => {
+          // Double-check still hovered after RAF delay
+          if (!isHovered.value) {
+            console.log('[HoverDistortion] MouseMove RAF ignored - not hovered');
+            mouseMoveThrottled = false;
+            return;
+          }
+
           // Use cached rect to avoid getBoundingClientRect on every mousemove
           const rect = cachedRect || el.getBoundingClientRect();
 
@@ -186,12 +209,14 @@ export const hoverDistortion = {
 
           mouseOffset.x = clamp(relativeX - 50, -50, 50);
           mouseOffset.y = clamp(relativeY - 50, -50, 50);
+          console.log('[HoverDistortion] MouseMove - offsets:', mouseOffset.x, mouseOffset.y);
 
           mouseMoveThrottled = false;
         });
       };
 
       const handleEnter = (event) => {
+        console.log('[HoverDistortion] Mouse ENTER');
         isHovered.value = true;
         // Cache rect on first hover for performance
         updateCachedRect();
@@ -201,20 +226,26 @@ export const hoverDistortion = {
       };
 
       const handleLeave = () => {
+        console.log('[HoverDistortion] Mouse LEAVE - offsets before reset:', mouseOffset.x, mouseOffset.y);
         isHovered.value = false;
-        mouseOffset.x = 0;
-        mouseOffset.y = 0;
-        el.style.removeProperty("--distortion-background-position");
-        // Cancel any pending RAF
+        // Cancel any pending pointer variable updates
         if (rafId) {
+          console.log('[HoverDistortion] Canceling rafId');
           cancelAnimationFrame(rafId);
           rafId = null;
           pendingUpdate = false;
         }
-        if (transformRafId) {
-          cancelAnimationFrame(transformRafId);
-          transformRafId = null;
-        }
+
+        // Reset offsets FIRST - this will trigger sync watch
+        mouseOffset.x = 0;
+        mouseOffset.y = 0;
+        console.log('[HoverDistortion] Offsets reset to:', mouseOffset.x, mouseOffset.y);
+
+        // DON'T cancel transformRafId here - let it complete with the reset values
+        // The sync watch above will schedule a new transform update
+
+        // Clean up background position
+        el.style.removeProperty("--distortion-background-position");
       };
 
       updateOptions(binding.value);

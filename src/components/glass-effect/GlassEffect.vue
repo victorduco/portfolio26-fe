@@ -9,10 +9,6 @@
       :displacement-mode="finalMode"
     />
 
-    <div class="glass-effect__content" :style="contentBackdropStyle">
-      <slot />
-    </div>
-
     <GeHighlight
       :options="{ highlightReflection: opts.highlightReflection }"
       :intensity="finalIntensity"
@@ -54,52 +50,46 @@ const props = defineProps({
 });
 
 // Check if global debugger options are available
-const debuggerOptions = inject('glassDebuggerOptions', null);
-const debuggerIntensity = inject('glassDebuggerIntensity', null);
-const debuggerStaticMap = inject('glassDebuggerStaticMap', null);
-const debuggerMode = inject('glassDebuggerMode', null);
+const debuggerOptions = inject("glassDebuggerOptions", null);
+const debuggerIntensity = inject("glassDebuggerIntensity", null);
+const debuggerStaticMap = inject("glassDebuggerStaticMap", null);
+const debuggerMode = inject("glassDebuggerMode", null);
 
 // Use debugger options if available, otherwise use user options
 // debuggerOptions is already reactive, so we can use it directly
-const opts = debuggerOptions ? debuggerOptions : createEffectOptions(props.userOptions);
+const opts = debuggerOptions
+  ? debuggerOptions
+  : createEffectOptions(props.userOptions);
 
 // Use global intensity and staticMap if debugger is active, otherwise use props
 // When debugger is active (not null), always use debugger values
 const finalIntensity = computed(() => {
-  const value = debuggerIntensity !== null ? debuggerIntensity.value : props.intensity;
-  console.log('GlassEffect finalIntensity:', value, 'debugger:', debuggerIntensity?.value, 'props:', props.intensity);
+  const value =
+    debuggerIntensity !== null ? debuggerIntensity.value : props.intensity;
+  console.log(
+    "GlassEffect finalIntensity:",
+    value,
+    "debugger:",
+    debuggerIntensity?.value,
+    "props:",
+    props.intensity
+  );
   return value;
 });
 
 const finalStaticMap = computed(() => {
-  const propValue = props['static-displacement-map'] || props.staticDisplacementMap;
-  const value = debuggerStaticMap !== null ? debuggerStaticMap.value : propValue;
-  console.log('GlassEffect finalStaticMap:', value);
+  const propValue =
+    props["static-displacement-map"] || props.staticDisplacementMap;
+  const value =
+    debuggerStaticMap !== null ? debuggerStaticMap.value : propValue;
+  console.log("GlassEffect finalStaticMap:", value);
   return value;
 });
 
 const finalMode = computed(() => {
-  const value = debuggerMode !== null ? debuggerMode.value : 'static';
-  console.log('GlassEffect finalMode:', value);
+  const value = debuggerMode !== null ? debuggerMode.value : "static";
+  console.log("GlassEffect finalMode:", value);
   return value;
-});
-
-// Create backdrop filter style for content
-const contentBackdropStyle = computed(() => {
-  const i = finalIntensity.value;
-  const brightness = opts.glassBrightness / 100;
-  const contrast = opts.glassContrast / 100;
-
-  // Filter opacity controls the overall intensity of brightness/contrast
-  const filterOpacity = opts.contentFilterOpacity * i;
-
-  // Apply opacity to the effect strength, not as separate filter
-  const finalBrightness = 1 + (brightness - 1) * filterOpacity;
-  const finalContrast = 1 + (contrast - 1) * filterOpacity;
-
-  return {
-    backdropFilter: `brightness(${finalBrightness}) contrast(${finalContrast})`
-  };
 });
 </script>
 
@@ -112,21 +102,5 @@ const contentBackdropStyle = computed(() => {
   width: 100%;
   height: 100%;
   border-radius: inherit;
-}
-
-.glass-effect__content {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  border-radius: inherit;
-  overflow: hidden;
-  cursor: pointer;
-  isolation: isolate;
-  will-change: transform;
-  transition: box-shadow 0.25s ease, border 0.25s ease, background 0.25s ease;
-  z-index: 1;
 }
 </style>
