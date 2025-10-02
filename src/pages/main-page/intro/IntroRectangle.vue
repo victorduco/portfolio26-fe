@@ -55,7 +55,7 @@
 <script setup>
 import { motion } from "motion-v";
 import { computed, ref } from "vue";
-import GlassEffect from "../glass-effect/GlassEffect.vue";
+import GlassEffect from "../../../components/glass-effect/GlassEffect.vue";
 import IntroRectangleActive from "./IntroRectangleActive.vue";
 import { INTRO_GLASS_CONFIG } from "./glassConfig.js";
 import {

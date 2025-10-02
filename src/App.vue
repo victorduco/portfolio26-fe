@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import Keypad from "./components/keypad/Keypad.vue";
-import MainPage from "./components/MainPage.vue";
+import MainPage from "./pages/main-page/MainPage.vue";
 
 const isUnlocked = ref(false);
 

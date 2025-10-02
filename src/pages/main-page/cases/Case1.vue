@@ -11,6 +11,6 @@
 .case1 {
   width: 100vw;
   height: 100vh;
-  background: transparent;
+  background: #0d1117;
 }
 </style>
