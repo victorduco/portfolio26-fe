@@ -64,32 +64,17 @@ const opts = debuggerOptions
 // Use global intensity and staticMap if debugger is active, otherwise use props
 // When debugger is active (not null), always use debugger values
 const finalIntensity = computed(() => {
-  const value =
-    debuggerIntensity !== null ? debuggerIntensity.value : props.intensity;
-  console.log(
-    "GlassEffect finalIntensity:",
-    value,
-    "debugger:",
-    debuggerIntensity?.value,
-    "props:",
-    props.intensity
-  );
-  return value;
+  return debuggerIntensity !== null ? debuggerIntensity.value : props.intensity;
 });
 
 const finalStaticMap = computed(() => {
   const propValue =
     props["static-displacement-map"] || props.staticDisplacementMap;
-  const value =
-    debuggerStaticMap !== null ? debuggerStaticMap.value : propValue;
-  console.log("GlassEffect finalStaticMap:", value);
-  return value;
+  return debuggerStaticMap !== null ? debuggerStaticMap.value : propValue;
 });
 
 const finalMode = computed(() => {
-  const value = debuggerMode !== null ? debuggerMode.value : "static";
-  console.log("GlassEffect finalMode:", value);
-  return value;
+  return debuggerMode !== null ? debuggerMode.value : "static";
 });
 </script>
 

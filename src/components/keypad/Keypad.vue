@@ -50,7 +50,6 @@ const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
 function handleButtonClick(value) {
   enteredDigits.value.push(value);
-  console.log("Clicked:", value, "Total digits:", enteredDigits.value);
 
   // После ввода 4 цифр открываем главную страницу
   if (enteredDigits.value.length === 4) {

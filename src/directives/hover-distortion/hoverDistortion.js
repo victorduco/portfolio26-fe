@@ -86,14 +86,11 @@ export const hoverDistortion = {
       });
 
       const updateTransform = (value) => {
-        console.log('[HoverDistortion] updateTransform called with:', value);
         // Debounce transform updates to avoid conflicts with CSS transitions
         if (transformRafId) {
-          console.log('[HoverDistortion] Canceling previous transformRafId');
           cancelAnimationFrame(transformRafId);
         }
         transformRafId = requestAnimationFrame(() => {
-          console.log('[HoverDistortion] Applying transform:', value);
           el.style.setProperty("--distortion-transform", value);
           el.style.transform = value;
           transformRafId = null;
@@ -185,7 +182,6 @@ export const hoverDistortion = {
       const handleMouseMove = (event) => {
         // Ignore mousemove if not hovered (prevents race conditions on leave)
         if (!isHovered.value) {
-          console.log('[HoverDistortion] MouseMove ignored - not hovered');
           return;
         }
 
@@ -196,7 +192,6 @@ export const hoverDistortion = {
         requestAnimationFrame(() => {
           // Double-check still hovered after RAF delay
           if (!isHovered.value) {
-            console.log('[HoverDistortion] MouseMove RAF ignored - not hovered');
             mouseMoveThrottled = false;
             return;
           }
@@ -209,14 +204,12 @@ export const hoverDistortion = {
 
           mouseOffset.x = clamp(relativeX - 50, -50, 50);
           mouseOffset.y = clamp(relativeY - 50, -50, 50);
-          console.log('[HoverDistortion] MouseMove - offsets:', mouseOffset.x, mouseOffset.y);
 
           mouseMoveThrottled = false;
         });
       };
 
       const handleEnter = (event) => {
-        console.log('[HoverDistortion] Mouse ENTER');
         isHovered.value = true;
         // Cache rect on first hover for performance
         updateCachedRect();
@@ -226,11 +219,9 @@ export const hoverDistortion = {
       };
 
       const handleLeave = () => {
-        console.log('[HoverDistortion] Mouse LEAVE - offsets before reset:', mouseOffset.x, mouseOffset.y);
         isHovered.value = false;
         // Cancel any pending pointer variable updates
         if (rafId) {
-          console.log('[HoverDistortion] Canceling rafId');
           cancelAnimationFrame(rafId);
           rafId = null;
           pendingUpdate = false;
@@ -239,7 +230,6 @@ export const hoverDistortion = {
         // Reset offsets FIRST - this will trigger sync watch
         mouseOffset.x = 0;
         mouseOffset.y = 0;
-        console.log('[HoverDistortion] Offsets reset to:', mouseOffset.x, mouseOffset.y);
 
         // DON'T cancel transformRafId here - let it complete with the reset values
         // The sync watch above will schedule a new transform update

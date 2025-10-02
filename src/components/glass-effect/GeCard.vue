@@ -47,8 +47,6 @@ const combinedStyle = computed(() => {
     100 + (glassSaturation - 100) * i
   }%) brightness(${finalBrightness}) contrast(${finalContrast})`;
 
-  console.log('GeCard backdrop-filter:', backdropFilterValue);
-
   return {
     boxShadow: `0 24px 70px rgba(6, 10, 24, ${shadowDepth * i})`,
     backdropFilter: backdropFilterValue,
