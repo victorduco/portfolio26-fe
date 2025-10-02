@@ -1,7 +1,7 @@
 <template>
   <div class="main-page">
     <BgToSvg :source-selector="sourceSelector" :render-delay="100" />
-    <PageNavigation />
+    <PageNavigation :sections="navigationSections" />
     <section id="intro">
       <Intro />
     </section>
@@ -31,6 +31,13 @@ import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "./page-navigation/PageNavigation.vue";
 
 const sourceSelector = ref("intro-text-export-node");
+
+const navigationSections = [
+  { id: "intro", label: "Intro" },
+  { id: "cases", label: "Cases" },
+  { id: "values", label: "Values" },
+  { id: "contacts", label: "Contacts" },
+];
 </script>
 
 <style scoped>

@@ -15,23 +15,36 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import NavigationItem from "./NavigationItem.vue";
 
-const sections = [
-  { id: "intro", label: "Intro" },
-  { id: "cases", label: "Cases" },
-  { id: "values", label: "Values" },
-  { id: "contacts", label: "Contacts" },
-];
+const props = defineProps({
+  sections: {
+    type: Array,
+    required: true,
+    validator: (value) => {
+      return value.every(
+        (section) =>
+          typeof section.id === "string" && typeof section.label === "string"
+      );
+    },
+  },
+  scrollBehavior: {
+    type: String,
+    default: "smooth",
+    validator: (value) => ["smooth", "auto", "instant"].includes(value),
+  },
+  observerRootMargin: {
+    type: String,
+    default: "-50% 0px -50% 0px",
+  },
+});
 
-const activeSection = ref("intro");
+const activeSection = ref(props.sections[0]?.id || "");
 let observer = null;
 
 function handleNavigate(sectionId) {
-  console.log("PageNavigation handleNavigate called with:", sectionId);
   const element = document.getElementById(sectionId);
-  console.log("Found element:", element);
   if (element) {
     element.scrollIntoView({
-      behavior: "smooth",
+      behavior: props.scrollBehavior,
       block: "start",
     });
   }
@@ -40,7 +53,7 @@ function handleNavigate(sectionId) {
 function setupIntersectionObserver() {
   const options = {
     root: null,
-    rootMargin: "-50% 0px -50% 0px",
+    rootMargin: props.observerRootMargin,
     threshold: 0,
   };
 
@@ -52,7 +65,7 @@ function setupIntersectionObserver() {
     });
   }, options);
 
-  sections.forEach((section) => {
+  props.sections.forEach((section) => {
     const element = document.getElementById(section.id);
     if (element) {
       observer.observe(element);
