@@ -1,41 +1,16 @@
 <script setup>
 import { ref } from "vue";
-import Intro from "./components/intro/Intro.vue";
 import Keypad from "./components/keypad/Keypad.vue";
-import BgToSvg from "./components/bg-to-svg/BgToSvg.vue";
-// import GlassEffectDebugger from "./components/glass-effect/GlassEffectDebugger.vue";
-// import { createEffectOptions } from "./components/glass-effect/GlassEffectDefaults.js";
-// import { glassEffectConfig } from "./components/keypad/glassEffectConfig.js";
-// import { INTRO_GLASS_CONFIG } from "./components/intro/glassConfig.js";
+import MainPage from "./components/MainPage.vue";
 
-const sourceSelector = ref("intro-text-export-node");
+const isUnlocked = ref(false);
 
-// Create global glass options from user config and provide to all descendants
-// const globalGlassOptions = createEffectOptions(INTRO_GLASS_CONFIG);
-// provide("glassDebuggerOptions", globalGlassOptions);
-
-// Global intensity control (separate from options)
-// const globalIntensity = ref(1);
-// provide("glassDebuggerIntensity", globalIntensity);
-
-// Global static displacement map control
-// const globalStaticMap = ref("/src/assets/distmaps/mp1.png");
-// provide("glassDebuggerStaticMap", globalStaticMap);
-
-// Displacement mode: 'static' or 'dynamic'
-// const displacementMode = ref("static");
-// provide("glassDebuggerMode", displacementMode);
+function handleUnlock() {
+  isUnlocked.value = true;
+}
 </script>
 
 <template>
-  <!-- <BgToSvg :source-selector="sourceSelector" :render-delay="100" />
-  <Intro /> -->
-  <Keypad />
-
-  <!-- <GlassEffectDebugger
-    :options="globalGlassOptions"
-    :intensity="globalIntensity"
-    :static-map="globalStaticMap"
-    :mode="displacementMode"
-  /> -->
+  <Keypad v-if="!isUnlocked" @unlock="handleUnlock" />
+  <MainPage v-else />
 </template>

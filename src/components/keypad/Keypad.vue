@@ -40,6 +40,8 @@ import { ref } from "vue";
 import KeypadButton from "./KeypadButton.vue";
 import BgToSvg from "../bg-to-svg/BgToSvg.vue";
 
+const emit = defineEmits(["unlock"]);
+
 // Массив введенных цифр
 const enteredDigits = ref([]);
 
@@ -60,6 +62,11 @@ const colors = [
 function handleButtonClick(value) {
   enteredDigits.value.push(value);
   console.log("Clicked:", value, "Total digits:", enteredDigits.value);
+
+  // После ввода 4 цифр открываем главную страницу
+  if (enteredDigits.value.length === 4) {
+    emit("unlock");
+  }
 }
 </script>
 
