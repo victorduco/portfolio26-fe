@@ -46,18 +46,7 @@ const emit = defineEmits(["unlock"]);
 const enteredDigits = ref([]);
 
 // Массив цветов для каждой последующей цифры
-const colors = [
-  "#FF6B6B", // красный
-  "#4ECDC4", // бирюзовый
-  "#FFE66D", // желтый
-  "#A8E6CF", // мятный
-  "#FF8B94", // розовый
-  "#C7CEEA", // лавандовый
-  "#FFDAC1", // персиковый
-  "#B4F8C8", // светло-зеленый
-  "#FBE7C6", // кремовый
-  "#A0C4FF", // голубой
-];
+const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
 function handleButtonClick(value) {
   enteredDigits.value.push(value);

@@ -169,8 +169,8 @@ const additionalMargin = computed(() => props.activeCount * -30);
   position: relative;
   z-index: 2;
   color: var(--color-square-content);
-  font-weight: 800;
-  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 600;
+  font-size: clamp(28px, 5vw, 56px);
   line-height: 1;
   user-select: none;
   pointer-events: none;
@@ -190,6 +190,5 @@ const additionalMargin = computed(() => props.activeCount * -30);
   height: 100%;
   top: 0;
   left: 0;
-  transform: translateY(-25%) translateX(10%);
 }
 </style>

@@ -40,8 +40,7 @@ export const boxVariants = {
       y: 0,
       rotate: 0,
       scale: 1,
-      backgroundColor: getColorWithAlpha(index, 0),
-      border: "1px solid #111111",
+      border: "1px solid #222",
     };
   },
   hover: ({ index, additionalMargin }) => {
@@ -53,7 +52,6 @@ export const boxVariants = {
       marginTop: "-150px",
       rotate: 15,
       scale: 1,
-      backgroundColor: getColorWithAlpha(index, 0),
       border: "1px solid #222222",
     };
   },
@@ -67,7 +65,6 @@ export const boxVariants = {
       rotate: 45,
       scale: 1,
       opacity: 1,
-      backgroundColor: getColorWithAlpha("#ff0000ff", 1),
       border: "2px solid #333333",
     };
   },
