@@ -1,0 +1,76 @@
+name: Post-deploy Check
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Heroku"]
+    types:
+      - completed
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    # Запускаем только если деплой прошел успешно
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Wait for deployment to be ready
+        run: |
+          echo "Waiting for site to be ready..."
+          timeout=300
+          elapsed=0
+          until curl -f -s -o /dev/null https://vdcp26.herokuapp.com || [ $elapsed -ge $timeout ]; do
+            echo "Site not ready yet... waiting 5 seconds"
+            sleep 5
+            elapsed=$((elapsed + 5))
+          done
+
+          if [ $elapsed -ge $timeout ]; then
+            echo "Timeout waiting for site to be ready"
+            exit 1
+          fi
+
+          echo "Site is ready! Waiting 10 more seconds for stability..."
+          sleep 10
+
+      - name: Run smoke tests
+        env:
+          SITE_URL: https://vdcp26.herokuapp.com
+        run: npm run test:e2e
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
+
+      - name: Comment on commit (if failed)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = '${{ github.event.workflow_run.head_sha }}';
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: sha,
+              body: '❌ Post-deploy smoke tests failed. Check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
+            });
