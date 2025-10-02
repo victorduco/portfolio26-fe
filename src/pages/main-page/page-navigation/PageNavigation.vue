@@ -79,7 +79,7 @@ onUnmounted(() => {
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0;
   z-index: 1000;
   padding: 24px 0;
 }
@@ -87,7 +87,6 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   .page-navigation {
     right: 24px;
-    gap: 20px;
   }
 }
 </style>

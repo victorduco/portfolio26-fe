@@ -74,7 +74,7 @@ function handleClick(event) {
   cursor: pointer;
   border: none;
   background: transparent;
-  padding: 0;
+  padding: 12px 0;
   outline: none;
 }
 
