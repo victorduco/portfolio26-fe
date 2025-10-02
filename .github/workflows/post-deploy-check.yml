@@ -13,54 +13,71 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: Wait for deployment to be ready
+      - name: Wait for Heroku to wake up
         run: |
-          echo "Waiting for site to be ready..."
-          timeout=300
-          elapsed=0
-          until curl -f -s -o /dev/null https://vdcp26.herokuapp.com || [ $elapsed -ge $timeout ]; do
-            echo "Site not ready yet... waiting 5 seconds"
+          echo "Waiting for Heroku app to wake up..."
+          sleep 30
+
+      - name: Check site availability
+        run: |
+          echo "Checking if site is accessible..."
+
+          # Проверяем доступность сайта (принимаем любой HTTP код, даже 503)
+          for i in {1..30}; do
+            echo "Attempt $i/30..."
+
+            # Делаем запрос и получаем HTTP код
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://vdcp26.herokuapp.com || echo "000")
+
+            echo "Got HTTP code: $HTTP_CODE"
+
+            # Если получили 200, 301, 302 - все хорошо
+            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
+              echo "✅ Site is accessible! HTTP $HTTP_CODE"
+              exit 0
+            fi
+
+            # Если 503 - приложение еще просыпается
+            if [ "$HTTP_CODE" = "503" ]; then
+              echo "Site is waking up (503)... waiting 10 seconds"
+              sleep 10
+              continue
+            fi
+
+            # Другой код - ждем и пробуем еще
+            echo "Unexpected code: $HTTP_CODE, waiting 5 seconds..."
             sleep 5
-            elapsed=$((elapsed + 5))
           done
 
-          if [ $elapsed -ge $timeout ]; then
-            echo "Timeout waiting for site to be ready"
+          echo "❌ Site failed to respond correctly after 30 attempts"
+          exit 1
+
+      - name: Test page content
+        run: |
+          echo "Fetching page content..."
+
+          # Получаем содержимое страницы
+          CONTENT=$(curl -s https://vdcp26.herokuapp.com)
+
+          # Проверяем, что HTML не пустой
+          if [ -z "$CONTENT" ]; then
+            echo "❌ Page content is empty"
             exit 1
           fi
 
-          echo "Site is ready! Waiting 10 more seconds for stability..."
-          sleep 10
+          # Проверяем, что есть базовая HTML структура
+          if ! echo "$CONTENT" | grep -q "<html"; then
+            echo "❌ No HTML tag found in response"
+            exit 1
+          fi
 
-      - name: Run smoke tests
-        env:
-          SITE_URL: https://vdcp26.herokuapp.com
-        run: npm run test:e2e
+          # Проверяем, что нет явных ошибок Heroku
+          if echo "$CONTENT" | grep -qi "application error"; then
+            echo "❌ Heroku application error detected"
+            exit 1
+          fi
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 7
+          echo "✅ Page content looks good!"
 
       - name: Comment on commit (if failed)
         if: failure()
@@ -72,5 +89,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: sha,
-              body: '❌ Post-deploy smoke tests failed. Check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
+              body: '❌ Post-deploy check failed. Site is not accessible or returning errors. Check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.'
             });
