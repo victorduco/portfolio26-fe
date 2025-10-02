@@ -23,11 +23,11 @@ jobs:
           echo "Checking if site is accessible..."
 
           # Проверяем доступность сайта (принимаем любой HTTP код, даже 503)
-          for i in {1..30}; do
-            echo "Attempt $i/30..."
+          for i in {1..5}; do
+            echo "Attempt $i/5..."
 
             # Делаем запрос и получаем HTTP код
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://vdcp26.herokuapp.com || echo "000")
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://vdcp26-c16bb5775681.herokuapp.com || echo "000")
 
             echo "Got HTTP code: $HTTP_CODE"
 
@@ -49,7 +49,7 @@ jobs:
             sleep 5
           done
 
-          echo "❌ Site failed to respond correctly after 30 attempts"
+          echo "❌ Site failed to respond correctly after 5 attempts"
           exit 1
 
       - name: Test page content
@@ -57,7 +57,7 @@ jobs:
           echo "Fetching page content..."
 
           # Получаем содержимое страницы
-          CONTENT=$(curl -s https://vdcp26.herokuapp.com)
+          CONTENT=$(curl -s https://vdcp26-c16bb5775681.herokuapp.com)
 
           # Проверяем, что HTML не пустой
           if [ -z "$CONTENT" ]; then
