@@ -29,6 +29,10 @@ import Case3 from "./cases/Case3.vue";
 import Values from "./values/Values.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "./page-navigation/PageNavigation.vue";
+import { useMeta } from "../../composables/useMeta.js";
+
+// Устанавливаем мета-теги для главной страницы
+useMeta("home");
 
 const sourceSelector = ref("intro-text-export-node");
 

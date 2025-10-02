@@ -39,6 +39,10 @@
 import { ref } from "vue";
 import KeypadButton from "./KeypadButton.vue";
 import BgToSvg from "../bg-to-svg/BgToSvg.vue";
+import { useMeta } from "../../composables/useMeta.js";
+
+// Устанавливаем мета-теги для Keypad
+useMeta("keypad");
 
 const emit = defineEmits(["unlock"]);
 

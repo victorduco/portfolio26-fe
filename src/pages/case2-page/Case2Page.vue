@@ -24,6 +24,10 @@ import Summary from "./case2/Summary.vue";
 import Task from "./case2/Task.vue";
 import Process from "./case2/Process.vue";
 import Results from "./case2/Results.vue";
+import { useMeta } from "../../composables/useMeta.js";
+
+// Устанавливаем мета-теги для Case 2
+useMeta("case2");
 
 const navigationSections = [
   { id: "case2-summary", label: "Summary" },
