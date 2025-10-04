@@ -22,29 +22,23 @@ export const maskElement = {
       // Insert as first child so it's behind existing content
       el.insertBefore(innerElement, el.firstChild);
 
-      let rafId = null;
-      const throttledSync = () => {
-        if (rafId) return;
-        rafId = raf(() => {
-          syncBackground(el, innerElement);
-          rafId = null;
-        });
-      };
+      // Sync напрямую - batching объединит все вызовы в одном RAF
+      const sync = () => syncBackground(el, innerElement);
 
       // первый sync после layout
-      raf(throttledSync);
+      raf(sync);
 
-      const observer = new MutationObserver(throttledSync);
+      const observer = new MutationObserver(sync);
       observer.observe(el, {
         attributes: true,
         attributeFilter: ["style", "class"],
       });
 
       // реагируем на изменения реальных размеров элемента
-      const ro = new ResizeObserver(throttledSync);
+      const ro = new ResizeObserver(sync);
       ro.observe(el);
 
-      return { throttledSync, observer, ro, innerElement };
+      return { sync, observer, ro, innerElement };
     });
 
     el._maskElement = { scope, ...state };

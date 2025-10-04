@@ -87,6 +87,7 @@ import GeFilterEnhancement from "./GeFilterEnhancement.vue";
 import mp1Image from "@/assets/distmaps/mp1.png";
 import mp2Image from "@/assets/distmaps/mp2.png";
 import mp3TstImage from "@/assets/distmaps/mp3-34-thin.png";
+import { layoutBatcher } from "@/directives/mask-element/layoutBatcher";
 const props = defineProps({
   options: { type: Object, required: true },
   intensity: { type: Number, required: true },
@@ -115,20 +116,24 @@ const displacementMapUrl = computed(() => {
 
 let maskElement = null;
 let resizeObserver = null;
-let rafId = 0;
 
 const updateMaskRect = () => {
-  if (!maskElement || rafId) return;
-  rafId = requestAnimationFrame(() => {
-    const { left, top, width, height } = maskElement.getBoundingClientRect();
-    maskRect.value = {
-      left: Math.round(left + window.scrollX),
-      top: Math.round(top + window.scrollY),
-      width: Math.round(width),
-      height: Math.round(height),
-    };
-    rafId = 0;
-  });
+  if (!maskElement) return;
+
+  layoutBatcher.scheduleTask(
+    // READ фаза
+    () => maskElement.getBoundingClientRect(),
+    // WRITE фаза
+    (rect) => {
+      if (!rect) return;
+      maskRect.value = {
+        left: Math.round(rect.left + window.scrollX),
+        top: Math.round(rect.top + window.scrollY),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+      };
+    }
+  );
 };
 
 const toggleListeners = (attach) => {
@@ -140,7 +145,6 @@ const toggleListeners = (attach) => {
 const cleanup = () => {
   resizeObserver?.disconnect();
   toggleListeners(false);
-  rafId && cancelAnimationFrame(rafId);
 };
 
 const applyFilterToMaskElement = () => {

@@ -64,7 +64,6 @@ export const boxVariants = {
       y: index % 2 === 0 ? "-25%" : "-115%",
       rotate: 45,
       scale: 1,
-      opacity: 1,
       border: "2px solid #333333",
     };
   },
@@ -79,11 +78,12 @@ export const contentWrapVariants = {
 // Объединенные варианты для контента (цифра и точка)
 export const squareContentVariants = {
   number: {
-    default: {
+    default: (index) => ({
       opacity: 0,
       scale: 1,
       color: "rgba(255,255,255,0)",
-    },
+      "--glow-color": getColorWithAlpha(index, 0),
+    }),
     hover: (index) => {
       const color = getColorWithAlpha(index, 1);
       return {
@@ -93,10 +93,11 @@ export const squareContentVariants = {
         color: color,
       };
     },
-    active: {
+    active: (index) => ({
       opacity: 0,
       color: "rgba(255,255,255,0)",
-    },
+      "--glow-color": getColorWithAlpha(index, 0),
+    }),
   },
   bullet: {
     default: { opacity: 1 },
