@@ -2,32 +2,35 @@
   <div class="main-page">
     <BgToSvg :source-selector="sourceSelector" :render-delay="100" />
     <PageNavigation :sections="navigationSections" @animation-complete="handleNavAnimationComplete" />
-    <section id="intro" :class="{ 'intro-visible': introVisible }">
-      <Intro :intro-visible="introVisible" />
-    </section>
-    <section id="case1">
-      <Case1 />
-    </section>
-    <section id="case2">
-      <Case2 />
-    </section>
-    <section id="case3">
-      <Case3 />
-    </section>
-    <section id="values">
-      <Values />
-    </section>
-    <section id="ai-play">
-      <div class="ai-play-placeholder">AI Play - Coming Soon</div>
-    </section>
-    <section id="contacts">
-      <Contacts />
-    </section>
+    <VueScrollSnap :fullscreen="true">
+      <section id="intro" class="item" :class="{ 'intro-visible': introVisible }">
+        <Intro :intro-visible="introVisible" />
+      </section>
+      <section id="case1" class="item">
+        <Case1 />
+      </section>
+      <section id="case2" class="item">
+        <Case2 />
+      </section>
+      <section id="case3" class="item">
+        <Case3 />
+      </section>
+      <section id="values" class="item">
+        <Values />
+      </section>
+      <section id="ai-play" class="item">
+        <div class="ai-play-placeholder">AI Play - Coming Soon</div>
+      </section>
+      <section id="contacts" class="item">
+        <Contacts />
+      </section>
+    </VueScrollSnap>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import VueScrollSnap from "vue-scroll-snap";
 import Intro from "./intro/Intro.vue";
 import BgToSvg from "../../components/bg-to-svg/BgToSvg.vue";
 import Case1 from "./cases/Case1.vue";
@@ -59,20 +62,10 @@ const navigationSections = [
 ];
 </script>
 
-<style>
-html {
-  scroll-snap-type: y proximity;
-}
-</style>
-
 <style scoped>
 .main-page {
   width: 100vw;
   background: #171717;
-}
-
-section {
-  scroll-snap-align: start;
 }
 
 #intro {
