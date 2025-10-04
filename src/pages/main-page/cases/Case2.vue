@@ -1,10 +1,10 @@
 <template>
-  <section class="case2">
+  <div class="case2">
     <RouterLink to="/case2" class="case-link">
       <h2>Case 2</h2>
       <p>View Details →</p>
     </RouterLink>
-  </section>
+  </div>
 </template>
 
 <script setup>

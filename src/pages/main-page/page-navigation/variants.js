@@ -6,11 +6,12 @@ export const spring = {
   mass: 1.5,
 };
 
-// Плавная анимация для ромбиков без overshoot
+// Легкая пружинка для ромбиков
 export const smoothTransition = {
-  type: "tween",
-  duration: 0.25,
-  ease: "easeInOut",
+  type: "spring",
+  stiffness: 250,
+  damping: 15,
+  mass: 1,
 };
 
 // Варианты для элемента навигации
@@ -18,18 +19,30 @@ export const navItemVariants = {
   default: {
     rotate: 0,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
+    opacity: 1,
   },
   hover: {
     rotate: 45,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
+    opacity: 1,
   },
   pressed: {
     rotate: 45,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
+    opacity: 1,
   },
   active: {
     rotate: 45,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
+    opacity: 1,
+  },
+  introHighlight: {
+    rotate: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    opacity: 1,
+  },
+  hidden: {
+    opacity: 0,
   },
 };
 
@@ -42,6 +55,9 @@ export const labelVariants = {
     opacity: 1,
   },
   active: {
+    opacity: 1,
+  },
+  introHighlight: {
     opacity: 1,
   },
 };

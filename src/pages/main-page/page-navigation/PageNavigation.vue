@@ -1,11 +1,12 @@
 <template>
   <nav class="page-navigation" aria-label="Page sections navigation">
     <NavigationItem
-      v-for="section in sections"
+      v-for="(section, index) in sections"
       :key="section.id"
       :label="section.label"
       :section-id="section.id"
       :is-active="activeSection === section.id"
+      :intro-highlight="introHighlightIndex === index"
       @navigate="handleNavigate"
     />
   </nav>
@@ -37,7 +38,8 @@ const props = defineProps({
   },
 });
 
-const activeSection = ref(props.sections[0]?.id || "");
+const activeSection = ref(""); // Не активируем ничего до завершения intro анимации
+const introHighlightIndex = ref(-1);
 let observer = null;
 
 function handleNavigate(sectionId) {
@@ -73,8 +75,45 @@ function setupIntersectionObserver() {
   });
 }
 
+const emit = defineEmits(['animationComplete']);
+
+function startIntroAnimation() {
+  const totalSections = props.sections.length;
+  let currentIndex = totalSections - 1;
+
+  function animateNext() {
+    if (currentIndex < 0) {
+      introHighlightIndex.value = -1;
+      // Активируем первую секцию (intro) после завершения анимации
+      activeSection.value = props.sections[0]?.id || "";
+      // Уведомляем родителя что анимация завершена
+      setTimeout(() => {
+        emit('animationComplete');
+      }, 500);
+      return;
+    }
+
+    introHighlightIndex.value = currentIndex;
+
+    // Вычисляем задержку: начинаем с 60ms, заканчиваем на 220ms
+    // Используем ease-out кривую для плавного замедления
+    const progress = (totalSections - 1 - currentIndex) / (totalSections - 1);
+    const easeOut = 1 - Math.pow(1 - progress, 2);
+    const delay = 60 + easeOut * 160; // от 60ms до 220ms
+
+    currentIndex--;
+    setTimeout(animateNext, delay);
+  }
+
+  animateNext();
+}
+
 onMounted(() => {
   setupIntersectionObserver();
+  // Задержка перед началом анимации меню
+  setTimeout(() => {
+    startIntroAnimation();
+  }, 500);
 });
 
 onUnmounted(() => {

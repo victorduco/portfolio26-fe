@@ -1,10 +1,18 @@
 <template>
-  <section class="case1">
-    <RouterLink to="/case1" class="case-link">
+  <div class="case1">
+    <video
+      class="case-video"
+      src="@/assets/case-videos/case1.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+    ></video>
+    <RouterLink to="/case1" class="case-link" style="display: none">
       <h2>Case 1</h2>
       <p>View Details →</p>
     </RouterLink>
-  </section>
+  </div>
 </template>
 
 <script setup>
@@ -19,6 +27,13 @@ import { RouterLink } from "vue-router";
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.case-video {
+  width: 80vw;
+  height: auto;
+  border-radius: 16px;
+  object-fit: contain;
 }
 
 .case-link {

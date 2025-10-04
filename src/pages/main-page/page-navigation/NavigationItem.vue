@@ -12,22 +12,23 @@
       class="nav-item-label"
       :variants="labelVariants"
       :animate="getAnimationState()"
-      :transition="spring"
+      :transition="getLabelTransition()"
+      :initial="'default'"
     >
       {{ label }}
     </motion.div>
     <motion.div
       class="nav-item"
       :variants="navItemVariants"
-      :animate="getAnimationState()"
+      :animate="getSquareAnimationState()"
       :transition="smoothTransition"
-      :initial="false"
+      :initial="'hidden'"
     />
   </button>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { motion } from "motion-v";
 import { spring, smoothTransition, navItemVariants, labelVariants } from "./variants.js";
 
@@ -44,6 +45,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  introHighlight: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["navigate"]);
@@ -52,10 +57,56 @@ const isHovered = ref(false);
 const isPressed = ref(false);
 
 function getAnimationState() {
+  // Для текста не показываем active состояние во время intro анимации
+  if (props.introHighlight) return "introHighlight";
+  if (isPressed.value) return "pressed";
+  // Показываем active только после того как элемент прошел intro анимацию
+  if (props.isActive && hasBeenIntroHighlighted.value) return "active";
+  if (isHovered.value) return "hover";
+  return "default";
+}
+
+const hasAppeared = ref(false);
+const hasBeenIntroHighlighted = ref(false);
+
+// Отслеживаем когда квадрат и текст должны появиться
+watch(() => props.introHighlight, (newVal) => {
+  if (newVal) {
+    hasAppeared.value = true;
+    hasBeenIntroHighlighted.value = true;
+  }
+}, { flush: 'sync' });
+
+function getSquareAnimationState() {
+  // Во время introHighlight показываем квадрат
+  if (props.introHighlight) {
+    return "introHighlight";
+  }
+
+  // Пока квадрат не появился - скрываем
+  if (!hasAppeared.value) return "hidden";
+
+  // После появления работаем как обычно
   if (isPressed.value) return "pressed";
   if (props.isActive) return "active";
   if (isHovered.value) return "hover";
   return "default";
+}
+
+function getLabelTransition() {
+  if (props.introHighlight) {
+    return {
+      type: "tween",
+      duration: 0.4,
+      ease: [0.4, 0, 0.6, 1], // ease-out curve (начинает быстро, заканчивает медленно)
+    };
+  }
+  // Используем плавный transition без пружины для opacity
+  return {
+    type: "tween",
+    duration: 0.25,
+    ease: "easeInOut",
+  };
 }
 
 function handleClick(event) {

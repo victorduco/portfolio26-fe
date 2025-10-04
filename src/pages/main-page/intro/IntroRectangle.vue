@@ -76,6 +76,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  introVisible: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const isActive = ref(false);
@@ -87,7 +91,8 @@ const motionElement = ref(null);
 function getAnimationState() {
   // Обычные интерактивные состояния
   if (isActive.value) return "active";
-  if (isHovered.value) return "hover";
+  // Не показываем hover пока Intro не появился
+  if (isHovered.value && props.introVisible) return "hover";
   return "default";
 }
 const emit = defineEmits(["activeChange"]);
@@ -102,7 +107,8 @@ function toggleState() {
 // Динамическая интенсивность по состояниям
 const glassIntensity = computed(() => {
   if (isActive.value) return glassIntensityVariants.active.intensity;
-  if (isHovered.value) return glassIntensityVariants.hover.intensity;
+  // Не показываем hover интенсивность пока Intro не появился
+  if (isHovered.value && props.introVisible) return glassIntensityVariants.hover.intensity;
   return glassIntensityVariants.default.intensity;
 });
 

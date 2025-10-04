@@ -1,17 +1,24 @@
 <template>
   <div class="main-page">
     <BgToSvg :source-selector="sourceSelector" :render-delay="100" />
-    <PageNavigation :sections="navigationSections" />
-    <section id="intro">
-      <Intro />
+    <PageNavigation :sections="navigationSections" @animation-complete="handleNavAnimationComplete" />
+    <section id="intro" :class="{ 'intro-visible': introVisible }">
+      <Intro :intro-visible="introVisible" />
     </section>
-    <section id="cases">
+    <section id="case1">
       <Case1 />
+    </section>
+    <section id="case2">
       <Case2 />
+    </section>
+    <section id="case3">
       <Case3 />
     </section>
     <section id="values">
       <Values />
+    </section>
+    <section id="ai-play">
+      <div class="ai-play-placeholder">AI Play - Coming Soon</div>
     </section>
     <section id="contacts">
       <Contacts />
@@ -35,18 +42,55 @@ import { useMeta } from "../../composables/useMeta.js";
 useMeta("home");
 
 const sourceSelector = ref("intro-text-export-node");
+const introVisible = ref(false);
+
+function handleNavAnimationComplete() {
+  introVisible.value = true;
+}
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
-  { id: "cases", label: "Cases" },
-  { id: "values", label: "Values" },
-  { id: "contacts", label: "Contacts" },
+  { id: "case1", label: "Story one" },
+  { id: "case2", label: "Story two" },
+  { id: "case3", label: "Story three" },
+  { id: "values", label: "Vision" },
+  { id: "ai-play", label: "AI Play" },
+  { id: "contacts", label: "Self" },
 ];
 </script>
+
+<style>
+html {
+  scroll-snap-type: y proximity;
+}
+</style>
 
 <style scoped>
 .main-page {
   width: 100vw;
   background: #171717;
+}
+
+section {
+  scroll-snap-align: start;
+}
+
+#intro {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+#intro.intro-visible {
+  opacity: 1;
+}
+
+.ai-play-placeholder {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.3);
 }
 </style>

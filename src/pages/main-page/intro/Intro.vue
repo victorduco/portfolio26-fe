@@ -15,6 +15,7 @@
       :key="index"
       :index="index"
       :active-count="activeCount"
+      :intro-visible="introVisible"
       @active-change="handleActiveChange"
     />
   </motion.ul>
@@ -25,6 +26,13 @@ import { ref } from "vue";
 import { motion } from "motion-v";
 import { spring } from "./variants";
 import IntroRectangle from "./IntroRectangle.vue";
+
+const props = defineProps({
+  introVisible: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const rects = Array(4).fill(null);
 const activeCount = ref(0);
