@@ -1,13 +1,15 @@
 <template>
   <div class="case1" ref="caseElement">
-    <video
-      ref="videoElement"
-      class="case-video"
-      src="@/assets/case-videos/case1.mp4"
-      muted
-      playsinline
-      @ended="handleVideoEnded"
-    ></video>
+    <div class="video-wrapper">
+      <video
+        ref="videoElement"
+        class="case-video"
+        src="@/assets/case-videos/case1.mp4"
+        muted
+        playsinline
+        @ended="handleVideoEnded"
+      ></video>
+    </div>
     <button v-if="showReplayButton" class="replay-button" @click="replayVideo">
       <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
@@ -90,14 +92,27 @@ onUnmounted(() => {
 .case1 {
   width: 100vw;
   height: 100vh;
-  background: #0d1117;
+  background: #27A9FF;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 }
 
+.video-wrapper {
+  padding: 24px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
 .case-video {
+  display: block;
   width: 60vw;
   height: auto;
   border-radius: 16px;
