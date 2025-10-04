@@ -1,13 +1,18 @@
 <template>
-  <div class="case1">
+  <div class="case1" ref="caseElement">
     <video
+      ref="videoElement"
       class="case-video"
       src="@/assets/case-videos/case1.mp4"
-      autoplay
-      loop
       muted
       playsinline
+      @ended="handleVideoEnded"
     ></video>
+    <button v-if="showReplayButton" class="replay-button" @click="replayVideo">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+      </svg>
+    </button>
     <RouterLink to="/case1" class="case-link" style="display: none">
       <h2>Case 1</h2>
       <p>View Details →</p>
@@ -16,7 +21,69 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import { RouterLink } from "vue-router";
+
+const caseElement = ref(null);
+const videoElement = ref(null);
+const showReplayButton = ref(false);
+let observer = null;
+let playTimeout = null;
+
+function handleVideoEnded() {
+  showReplayButton.value = true;
+}
+
+function replayVideo() {
+  showReplayButton.value = false;
+  if (videoElement.value) {
+    videoElement.value.currentTime = 0;
+    videoElement.value.play();
+  }
+}
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Запускаем видео через 1 секунду после появления в области видимости
+          playTimeout = setTimeout(() => {
+            if (videoElement.value) {
+              showReplayButton.value = false;
+              videoElement.value.play();
+            }
+          }, 1000);
+        } else {
+          // Очищаем таймаут и останавливаем видео при выходе из области видимости
+          if (playTimeout) {
+            clearTimeout(playTimeout);
+            playTimeout = null;
+          }
+          if (videoElement.value) {
+            videoElement.value.pause();
+          }
+        }
+      });
+    },
+    {
+      threshold: 0.5, // Секция должна быть видна хотя бы на 50%
+    }
+  );
+
+  if (caseElement.value) {
+    observer.observe(caseElement.value);
+  }
+});
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect();
+  }
+  if (playTimeout) {
+    clearTimeout(playTimeout);
+  }
+});
 </script>
 
 <style scoped>
@@ -27,10 +94,11 @@ import { RouterLink } from "vue-router";
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .case-video {
-  width: 80vw;
+  width: 60vw;
   height: auto;
   border-radius: 16px;
   object-fit: contain;
@@ -60,5 +128,34 @@ import { RouterLink } from "vue-router";
   margin: 0;
   font-size: 18px;
   opacity: 0.7;
+}
+
+.replay-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.replay-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.replay-button svg {
+  width: 40px;
+  height: 40px;
 }
 </style>
