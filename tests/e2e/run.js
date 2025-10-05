@@ -6,6 +6,7 @@
  */
 
 import { testResizePerformance } from './scenarios/resize-performance.js';
+import { testInteractionPerformance } from './scenarios/interaction-performance.js';
 
 const args = process.argv.slice(2);
 const scenario = args[0] || 'resize-performance';
@@ -32,10 +33,21 @@ async function run() {
       });
       break;
 
+    case 'interaction-performance':
+      await testInteractionPerformance({
+        url: 'http://localhost:5173',
+        interactionRounds: 3,
+        headless,
+        comment,
+        cpuThrottling
+      });
+      break;
+
     default:
       console.error(`❌ Unknown scenario: ${scenario}`);
       console.log('\nAvailable scenarios:');
       console.log('  - resize-performance');
+      console.log('  - interaction-performance');
       process.exit(1);
   }
 }

@@ -1,0 +1,151 @@
+{
+  "testName": "interaction-performance",
+  "timestamp": "2025-10-05T02:52:27.948Z",
+  "comment": "Hardcore UI interaction - no scroll",
+  "results": {
+    "config": {
+      "url": "http://localhost:5173",
+      "interactionRounds": 3,
+      "totalInteractions": 150,
+      "comment": "Hardcore UI interaction - no scroll",
+      "cpuThrottling": 1
+    },
+    "totalTime": {
+      "ms": 18779,
+      "seconds": "18.78"
+    },
+    "interactions": {
+      "total": 150,
+      "avgDuration": 728.39,
+      "minDuration": 231,
+      "maxDuration": 2327,
+      "patterns": {
+        "hover-sequential": {
+          "avg": 234,
+          "min": 231,
+          "max": 240,
+          "count": 3
+        },
+        "activate-all": {
+          "avg": 470.67,
+          "min": 461,
+          "max": 481,
+          "count": 3
+        },
+        "hover-zigzag": {
+          "avg": 361.67,
+          "min": 330,
+          "max": 412,
+          "count": 3
+        },
+        "deactivate-reverse": {
+          "avg": 459,
+          "min": 454,
+          "max": 465,
+          "count": 3
+        },
+        "rapid-toggle": {
+          "avg": 669.33,
+          "min": 654,
+          "max": 684,
+          "count": 3
+        },
+        "hover-random": {
+          "avg": 2175.67,
+          "min": 2035,
+          "max": 2327,
+          "count": 3
+        }
+      },
+      "details": [
+        {
+          "type": "hover-sequential",
+          "duration": 240
+        },
+        {
+          "type": "activate-all",
+          "duration": 461
+        },
+        {
+          "type": "hover-zigzag",
+          "duration": 343
+        },
+        {
+          "type": "deactivate-reverse",
+          "duration": 465
+        },
+        {
+          "type": "rapid-toggle",
+          "duration": 684
+        },
+        {
+          "type": "hover-random",
+          "duration": 2035
+        },
+        {
+          "type": "hover-sequential",
+          "duration": 231
+        },
+        {
+          "type": "activate-all",
+          "duration": 470
+        },
+        {
+          "type": "hover-zigzag",
+          "duration": 412
+        },
+        {
+          "type": "deactivate-reverse",
+          "duration": 454
+        },
+        {
+          "type": "rapid-toggle",
+          "duration": 654
+        },
+        {
+          "type": "hover-random",
+          "duration": 2327
+        },
+        {
+          "type": "hover-sequential",
+          "duration": 231
+        },
+        {
+          "type": "activate-all",
+          "duration": 481
+        },
+        {
+          "type": "hover-zigzag",
+          "duration": 330
+        },
+        {
+          "type": "deactivate-reverse",
+          "duration": 458
+        },
+        {
+          "type": "rapid-toggle",
+          "duration": 670
+        },
+        {
+          "type": "hover-random",
+          "duration": 2165
+        }
+      ]
+    },
+    "fps": {
+      "avg": 120.33,
+      "min": 120,
+      "max": 121,
+      "history": [
+        120,
+        121,
+        120
+      ]
+    },
+    "memory": {
+      "used": 41,
+      "total": 69,
+      "limit": 4096
+    }
+  }
+}
