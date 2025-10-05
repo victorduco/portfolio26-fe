@@ -156,6 +156,9 @@ export function printDetailedReport(analysis, results = {}) {
     console.log(`  Средний FPS:       ${f.avg.toFixed(2)}`);
     console.log(`  Медиана FPS:       ${f.median.toFixed(2)}`);
     console.log(`  Min/Max FPS:       ${f.min} / ${f.max}`);
+    if (results.finalMetrics?.avgFrameTime) {
+      console.log(`  Среднее время кадра: ${results.finalMetrics.avgFrameTime}ms (цель: <16.67ms для 60fps)`);
+    }
     console.log(`  Стандартное откл:  ${f.std.toFixed(2)}`);
     console.log(`  Состояние:         ${analysis.details.fpsHealth}`);
   }
@@ -168,6 +171,30 @@ export function printDetailedReport(analysis, results = {}) {
     console.log(`  Использовано:      ${m.used}MB / ${m.total}MB`);
     console.log(`  Процент:           ${m.usagePercent}%`);
     console.log(`  Доступно:          ${m.available}MB`);
+  }
+
+  // Long Tasks Summary
+  if (results.finalMetrics?.longTasks) {
+    const lt = results.finalMetrics.longTasks;
+    console.log('\n⏳ ДОЛГИЕ ЗАДАЧИ (>50ms):');
+    console.log('─'.repeat(80));
+    console.log(`  Количество:        ${lt.count}`);
+    console.log(`  Общее время:       ${lt.totalDuration}ms`);
+    if (lt.count > 0) {
+      const avgDuration = (lt.totalDuration / lt.count).toFixed(2);
+      console.log(`  Среднее время:     ${avgDuration}ms`);
+      console.log(`  Состояние:         ${lt.count > 10 ? '⚠️  МНОГО' : lt.count > 5 ? '⚡ НОРМА' : '✅ ХОРОШО'}`);
+    }
+  }
+
+  // Navigation Timing
+  if (results.finalMetrics?.navigation) {
+    const nav = results.finalMetrics.navigation;
+    console.log('\n🚀 ВРЕМЯ ЗАГРУЗКИ:');
+    console.log('─'.repeat(80));
+    if (nav.domContentLoaded) console.log(`  DOM готов:         ${nav.domContentLoaded}ms`);
+    if (nav.domInteractive) console.log(`  DOM интерактивен:  ${nav.domInteractive}ms`);
+    if (nav.loadComplete) console.log(`  Полная загрузка:   ${nav.loadComplete}ms`);
   }
 
   // Timeline

@@ -140,13 +140,24 @@ export async function testInteractionPerformance({
       // Pattern 1: Hover каждый прямоугольник по порядку
       console.log('  Pattern 1: Sequential hovers...');
       const hoverStartTime = Date.now();
+      const hoverTimings = [];
       for (let i = 0; i < rectCount; i++) {
+        const start = Date.now();
         await rectangles[i].hover();
+        const elapsed = Date.now() - start;
+        hoverTimings.push(elapsed);
+        console.log(`    Hover ${i+1}: ${elapsed}ms`);
         await page.waitForTimeout(25);
       }
       const hoverDuration = Date.now() - hoverStartTime;
-      interactionMetrics.push({ type: 'hover-sequential', duration: hoverDuration });
+      const avgHover = (hoverTimings.reduce((a,b) => a+b, 0) / hoverTimings.length).toFixed(2);
+      console.log(`    ⏱️  Среднее hover: ${avgHover}ms, Min: ${Math.min(...hoverTimings)}ms, Max: ${Math.max(...hoverTimings)}ms`);
+      interactionMetrics.push({ type: 'hover-sequential', duration: hoverDuration, timings: hoverTimings });
       totalInteractions += rectCount;
+
+      // Measure FPS after Pattern 1
+      let perfMetrics = await getPerformanceMetrics(page);
+      if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 2: Клик на каждый для активации
       console.log('  Pattern 2: Activate all...');
@@ -158,6 +169,10 @@ export async function testInteractionPerformance({
       const activateDuration = Date.now() - activateStartTime;
       interactionMetrics.push({ type: 'activate-all', duration: activateDuration });
       totalInteractions += rectCount;
+
+      // Measure FPS after Pattern 2
+      perfMetrics = await getPerformanceMetrics(page);
+      if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 3: Быстрые зигзагообразные ховеры (стресс-тест)
       console.log('  Pattern 3: Zigzag hovers (stress)...');
@@ -173,6 +188,10 @@ export async function testInteractionPerformance({
       interactionMetrics.push({ type: 'hover-zigzag', duration: zigzagDuration });
       totalInteractions += zigzagPattern.length;
 
+      // Measure FPS after Pattern 3
+      perfMetrics = await getPerformanceMetrics(page);
+      if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
+
       // Pattern 4: Деактивация в обратном порядке
       console.log('  Pattern 4: Deactivate reverse...');
       const deactivateStartTime = Date.now();
@@ -184,6 +203,10 @@ export async function testInteractionPerformance({
       interactionMetrics.push({ type: 'deactivate-reverse', duration: deactivateDuration });
       totalInteractions += rectCount;
 
+      // Measure FPS after Pattern 4
+      perfMetrics = await getPerformanceMetrics(page);
+      if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
+
       // Pattern 5: Быстрая активация/деактивация одного и того же
       console.log('  Pattern 5: Rapid toggle...');
       const toggleStartTime = Date.now();
@@ -194,6 +217,10 @@ export async function testInteractionPerformance({
       const toggleDuration = Date.now() - toggleStartTime;
       interactionMetrics.push({ type: 'rapid-toggle', duration: toggleDuration });
       totalInteractions += 3;
+
+      // Measure FPS after Pattern 5
+      perfMetrics = await getPerformanceMetrics(page);
+      if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 6: Случайные ховеры (имитация реального пользователя)
       console.log('  Pattern 6: Random hovers...');
@@ -207,8 +234,8 @@ export async function testInteractionPerformance({
       interactionMetrics.push({ type: 'hover-random', duration: randomDuration });
       totalInteractions += 6;
 
-      // Collect FPS metrics
-      const perfMetrics = await getPerformanceMetrics(page);
+      // Measure FPS after Pattern 6 (final for round)
+      perfMetrics = await getPerformanceMetrics(page);
       if (perfMetrics.fps > 0) {
         fpsMetrics.push(perfMetrics.fps);
       }

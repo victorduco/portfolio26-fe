@@ -1,14 +1,14 @@
 {
   "testName": "interaction-performance",
-  "timestamp": "2025-10-05T15:23:42.871Z",
+  "timestamp": "2025-10-05T15:33:13.642Z",
   "analysis": {
     "summary": {
       "fps": {
-        "avg": 21,
-        "min": 21,
-        "max": 21,
-        "median": 21,
-        "std": 0
+        "avg": 26.17,
+        "min": 15,
+        "max": 44,
+        "median": 23,
+        "std": 11.781576955380615
       }
     },
     "details": {
