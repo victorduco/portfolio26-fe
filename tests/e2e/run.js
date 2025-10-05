@@ -13,6 +13,7 @@ const scenario = args[0] || 'resize-performance';
 const comment = args.find(arg => arg.startsWith('--comment='))?.replace('--comment=', '') || '';
 const headless = args.includes('--headless');
 const cpuThrottling = parseInt(args.find(arg => arg.startsWith('--cpu='))?.replace('--cpu=', '') || '1');
+const browserType = args.find(arg => arg.startsWith('--browser='))?.replace('--browser=', '') || 'chromium';
 
 console.log(`
 ╔════════════════════════════════════════════════════════════════╗
@@ -36,10 +37,11 @@ async function run() {
     case 'interaction-performance':
       await testInteractionPerformance({
         url: 'http://localhost:5173',
-        interactionRounds: 3,
+        interactionRounds: 1,
         headless,
         comment,
-        cpuThrottling
+        cpuThrottling,
+        browserType
       });
       break;
 

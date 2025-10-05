@@ -1,0 +1,22 @@
+{
+  "testName": "interaction-performance",
+  "timestamp": "2025-10-05T15:23:42.871Z",
+  "analysis": {
+    "summary": {
+      "fps": {
+        "avg": 21,
+        "min": 21,
+        "max": 21,
+        "median": 21,
+        "std": 0
+      }
+    },
+    "details": {
+      "fpsHealth": "Poor (15-30 FPS)"
+    },
+    "timeline": [],
+    "recommendations": [
+      "🐌 Средний FPS ниже 30 - оптимизируйте рендеринг"
+    ]
+  }
+}

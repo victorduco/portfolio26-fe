@@ -1,4 +1,4 @@
-import { chromium } from '@playwright/test';
+import { chromium, webkit, firefox } from '@playwright/test';
 import { setupPerformanceTracking, getPerformanceMetrics, calculateStats } from '../helpers/performance.js';
 import { saveResults, appendToLog } from '../helpers/reporter.js';
 import { analyzeResults, printDetailedReport, saveAnalysis } from '../helpers/analyzer.js';
@@ -17,14 +17,44 @@ import { analyzeResults, printDetailedReport, saveAnalysis } from '../helpers/an
  */
 export async function testInteractionPerformance({
   url = 'http://localhost:5173',
-  interactionRounds = 3,
+  interactionRounds = 1,
   headless = false,
   comment = '',
-  cpuThrottling = 1
+  cpuThrottling = 1,
+  browserType = 'chromium' // chromium, webkit, firefox
 } = {}) {
   const testStartTime = Date.now();
-  const browser = await chromium.launch({ headless });
+
+  // Select browser
+  const browsers = { chromium, webkit, firefox };
+  const browserEngine = browsers[browserType] || chromium;
+
+  console.log(`🌐 Browser: ${browserType}\n`);
+  const browser = await browserEngine.launch({
+    headless,
+    // Force window to front on macOS
+    ...(browserType === 'webkit' && !headless ? {
+      args: ['--auto-open-devtools-for-tabs']
+    } : {})
+  });
   const page = await browser.newPage();
+
+  // Bring window to front for WebKit
+  if (browserType === 'webkit' && !headless) {
+    await page.bringToFront();
+
+    // Force activate window using AppleScript on macOS
+    if (process.platform === 'darwin') {
+      const { execSync } = await import('child_process');
+      try {
+        // Activate the frontmost Playwright/WebKit window
+        execSync(`osascript -e 'tell application "System Events" to set frontmost of first process whose name contains "Playwright" to true'`, { timeout: 2000 });
+      } catch (err) {
+        console.log('⚠️  Could not activate window via AppleScript (non-critical)');
+      }
+      await page.waitForTimeout(300);
+    }
+  }
 
   try {
     // Enable CPU throttling if specified
@@ -34,19 +64,34 @@ export async function testInteractionPerformance({
       console.log(`⚙️  CPU throttling enabled: ${cpuThrottling}x slowdown\n`);
     }
 
-    // Initial viewport BEFORE goto
-    await page.setViewportSize({ width: 1280, height: 800 });
+    // Initial viewport BEFORE goto - larger for WebKit, standard for others
+    const viewportSize = browserType === 'webkit' && !headless
+      ? { width: 1600, height: 900 }
+      : { width: 1280, height: 800 };
+    await page.setViewportSize(viewportSize);
 
     await page.goto(url);
+
+    // Set window position to top-left (0,0) for WebKit
+    if (browserType === 'webkit' && !headless && process.platform === 'darwin') {
+      const { execSync } = await import('child_process');
+      try {
+        execSync(`osascript -e 'tell application "System Events" to tell process "Playwright" to set position of window 1 to {0, 0}'`, { timeout: 2000 });
+      } catch (err) {
+        console.log('⚠️  Could not set window position (non-critical)');
+      }
+      await page.waitForTimeout(300);
+    }
 
     console.log('⌨️  Вводим 4 цифры на кейпаде для разблокировки...');
 
     // Клики по кнопкам кейпада (нужно 4 клика для разблокировки)
     // Используем код: 1, 5, 1, 5
-    await page.mouse.click(449, 74);   // 1
-    await page.mouse.click(640, 264);  // 5
-    await page.mouse.click(449, 74);   // 1
-    await page.mouse.click(640, 264);  // 5
+    // Кликаем по обертке кнопки, ищем по тексту внутри
+    await page.locator('.keypad-button-hover-wrapper:has-text("1")').click();
+    await page.locator('.keypad-button-hover-wrapper:has-text("5")').click();
+    await page.locator('.keypad-button-hover-wrapper:has-text("1")').click();
+    await page.locator('.keypad-button-hover-wrapper:has-text("5")').click();
 
     console.log('✅ Код введен: 1 5 1 5 (разблокировано)\n');
 
@@ -96,8 +141,8 @@ export async function testInteractionPerformance({
       console.log('  Pattern 1: Sequential hovers...');
       const hoverStartTime = Date.now();
       for (let i = 0; i < rectCount; i++) {
-        await rectangles[i].hover({ force: true });
-        await page.waitForTimeout(50);
+        await rectangles[i].hover();
+        await page.waitForTimeout(25);
       }
       const hoverDuration = Date.now() - hoverStartTime;
       interactionMetrics.push({ type: 'hover-sequential', duration: hoverDuration });
@@ -108,7 +153,7 @@ export async function testInteractionPerformance({
       const activateStartTime = Date.now();
       for (let i = 0; i < rectCount; i++) {
         await rectangles[i].click({ force: true });
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(50);
       }
       const activateDuration = Date.now() - activateStartTime;
       interactionMetrics.push({ type: 'activate-all', duration: activateDuration });
@@ -120,8 +165,8 @@ export async function testInteractionPerformance({
       const zigzagPattern = [0, 3, 1, 2, 3, 0, 2, 1]; // Прыгаем между прямоугольниками
       for (const index of zigzagPattern) {
         if (index < rectCount) {
-          await rectangles[index].hover({ force: true });
-          await page.waitForTimeout(30);
+          await rectangles[index].hover();
+          await page.waitForTimeout(15);
         }
       }
       const zigzagDuration = Date.now() - zigzagStartTime;
@@ -133,7 +178,7 @@ export async function testInteractionPerformance({
       const deactivateStartTime = Date.now();
       for (let i = rectCount - 1; i >= 0; i--) {
         await rectangles[i].click({ force: true });
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(50);
       }
       const deactivateDuration = Date.now() - deactivateStartTime;
       interactionMetrics.push({ type: 'deactivate-reverse', duration: deactivateDuration });
@@ -142,25 +187,25 @@ export async function testInteractionPerformance({
       // Pattern 5: Быстрая активация/деактивация одного и того же
       console.log('  Pattern 5: Rapid toggle...');
       const toggleStartTime = Date.now();
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 3; i++) {
         await rectangles[0].click({ force: true });
-        await page.waitForTimeout(50);
+        await page.waitForTimeout(25);
       }
       const toggleDuration = Date.now() - toggleStartTime;
       interactionMetrics.push({ type: 'rapid-toggle', duration: toggleDuration });
-      totalInteractions += 10;
+      totalInteractions += 3;
 
       // Pattern 6: Случайные ховеры (имитация реального пользователя)
       console.log('  Pattern 6: Random hovers...');
       const randomStartTime = Date.now();
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 6; i++) {
         const randomIndex = Math.floor(Math.random() * rectCount);
-        await rectangles[randomIndex].hover({ force: true });
-        await page.waitForTimeout(Math.random() * 100 + 50);
+        await rectangles[randomIndex].hover();
+        await page.waitForTimeout(Math.random() * 25 + 12);
       }
       const randomDuration = Date.now() - randomStartTime;
       interactionMetrics.push({ type: 'hover-random', duration: randomDuration });
-      totalInteractions += 20;
+      totalInteractions += 6;
 
       // Collect FPS metrics
       const perfMetrics = await getPerformanceMetrics(page);

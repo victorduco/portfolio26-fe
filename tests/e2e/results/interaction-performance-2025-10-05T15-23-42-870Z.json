@@ -1,0 +1,97 @@
+{
+  "testName": "interaction-performance",
+  "timestamp": "2025-10-05T15:23:42.871Z",
+  "comment": "Baseline - WebKit initial performance",
+  "results": {
+    "config": {
+      "url": "http://localhost:5173",
+      "interactionRounds": 1,
+      "totalInteractions": 29,
+      "comment": "Baseline - WebKit initial performance",
+      "cpuThrottling": 1
+    },
+    "totalTime": {
+      "ms": 25456,
+      "seconds": "25.46"
+    },
+    "interactions": {
+      "total": 29,
+      "avgDuration": 2637.83,
+      "minDuration": 113,
+      "maxDuration": 7933,
+      "patterns": {
+        "hover-sequential": {
+          "avg": 3373,
+          "min": 3373,
+          "max": 3373,
+          "count": 1
+        },
+        "activate-all": {
+          "avg": 261,
+          "min": 261,
+          "max": 261,
+          "count": 1
+        },
+        "hover-zigzag": {
+          "avg": 3900,
+          "min": 3900,
+          "max": 3900,
+          "count": 1
+        },
+        "deactivate-reverse": {
+          "avg": 247,
+          "min": 247,
+          "max": 247,
+          "count": 1
+        },
+        "rapid-toggle": {
+          "avg": 113,
+          "min": 113,
+          "max": 113,
+          "count": 1
+        },
+        "hover-random": {
+          "avg": 7933,
+          "min": 7933,
+          "max": 7933,
+          "count": 1
+        }
+      },
+      "details": [
+        {
+          "type": "hover-sequential",
+          "duration": 3373
+        },
+        {
+          "type": "activate-all",
+          "duration": 261
+        },
+        {
+          "type": "hover-zigzag",
+          "duration": 3900
+        },
+        {
+          "type": "deactivate-reverse",
+          "duration": 247
+        },
+        {
+          "type": "rapid-toggle",
+          "duration": 113
+        },
+        {
+          "type": "hover-random",
+          "duration": 7933
+        }
+      ]
+    },
+    "fps": {
+      "avg": 21,
+      "min": 21,
+      "max": 21,
+      "history": [
+        21
+      ]
+    },
+    "memory": null
+  }
+}
