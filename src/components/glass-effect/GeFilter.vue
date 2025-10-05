@@ -98,6 +98,7 @@ const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
 const glassFilterEl = ref(null);
 const displacementMapImg = ref(null);
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
+const logPrefix = `[GeFilter:${filterId}]`;
 const shaderMapUrl = computed(
   () => displacementMapImg.value?.shaderMapUrl || ""
 );
@@ -115,37 +116,59 @@ const displacementMapUrl = computed(() => {
 let maskElement = null;
 let resizeObserver = null;
 
-const updateMaskRect = () => {
-  if (!maskElement) return;
+const updateMaskRect = (source) => {
+  const reason = typeof source === "string" ? source : source?.type || "manual";
+
+  if (!maskElement) {
+    console.log(`${logPrefix} updateMaskRect skipped (no maskElement)`, { reason });
+    return;
+  }
+
+  console.log(`${logPrefix} updateMaskRect scheduled`, { reason });
 
   layoutBatcher.scheduleTask(
     // READ фаза
-    () => maskElement.getBoundingClientRect(),
+    () => {
+      console.log(`${logPrefix} layoutBatcher READ start`, { reason });
+      const rect = maskElement.getBoundingClientRect();
+      console.log(`${logPrefix} layoutBatcher READ end`, rect);
+      return rect;
+    },
     // WRITE фаза
     (rect) => {
-      if (!rect) return;
-      maskRect.value = {
+      if (!rect) {
+        console.log(`${logPrefix} layoutBatcher WRITE skipped (rect null)`, { reason });
+        return;
+      }
+      const nextRect = {
         left: Math.round(rect.left + window.scrollX),
         top: Math.round(rect.top + window.scrollY),
         width: Math.round(rect.width),
         height: Math.round(rect.height),
       };
+      console.log(`${logPrefix} layoutBatcher WRITE apply`, nextRect);
+      maskRect.value = nextRect;
     }
   );
 };
 
 const toggleListeners = (attach) => {
   const method = attach ? "addEventListener" : "removeEventListener";
+  console.log(`${logPrefix} ${attach ? "attach" : "detach"} window listeners`);
   window[method]("scroll", updateMaskRect, { passive: true });
   window[method]("resize", updateMaskRect);
 };
 
 const cleanup = () => {
+  console.log(`${logPrefix} cleanup start`);
   resizeObserver?.disconnect();
+  resizeObserver = null;
   toggleListeners(false);
+  console.log(`${logPrefix} cleanup end`);
 };
 
 const applyFilterToMaskElement = () => {
+  console.log(`${logPrefix} applyFilterToMaskElement start`);
   // Try to find .mask-element - it can be a parent or the wrapper itself
   let el = glassFilterEl.value?.parentElement;
   while (el) {
@@ -156,29 +179,44 @@ const applyFilterToMaskElement = () => {
     el = el.parentElement;
   }
 
-  if (!maskElement) return;
+  if (!maskElement) {
+    console.log(`${logPrefix} mask-element not found`);
+    return;
+  }
 
+  console.log(`${logPrefix} mask-element found`, maskElement);
   maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);
   maskElement.style.setProperty(
     "--displacement-map-url",
     `url(${shaderMapUrl.value})`
   );
+  console.log(`${logPrefix} CSS variables set`);
 
-  updateMaskRect();
+  updateMaskRect("initial");
   resizeObserver?.disconnect();
-  resizeObserver = new ResizeObserver(updateMaskRect);
+  resizeObserver = new ResizeObserver((entries) => {
+    console.log(`${logPrefix} ResizeObserver callback`, entries);
+    updateMaskRect("resize-observer");
+  });
   resizeObserver.observe(maskElement);
+  console.log(`${logPrefix} resizeObserver attached`);
   toggleListeners(true);
 };
 
 onMounted(async () => {
+  console.log(`${logPrefix} onMounted start`);
   await nextTick();
+  console.log(`${logPrefix} nextTick resolved`);
   applyFilterToMaskElement();
+  console.log(`${logPrefix} onMounted end`);
 });
 
 // watch(shaderMapUrl, (url) => url && applyFilterToMaskElement());
 
-onBeforeUnmount(cleanup);
+onBeforeUnmount(() => {
+  console.log(`${logPrefix} onBeforeUnmount`);
+  cleanup();
+});
 
 defineExpose({ filterId, shaderMapUrl });
 </script>
