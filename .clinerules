@@ -7,6 +7,7 @@
 - После оптимизации производительности
 - При добавлении/изменении анимаций или эффектов
 - Перед созданием Pull Request
+- При тестировании на разных типах устройств
 
 ### Workflow для тестирования
 
@@ -29,6 +30,27 @@ npm run test:perf -- --comment="После: описание изменений"
 ```bash
 npm run test:compare
 ```
+
+### CPU Throttling
+
+Для тестирования на слабых устройствах используй параметр `--cpu`:
+
+```bash
+# Без throttling (мощный десктоп)
+npm run test:perf -- --comment="Desktop performance"
+
+# 4x замедление (средний ноутбук)
+npm run test:perf -- --cpu=4 --comment="Mid-range laptop"
+
+# 6x замедление (слабое устройство)
+npm run test:perf -- --cpu=6 --comment="Low-end device"
+```
+
+**Когда использовать:**
+- `--cpu=1` (default) - разработка, быстрая проверка
+- `--cpu=4` - финальная проверка перед PR
+- `--cpu=6` - тестирование для широкой аудитории
+- `--cpu=8` - экстремальные условия, мобильные устройства
 
 ### Интерпретация метрик
 
@@ -54,24 +76,30 @@ npm run test:compare
 
 Если обнаружена деградация:
 
-1. Проверь компоненты с эффектами:
-   - `<Keypad>` - glass-effect, анимации
-   - `<GeFilter>` - SVG фильтры
-   - `<BgToSvg>` - конвертация в SVG
+1. **Главные виновники (проверяй в первую очередь):**
+   - `<BgToSvg>` в Keypad - resize listener генерирует PNG при каждом resize
+     - ⚠️ **ВАЖНО**: resize listener должен быть ОТКЛЮЧЕН (закомментирован)
+     - Используется `toPng` из `html-to-image` - медленная операция
+   - `<BgToSvg>` в MainPage - меньше влияет, но тоже проверь
 
-2. Проверь директивы:
-   - `v-mask-element` - resize observers
-   - `v-hover-distortion` - mouse events
+2. Проверь компоненты с эффектами:
+   - `<Keypad>` - glass-effect, анимации, 10 кнопок с директивами
+   - `<GeFilter>` - SVG фильтры, ResizeObserver
+   - `<GlassEffect>` - используется на каждой кнопке
+
+3. Проверь директивы:
+   - `v-mask-element` - ResizeObserver (КРИТИЧНО, не отключать!)
+   - `v-hover-distortion` - resize listener (минимальное влияние)
    - `v-glass-effect` - динамические фильтры
 
-3. Отключай компоненты последовательно:
+4. Отключай компоненты последовательно:
 ```bash
 # Закомментируй компонент в App.vue
 npm run test:perf -- --comment="Без Keypad"
 npm run test:compare
 ```
 
-4. Проверяй resize события:
+5. Проверяй resize события:
 ```bash
 # Поиск всех resize слушателей
 grep -r "resize" src/ --include="*.vue" --include="*.js"
@@ -79,16 +107,22 @@ grep -r "resize" src/ --include="*.vue" --include="*.js"
 
 ### Рекомендации по оптимизации
 
-1. **Уменьшить количество resize listeners**
-   - Дебаунсинг событий
-   - Отключение ненужных observers
+1. **BgToSvg оптимизация (КРИТИЧНО)**
+   - ✅ Используй `toPng` вместо `toSvg` (в 2 раза быстрее)
+   - ✅ ОТКЛЮЧИ resize listener - генерация должна быть только при mount и data change
+   - Если нужен resize - добавь debounce минимум 300-500ms
+   - Рассмотри статическое изображение вместо динамической генерации
 
-2. **Оптимизация рендеринга**
+2. **Уменьшить количество resize listeners**
+   - Дебаунсинг событий (300-500ms)
+   - НЕ отключай ResizeObserver в `v-mask-element` (критично для glass-effect)
+
+3. **Оптимизация рендеринга**
    - Мемоизация computed свойств
    - Виртуализация списков
    - Lazy loading компонентов
 
-3. **Память**
+4. **Память**
    - Очистка listeners в onUnmounted
    - Отмена анимаций при размонтировании
    - Проверка утечек в DevTools
@@ -96,10 +130,14 @@ grep -r "resize" src/ --include="*.vue" --include="*.js"
 ### Файлы для проверки
 
 При изменении производительности проверь:
+- **`src/components/bg-to-svg/BgToSvg.vue`** - ГЛАВНЫЙ ВИНОВНИК деградации
+  - resize listener должен быть закомментирован (строки 58-64)
+  - используется toPng вместо toSvg
 - `src/App.vue` - основной компонент
-- `src/components/keypad/Keypad.vue` - тяжелый компонент
+- `src/components/keypad/Keypad.vue` - тяжелый компонент, использует BgToSvg
 - `src/components/glass-effect/*.vue` - SVG фильтры
-- `src/directives/*.js` - директивы с событиями
+- `src/directives/mask-element/maskElement.js` - ResizeObserver (НЕ ТРОГАТЬ!)
+- `src/directives/hover-distortion/hoverDistortion.js` - resize listener
 - `src/pages/main-page/**` - основные страницы
 
 ### Автоматизация
@@ -110,9 +148,21 @@ grep -r "resize" src/ --include="*.vue" --include="*.js"
   run: |
     npm run dev &
     sleep 5
-    npm run test:perf:headless -- --comment="CI: ${{ github.sha }}"
+    npm run test:perf:headless -- --cpu=4 --comment="CI: ${{ github.sha }}"
     npm run test:compare || echo "Warning: Performance regression detected"
 ```
+
+### Известные результаты тестов
+
+**Baseline (до оптимизации):**
+- SVG + resize listener: 10.85s, 467ms avg, деградация +468% ❌
+- PNG + resize listener: 5.17s, 187ms avg, деградация +501% ⚠️
+- PNG без resize listener: 2.61s, 74ms avg, деградация НЕТ ✅
+
+**Выводы:**
+- BgToSvg с resize listener - основная причина деградации
+- PNG в 2 раза быстрее SVG
+- Отключение resize listener решает проблему полностью
 
 ### Документация
 

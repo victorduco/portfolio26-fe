@@ -12,13 +12,21 @@ export async function testResizePerformance({
   resizeCount = 20,
   resizeSteps = 5,
   headless = false,
-  comment = ''
+  comment = '',
+  cpuThrottling = 1 // 1 = no throttling, 4 = 4x slowdown, 6 = 6x slowdown
 } = {}) {
   const testStartTime = Date.now();
   const browser = await chromium.launch({ headless });
   const page = await browser.newPage();
 
   try {
+    // Enable CPU throttling if specified
+    if (cpuThrottling > 1) {
+      const client = await page.context().newCDPSession(page);
+      await client.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottling });
+      console.log(`⚙️  CPU throttling enabled: ${cpuThrottling}x slowdown\n`);
+    }
+
     await page.goto(url);
 
     // Initial setup

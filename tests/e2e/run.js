@@ -11,6 +11,7 @@ const args = process.argv.slice(2);
 const scenario = args[0] || 'resize-performance';
 const comment = args.find(arg => arg.startsWith('--comment='))?.replace('--comment=', '') || '';
 const headless = args.includes('--headless');
+const cpuThrottling = parseInt(args.find(arg => arg.startsWith('--cpu='))?.replace('--cpu=', '') || '1');
 
 console.log(`
 ╔════════════════════════════════════════════════════════════════╗
@@ -26,7 +27,8 @@ async function run() {
         resizeCount: 20,
         resizeSteps: 5,
         headless,
-        comment
+        comment,
+        cpuThrottling
       });
       break;
 
