@@ -84,15 +84,13 @@ import GeFilterEdgeProcessing from "./GeFilterEdgeProcessing.vue";
 import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
 import GeFilterComposite from "./GeFilterComposite.vue";
 import GeFilterEnhancement from "./GeFilterEnhancement.vue";
-import mp1Image from "@/assets/distmaps/mp1.png";
-import mp2Image from "@/assets/distmaps/mp2.png";
 import mp3TstImage from "@/assets/distmaps/mp3-34-thin.png";
 import { layoutBatcher } from "@/directives/mask-element/layoutBatcher";
 const props = defineProps({
   options: { type: Object, required: true },
   intensity: { type: Number, required: true },
   staticDisplacementMap: { type: String, default: null },
-  displacementMode: { type: String, default: 'static' },
+  displacementMode: { type: String, default: "static" },
 });
 
 const { options: o } = props;
@@ -105,10 +103,10 @@ const shaderMapUrl = computed(
 );
 
 const displacementMapUrl = computed(() => {
-  if (props.displacementMode === 'static' && props.staticDisplacementMap) {
+  if (props.displacementMode === "static" && props.staticDisplacementMap) {
     return props.staticDisplacementMap;
   }
-  if (props.displacementMode === 'dynamic') {
+  if (props.displacementMode === "dynamic") {
     return shaderMapUrl.value || mp3TstImage;
   }
   return props.staticDisplacementMap || mp3TstImage;
@@ -178,7 +176,7 @@ onMounted(async () => {
   applyFilterToMaskElement();
 });
 
-watch(shaderMapUrl, (url) => url && applyFilterToMaskElement());
+// watch(shaderMapUrl, (url) => url && applyFilterToMaskElement());
 
 onBeforeUnmount(cleanup);
 
