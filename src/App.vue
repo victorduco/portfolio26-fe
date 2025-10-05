@@ -11,6 +11,6 @@ function handleUnlock() {
 </script>
 
 <template>
-  <!-- <Keypad v-if="!isUnlocked" @unlock="handleUnlock" /> -->
-  <!-- <RouterView v-else /> -->
+  <Keypad v-if="!isUnlocked" @unlock="handleUnlock" />
+  <RouterView v-else />
 </template>
