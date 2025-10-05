@@ -9,13 +9,8 @@
     @click="emit('click', value)"
   >
     <div class="keypad-button-wrapper">
-      <GlassEffect
-        class="keypad-button-glass"
-        v-mask-element="'#171717'"
-        :user-options="glassEffectConfig"
-        :static-displacement-map="staticDisplacementMap"
-      >
-      </GlassEffect>
+      <!-- GlassEffect disabled for performance experiment -->
+      <div class="keypad-button-glass"></div>
 
       <motion.div
         class="keypad-number"
@@ -32,10 +27,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { motion } from "motion-v";
-import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
-import { glassEffectConfig } from "./glassEffectConfig.js";
-import staticDisplacementMap from "../../assets/distmaps/nummp1.png";
 
 const props = defineProps({
   value: {

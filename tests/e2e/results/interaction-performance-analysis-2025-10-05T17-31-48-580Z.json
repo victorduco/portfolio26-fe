@@ -1,0 +1,26 @@
+{
+  "testName": "interaction-performance",
+  "timestamp": "2025-10-05T17:31:48.581Z",
+  "analysis": {
+    "summary": {
+      "fps": {
+        "avg": 30.8,
+        "min": 30,
+        "max": 32,
+        "median": 30,
+        "std": 0.9797958971132713
+      },
+      "memory": {
+        "used": 44,
+        "total": 55,
+        "usagePercent": "80.00",
+        "available": 11
+      }
+    },
+    "details": {
+      "fpsHealth": "Good (30-60 FPS)"
+    },
+    "timeline": [],
+    "recommendations": []
+  }
+}
