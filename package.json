@@ -8,7 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed"
+    "test:e2e:headed": "playwright test --headed",
+    "test:perf": "node tests/e2e/run.js resize-performance",
+    "test:perf:headless": "node tests/e2e/run.js resize-performance --headless",
+    "test:compare": "node tests/e2e/compare.js",
+    "test:compare:json": "node tests/e2e/compare.js --format=json"
   },
   "dependencies": {
     "@wxperia/liquid-glass-vue": "^1.0.9",

@@ -1,0 +1,315 @@
+{
+  "testName": "resize-performance",
+  "timestamp": "2025-10-05T01:59:34.714Z",
+  "comment": "После изменений: пустой App без кейпада",
+  "results": {
+    "config": {
+      "url": "http://localhost:5173",
+      "resizeCount": 20,
+      "resizeSteps": 5,
+      "comment": "После изменений: пустой App без кейпада"
+    },
+    "totalTime": {
+      "ms": 1918,
+      "seconds": "1.92"
+    },
+    "resize": {
+      "avgDuration": 39.75,
+      "minDuration": 21,
+      "maxDuration": 60,
+      "details": [
+        {
+          "iteration": 1,
+          "from": {
+            "width": 1280,
+            "height": 800
+          },
+          "to": {
+            "width": 1037,
+            "height": 548
+          },
+          "duration": 60,
+          "timestamp": 1759629573823,
+          "fps": 0
+        },
+        {
+          "iteration": 2,
+          "from": {
+            "width": 1037,
+            "height": 548
+          },
+          "to": {
+            "width": 1175,
+            "height": 783
+          },
+          "duration": 32,
+          "timestamp": 1759629573884,
+          "fps": 0
+        },
+        {
+          "iteration": 3,
+          "from": {
+            "width": 1175,
+            "height": 783
+          },
+          "to": {
+            "width": 1700,
+            "height": 1197
+          },
+          "duration": 41,
+          "timestamp": 1759629573917,
+          "fps": 0
+        },
+        {
+          "iteration": 4,
+          "from": {
+            "width": 1700,
+            "height": 1197
+          },
+          "to": {
+            "width": 596,
+            "height": 439
+          },
+          "duration": 57,
+          "timestamp": 1759629573959,
+          "fps": 0
+        },
+        {
+          "iteration": 5,
+          "from": {
+            "width": 596,
+            "height": 439
+          },
+          "to": {
+            "width": 848,
+            "height": 1022
+          },
+          "duration": 39,
+          "timestamp": 1759629574029,
+          "fps": 0
+        },
+        {
+          "iteration": 6,
+          "from": {
+            "width": 848,
+            "height": 1022
+          },
+          "to": {
+            "width": 613,
+            "height": 972
+          },
+          "duration": 21,
+          "timestamp": 1759629574078,
+          "fps": 0
+        },
+        {
+          "iteration": 7,
+          "from": {
+            "width": 613,
+            "height": 972
+          },
+          "to": {
+            "width": 615,
+            "height": 1172
+          },
+          "duration": 24,
+          "timestamp": 1759629574100,
+          "fps": 0
+        },
+        {
+          "iteration": 8,
+          "from": {
+            "width": 615,
+            "height": 1172
+          },
+          "to": {
+            "width": 1914,
+            "height": 823
+          },
+          "duration": 44,
+          "timestamp": 1759629574125,
+          "fps": 0
+        },
+        {
+          "iteration": 9,
+          "from": {
+            "width": 1914,
+            "height": 823
+          },
+          "to": {
+            "width": 997,
+            "height": 447
+          },
+          "duration": 34,
+          "timestamp": 1759629574175,
+          "fps": 0
+        },
+        {
+          "iteration": 10,
+          "from": {
+            "width": 997,
+            "height": 447
+          },
+          "to": {
+            "width": 1858,
+            "height": 1160
+          },
+          "duration": 34,
+          "timestamp": 1759629574216,
+          "fps": 0
+        },
+        {
+          "iteration": 11,
+          "from": {
+            "width": 1858,
+            "height": 1160
+          },
+          "to": {
+            "width": 875,
+            "height": 799
+          },
+          "duration": 34,
+          "timestamp": 1759629574258,
+          "fps": 0
+        },
+        {
+          "iteration": 12,
+          "from": {
+            "width": 875,
+            "height": 799
+          },
+          "to": {
+            "width": 1540,
+            "height": 477
+          },
+          "duration": 42,
+          "timestamp": 1759629574300,
+          "fps": 0
+        },
+        {
+          "iteration": 13,
+          "from": {
+            "width": 1540,
+            "height": 477
+          },
+          "to": {
+            "width": 925,
+            "height": 567
+          },
+          "duration": 40,
+          "timestamp": 1759629574350,
+          "fps": 0
+        },
+        {
+          "iteration": 14,
+          "from": {
+            "width": 925,
+            "height": 567
+          },
+          "to": {
+            "width": 816,
+            "height": 1010
+          },
+          "duration": 50,
+          "timestamp": 1759629574391,
+          "fps": 0
+        },
+        {
+          "iteration": 15,
+          "from": {
+            "width": 816,
+            "height": 1010
+          },
+          "to": {
+            "width": 1915,
+            "height": 494
+          },
+          "duration": 38,
+          "timestamp": 1759629574442,
+          "fps": 0
+        },
+        {
+          "iteration": 16,
+          "from": {
+            "width": 1915,
+            "height": 494
+          },
+          "to": {
+            "width": 1275,
+            "height": 505
+          },
+          "duration": 33,
+          "timestamp": 1759629574484,
+          "fps": 0
+        },
+        {
+          "iteration": 17,
+          "from": {
+            "width": 1275,
+            "height": 505
+          },
+          "to": {
+            "width": 679,
+            "height": 1081
+          },
+          "duration": 41,
+          "timestamp": 1759629574518,
+          "fps": 0
+        },
+        {
+          "iteration": 18,
+          "from": {
+            "width": 679,
+            "height": 1081
+          },
+          "to": {
+            "width": 1007,
+            "height": 681
+          },
+          "duration": 35,
+          "timestamp": 1759629574566,
+          "fps": 0
+        },
+        {
+          "iteration": 19,
+          "from": {
+            "width": 1007,
+            "height": 681
+          },
+          "to": {
+            "width": 1754,
+            "height": 959
+          },
+          "duration": 42,
+          "timestamp": 1759629574608,
+          "fps": 0
+        },
+        {
+          "iteration": 20,
+          "from": {
+            "width": 1754,
+            "height": 959
+          },
+          "to": {
+            "width": 1640,
+            "height": 759
+          },
+          "duration": 54,
+          "timestamp": 1759629574654,
+          "fps": 0
+        }
+      ]
+    },
+    "fps": {
+      "avg": 0,
+      "min": 0,
+      "max": 0,
+      "history": []
+    },
+    "memory": {
+      "used": 39,
+      "total": 43,
+      "limit": 4096
+    }
+  }
+}

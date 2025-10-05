@@ -1,0 +1,184 @@
+{
+  "testName": "resize-performance",
+  "timestamp": "2025-10-05T01:59:34.714Z",
+  "analysis": {
+    "summary": {
+      "resize": {
+        "avg": 39.75,
+        "min": 21,
+        "max": 60,
+        "median": 39.5,
+        "std": 9.689556233388606,
+        "total": 795
+      },
+      "fps": {
+        "avg": 0,
+        "min": 0,
+        "max": 0,
+        "median": 0,
+        "std": 0
+      },
+      "memory": {
+        "used": 39,
+        "total": 43,
+        "usagePercent": "90.70",
+        "available": 4
+      }
+    },
+    "details": {
+      "degradation": {
+        "firstHalfAvg": 38.6,
+        "secondHalfAvg": 40.9,
+        "degradationPercent": "5.96",
+        "isDegrading": false
+      },
+      "fpsHealth": "Critical (<15 FPS)"
+    },
+    "timeline": [
+      {
+        "second": "0.00",
+        "iteration": 1,
+        "fps": "N/A",
+        "duration": 60,
+        "size": "1037x548"
+      },
+      {
+        "second": "0.06",
+        "iteration": 2,
+        "fps": "N/A",
+        "duration": 32,
+        "size": "1175x783"
+      },
+      {
+        "second": "0.09",
+        "iteration": 3,
+        "fps": "N/A",
+        "duration": 41,
+        "size": "1700x1197"
+      },
+      {
+        "second": "0.13",
+        "iteration": 4,
+        "fps": "N/A",
+        "duration": 57,
+        "size": "596x439"
+      },
+      {
+        "second": "0.19",
+        "iteration": 5,
+        "fps": "N/A",
+        "duration": 39,
+        "size": "848x1022"
+      },
+      {
+        "second": "0.23",
+        "iteration": 6,
+        "fps": "N/A",
+        "duration": 21,
+        "size": "613x972"
+      },
+      {
+        "second": "0.25",
+        "iteration": 7,
+        "fps": "N/A",
+        "duration": 24,
+        "size": "615x1172"
+      },
+      {
+        "second": "0.27",
+        "iteration": 8,
+        "fps": "N/A",
+        "duration": 44,
+        "size": "1914x823"
+      },
+      {
+        "second": "0.32",
+        "iteration": 9,
+        "fps": "N/A",
+        "duration": 34,
+        "size": "997x447"
+      },
+      {
+        "second": "0.35",
+        "iteration": 10,
+        "fps": "N/A",
+        "duration": 34,
+        "size": "1858x1160"
+      },
+      {
+        "second": "0.39",
+        "iteration": 11,
+        "fps": "N/A",
+        "duration": 34,
+        "size": "875x799"
+      },
+      {
+        "second": "0.42",
+        "iteration": 12,
+        "fps": "N/A",
+        "duration": 42,
+        "size": "1540x477"
+      },
+      {
+        "second": "0.46",
+        "iteration": 13,
+        "fps": "N/A",
+        "duration": 40,
+        "size": "925x567"
+      },
+      {
+        "second": "0.50",
+        "iteration": 14,
+        "fps": "N/A",
+        "duration": 50,
+        "size": "816x1010"
+      },
+      {
+        "second": "0.55",
+        "iteration": 15,
+        "fps": "N/A",
+        "duration": 38,
+        "size": "1915x494"
+      },
+      {
+        "second": "0.59",
+        "iteration": 16,
+        "fps": "N/A",
+        "duration": 33,
+        "size": "1275x505"
+      },
+      {
+        "second": "0.62",
+        "iteration": 17,
+        "fps": "N/A",
+        "duration": 41,
+        "size": "679x1081"
+      },
+      {
+        "second": "0.66",
+        "iteration": 18,
+        "fps": "N/A",
+        "duration": 35,
+        "size": "1007x681"
+      },
+      {
+        "second": "0.70",
+        "iteration": 19,
+        "fps": "N/A",
+        "duration": 42,
+        "size": "1754x959"
+      },
+      {
+        "second": "0.74",
+        "iteration": 20,
+        "fps": "N/A",
+        "duration": 54,
+        "size": "1640x759"
+      }
+    ],
+    "recommendations": [
+      "⚠️  Высокое использование памяти (>90%)",
+      "🐌 Средний FPS ниже 30 - оптимизируйте рендеринг"
+    ]
+  }
+}
