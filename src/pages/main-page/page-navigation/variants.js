@@ -6,12 +6,24 @@ export const spring = {
   mass: 1.5,
 };
 
-// Легкая пружинка для ромбиков
+// Пружинка для ромбиков (чуть заметнее качается)
 export const smoothTransition = {
   type: "spring",
-  stiffness: 250,
-  damping: 15,
-  mass: 1,
+  stiffness: 320,
+  damping: 11,
+  mass: 1.2,
+};
+
+export const opacityTween = {
+  type: "tween",
+  duration: 0.2,
+  ease: "easeOut",
+};
+
+export const backgroundTween = {
+  type: "tween",
+  duration: 0.3,
+  ease: "easeInOut",
 };
 
 // Варианты для элемента навигации

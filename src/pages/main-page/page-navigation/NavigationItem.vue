@@ -21,7 +21,11 @@
       class="nav-item"
       :variants="navItemVariants"
       :animate="getSquareAnimationState()"
-      :transition="smoothTransition"
+      :transition="{
+        rotate: smoothTransition,
+        opacity: opacityTween,
+        backgroundColor: backgroundTween,
+      }"
       :initial="'hidden'"
     />
   </button>
@@ -30,7 +34,14 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { motion } from "motion-v";
-import { spring, smoothTransition, navItemVariants, labelVariants } from "./variants.js";
+import {
+  spring,
+  smoothTransition,
+  opacityTween,
+  backgroundTween,
+  navItemVariants,
+  labelVariants,
+} from "./variants.js";
 
 const props = defineProps({
   label: {
