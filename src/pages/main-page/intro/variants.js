@@ -1,5 +1,8 @@
+import { delay } from "motion-v";
+
 // Color mappings for different states
 const COLOR_MAP = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
+const BORDER_COLOR_MAP = ["#9cd7ffff", "#FF83A2", "#00FFBC", "#FFFF78"];
 
 const hexToRgba = (hex, alpha) => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -10,6 +13,11 @@ const hexToRgba = (hex, alpha) => {
 
 const getColorWithAlpha = (index, alpha) => {
   const color = COLOR_MAP[index] || COLOR_MAP[0];
+  return hexToRgba(color, alpha);
+};
+
+const getBorderColorWithAlpha = (index, alpha) => {
+  const color = BORDER_COLOR_MAP[index] || BORDER_COLOR_MAP[0];
   return hexToRgba(color, alpha);
 };
 
@@ -27,6 +35,16 @@ export const marginSpring = {
   mass: 1.5, // инерция побольше для реализма
   delay: 0.1,
 };
+
+export const textShadowSpring = {
+  type: "spring",
+  stiffness: 100,
+  damping: 13,
+  mass: 1.5,
+  delay: 0.2,
+};
+
+// main box
 export const boxVariants = {
   default: ({ index, additionalMargin }) => {
     const baseMargin = 0;
@@ -37,11 +55,14 @@ export const boxVariants = {
       y: 0,
       rotate: 0,
       scale: 1,
-      border: "1px solid #222",
+      "--border-color": "#ffffff10",
+      "--border-gradient": "transparent",
+      "--glow-color": getBorderColorWithAlpha(index, 0),
     };
   },
   hover: ({ index, additionalMargin }) => {
     const baseMargin = 0;
+
     return {
       "--element-side-size": "400px",
       marginLeft: `${baseMargin + additionalMargin}px`,
@@ -49,7 +70,9 @@ export const boxVariants = {
       marginTop: "-150px",
       rotate: 15,
       scale: 1,
-      border: "1px solid #222222",
+      "--border-color": getBorderColorWithAlpha(index, 0.1),
+      "--border-gradient": "transparent",
+      "--glow-color": getBorderColorWithAlpha(index, 0.2),
     };
   },
   active: ({ index, additionalMargin }) => {
@@ -61,7 +84,9 @@ export const boxVariants = {
       y: index % 2 === 0 ? "-25%" : "-115%",
       rotate: 45,
       scale: 1,
-      border: "2px solid #333333",
+      "--border-color": getBorderColorWithAlpha(index, 0),
+      "--border-gradient": "transparent",
+      "--glow-color": getBorderColorWithAlpha(index, 0),
     };
   },
 };
@@ -80,20 +105,25 @@ export const squareContentVariants = {
       scale: 1,
       color: "rgba(255,255,255,0)",
       "--glow-color": getColorWithAlpha(index, 0),
+      "--text-glow-color": getColorWithAlpha(index, 0),
+      "--text-shadow-offset": "0px",
     }),
     hover: (index) => {
-      const color = getColorWithAlpha(index, 1);
       return {
         opacity: 1,
         rotate: -15,
-        "--glow-color": color,
-        color: color,
+        "--glow-color": getColorWithAlpha(index, 1),
+        "--text-glow-color": getColorWithAlpha(index, 1),
+        "--text-shadow-offset": "70px",
+        color: getColorWithAlpha(index, 1),
       };
     },
     active: (index) => ({
       opacity: 0,
       color: "rgba(255,255,255,0)",
       "--glow-color": getColorWithAlpha(index, 0),
+      "--text-glow-color": getColorWithAlpha(index, 0),
+      "--text-shadow-offset": "0px",
     }),
   },
   bullet: {
