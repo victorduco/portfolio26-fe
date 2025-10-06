@@ -41,7 +41,7 @@
             :intensity="props.intensity"
           />
 
-          <GeFilterComposite
+          <!-- <GeFilterComposite
             :glass-blur="o.glassBlur"
             :refraction-depth="o.refractionDepth"
             :intensity="props.intensity"
@@ -51,7 +51,7 @@
             :glass-saturation="o.glassSaturation"
             :surface-reflection="o.surfaceReflection"
             :intensity="props.intensity"
-          />
+          /> -->
         </filter>
       </defs>
     </svg>
