@@ -1,7 +1,6 @@
 // Glass effect configuration for intro rectangles
 export const INTRO_GLASS_CONFIG = {
   displacementScale: 55,
-  aberrationIntensity: 4.9,
   displacementCurvature: 1.3,
   glassBlur: 50,
   glassSaturation: 285,

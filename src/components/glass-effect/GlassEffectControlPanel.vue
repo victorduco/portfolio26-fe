@@ -28,25 +28,6 @@
         </label>
 
         <label class="glass-control-panel__field">
-          <span>Aberration Intensity</span>
-          <input
-            type="range"
-            min="0"
-            max="8"
-            step="0.1"
-            v-model.number="localOptions.aberrationIntensity"
-          />
-          <input
-            type="number"
-            min="0"
-            max="8"
-            step="0.1"
-            v-model.number="localOptions.aberrationIntensity"
-            class="glass-control-panel__number-input"
-          />
-        </label>
-
-        <label class="glass-control-panel__field">
           <span>Displacement Curvature</span>
           <input
             type="range"

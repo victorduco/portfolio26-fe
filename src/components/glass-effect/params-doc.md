@@ -5,7 +5,6 @@
 | Parameter           | Description                      | Default | Range     |
 | ------------------- | -------------------------------- | ------- | --------- |
 | displacementScale   | Liquid glass distortion strength | 65      | 10 - 120  |
-| aberrationIntensity | Chromatic aberration intensity   | 2.8     | 0 - 8     |
 | surfaceCurvature    | Surface curvature                | 1.8     | 0.5 - 3.0 |
 | glassBlur           | Backdrop blur                    | 25      | 8 - 40    |
 | glassSaturation     | Material saturation              | 185     | 120 - 280 |
@@ -51,7 +50,6 @@ const {
   // ...
 } = useGlassDemo({
   displacementScale: 80, // example
-  aberrationIntensity: 3.5,
   surfaceCurvature: 2.0,
   glassBlur: 30,
   shaderCornerRadius: 0.3,

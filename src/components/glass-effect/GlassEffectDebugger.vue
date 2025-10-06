@@ -59,25 +59,6 @@
           </label>
 
           <label class="glass-debugger__field">
-            <span>Aberration Intensity</span>
-            <input
-              type="range"
-              min="0"
-              max="8"
-              step="0.1"
-              v-model.number="globalOptions.aberrationIntensity"
-            />
-            <input
-              type="number"
-              min="0"
-              max="8"
-              step="0.1"
-              v-model.number="globalOptions.aberrationIntensity"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
             <span>Displacement Curvature</span>
             <input
               type="range"

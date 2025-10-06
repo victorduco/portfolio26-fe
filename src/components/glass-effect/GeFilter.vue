@@ -24,12 +24,6 @@
       aria-hidden="true"
     >
       <defs>
-        <!-- вернуть если надо 
-         filterUnits="userSpaceOnUse"
-          primitiveUnits="userSpaceOnUse"           x="-35%"
-          y="-35%"
-          width="170%"
-          height="170%"-->
         <filter :id="filterId" color-interpolation-filters="sRGB">
           <feImage
             :x="maskRect.left"
@@ -41,15 +35,9 @@
             :href="displacementMapUrl"
           />
 
-          <GeFilterEdgeProcessing
-            :surface-reflection="o.surfaceReflection"
-            :intensity="props.intensity"
-          />
-
           <GeFilterDisplacementMap
             :displacement-scale="o.displacementScale"
             :displacement-curvature="o.displacementCurvature"
-            :aberration-intensity="o.aberrationIntensity"
             :intensity="props.intensity"
           />
 
@@ -80,7 +68,6 @@ import {
   ref,
 } from "vue";
 import GeFilterDisplacementMapImg from "./GeFilterDisplacementMapImg.vue";
-import GeFilterEdgeProcessing from "./GeFilterEdgeProcessing.vue";
 import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
 import GeFilterComposite from "./GeFilterComposite.vue";
 import GeFilterEnhancement from "./GeFilterEnhancement.vue";
@@ -120,7 +107,9 @@ const updateMaskRect = (source) => {
   const reason = typeof source === "string" ? source : source?.type || "manual";
 
   if (!maskElement) {
-    console.log(`${logPrefix} updateMaskRect skipped (no maskElement)`, { reason });
+    console.log(`${logPrefix} updateMaskRect skipped (no maskElement)`, {
+      reason,
+    });
     return;
   }
 
@@ -137,7 +126,9 @@ const updateMaskRect = (source) => {
     // WRITE фаза
     (rect) => {
       if (!rect) {
-        console.log(`${logPrefix} layoutBatcher WRITE skipped (rect null)`, { reason });
+        console.log(`${logPrefix} layoutBatcher WRITE skipped (rect null)`, {
+          reason,
+        });
         return;
       }
       const nextRect = {

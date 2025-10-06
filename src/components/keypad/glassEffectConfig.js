@@ -1,6 +1,5 @@
 export const glassEffectConfig = {
   displacementScale: 300,
-  aberrationIntensity: 0,
   displacementCurvature: 1.0,
   glassBlur: 15,
   glassSaturation: 215,

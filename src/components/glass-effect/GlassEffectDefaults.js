@@ -3,7 +3,6 @@ import { reactive } from "vue";
 export function createEffectOptions(userOptions = {}) {
   const config = reactive({
     displacementScale: 65,
-    aberrationIntensity: 2.8,
     displacementCurvature: 1.8,
     glassBlur: 25,
     glassSaturation: 185,
