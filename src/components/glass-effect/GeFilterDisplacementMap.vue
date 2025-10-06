@@ -17,11 +17,8 @@ import { computed } from "vue";
 
 const props = defineProps({
   displacementScale: { type: Number, required: true },
-  displacementCurvature: { type: Number, required: true },
   intensity: { type: Number, required: true },
 });
 
-const scale = computed(() =>
-  props.displacementScale * props.displacementCurvature * props.intensity
-);
+const scale = computed(() => props.displacementScale * props.intensity);
 </script>

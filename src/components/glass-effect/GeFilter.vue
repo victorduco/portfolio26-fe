@@ -19,7 +19,6 @@
 
           <GeFilterDisplacementMap
             :displacement-scale="o.displacementScale"
-            :displacement-curvature="o.displacementCurvature"
             :intensity="props.intensity"
           />
         </filter>

@@ -26,7 +26,6 @@ const combinedStyle = computed(() => {
   const {
     glassBrightness,
     glassContrast,
-    shadowDepth,
     glassBlur,
     glassSaturation,
   } = o;
@@ -36,12 +35,14 @@ const combinedStyle = computed(() => {
   const finalBrightness = 1 + (brightness - 1) * i;
   const finalContrast = 1 + (contrast - 1) * i;
 
+  const shadowOpacity = clamp(0.4 * i, 0, 1);
+
   const backdropFilterValue = `blur(${glassBlur * i}px) saturate(${
     100 + (glassSaturation - 100) * i
   }%) brightness(${finalBrightness}) contrast(${finalContrast})`;
 
   return {
-    boxShadow: `0 24px 70px rgba(6, 10, 24, ${shadowDepth * i})`,
+    boxShadow: `0 24px 70px rgba(6, 10, 24, ${shadowOpacity})`,
     backdropFilter: backdropFilterValue,
   };
 });
