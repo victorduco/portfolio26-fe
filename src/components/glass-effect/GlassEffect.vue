@@ -13,23 +13,6 @@
       :options="{ highlightReflection: opts.highlightReflection }"
       :intensity="finalIntensity"
     />
-
-    <GeNoise
-      :options="{
-        noiseStrength: opts.noiseStrength,
-        noiseRefractionDepth: opts.noiseRefractionDepth,
-      }"
-      :intensity="finalIntensity"
-    />
-
-    <GeLight
-      :options="{
-        lightIntensity: opts.lightIntensity,
-        lightSpread: opts.lightSpread,
-        lightHue: opts.lightHue,
-      }"
-      :intensity="finalIntensity"
-    />
   </div>
 </template>
 
@@ -39,8 +22,6 @@ import { createEffectOptions } from "./GlassEffectDefaults.js";
 import GeCard from "./GeCard.vue";
 import GeFilter from "./GeFilter.vue";
 import GeHighlight from "./GeHighlight.vue";
-import GeNoise from "./GeNoise.vue";
-import GeLight from "./GeLight.vue";
 
 const props = defineProps({
   userOptions: { type: Object, default: () => ({}) },

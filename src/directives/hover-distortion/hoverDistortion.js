@@ -56,7 +56,7 @@ export const hoverDistortion = {
 
       // Save the initial transform to preserve it
       const initialTransform = window.getComputedStyle(el).transform;
-      const baseTransform = initialTransform !== 'none' ? initialTransform : '';
+      const baseTransform = initialTransform !== "none" ? initialTransform : "";
 
       const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -77,12 +77,16 @@ export const hoverDistortion = {
         const translateX = mouseOffset.x * TRANSLATE_MULTIPLIER;
         const translateY = mouseOffset.y * TRANSLATE_MULTIPLIER;
 
-        const distortionTransform = `scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(
+        const distortionTransform = `scaleX(${scaleX.toFixed(
           3
-        )}) translate(${translateX.toFixed(2)}px, ${translateY.toFixed(2)}px)`;
+        )}) scaleY(${scaleY.toFixed(3)}) translate(${translateX.toFixed(
+          2
+        )}px, ${translateY.toFixed(2)}px)`;
 
         // Combine base transform with distortion
-        return baseTransform ? `${baseTransform} ${distortionTransform}` : distortionTransform;
+        return baseTransform
+          ? `${baseTransform} ${distortionTransform}`
+          : distortionTransform;
       });
 
       const updateTransform = (value) => {
@@ -98,7 +102,7 @@ export const hoverDistortion = {
       };
 
       // Watch with sync flush to ensure immediate updates on value changes
-      watch(cardTransform, updateTransform, { flush: 'sync' });
+      watch(cardTransform, updateTransform, { flush: "sync" });
 
       watch(
         isHovered,
