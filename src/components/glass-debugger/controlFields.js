@@ -9,7 +9,6 @@ const FIELD_BLUEPRINTS = {
 
 const SECTION_LAYOUT = [
   { title: "Displacement", keys: ["displacementScale"] },
-  { title: "Glass Material", keys: ["glassBlur", "glassSaturation", "glassBrightness", "glassContrast"] },
   { title: "Highlight", keys: ["highlightReflection"] },
 ];
 

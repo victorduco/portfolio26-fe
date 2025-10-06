@@ -1,6 +1,12 @@
 <template>
   <div class="main-page">
-    <GeBackground :source-selector="sourceSelector" :render-delay="100" />
+    <GeBackground
+      :source-selector="sourceSelector"
+      :render-delay="100"
+      :background-styles="{
+        filter: 'blur(10px) saturate(90%) brightness(0.9) contrast(1)',
+      }"
+    />
     <PageNavigation :sections="navigationSections" @animation-complete="handleNavAnimationComplete" />
     <VueScrollSnap :fullscreen="true">
       <section id="intro" class="item" :class="{ 'intro-visible': introVisible }">

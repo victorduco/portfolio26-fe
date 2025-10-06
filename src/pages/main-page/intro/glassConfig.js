@@ -1,10 +1,5 @@
 // Glass effect configuration for intro rectangles
 export const INTRO_GLASS_CONFIG = {
-  displacementMap: "/distmaps/nummp1.png",
-  displacementScale: 55,
-  glassBlur: 50,
-  glassSaturation: 285,
-  glassBrightness: 179,
-  glassContrast: 120,
-  highlightReflection: 0.45,
+  displacementMap: "/src/assets/distmaps/100-1-d.png",
+  displacementScale: 300,
 };
