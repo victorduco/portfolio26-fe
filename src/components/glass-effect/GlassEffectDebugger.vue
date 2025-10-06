@@ -12,19 +12,11 @@
       </div>
 
       <div class="glass-debugger__content">
-        <!-- Global Controls Section -->
         <section class="glass-debugger__section glass-debugger__section--global">
           <h4>Global Controls</h4>
-
           <label class="glass-debugger__field">
             <span>Effect Intensity ({{ intensityDisplay }})</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalIntensity"
-            />
+            <input type="range" min="0" max="1" step="0.01" v-model.number="globalIntensity" />
             <input
               type="number"
               min="0"
@@ -36,174 +28,32 @@
           </label>
         </section>
 
-        <!-- Displacement Section -->
-        <section class="glass-debugger__section">
-          <h4>Displacement</h4>
-
-          <label class="glass-debugger__field">
-            <span>Displacement Scale</span>
+        <section
+          v-for="section in controlSections"
+          :key="section.title"
+          class="glass-debugger__section"
+        >
+          <h4>{{ section.title }}</h4>
+          <label
+            v-for="field in section.fields"
+            :key="field.key"
+            class="glass-debugger__field"
+          >
+            <span>{{ field.label }}</span>
             <input
               type="range"
-              min="10"
-              max="120"
-              step="1"
-              v-model.number="globalOptions.displacementScale"
+              v-bind="field.attrs"
+              v-model.number="globalOptions[field.key]"
             />
             <input
               type="number"
-              min="10"
-              max="120"
-              v-model.number="globalOptions.displacementScale"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Displacement Curvature</span>
-            <input
-              type="range"
-              min="0.5"
-              max="3.0"
-              step="0.1"
-              v-model.number="globalOptions.displacementCurvature"
-            />
-            <input
-              type="number"
-              min="0.5"
-              max="3.0"
-              step="0.1"
-              v-model.number="globalOptions.displacementCurvature"
+              v-bind="field.numberAttrs"
+              v-model.number="globalOptions[field.key]"
               class="glass-debugger__number-input"
             />
           </label>
         </section>
 
-        <!-- Glass Material Section -->
-        <section class="glass-debugger__section">
-          <h4>Glass Material</h4>
-
-          <label class="glass-debugger__field">
-            <span>Glass Blur</span>
-            <input
-              type="range"
-              min="8"
-              max="40"
-              step="1"
-              v-model.number="globalOptions.glassBlur"
-            />
-            <input
-              type="number"
-              min="8"
-              max="40"
-              v-model.number="globalOptions.glassBlur"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Glass Saturation</span>
-            <input
-              type="range"
-              min="0"
-              max="400"
-              step="5"
-              v-model.number="globalOptions.glassSaturation"
-            />
-            <input
-              type="number"
-              min="0"
-              max="400"
-              v-model.number="globalOptions.glassSaturation"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Glass Brightness</span>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              step="1"
-              v-model.number="globalOptions.glassBrightness"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              v-model.number="globalOptions.glassBrightness"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Glass Contrast</span>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              step="1"
-              v-model.number="globalOptions.glassContrast"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              v-model.number="globalOptions.glassContrast"
-              class="glass-debugger__number-input"
-            />
-          </label>
-        </section>
-
-        <!-- Effects Section -->
-        <section class="glass-debugger__section">
-          <h4>Effects</h4>
-
-          <label class="glass-debugger__field">
-            <span>Shadow Depth</span>
-            <input
-              type="range"
-              min="0.1"
-              max="0.8"
-              step="0.01"
-              v-model.number="globalOptions.shadowDepth"
-            />
-            <input
-              type="number"
-              min="0.1"
-              max="0.8"
-              step="0.01"
-              v-model.number="globalOptions.shadowDepth"
-              class="glass-debugger__number-input"
-            />
-          </label>
-        </section>
-
-        <!-- Highlight Section -->
-        <section class="glass-debugger__section">
-          <h4>Highlight</h4>
-
-          <label class="glass-debugger__field">
-            <span>Highlight Reflection</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.highlightReflection"
-            />
-            <input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.highlightReflection"
-              class="glass-debugger__number-input"
-            />
-          </label>
-        </section>
-
-        <!-- Displacement Map Selection Section -->
         <section class="glass-debugger__section glass-debugger__section--displacement">
           <h4>Displacement Map</h4>
 
@@ -233,8 +83,8 @@
           <div class="glass-debugger__preview">
             <span class="glass-debugger__preview-label">Current Displacement Map</span>
             <img
-              v-if="globalOptions.displacementMap"
-              :src="globalOptions.displacementMap"
+              v-if="selectedMap"
+              :src="selectedMap"
               alt="Displacement Map Preview"
               class="glass-debugger__preview-img"
               @click="openMapInNewWindow"
@@ -261,15 +111,15 @@
 
 <script setup>
 import { ref, computed, inject } from 'vue';
+import { createControlSections } from './controlFields.js';
 
-// Auto-load all distmaps from assets folder
-const distmapsModules = import.meta.glob('/src/assets/distmaps/*.png', { eager: true, as: 'url' });
-const availableDistmaps = ref(
-  Object.entries(distmapsModules).map(([path, url]) => ({
-    value: url,
-    label: path.split('/').pop().replace('.png', '')
-  }))
-);
+const loadDistmaps = () =>
+  Object.entries(import.meta.glob('/src/assets/distmaps/*.png', { eager: true, as: 'url' })).map(
+    ([path, url]) => ({ value: url, label: path.split('/').pop().replace('.png', '') })
+  );
+
+const availableDistmaps = ref(loadDistmaps());
+const controlSections = createControlSections();
 
 const props = defineProps({
   options: {
@@ -293,42 +143,31 @@ const debuggerIntensity = inject('glassDebuggerIntensity', null);
 const globalIntensity = debuggerIntensity || ref(props.intensity);
 
 // Computed for display
-const intensityDisplay = computed(() => {
-  const val = globalIntensity.value;
-  return typeof val === 'number' ? val.toFixed(2) : '1.00';
-});
+const intensityDisplay = computed(() =>
+  Number.isFinite(+globalIntensity.value) ? (+globalIntensity.value).toFixed(2) : '1.00'
+);
+const selectedMap = computed(() => globalOptions.displacementMap);
 
-// Refresh distmaps list
-const refreshDistmaps = async () => {
-  const modules = import.meta.glob('/src/assets/distmaps/*.png', { eager: true, as: 'url' });
-  availableDistmaps.value = Object.entries(modules).map(([path, url]) => ({
-    value: url,
-    label: path.split('/').pop().replace('.png', '')
-  }));
-  console.log('Distmaps refreshed:', availableDistmaps.value.length);
+const refreshDistmaps = () => {
+  availableDistmaps.value = loadDistmaps();
 };
 
 // Function to open displacement map in new window
 const openMapInNewWindow = () => {
-  if (globalOptions.displacementMap) {
-    window.open(globalOptions.displacementMap, '_blank');
-  }
+  if (selectedMap.value) window.open(selectedMap.value, '_blank');
 };
 
 // Download settings as JSON
 const downloadSettings = () => {
-  const settings = {
-    intensity: globalIntensity.value,
-    options: globalOptions
-  };
-
-  const json = JSON.stringify(settings, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
+  const blob = new Blob(
+    [JSON.stringify({ intensity: globalIntensity.value, options: globalOptions }, null, 2)],
+    { type: 'application/json' }
+  );
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `glass-effect-settings-${Date.now()}.json`;
-  a.click();
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `glass-effect-settings-${Date.now()}.json`;
+  link.click();
   URL.revokeObjectURL(url);
 };
 </script>

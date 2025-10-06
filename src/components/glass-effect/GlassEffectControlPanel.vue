@@ -5,169 +5,24 @@
     </div>
 
     <div class="glass-control-panel__content">
-      <!-- Displacement Section -->
-      <section class="glass-control-panel__section">
-        <h4>Displacement</h4>
-
-        <label class="glass-control-panel__field">
-          <span>Displacement Scale</span>
-          <input
-            type="range"
-            min="10"
-            max="120"
-            step="1"
-            v-model.number="localOptions.displacementScale"
-          />
-          <input
-            type="number"
-            min="10"
-            max="120"
-            v-model.number="localOptions.displacementScale"
-            class="glass-control-panel__number-input"
-          />
-        </label>
-
-        <label class="glass-control-panel__field">
-          <span>Displacement Curvature</span>
-          <input
-            type="range"
-            min="0.5"
-            max="3.0"
-            step="0.1"
-            v-model.number="localOptions.displacementCurvature"
-          />
+      <section
+        v-for="section in controlSections"
+        :key="section.title"
+        class="glass-control-panel__section"
+      >
+        <h4>{{ section.title }}</h4>
+        <label
+          v-for="field in section.fields"
+          :key="field.key"
+          class="glass-control-panel__field"
+        >
+          <span>{{ field.label }}</span>
+          <input type="range" v-bind="field.attrs" v-model.number="localOptions[field.key]" />
           <input
             type="number"
-            min="0.5"
-            max="3.0"
-            step="0.1"
-            v-model.number="localOptions.displacementCurvature"
             class="glass-control-panel__number-input"
-          />
-        </label>
-      </section>
-
-      <!-- Glass Material Section -->
-      <section class="glass-control-panel__section">
-        <h4>Glass Material</h4>
-
-        <label class="glass-control-panel__field">
-          <span>Glass Blur</span>
-          <input
-            type="range"
-            min="8"
-            max="40"
-            step="1"
-            v-model.number="localOptions.glassBlur"
-          />
-          <input
-            type="number"
-            min="8"
-            max="40"
-            v-model.number="localOptions.glassBlur"
-            class="glass-control-panel__number-input"
-          />
-        </label>
-
-        <label class="glass-control-panel__field">
-          <span>Glass Saturation</span>
-          <input
-            type="range"
-            min="120"
-            max="280"
-            step="5"
-            v-model.number="localOptions.glassSaturation"
-          />
-          <input
-            type="number"
-            min="120"
-            max="280"
-            v-model.number="localOptions.glassSaturation"
-            class="glass-control-panel__number-input"
-          />
-        </label>
-
-        <label class="glass-control-panel__field">
-          <span>Glass Brightness</span>
-          <input
-            type="range"
-            min="85"
-            max="140"
-            step="1"
-            v-model.number="localOptions.glassBrightness"
-          />
-          <input
-            type="number"
-            min="85"
-            max="140"
-            v-model.number="localOptions.glassBrightness"
-            class="glass-control-panel__number-input"
-          />
-        </label>
-
-        <label class="glass-control-panel__field">
-          <span>Glass Contrast</span>
-          <input
-            type="range"
-            min="85"
-            max="135"
-            step="1"
-            v-model.number="localOptions.glassContrast"
-          />
-          <input
-            type="number"
-            min="85"
-            max="135"
-            v-model.number="localOptions.glassContrast"
-            class="glass-control-panel__number-input"
-          />
-        </label>
-      </section>
-
-      <!-- Effects Section -->
-      <section class="glass-control-panel__section">
-        <h4>Effects</h4>
-
-        <label class="glass-control-panel__field">
-          <span>Shadow Depth</span>
-          <input
-            type="range"
-            min="0.1"
-            max="0.8"
-            step="0.01"
-            v-model.number="localOptions.shadowDepth"
-          />
-          <input
-            type="number"
-            min="0.1"
-            max="0.8"
-            step="0.01"
-            v-model.number="localOptions.shadowDepth"
-            class="glass-control-panel__number-input"
-          />
-        </label>
-      </section>
-
-      <!-- Highlight Section -->
-      <section class="glass-control-panel__section">
-        <h4>Highlight</h4>
-
-        <label class="glass-control-panel__field">
-          <span>Highlight Reflection</span>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            v-model.number="localOptions.highlightReflection"
-          />
-          <input
-            type="number"
-            min="0"
-            max="1"
-            step="0.01"
-            v-model.number="localOptions.highlightReflection"
-            class="glass-control-panel__number-input"
+            v-bind="field.numberAttrs"
+            v-model.number="localOptions[field.key]"
           />
         </label>
       </section>
@@ -177,6 +32,7 @@
 
 <script setup>
 import { watch } from 'vue';
+import { createControlSections } from './controlFields.js';
 
 const props = defineProps({
   modelValue: {
@@ -188,15 +44,13 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const localOptions = props.modelValue;
+const controlSections = createControlSections({
+  glassSaturation: { attrs: { min: 120, max: 280, step: 5 } },
+  glassBrightness: { attrs: { min: 85, max: 140, step: 1 } },
+  glassContrast: { attrs: { min: 85, max: 135, step: 1 } },
+});
 
-// Watch for changes and emit updates
-watch(
-  () => localOptions,
-  (newValue) => {
-    emit('update:modelValue', newValue);
-  },
-  { deep: true }
-);
+watch(localOptions, (value) => emit('update:modelValue', value), { deep: true });
 </script>
 
 <style scoped>
