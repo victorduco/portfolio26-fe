@@ -40,18 +40,6 @@
             :displacement-curvature="o.displacementCurvature"
             :intensity="props.intensity"
           />
-
-          <!-- <GeFilterComposite
-            :glass-blur="o.glassBlur"
-            :refraction-depth="o.refractionDepth"
-            :intensity="props.intensity"
-          />
-
-          <GeFilterEnhancement
-            :glass-saturation="o.glassSaturation"
-            :surface-reflection="o.surfaceReflection"
-            :intensity="props.intensity"
-          /> -->
         </filter>
       </defs>
     </svg>
@@ -69,8 +57,6 @@ import {
 } from "vue";
 import GeFilterDisplacementMapImg from "./GeFilterDisplacementMapImg.vue";
 import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
-import GeFilterComposite from "./GeFilterComposite.vue";
-import GeFilterEnhancement from "./GeFilterEnhancement.vue";
 import mp3TstImage from "@/assets/distmaps/mp3-34-thin.png";
 import { layoutBatcher } from "@/directives/mask-element/layoutBatcher";
 const props = defineProps({
