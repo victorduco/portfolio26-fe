@@ -9,16 +9,16 @@
 
 - Without GlassEffect on keypad buttons: noticeably faster interactions and smoother visuals (no SVG filters/ResizeObserver in the button overlay).
 - Without hover-distortion: UI still stutters, so removing the distortion alone does not resolve the slowdown.
-- Tried: keep distortion enabled, and disable BgToSvg re-rendering on data changes (only initial render). Implemented via `BgToSvg.vue` prop `observeChanges=false` in `Keypad.vue`.
+- Tried: keep distortion enabled, and disable GeBackground re-rendering on data changes (only initial render). Implemented via `GeBackground.vue` prop `observeChanges=false` in `Keypad.vue`.
 - Result: still significantly laggy under interaction load.
 - Then disabled `v-mask-element` on keypad buttons: lag disappeared as well (similar to removing GlassEffect).
 - Conclusion: both GlassEffect and v-mask-element can introduce overhead; keypad feels smooth when either is removed.
-- Action: revert probe changes and return keypad to “all on” state for baseline (GlassEffect ON, hover-distortion ON, v-mask-element ON, BgToSvg observes changes).
+- Action: revert probe changes and return keypad to “all on” state for baseline (GlassEffect ON, hover-distortion ON, v-mask-element ON, GeBackground observes changes).
 
  Files changed during probes (now reverted to baseline settings):
  - src/components/keypad/KeypadButton.vue: GlassEffect ON, v-mask-element ON, hover-distortion ON.
- - src/components/bg-to-svg/BgToSvg.vue: `observeChanges` prop added; currently BgToSvg observes changes.
- - src/components/keypad/Keypad.vue: BgToSvg uses `:observe-changes="true"`.
+ - src/components/glass-effect/GeBackground.vue: `observeChanges` prop added; currently GeBackground observes changes.
+ - src/components/keypad/Keypad.vue: GeBackground uses `:observe-changes="true"`.
 
 No automated metrics captured for these notes yet — qualitative observations only.
 

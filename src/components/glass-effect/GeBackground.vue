@@ -1,6 +1,6 @@
 <script setup>
 /**
- * BgToSvg Component
+ * GeBackground Component
  *
  * Converts DOM element to PNG and sets it as CSS variable background.
  *
@@ -18,14 +18,23 @@
  */
 import { onMounted, onUnmounted, watch, nextTick } from "vue";
 import { toPng } from "html-to-image";
-
 const props = defineProps({
   sourceSelector: { type: String, required: true },
   watchData: { type: [Array, Object, String, Number], default: null },
   renderDelay: { type: Number, default: 100 },
+  backgroundStyles: { type: Object },
 });
 
 let isGenerating = false;
+
+const sanitizeStyles = (styles) => {
+  if (!styles) {
+    return undefined;
+  }
+
+  const entries = Object.entries(styles).filter(([, value]) => value !== null && value !== undefined);
+  return entries.length ? Object.fromEntries(entries) : undefined;
+};
 
 async function generateBackground() {
   if (isGenerating) {
@@ -39,6 +48,7 @@ async function generateBackground() {
     return;
   }
   const bodyBg = getComputedStyle(document.body).backgroundColor || "#000";
+  const sanitizedStyles = sanitizeStyles(props.backgroundStyles);
 
   await new Promise((resolve) => setTimeout(resolve, props.renderDelay));
   await document.fonts.ready;
@@ -48,6 +58,7 @@ async function generateBackground() {
     height: src.offsetHeight,
     backgroundColor: bodyBg,
     pixelRatio: 1,
+    style: sanitizedStyles,
   });
   document.documentElement.style.setProperty(
     "--global-keypad-bg",
@@ -63,6 +74,15 @@ async function generateBackground() {
 // Watch for data changes to trigger regeneration
 watch(
   () => props.watchData,
+  async () => {
+    await nextTick();
+    requestAnimationFrame(generateBackground);
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.backgroundStyles,
   async () => {
     await nextTick();
     requestAnimationFrame(generateBackground);

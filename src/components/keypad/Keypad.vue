@@ -1,9 +1,12 @@
 <template>
   <div class="keypad-container">
-    <BgToSvg
+    <GeBackground
       source-selector="keypad-bg-export"
       :watch-data="enteredDigits"
       :render-delay="0"
+      :background-styles="{
+        filter: 'blur(10px) saturate(90%) brightness(0.9) contrast(1)',
+      }"
     />
 
     <!-- Фоновый слой с введенными цифрами -->
@@ -38,9 +41,8 @@
 <script setup>
 import { ref } from "vue";
 import KeypadButton from "./KeypadButton.vue";
-import BgToSvg from "../bg-to-svg/BgToSvg.vue";
+import GeBackground from "../glass-effect/GeBackground.vue";
 import { useMeta } from "../../composables/useMeta.js";
-
 // Устанавливаем мета-теги для Keypad
 useMeta("keypad");
 

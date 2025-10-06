@@ -1,7 +1,5 @@
 <template>
   <div class="glass-effect">
-    <GeCard :options="opts" :intensity="finalIntensity" />
-
     <GeDisplacement
       :options="opts"
       :intensity="finalIntensity"
@@ -18,7 +16,6 @@
 <script setup>
 import { inject, computed } from "vue";
 import { createEffectOptions } from "./GlassEffectDefaults.js";
-import GeCard from "./GeCard.vue";
 import GeDisplacement from "./GeDisplacement.vue";
 import GeHighlight from "./GeHighlight.vue";
 

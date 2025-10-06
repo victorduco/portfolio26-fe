@@ -8,11 +8,11 @@
 
 ## Стартовое состояние
 
-- Keypad: GlassEffect ON, v-mask-element ON, hover-distortion ON, BgToSvg (observeChanges=true).
+- Keypad: GlassEffect ON, v-mask-element ON, hover-distortion ON, GeBackground (observeChanges=true).
 - Базовые наблюдения:
   - Выключение GlassEffect даёт ощутимый прирост отзывчивости.
   - Выключение hover-distortion лаг не убирает.
-  - BgToSvg с observeChanges=false лаг не убирает.
+  - GeBackground с observeChanges=false лаг не убирает.
   - Без v-mask-element лаг пропадает (эффект схож с отключением GlassEffect).
 - Предположение: узкое место в связке GlassEffect ↔ mask-element.
 
@@ -78,5 +78,5 @@
 
 - [ ] Зафиксировать метрики interaction-performance для двух режимов: без GlassEffect (эксп.6) и с GlassEffect без GeFilter (эксп.7).
 - [ ] Подумать о перманентном флаге для включения/выключения GeFilter на проде.
-- [ ] Добавить временный флаг для полного отключения BgToSvg и сравнить влияние.
+- [ ] Добавить временный флаг для полного отключения GeBackground и сравнить влияние.
 - [ ] Снять профилировку (Performance в DevTools) на сценарии ввода/hover.

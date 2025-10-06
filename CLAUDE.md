@@ -31,9 +31,9 @@ npm run test:e2e:headed              # Playwright tests (visible browser)
 
 ## Critical Performance Rules
 
-### BgToSvg Component - MAIN PERFORMANCE BOTTLENECK
+### GeBackground Component - MAIN PERFORMANCE BOTTLENECK
 
-**Location:** `src/components/bg-to-svg/BgToSvg.vue`
+**Location:** `src/components/glass-effect/GeBackground.vue`
 
 **CRITICAL:** The resize listener MUST remain disabled (lines 76-84):
 ```javascript
@@ -88,7 +88,7 @@ npm run test:compare
 App.vue (Main entry)
 ├── Keypad (unlock screen, 4 digits required)
 │   ├── KeypadButton (10 buttons with glass-effect + directives)
-│   └── BgToSvg (CRITICAL: generates PNG background)
+│   └── GeBackground (CRITICAL: generates PNG background)
 │
 └── RouterView (after unlock)
     └── MainPage
@@ -183,8 +183,8 @@ From extensive testing (see `.clinerules`):
 
 When degradation is detected:
 
-1. **Check BgToSvg first** (most common culprit)
-   - Verify resize listener is disabled in `BgToSvg.vue`
+1. **Check GeBackground first** (most common culprit)
+   - Verify resize listener is disabled in `GeBackground.vue`
    - Confirm using `toPng` not `toSvg`
 
 2. **Identify components with resize/ResizeObserver:**
@@ -200,7 +200,7 @@ When degradation is detected:
    - Repeat until degradation disappears
 
 4. **Check these hot spots:**
-   - `src/components/bg-to-svg/BgToSvg.vue` - resize listener
+   - `src/components/glass-effect/GeBackground.vue` - resize listener
    - `src/components/glass-effect/GeFilter.vue` - SVG filters + ResizeObserver
    - `src/directives/mask-element/maskElement.js` - ResizeObserver (don't disable!)
    - `src/directives/hover-distortion/hoverDistortion.js` - resize listener
@@ -208,7 +208,7 @@ When degradation is detected:
 ## Important File Locations
 
 **Performance-critical files:**
-- `src/components/bg-to-svg/BgToSvg.vue` - Main bottleneck when resize enabled
+- `src/components/glass-effect/GeBackground.vue` - Main bottleneck when resize enabled
 - `src/directives/mask-element/layoutBatcher.js` - Prevents layout thrashing
 - `src/directives/mask-element/syncBackground.js` - Background sync logic
 - `src/components/glass-effect/GeFilter.vue` - SVG filter system
