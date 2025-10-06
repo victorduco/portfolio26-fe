@@ -7,6 +7,8 @@
       :section-id="section.id"
       :is-active="activeSection === section.id"
       :intro-highlight="introHighlightIndex === index"
+      :intro-green="introGreenIndex === index"
+      :intro-fade-out="introFadeOutIndex === index"
       @navigate="handleNavigate"
     />
   </nav>
@@ -40,6 +42,8 @@ const props = defineProps({
 
 const activeSection = ref(""); // Не активируем ничего до завершения intro анимации
 const introHighlightIndex = ref(-1);
+const introGreenIndex = ref(-1);
+const introFadeOutIndex = ref(-1);
 let observer = null;
 
 function handleNavigate(sectionId) {
@@ -80,29 +84,68 @@ const emit = defineEmits(['animationComplete']);
 function startIntroAnimation() {
   const totalSections = props.sections.length;
   let currentIndex = totalSections - 1;
+  let previousIndex = -1;
 
   function animateNext() {
     if (currentIndex < 0) {
-      introHighlightIndex.value = -1;
-      // Активируем первую секцию (intro) после завершения анимации
-      activeSection.value = props.sections[0]?.id || "";
-      // Уведомляем родителя что анимация завершена
-      setTimeout(() => {
-        emit('animationComplete');
-      }, 500);
+      // Финализируем последний элемент (index 0)
+      if (previousIndex === 0) {
+        introFadeOutIndex.value = 0;
+
+        setTimeout(() => {
+          introFadeOutIndex.value = -1;
+
+          setTimeout(() => {
+            introHighlightIndex.value = -1;
+            introGreenIndex.value = -1;
+
+            // Активируем первую секцию (intro) после завершения анимации
+            activeSection.value = props.sections[0]?.id || "";
+
+            // Уведомляем родителя что анимация завершена
+            setTimeout(() => {
+              emit('animationComplete');
+            }, 100);
+          }, 0);
+        }, 150);
+      } else {
+        introHighlightIndex.value = -1;
+        introGreenIndex.value = -1;
+        introFadeOutIndex.value = -1;
+        activeSection.value = props.sections[0]?.id || "";
+        setTimeout(() => {
+          emit('animationComplete');
+        }, 500);
+      }
       return;
     }
 
-    introHighlightIndex.value = currentIndex;
+    // Одновременно: делаем зеленым текущий И начинаем затухание предыдущего
+    introGreenIndex.value = currentIndex;
 
-    // Вычисляем задержку: начинаем с 60ms, заканчиваем на 220ms
-    // Используем ease-out кривую для плавного замедления
+    // Вычисляем задержку: начинаем с 176ms (медленно), заканчиваем на 48ms (быстро) - на 20% быстрее
     const progress = (totalSections - 1 - currentIndex) / (totalSections - 1);
-    const easeOut = 1 - Math.pow(1 - progress, 2);
-    const delay = 60 + easeOut * 160; // от 60ms до 220ms
+    const easeIn = Math.pow(progress, 2); // ease-in кривая для ускорения
+    const baseDelay = 176 - easeIn * 128; // от 176ms до 48ms (220*0.8 и 160*0.8)
+    const greenDuration = baseDelay * 3; // в 3 раза дольше остается зеленым
 
+    if (previousIndex !== -1) {
+      introFadeOutIndex.value = previousIndex;
+
+      // Через 150ms (время затухания) убираем fadeOut и меняем цвет на белый (пока opacity = 0)
+      setTimeout(() => {
+        introFadeOutIndex.value = -1;
+
+        // Сразу после смены цвета показываем белым
+        setTimeout(() => {
+          introHighlightIndex.value = previousIndex;
+        }, 0);
+      }, 150);
+    }
+
+    previousIndex = currentIndex;
     currentIndex--;
-    setTimeout(animateNext, delay);
+    setTimeout(animateNext, greenDuration);
   }
 
   animateNext();

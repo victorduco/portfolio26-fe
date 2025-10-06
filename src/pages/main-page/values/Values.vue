@@ -11,6 +11,6 @@
 .values {
   width: 100vw;
   height: 100vh;
-  background: #0f3460;
+  background: #171717;
 }
 </style>

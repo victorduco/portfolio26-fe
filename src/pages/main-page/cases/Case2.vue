@@ -15,7 +15,7 @@ import { RouterLink } from "vue-router";
 .case2 {
   width: 100vw;
   height: 100vh;
-  background: #1a1a2e;
+  background: #171717;
   display: flex;
   align-items: center;
   justify-content: center;

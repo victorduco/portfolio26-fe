@@ -11,6 +11,6 @@
 .case2-summary {
   width: 100vw;
   height: 100vh;
-  background: #0d1117;
+  background: #171717;
 }
 </style>

@@ -11,6 +11,6 @@
 .case3-process {
   width: 100vw;
   height: 100vh;
-  background: #16213e;
+  background: #171717;
 }
 </style>

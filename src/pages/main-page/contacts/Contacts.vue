@@ -11,6 +11,6 @@
 .contacts {
   width: 100vw;
   height: 100vh;
-  background: #1f1f1f;
+  background: #171717;
 }
 </style>

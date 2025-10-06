@@ -50,7 +50,7 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 import IntroRectangleActive from "./IntroRectangleActive.vue";
 import { backdropFilter as vBackdropFilter } from "@/directives/backdrop-filter";
 import {
@@ -72,6 +72,10 @@ const props = defineProps({
     default: 0,
   },
   introVisible: {
+    type: Boolean,
+    default: false,
+  },
+  forceClose: {
     type: Boolean,
     default: false,
   },
@@ -106,6 +110,14 @@ function toggleState() {
 
   emit("activeChange", isActive.value);
 }
+
+// Следим за forceClose и закрываем с анимацией
+watch(() => props.forceClose, (newVal) => {
+  if (newVal && isActive.value) {
+    isActive.value = false;
+    emit("activeChange", false);
+  }
+});
 
 // Computed additional margin
 const additionalMargin = computed(() => props.activeCount * -30);

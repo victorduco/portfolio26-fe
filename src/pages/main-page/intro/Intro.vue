@@ -1,30 +1,53 @@
 <template>
   <section class="intro-hero" id="intro-text-export-node">
     <div class="intro-hero__title">
-      <h1 class="h1">Rectangles That Rules Numbers</h1>
-      <p class="body1">
+      <Motion
+        tag="h1"
+        class="h1"
+        :variants="titleVariants"
+        :animate="titleState"
+        :transition="titleTransition"
+        :initial="'hidden'"
+      >
+        Rectangles That Rules Numbers
+      </Motion>
+      <Motion
+        tag="p"
+        class="body1"
+        :variants="subtitleVariants"
+        :animate="subtitleState"
+        :transition="subtitleTransition"
+        :initial="'hidden'"
+      >
         This is story of me and how UX can change things around us. Something
         else to write here.
-      </p>
+      </Motion>
     </div>
   </section>
 
-  <motion.ul class="intro-list" :transition="{ spring }">
+  <Motion
+    tag="ul"
+    class="intro-list"
+    :variants="rectanglesVariants"
+    :animate="rectanglesState"
+    :transition="rectanglesTransition"
+    :initial="'hidden'"
+  >
     <IntroRectangle
       v-for="(_, index) in rects"
       :key="index"
       :index="index"
       :active-count="activeCount"
-      :intro-visible="introVisible"
+      :intro-visible="showRectangles"
+      :force-close="forceCloseAll"
       @active-change="handleActiveChange"
     />
-  </motion.ul>
+  </Motion>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { motion } from "motion-v";
-import { spring } from "./variants";
+import { ref, watch, onMounted, onUnmounted } from "vue";
+import { Motion } from "motion-v";
 import IntroRectangle from "./IntroRectangle.vue";
 
 const props = defineProps({
@@ -36,10 +59,101 @@ const props = defineProps({
 
 const rects = Array(4).fill(null);
 const activeCount = ref(0);
+const forceCloseAll = ref(false); // Флаг для принудительного закрытия
+
+// Состояния анимации
+const titleState = ref("hidden");
+const subtitleState = ref("hidden");
+const rectanglesState = ref("hidden");
+const showRectangles = ref(false);
+
+// Варианты анимации
+const titleVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const subtitleVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const rectanglesVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+// Transition конфиги
+const titleTransition = {
+  type: "tween",
+  duration: 0.6,
+  ease: [0.4, 0, 0.2, 1],
+};
+
+const subtitleTransition = {
+  type: "tween",
+  duration: 0.5,
+  ease: [0.4, 0, 0.2, 1],
+};
+
+const rectanglesTransition = {
+  type: "tween",
+  duration: 0.4,
+  ease: [0.4, 0, 0.2, 1],
+};
+
+// Последовательная анимация при появлении intro
+watch(() => props.introVisible, async (newVal) => {
+  if (newVal) {
+    // 1. Заголовок
+    titleState.value = "visible";
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // 2. Подзаголовок
+    subtitleState.value = "visible";
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // 3. Квадратики
+    rectanglesState.value = "visible";
+    showRectangles.value = true;
+  }
+});
 
 function handleActiveChange(isActive) {
   activeCount.value += isActive ? 1 : -1;
 }
+
+// Отслеживаем скролл и сбрасываем квадраты при уходе из viewport
+let observer = null;
+
+onMounted(() => {
+  const introSection = document.getElementById('intro');
+  if (introSection) {
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Если секция полностью ушла из viewport
+          if (!entry.isIntersecting && activeCount.value > 0) {
+            // Принудительно закрываем все квадраты одновременно с анимацией
+            forceCloseAll.value = true;
+          } else if (entry.isIntersecting) {
+            // Когда возвращаемся - снимаем блокировку
+            forceCloseAll.value = false;
+          }
+        });
+      },
+      {
+        threshold: 0.1, // Триггерим когда меньше 10% видно
+      }
+    );
+
+    observer.observe(introSection);
+  }
+});
+
+onUnmounted(() => {
+  observer?.disconnect();
+});
 </script>
 
 <style scoped>

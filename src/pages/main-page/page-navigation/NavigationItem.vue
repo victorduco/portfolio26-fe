@@ -60,6 +60,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  introGreen: {
+    type: Boolean,
+    default: false,
+  },
+  introFadeOut: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["navigate"]);
@@ -68,7 +76,9 @@ const isHovered = ref(false);
 const isPressed = ref(false);
 
 function getAnimationState() {
-  // Для текста не показываем active состояние во время intro анимации
+  // Приоритет: fadeOut > зеленый > highlight > остальное
+  if (props.introFadeOut) return "introFadeOut";
+  if (props.introGreen) return "introGreen";
   if (props.introHighlight) return "introHighlight";
   if (isPressed.value) return "pressed";
   // Показываем active только после того как элемент прошел intro анимацию
@@ -88,7 +98,20 @@ watch(() => props.introHighlight, (newVal) => {
   }
 }, { flush: 'sync' });
 
+// Также отслеживаем зеленое состояние
+watch(() => props.introGreen, (newVal) => {
+  if (newVal) {
+    hasAppeared.value = true;
+    hasBeenIntroHighlighted.value = true;
+  }
+}, { flush: 'sync' });
+
 function getSquareAnimationState() {
+  // Приоритет: зеленый > highlight > остальное
+  if (props.introGreen) {
+    return "introGreen";
+  }
+
   // Во время introHighlight показываем квадрат
   if (props.introHighlight) {
     return "introHighlight";
@@ -105,6 +128,13 @@ function getSquareAnimationState() {
 }
 
 function getLabelTransition() {
+  if (props.introFadeOut) {
+    return {
+      type: "tween",
+      duration: 0.15,
+      ease: "easeOut",
+    };
+  }
   if (props.introHighlight) {
     return {
       type: "tween",

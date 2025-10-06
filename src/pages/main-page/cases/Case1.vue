@@ -49,13 +49,13 @@ onMounted(() => {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // Запускаем видео через 1 секунду после появления в области видимости
+          // Запускаем видео через 0.5 секунды после появления в области видимости
           playTimeout = setTimeout(() => {
             if (videoElement.value) {
               showReplayButton.value = false;
               videoElement.value.play();
             }
-          }, 1000);
+          }, 500);
         } else {
           // Очищаем таймаут и останавливаем видео при выходе из области видимости
           if (playTimeout) {
@@ -92,7 +92,7 @@ onUnmounted(() => {
 .case1 {
   width: 100vw;
   height: 100vh;
-  background: #27A9FF;
+  background: #171717;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -40,7 +40,7 @@ const navigationSections = [
 <style scoped>
 .case1-page {
   width: 100vw;
-  background: #0d1117;
+  background: #171717;
   position: relative;
 }
 

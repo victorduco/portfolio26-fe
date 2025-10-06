@@ -48,6 +48,11 @@ export const navItemVariants = {
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     opacity: 1,
   },
+  introGreen: {
+    rotate: 0,
+    backgroundColor: "#00FFBC",
+    opacity: 1,
+  },
   introHighlight: {
     rotate: 0,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -62,14 +67,26 @@ export const navItemVariants = {
 export const labelVariants = {
   default: {
     opacity: 0,
+    color: "rgba(255, 255, 255, 0.9)",
   },
   hover: {
     opacity: 1,
+    color: "rgba(255, 255, 255, 0.9)",
   },
   active: {
     opacity: 1,
+    color: "rgba(255, 255, 255, 0.9)",
+  },
+  introGreen: {
+    opacity: 1,
+    color: "#00FFBC",
+  },
+  introFadeOut: {
+    opacity: 0,
+    color: "#00FFBC",
   },
   introHighlight: {
     opacity: 1,
+    color: "rgba(255, 255, 255, 0.9)",
   },
 };
