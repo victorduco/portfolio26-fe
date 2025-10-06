@@ -2,7 +2,7 @@
 import { ref, provide } from "vue";
 import { RouterView } from "vue-router";
 import Keypad from "./components/keypad/Keypad.vue";
-import GlassEffectDebugger from "./components/glass-effect/GlassEffectDebugger.vue";
+import GlassEffectDebugger from "./components/glass-debugger/GlassEffectDebugger.vue";
 import { createEffectOptions } from "./components/glass-effect/GlassEffectDefaults.js";
 import { glassEffectConfig } from "./components/keypad/glassEffectConfig.js";
 
