@@ -1,0 +1,319 @@
+{
+  "testName": "filter-area-performance",
+  "timestamp": "2025-10-05T21:17:05.652Z",
+  "comment": "WebKit visualization test",
+  "results": {
+    "config": {
+      "url": "http://localhost:5173",
+      "comment": "WebKit visualization test",
+      "cpuThrottling": 1,
+      "browserType": "webkit"
+    },
+    "totalTime": {
+      "ms": 22344,
+      "seconds": "22.34"
+    },
+    "configurations": [
+      {
+        "config": {
+          "name": "100% (baseline)",
+          "percent": 100,
+          "displayNone": false
+        },
+        "clicks": {
+          "avg": 210.67,
+          "min": 34,
+          "max": 562,
+          "count": 3,
+          "details": [
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 562
+            },
+            {
+              "type": "keypad-click",
+              "digit": "5",
+              "duration": 34
+            },
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 36
+            }
+          ]
+        },
+        "hovers": {
+          "avg": 1262.5,
+          "min": 1095,
+          "max": 1430,
+          "count": 2,
+          "details": [
+            {
+              "type": "hover-sequence",
+              "count": 5,
+              "duration": 1430
+            },
+            {
+              "type": "hover-sequence",
+              "count": 4,
+              "duration": 1095
+            }
+          ]
+        },
+        "fps": {
+          "avg": 14,
+          "min": 9,
+          "max": 24,
+          "history": [
+            9,
+            9,
+            24,
+            14
+          ]
+        },
+        "memory": null
+      },
+      {
+        "config": {
+          "name": "75%",
+          "percent": 75,
+          "displayNone": false
+        },
+        "clicks": {
+          "avg": 220,
+          "min": 36,
+          "max": 586,
+          "count": 3,
+          "details": [
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 586
+            },
+            {
+              "type": "keypad-click",
+              "digit": "5",
+              "duration": 36
+            },
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 38
+            }
+          ]
+        },
+        "hovers": {
+          "avg": 1250.5,
+          "min": 1070,
+          "max": 1431,
+          "count": 2,
+          "details": [
+            {
+              "type": "hover-sequence",
+              "count": 5,
+              "duration": 1431
+            },
+            {
+              "type": "hover-sequence",
+              "count": 4,
+              "duration": 1070
+            }
+          ]
+        },
+        "fps": {
+          "avg": 14,
+          "min": 8,
+          "max": 24,
+          "history": [
+            8,
+            8,
+            24,
+            16
+          ]
+        },
+        "memory": null
+      },
+      {
+        "config": {
+          "name": "50%",
+          "percent": 50,
+          "displayNone": false
+        },
+        "clicks": {
+          "avg": 220,
+          "min": 37,
+          "max": 586,
+          "count": 3,
+          "details": [
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 586
+            },
+            {
+              "type": "keypad-click",
+              "digit": "5",
+              "duration": 37
+            },
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 37
+            }
+          ]
+        },
+        "hovers": {
+          "avg": 1174.5,
+          "min": 1103,
+          "max": 1246,
+          "count": 2,
+          "details": [
+            {
+              "type": "hover-sequence",
+              "count": 3,
+              "duration": 1246
+            },
+            {
+              "type": "hover-sequence",
+              "count": 4,
+              "duration": 1103
+            }
+          ]
+        },
+        "fps": {
+          "avg": 13,
+          "min": 8,
+          "max": 18,
+          "history": [
+            8,
+            8,
+            18,
+            18
+          ]
+        },
+        "memory": null
+      },
+      {
+        "config": {
+          "name": "25%",
+          "percent": 25,
+          "displayNone": false
+        },
+        "clicks": {
+          "avg": 216.67,
+          "min": 36,
+          "max": 576,
+          "count": 3,
+          "details": [
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 576
+            },
+            {
+              "type": "keypad-click",
+              "digit": "5",
+              "duration": 36
+            },
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 38
+            }
+          ]
+        },
+        "hovers": {
+          "avg": 1179,
+          "min": 1019,
+          "max": 1339,
+          "count": 2,
+          "details": [
+            {
+              "type": "hover-sequence",
+              "count": 4,
+              "duration": 1339
+            },
+            {
+              "type": "hover-sequence",
+              "count": 3,
+              "duration": 1019
+            }
+          ]
+        },
+        "fps": {
+          "avg": 13.5,
+          "min": 8,
+          "max": 19,
+          "history": [
+            8,
+            8,
+            19,
+            19
+          ]
+        },
+        "memory": null
+      },
+      {
+        "config": {
+          "name": "0% (disabled)",
+          "percent": 0,
+          "displayNone": true
+        },
+        "clicks": {
+          "avg": 217,
+          "min": 36,
+          "max": 577,
+          "count": 3,
+          "details": [
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 577
+            },
+            {
+              "type": "keypad-click",
+              "digit": "5",
+              "duration": 38
+            },
+            {
+              "type": "keypad-click",
+              "digit": "1",
+              "duration": 36
+            }
+          ]
+        },
+        "hovers": {
+          "avg": 1052.5,
+          "min": 866,
+          "max": 1239,
+          "count": 2,
+          "details": [
+            {
+              "type": "hover-sequence",
+              "count": 3,
+              "duration": 1239
+            },
+            {
+              "type": "hover-sequence",
+              "count": 4,
+              "duration": 866
+            }
+          ]
+        },
+        "fps": {
+          "avg": 12.5,
+          "min": 8,
+          "max": 17,
+          "history": [
+            8,
+            8,
+            17,
+            17
+          ]
+        },
+        "memory": null
+      }
+    ]
+  }
+}

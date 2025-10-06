@@ -7,6 +7,7 @@
 
 import { testResizePerformance } from './scenarios/resize-performance.js';
 import { testInteractionPerformance } from './scenarios/interaction-performance.js';
+import { testFilterAreaPerformance } from './scenarios/filter-area-performance.js';
 
 const args = process.argv.slice(2);
 const scenario = args[0] || 'resize-performance';
@@ -45,11 +46,22 @@ async function run() {
       });
       break;
 
+    case 'filter-area-performance':
+      await testFilterAreaPerformance({
+        url: 'http://localhost:5173',
+        headless,
+        comment,
+        cpuThrottling,
+        browserType
+      });
+      break;
+
     default:
       console.error(`❌ Unknown scenario: ${scenario}`);
       console.log('\nAvailable scenarios:');
       console.log('  - resize-performance');
       console.log('  - interaction-performance');
+      console.log('  - filter-area-performance');
       process.exit(1);
   }
 }

@@ -3,7 +3,12 @@
     <div v-if="isVisible" class="glass-debugger">
       <div class="glass-debugger__header">
         <h3>Glass Effect Debugger</h3>
-        <button class="glass-debugger__close" @click="isVisible = false">✕</button>
+        <div class="glass-debugger__header-actions">
+          <button class="glass-debugger__action-btn" @click="downloadSettings" title="Download settings">
+            💾
+          </button>
+          <button class="glass-debugger__close" @click="isVisible = false">✕</button>
+        </div>
       </div>
 
       <div class="glass-debugger__content">
@@ -696,11 +701,20 @@
           <!-- Static map selector -->
           <label v-if="displacementMode === 'static'" class="glass-debugger__field">
             <span>Select Static Map</span>
-            <select v-model="globalStaticMap" class="glass-debugger__select">
-              <option v-for="map in availableDistmaps" :key="map.value" :value="map.value">
-                {{ map.label }}
-              </option>
-            </select>
+            <div class="glass-debugger__select-wrapper">
+              <select v-model="globalStaticMap" class="glass-debugger__select">
+                <option v-for="map in availableDistmaps" :key="map.value" :value="map.value">
+                  {{ map.label }}
+                </option>
+              </select>
+              <button
+                class="glass-debugger__refresh-btn"
+                @click="refreshDistmaps"
+                title="Refresh distmaps list"
+              >
+                🔄
+              </button>
+            </div>
           </label>
 
           <!-- Instructions -->
@@ -770,8 +784,16 @@
 
 <script setup>
 import { ref, computed, inject, watch, onMounted, onBeforeUnmount } from 'vue';
-import { availableDistmaps } from './distmapsList.js';
 import { ShaderDisplacementGenerator } from './ShaderDisplacementGenerator';
+
+// Auto-load all distmaps from assets folder
+const distmapsModules = import.meta.glob('/src/assets/distmaps/*.png', { eager: true, as: 'url' });
+const availableDistmaps = ref(
+  Object.entries(distmapsModules).map(([path, url]) => ({
+    value: url,
+    label: path.split('/').pop().replace('.png', '')
+  }))
+);
 
 const props = defineProps({
   options: {
@@ -911,6 +933,35 @@ onBeforeUnmount(() => {
     contentElement.value.removeEventListener('scroll', handleScroll);
   }
 });
+
+// Refresh distmaps list
+const refreshDistmaps = async () => {
+  const modules = import.meta.glob('/src/assets/distmaps/*.png', { eager: true, as: 'url' });
+  availableDistmaps.value = Object.entries(modules).map(([path, url]) => ({
+    value: url,
+    label: path.split('/').pop().replace('.png', '')
+  }));
+  console.log('Distmaps refreshed:', availableDistmaps.value.length);
+};
+
+// Download settings as JSON
+const downloadSettings = () => {
+  const settings = {
+    intensity: globalIntensity.value,
+    mode: displacementMode.value,
+    staticMap: globalStaticMap.value,
+    options: globalOptions
+  };
+
+  const json = JSON.stringify(settings, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `glass-effect-settings-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
 </script>
 
 <style scoped>
@@ -949,6 +1000,12 @@ onBeforeUnmount(() => {
   align-items: center;
 }
 
+.glass-debugger__header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .glass-debugger__header h3 {
   margin: 0;
   font-size: 1.1rem;
@@ -958,11 +1015,12 @@ onBeforeUnmount(() => {
   font-weight: 600;
 }
 
+.glass-debugger__action-btn,
 .glass-debugger__close {
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   padding: 0;
   width: 32px;
@@ -974,9 +1032,14 @@ onBeforeUnmount(() => {
   transition: all 0.2s ease;
 }
 
+.glass-debugger__action-btn:hover,
 .glass-debugger__close:hover {
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 1);
+}
+
+.glass-debugger__close {
+  font-size: 24px;
 }
 
 .glass-debugger__content {
@@ -1166,8 +1229,14 @@ onBeforeUnmount(() => {
   margin-top: 8px;
 }
 
+.glass-debugger__select-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .glass-debugger__select {
-  width: 100%;
+  flex: 1;
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1186,6 +1255,27 @@ onBeforeUnmount(() => {
 .glass-debugger__select:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.4);
+}
+
+.glass-debugger__refresh-btn {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glass-debugger__refresh-btn:hover {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 1);
+  transform: rotate(180deg);
 }
 
 .glass-debugger__preview {

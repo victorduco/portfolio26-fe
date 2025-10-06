@@ -13,6 +13,8 @@
     "test:perf:headless": "node tests/e2e/run.js resize-performance --headless",
     "test:interaction": "node tests/e2e/run.js interaction-performance",
     "test:interaction:headless": "node tests/e2e/run.js interaction-performance --headless",
+    "test:filter": "node tests/e2e/run.js filter-area-performance",
+    "test:filter:headless": "node tests/e2e/run.js filter-area-performance --headless",
     "test:compare": "node tests/e2e/compare.js",
     "test:compare:json": "node tests/e2e/compare.js --format=json"
   },
