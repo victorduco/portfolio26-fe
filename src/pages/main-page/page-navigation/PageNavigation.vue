@@ -9,6 +9,7 @@
       :intro-highlight="introHighlightIndex === index"
       :intro-green="introGreenIndex === index"
       :intro-fade-out="introFadeOutIndex === index"
+      :intro-complete="introFinished"
       @navigate="handleNavigate"
     />
   </nav>
@@ -38,9 +39,14 @@ const props = defineProps({
     type: String,
     default: "-50% 0px -50% 0px",
   },
+  enableIntroAnimation: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const activeSection = ref(""); // Не активируем ничего до завершения intro анимации
+const introFinished = ref(!props.enableIntroAnimation);
 const introHighlightIndex = ref(-1);
 const introGreenIndex = ref(-1);
 const introFadeOutIndex = ref(-1);
@@ -104,6 +110,7 @@ function startIntroAnimation() {
 
             // Уведомляем родителя что анимация завершена
             setTimeout(() => {
+              introFinished.value = true;
               emit('animationComplete');
             }, 100);
           }, 0);
@@ -114,6 +121,7 @@ function startIntroAnimation() {
         introFadeOutIndex.value = -1;
         activeSection.value = props.sections[0]?.id || "";
         setTimeout(() => {
+          introFinished.value = true;
           emit('animationComplete');
         }, 500);
       }
@@ -153,10 +161,24 @@ function startIntroAnimation() {
 
 onMounted(() => {
   setupIntersectionObserver();
-  // Задержка перед началом анимации меню
-  setTimeout(() => {
-    startIntroAnimation();
-  }, 500);
+
+  if (props.enableIntroAnimation) {
+    // Задержка перед началом анимации меню
+    setTimeout(() => {
+      startIntroAnimation();
+    }, 500);
+  } else {
+    // Без анимации сразу сообщаем о завершении
+    introHighlightIndex.value = -1;
+    introGreenIndex.value = -1;
+    introFadeOutIndex.value = -1;
+    activeSection.value = props.sections[0]?.id || "";
+    introFinished.value = true;
+
+    setTimeout(() => {
+      emit('animationComplete');
+    }, 0);
+  }
 });
 
 onUnmounted(() => {

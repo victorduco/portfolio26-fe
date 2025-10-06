@@ -42,7 +42,7 @@ const router = createRouter({
     // Если возвращаемся на главную со страницы кейса
     if (to.path === "/" && from.path.startsWith("/story")) {
       const savedScroll = scrollPositions.get("/");
-      if (savedScroll) {
+      if (savedScroll !== undefined) {
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve({ top: savedScroll, behavior: "instant" });
@@ -64,7 +64,35 @@ const router = createRouter({
 // Сохраняем позицию скролла перед переходом
 router.beforeEach((to, from, next) => {
   if (from.path === "/") {
-    scrollPositions.set("/", window.scrollY || window.pageYOffset);
+    if (typeof window !== "undefined") {
+      const container = document.querySelector(
+        ".scroll-snap-container.fullscreen"
+      );
+      const scrollTop = container
+        ? container.scrollTop
+        : window.scrollY || window.pageYOffset;
+      scrollPositions.set("/", scrollTop);
+    } else {
+      scrollPositions.set("/", 0);
+    }
+  }
+
+  if (to.path === "/") {
+    const cameFromStory = from.path?.startsWith("/story");
+    to.meta.skipNavIntro = Boolean(cameFromStory);
+    if (cameFromStory) {
+      const savedScroll = scrollPositions.has("/")
+        ? scrollPositions.get("/")
+        : 0;
+      to.meta.restoreScrollTop = savedScroll;
+    } else if (to.meta.restoreScrollTop !== undefined) {
+      to.meta.restoreScrollTop = undefined;
+    }
+  } else if (to.meta?.skipNavIntro) {
+    to.meta.skipNavIntro = false;
+    if (to.meta.restoreScrollTop !== undefined) {
+      to.meta.restoreScrollTop = undefined;
+    }
   }
   next();
 });

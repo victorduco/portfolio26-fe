@@ -103,21 +103,27 @@ const rectanglesTransition = {
 };
 
 // Последовательная анимация при появлении intro
-watch(() => props.introVisible, async (newVal) => {
-  if (newVal) {
+watch(
+  () => props.introVisible,
+  async (newVal) => {
+    if (!newVal) {
+      return;
+    }
+
     // 1. Заголовок
     titleState.value = "visible";
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     // 2. Подзаголовок
     subtitleState.value = "visible";
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     // 3. Квадратики
     rectanglesState.value = "visible";
     showRectangles.value = true;
-  }
-});
+  },
+  { immediate: true }
+);
 
 function handleActiveChange(isActive) {
   activeCount.value += isActive ? 1 : -1;

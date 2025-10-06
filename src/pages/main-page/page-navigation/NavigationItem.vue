@@ -68,6 +68,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  introComplete: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["navigate"]);
@@ -105,6 +109,13 @@ watch(() => props.introGreen, (newVal) => {
     hasBeenIntroHighlighted.value = true;
   }
 }, { flush: 'sync' });
+
+watch(() => props.introComplete, (newVal) => {
+  if (newVal) {
+    hasAppeared.value = true;
+    hasBeenIntroHighlighted.value = true;
+  }
+}, { immediate: true });
 
 function getSquareAnimationState() {
   // Приоритет: зеленый > highlight > остальное

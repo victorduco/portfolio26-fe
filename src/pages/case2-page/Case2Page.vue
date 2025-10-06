@@ -1,7 +1,7 @@
 <template>
   <div class="case2-page">
     <RouterLink to="/" class="back-button">← Back to Home</RouterLink>
-    <PageNavigation :sections="navigationSections" />
+    <PageNavigation :sections="navigationSections" :enable-intro-animation="false" />
     <section id="case2-summary">
       <Summary />
     </section>
