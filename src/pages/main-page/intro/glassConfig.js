@@ -1,5 +1,6 @@
 // Glass effect configuration for intro rectangles
 export const INTRO_GLASS_CONFIG = {
+  displacementMap: "/distmaps/nummp1.png",
   displacementScale: 55,
   displacementCurvature: 1.3,
   glassBlur: 50,
@@ -8,15 +9,4 @@ export const INTRO_GLASS_CONFIG = {
   glassContrast: 120,
   shadowDepth: 30,
   highlightReflection: 0.45,
-  shaderCornerRadius: -0.2,
-  shaderRectWidth: 0,
-  shaderRectHeight: 0,
-  shaderCenterOffsetX: 0,
-  shaderCenterOffsetY: 0,
-  shaderEdgeSoftness: 1.6,
-  shaderDistortionStart: 0.41,
-  shaderDistortionEnd: 0.25,
-  shaderDistortionOffset: 0.21,
-  shaderScalingStart: 0.7,
-  shaderScalingEnd: 1,
 };

@@ -12,7 +12,6 @@
       <GlassEffect
         class="keypad-button-glass"
         :user-options="glassEffectConfig"
-        :static-displacement-map="staticDisplacementMap"
       >
       </GlassEffect>
 
@@ -34,7 +33,6 @@ import { motion } from "motion-v";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
 import { glassEffectConfig } from "./glassEffectConfig.js";
-import staticDisplacementMap from "../../assets/distmaps/100-1-d.png";
 
 const props = defineProps({
   value: {

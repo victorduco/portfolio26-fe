@@ -78,66 +78,6 @@
           </label>
         </section>
 
-        <!-- Content Filters Section -->
-        <section class="glass-debugger__section glass-debugger__section--content">
-          <h4>Content Filters</h4>
-
-          <label class="glass-debugger__field">
-            <span>Brightness</span>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              step="1"
-              v-model.number="globalOptions.glassBrightness"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              v-model.number="globalOptions.glassBrightness"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Contrast</span>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              step="1"
-              v-model.number="globalOptions.glassContrast"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              v-model.number="globalOptions.glassContrast"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Filter Opacity (mix of filtered/original)</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.contentFilterOpacity"
-            />
-            <input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.contentFilterOpacity"
-              class="glass-debugger__number-input"
-            />
-          </label>
-        </section>
-
         <!-- Glass Material Section -->
         <section class="glass-debugger__section">
           <h4>Glass Material</h4>
@@ -174,6 +114,42 @@
               min="0"
               max="400"
               v-model.number="globalOptions.glassSaturation"
+              class="glass-debugger__number-input"
+            />
+          </label>
+
+          <label class="glass-debugger__field">
+            <span>Glass Brightness</span>
+            <input
+              type="range"
+              min="0"
+              max="500"
+              step="1"
+              v-model.number="globalOptions.glassBrightness"
+            />
+            <input
+              type="number"
+              min="0"
+              max="500"
+              v-model.number="globalOptions.glassBrightness"
+              class="glass-debugger__number-input"
+            />
+          </label>
+
+          <label class="glass-debugger__field">
+            <span>Glass Contrast</span>
+            <input
+              type="range"
+              min="0"
+              max="500"
+              step="1"
+              v-model.number="globalOptions.glassContrast"
+            />
+            <input
+              type="number"
+              min="0"
+              max="500"
+              v-model.number="globalOptions.glassContrast"
               class="glass-debugger__number-input"
             />
           </label>
@@ -227,237 +203,14 @@
           </label>
         </section>
 
-        <!-- Shader Section (only in dynamic mode) -->
-        <section v-if="displacementMode === 'dynamic'" class="glass-debugger__section">
-          <h4>Shader (Dynamic Generation)</h4>
-
-          <label class="glass-debugger__field">
-            <span>Corner Radius</span>
-            <input
-              type="range"
-              min="-1"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderCornerRadius"
-            />
-            <input
-              type="number"
-              min="-1"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderCornerRadius"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Rect Width (0 = diamond)</span>
-            <input
-              type="range"
-              min="0"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderRectWidth"
-            />
-            <input
-              type="number"
-              min="0"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderRectWidth"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Rect Height (0 = diamond)</span>
-            <input
-              type="range"
-              min="0"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderRectHeight"
-            />
-            <input
-              type="number"
-              min="0"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderRectHeight"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Center Offset X</span>
-            <input
-              type="range"
-              min="-0.5"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderCenterOffsetX"
-            />
-            <input
-              type="number"
-              min="-0.5"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderCenterOffsetX"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Center Offset Y</span>
-            <input
-              type="range"
-              min="-0.5"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderCenterOffsetY"
-            />
-            <input
-              type="number"
-              min="-0.5"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderCenterOffsetY"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Edge Softness</span>
-            <input
-              type="range"
-              min="0.1"
-              max="10"
-              step="0.1"
-              v-model.number="globalOptions.shaderEdgeSoftness"
-            />
-            <input
-              type="number"
-              min="0.1"
-              max="10"
-              step="0.1"
-              v-model.number="globalOptions.shaderEdgeSoftness"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Distortion Start</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderDistortionStart"
-            />
-            <input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderDistortionStart"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Distortion End</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderDistortionEnd"
-            />
-            <input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderDistortionEnd"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Distortion Offset</span>
-            <input
-              type="range"
-              min="0"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderDistortionOffset"
-            />
-            <input
-              type="number"
-              min="0"
-              max="0.5"
-              step="0.01"
-              v-model.number="globalOptions.shaderDistortionOffset"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Scaling Start</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderScalingStart"
-            />
-            <input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderScalingStart"
-              class="glass-debugger__number-input"
-            />
-          </label>
-
-          <label class="glass-debugger__field">
-            <span>Scaling End</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderScalingEnd"
-            />
-            <input
-              type="number"
-              min="0"
-              max="1"
-              step="0.01"
-              v-model.number="globalOptions.shaderScalingEnd"
-              class="glass-debugger__number-input"
-            />
-          </label>
-        </section>
-
-        <!-- Displacement Map Configuration Section -->
+        <!-- Displacement Map Selection Section -->
         <section class="glass-debugger__section glass-debugger__section--displacement">
-          <h4>Displacement Map Configuration</h4>
+          <h4>Displacement Map</h4>
 
           <label class="glass-debugger__field">
-            <span>Mode</span>
-            <select v-model="displacementMode" class="glass-debugger__select">
-              <option value="static">Static Map (from files)</option>
-              <option value="dynamic">Dynamic (shader generated)</option>
-            </select>
-          </label>
-
-          <!-- Static map selector -->
-          <label v-if="displacementMode === 'static'" class="glass-debugger__field">
             <span>Select Static Map</span>
             <div class="glass-debugger__select-wrapper">
-              <select v-model="globalStaticMap" class="glass-debugger__select">
+              <select v-model="globalOptions.displacementMap" class="glass-debugger__select">
                 <option v-for="map in availableDistmaps" :key="map.value" :value="map.value">
                   {{ map.label }}
                 </option>
@@ -472,58 +225,27 @@
             </div>
           </label>
 
-          <!-- Instructions -->
           <div class="glass-debugger__hint">
-            <span v-if="displacementMode === 'static'">
-              💡 Static maps are pre-generated and faster. Select from library above.
-            </span>
-            <span v-else>
-              💡 Dynamic mode generates the map in real-time using Shader parameters above.
-            </span>
+            💡 Select a displacement map from the library. Maps are located in /src/assets/distmaps/
           </div>
 
           <!-- Preview -->
           <div class="glass-debugger__preview">
-            <span class="glass-debugger__preview-label">
-              Current Displacement Map
-              <span v-if="displacementMode === 'dynamic'" class="glass-debugger__preview-badge">
-                Live Generated
-              </span>
-            </span>
+            <span class="glass-debugger__preview-label">Current Displacement Map</span>
             <img
-              v-if="previewMapUrl"
-              :src="previewMapUrl"
+              v-if="globalOptions.displacementMap"
+              :src="globalOptions.displacementMap"
               alt="Displacement Map Preview"
               class="glass-debugger__preview-img"
               @click="openMapInNewWindow"
               title="Click to open in new window"
             />
             <div v-else class="glass-debugger__preview-placeholder">
-              Generating...
+              No map selected
             </div>
           </div>
         </section>
       </div>
-
-      <!-- Sticky Preview (only in dynamic mode when scrolling) -->
-      <Transition name="sticky-fade">
-        <div v-if="showStickyPreview && displacementMode === 'dynamic'" class="glass-debugger__sticky-preview">
-          <div class="glass-debugger__sticky-preview-content">
-            <span class="glass-debugger__sticky-preview-label">
-              Displacement Map
-              <span class="glass-debugger__preview-badge">Live</span>
-            </span>
-            <img
-              v-if="previewMapUrl"
-              :src="previewMapUrl"
-              alt="Displacement Map"
-              class="glass-debugger__sticky-preview-img"
-              @click="openMapInNewWindow"
-              title="Click to open in new window"
-            />
-          </div>
-        </div>
-      </Transition>
     </div>
 
     <!-- Toggle button -->
@@ -538,8 +260,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, watch, onMounted, onBeforeUnmount } from 'vue';
-import { ShaderDisplacementGenerator } from './ShaderDisplacementGenerator';
+import { ref, computed, inject } from 'vue';
 
 // Auto-load all distmaps from assets folder
 const distmapsModules = import.meta.glob('/src/assets/distmaps/*.png', { eager: true, as: 'url' });
@@ -559,134 +280,22 @@ const props = defineProps({
     type: [Object, Number],
     required: true,
   },
-  staticMap: {
-    type: [Object, String],
-    required: true,
-  },
-  mode: {
-    type: [Object, String],
-    required: true,
-  },
 });
 
 const isVisible = ref(true);
 const globalOptions = props.options;
-const showStickyPreview = ref(false);
-const contentElement = ref(null);
 
 // Get the actual refs from inject (same as GlassEffect does)
 // These are the SAME refs that App.vue provides, so changes here affect all components
 const debuggerIntensity = inject('glassDebuggerIntensity', null);
-const debuggerStaticMap = inject('glassDebuggerStaticMap', null);
-const debuggerMode = inject('glassDebuggerMode', null);
 
 // Use the injected refs directly (they are writable)
 const globalIntensity = debuggerIntensity || ref(props.intensity);
-const globalStaticMap = debuggerStaticMap || ref(props.staticMap);
-const displacementMode = debuggerMode || ref(props.mode);
-
-// Dynamic displacement map generation
-const dynamicMapUrl = ref('');
-let shaderGenerator = null;
-
-// Generate displacement map from shader parameters
-const generateDynamicMap = () => {
-  if (displacementMode.value !== 'dynamic') return;
-
-  // Clean up old generator
-  if (shaderGenerator) {
-    shaderGenerator.destroy();
-  }
-
-  // Create new generator with current shader parameters (square for preview)
-  shaderGenerator = new ShaderDisplacementGenerator({
-    width: 300,
-    height: 300,
-    cornerRadius: globalOptions.shaderCornerRadius,
-    rectWidth: globalOptions.shaderRectWidth,
-    rectHeight: globalOptions.shaderRectHeight,
-    centerOffsetX: globalOptions.shaderCenterOffsetX,
-    centerOffsetY: globalOptions.shaderCenterOffsetY,
-    edgeSoftness: globalOptions.shaderEdgeSoftness,
-    distortionStart: globalOptions.shaderDistortionStart,
-    distortionEnd: globalOptions.shaderDistortionEnd,
-    distortionOffset: globalOptions.shaderDistortionOffset,
-    scalingStart: globalOptions.shaderScalingStart,
-    scalingEnd: globalOptions.shaderScalingEnd,
-  });
-
-  dynamicMapUrl.value = shaderGenerator.updateShader();
-};
-
-// Watch shader parameters and regenerate when they change
-watch(
-  () => [
-    displacementMode.value,
-    globalOptions.shaderCornerRadius,
-    globalOptions.shaderRectWidth,
-    globalOptions.shaderRectHeight,
-    globalOptions.shaderCenterOffsetX,
-    globalOptions.shaderCenterOffsetY,
-    globalOptions.shaderEdgeSoftness,
-    globalOptions.shaderDistortionStart,
-    globalOptions.shaderDistortionEnd,
-    globalOptions.shaderDistortionOffset,
-    globalOptions.shaderScalingStart,
-    globalOptions.shaderScalingEnd,
-  ],
-  () => {
-    if (displacementMode.value === 'dynamic') {
-      generateDynamicMap();
-    }
-  },
-  { immediate: true }
-);
 
 // Computed for display
 const intensityDisplay = computed(() => {
   const val = globalIntensity.value;
   return typeof val === 'number' ? val.toFixed(2) : '1.00';
-});
-
-// Computed for preview image - use dynamic map in dynamic mode, static otherwise
-const previewMapUrl = computed(() => {
-  return displacementMode.value === 'dynamic' ? dynamicMapUrl.value : globalStaticMap.value;
-});
-
-// Function to open displacement map in new window
-const openMapInNewWindow = () => {
-  window.open(previewMapUrl.value, '_blank');
-};
-
-// Handle scroll to show/hide sticky preview
-const handleScroll = (event) => {
-  if (displacementMode.value !== 'dynamic') {
-    showStickyPreview.value = false;
-    return;
-  }
-
-  const container = event.target;
-  const scrollTop = container.scrollTop;
-  const scrollHeight = container.scrollHeight;
-  const clientHeight = container.clientHeight;
-
-  // Show sticky preview when scrolled past 50% of content
-  showStickyPreview.value = scrollTop > (scrollHeight - clientHeight) * 0.3;
-};
-
-onMounted(() => {
-  // Find the content scrollable element
-  const content = document.querySelector('.glass-debugger__content');
-  if (content) {
-    contentElement.value = content;
-    content.addEventListener('scroll', handleScroll);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (contentElement.value) {
-    contentElement.value.removeEventListener('scroll', handleScroll);
-  }
 });
 
 // Refresh distmaps list
@@ -699,12 +308,17 @@ const refreshDistmaps = async () => {
   console.log('Distmaps refreshed:', availableDistmaps.value.length);
 };
 
+// Function to open displacement map in new window
+const openMapInNewWindow = () => {
+  if (globalOptions.displacementMap) {
+    window.open(globalOptions.displacementMap, '_blank');
+  }
+};
+
 // Download settings as JSON
 const downloadSettings = () => {
   const settings = {
     intensity: globalIntensity.value,
-    mode: displacementMode.value,
-    staticMap: globalStaticMap.value,
     options: globalOptions
   };
 
@@ -918,28 +532,6 @@ const downloadSettings = () => {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-.glass-debugger__text-input {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 0.9rem;
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
-  transition: all 0.2s ease;
-}
-
-.glass-debugger__text-input:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.glass-debugger__text-input:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
 .glass-debugger__section--global {
   background: rgba(100, 150, 255, 0.08);
   padding: 16px;
@@ -949,17 +541,6 @@ const downloadSettings = () => {
 
 .glass-debugger__section--global h4 {
   color: rgba(150, 180, 255, 0.9);
-}
-
-.glass-debugger__section--content {
-  background: rgba(150, 100, 255, 0.08);
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(150, 100, 255, 0.2);
-}
-
-.glass-debugger__section--content h4 {
-  color: rgba(180, 150, 255, 0.9);
 }
 
 .glass-debugger__section--displacement {
@@ -1048,18 +629,6 @@ const downloadSettings = () => {
   gap: 8px;
 }
 
-.glass-debugger__preview-badge {
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: rgba(0, 255, 100, 0.2);
-  color: rgba(0, 255, 150, 1);
-  border: 1px solid rgba(0, 255, 100, 0.3);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
 .glass-debugger__preview-placeholder {
   width: 100%;
   height: 120px;
@@ -1088,65 +657,6 @@ const downloadSettings = () => {
   border-color: rgba(100, 150, 255, 0.5);
   transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(100, 150, 255, 0.3);
-}
-
-.glass-debugger__sticky-preview {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.95);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(255, 200, 100, 0.3);
-  padding: 16px 24px;
-  z-index: 10;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
-}
-
-.glass-debugger__sticky-preview-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.glass-debugger__sticky-preview-label {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.75);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.glass-debugger__sticky-preview-img {
-  width: 100%;
-  height: 100px;
-  object-fit: contain;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 200, 100, 0.3);
-  background: rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.glass-debugger__sticky-preview-img:hover {
-  border-color: rgba(255, 200, 100, 0.6);
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(255, 200, 100, 0.4);
-}
-
-.sticky-fade-enter-active,
-.sticky-fade-leave-active {
-  transition: all 0.3s ease;
-}
-
-.sticky-fade-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.sticky-fade-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
 }
 
 .glass-debugger-toggle {

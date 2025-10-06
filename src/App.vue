@@ -16,14 +16,6 @@ provide("glassDebuggerOptions", globalGlassOptions);
 const globalIntensity = ref(1);
 provide("glassDebuggerIntensity", globalIntensity);
 
-// Global static displacement map control
-const globalStaticMap = ref("/src/assets/distmaps/100-1-d.png");
-provide("glassDebuggerStaticMap", globalStaticMap);
-
-// Global mode control
-const globalMode = ref("static");
-provide("glassDebuggerMode", globalMode);
-
 function handleUnlock() {
   isUnlocked.value = true;
 }
@@ -37,7 +29,5 @@ function handleUnlock() {
   <GlassEffectDebugger
     :options="globalGlassOptions"
     :intensity="globalIntensity"
-    :static-map="globalStaticMap"
-    :mode="globalMode"
   />
 </template>

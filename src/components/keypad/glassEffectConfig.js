@@ -1,4 +1,5 @@
 export const glassEffectConfig = {
+  displacementMap: "/src/assets/distmaps/100-1-d.png",
   displacementScale: 300,
   displacementCurvature: 1.0,
   glassBlur: 15,
@@ -7,15 +8,4 @@ export const glassEffectConfig = {
   glassContrast: 103,
   shadowDepth: 30,
   highlightReflection: 0.23,
-  shaderCornerRadius: -0.2,
-  shaderRectWidth: 0,
-  shaderRectHeight: 0,
-  shaderCenterOffsetX: 0,
-  shaderCenterOffsetY: 0,
-  shaderEdgeSoftness: 1.6,
-  shaderDistortionStart: 0.41,
-  shaderDistortionEnd: 0.25,
-  shaderDistortionOffset: 0.21,
-  shaderScalingStart: 0.7,
-  shaderScalingEnd: 1,
 };

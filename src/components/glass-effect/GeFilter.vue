@@ -1,25 +1,7 @@
 <template>
   <div ref="glassFilterEl" class="glass-filter">
-    <GeFilterDisplacementMapImg
-      v-if="props.displacementMode === 'dynamic'"
-      ref="displacementMapImg"
-      :filter-id="filterId"
-      :intensity="props.intensity"
-      :shader-corner-radius="o.shaderCornerRadius"
-      :shader-rect-width="o.shaderRectWidth"
-      :shader-rect-height="o.shaderRectHeight"
-      :shader-center-offset-x="o.shaderCenterOffsetX"
-      :shader-center-offset-y="o.shaderCenterOffsetY"
-      :shader-edge-softness="o.shaderEdgeSoftness"
-      :shader-distortion-start="o.shaderDistortionStart"
-      :shader-distortion-end="o.shaderDistortionEnd"
-      :shader-distortion-offset="o.shaderDistortionOffset"
-      :shader-scaling-start="o.shaderScalingStart"
-      :shader-scaling-end="o.shaderScalingEnd"
-    />
-
     <svg
-      v-if="(shaderMapUrl || staticDisplacementMap) && props.intensity >= 0.01"
+      v-if="staticDisplacementMap && props.intensity >= 0.01"
       class="glass-filter__svg"
       aria-hidden="true"
     >
@@ -32,7 +14,7 @@
             :height="maskRect.height"
             result="DISPLACEMENT_MAP"
             preserveAspectRatio="xMidYMid slice"
-            :href="displacementMapUrl"
+            :href="staticDisplacementMap"
           />
 
           <GeFilterDisplacementMap
@@ -48,43 +30,24 @@
 
 <script setup>
 import {
-  computed,
   onMounted,
   onBeforeUnmount,
-  watch,
   nextTick,
   ref,
 } from "vue";
-import GeFilterDisplacementMapImg from "./GeFilterDisplacementMapImg.vue";
 import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
-import mp3TstImage from "@/assets/distmaps/mp3-34-thin.png";
 import { layoutBatcher } from "@/directives/mask-element/layoutBatcher";
 const props = defineProps({
   options: { type: Object, required: true },
   intensity: { type: Number, required: true },
-  staticDisplacementMap: { type: String, default: null },
-  displacementMode: { type: String, default: "static" },
+  staticDisplacementMap: { type: String, required: true },
 });
 
-const { options: o } = props;
+const { options: o, staticDisplacementMap } = props;
 const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
 const glassFilterEl = ref(null);
-const displacementMapImg = ref(null);
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
 const logPrefix = `[GeFilter:${filterId}]`;
-const shaderMapUrl = computed(
-  () => displacementMapImg.value?.shaderMapUrl || ""
-);
-
-const displacementMapUrl = computed(() => {
-  if (props.displacementMode === "static" && props.staticDisplacementMap) {
-    return props.staticDisplacementMap;
-  }
-  if (props.displacementMode === "dynamic") {
-    return shaderMapUrl.value || mp3TstImage;
-  }
-  return props.staticDisplacementMap || mp3TstImage;
-});
 
 let maskElement = null;
 let resizeObserver = null;
@@ -163,10 +126,6 @@ const applyFilterToMaskElement = () => {
 
   console.log(`${logPrefix} mask-element found`, maskElement);
   maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);
-  maskElement.style.setProperty(
-    "--displacement-map-url",
-    `url(${shaderMapUrl.value})`
-  );
   console.log(`${logPrefix} CSS variables set`);
 
   updateMaskRect("initial");
@@ -188,14 +147,12 @@ onMounted(async () => {
   console.log(`${logPrefix} onMounted end`);
 });
 
-// watch(shaderMapUrl, (url) => url && applyFilterToMaskElement());
-
 onBeforeUnmount(() => {
   console.log(`${logPrefix} onBeforeUnmount`);
   cleanup();
 });
 
-defineExpose({ filterId, shaderMapUrl });
+defineExpose({ filterId });
 </script>
 
 <style scoped>
