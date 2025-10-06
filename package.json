@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:perf": "node tests/e2e/run.js resize-performance",
@@ -34,6 +37,7 @@
     "@vue/devtools": "^8.0.2",
     "typescript": "^5.9.2",
     "vite": "^7.1.2",
-    "vite-plugin-vue-devtools": "^8.0.2"
+    "vite-plugin-vue-devtools": "^8.0.2",
+    "vitepress": "^1.6.4"
   }
 }
