@@ -10,13 +10,11 @@ const props = defineProps({
   intensity: { type: Number, default: 1 },
 });
 
-const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 const { options: o, intensity: i } = props;
 
 const combinedStyle = computed(() => {
   if (!i)
     return {
-      boxShadow: "none",
       backgroundColor: "#000",
       border: "none",
       backdropFilter: "none",
@@ -35,14 +33,11 @@ const combinedStyle = computed(() => {
   const finalBrightness = 1 + (brightness - 1) * i;
   const finalContrast = 1 + (contrast - 1) * i;
 
-  const shadowOpacity = clamp(0.4 * i, 0, 1);
-
   const backdropFilterValue = `blur(${glassBlur * i}px) saturate(${
     100 + (glassSaturation - 100) * i
   }%) brightness(${finalBrightness}) contrast(${finalContrast})`;
 
   return {
-    boxShadow: `0 24px 70px rgba(6, 10, 24, ${shadowOpacity})`,
     backdropFilter: backdropFilterValue,
   };
 });

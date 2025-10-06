@@ -46,7 +46,7 @@ const { options: o } = props;
 const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
 const glassFilterEl = ref(null);
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
-const logPrefix = `[GeFilter:${filterId}]`;
+const logPrefix = `[GeDisplacement:${filterId}]`;
 
 let maskElement = null;
 let resizeObserver = null;

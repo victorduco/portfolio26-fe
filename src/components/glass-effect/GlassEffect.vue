@@ -2,7 +2,7 @@
   <div class="glass-effect">
     <GeCard :options="opts" :intensity="finalIntensity" />
 
-    <GeFilter
+    <GeDisplacement
       :options="opts"
       :intensity="finalIntensity"
       :static-displacement-map="opts.displacementMap"
@@ -19,7 +19,7 @@
 import { inject, computed } from "vue";
 import { createEffectOptions } from "./GlassEffectDefaults.js";
 import GeCard from "./GeCard.vue";
-import GeFilter from "./GeFilter.vue";
+import GeDisplacement from "./GeDisplacement.vue";
 import GeHighlight from "./GeHighlight.vue";
 
 const props = defineProps({
