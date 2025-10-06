@@ -70,8 +70,8 @@ const contentData = [
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 90%;
-  height: 90%;
+  width: 97%;
+  height: 97%;
   border-radius: 28px;
   display: grid;
   place-items: center;
