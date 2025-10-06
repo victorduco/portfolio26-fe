@@ -11,18 +11,18 @@ const routes = [
     component: MainPage,
   },
   {
-    path: "/case1",
-    name: "Case1",
+    path: "/story/one",
+    name: "StoryOne",
     component: Case1Page,
   },
   {
-    path: "/case2",
-    name: "Case2",
+    path: "/story/two",
+    name: "StoryTwo",
     component: Case2Page,
   },
   {
-    path: "/case3",
-    name: "Case3",
+    path: "/story/three",
+    name: "StoryThree",
     component: Case3Page,
   },
 ];
@@ -40,7 +40,7 @@ const router = createRouter({
     }
 
     // Если возвращаемся на главную со страницы кейса
-    if (to.path === "/" && from.path.startsWith("/case")) {
+    if (to.path === "/" && from.path.startsWith("/story")) {
       const savedScroll = scrollPositions.get("/");
       if (savedScroll) {
         return new Promise((resolve) => {
@@ -52,7 +52,7 @@ const router = createRouter({
     }
 
     // При переходе на кейс - в начало
-    if (to.path.startsWith("/case")) {
+    if (to.path.startsWith("/story")) {
       return { top: 0, behavior: "instant" };
     }
 

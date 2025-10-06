@@ -1,7 +1,7 @@
 <template>
   <div class="case2">
-    <RouterLink to="/case2" class="case-link">
-      <h2>Case 2</h2>
+    <RouterLink to="/story/two" class="case-link">
+      <h2>story/two</h2>
       <p>View Details →</p>
     </RouterLink>
   </div>

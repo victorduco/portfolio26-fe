@@ -14,12 +14,14 @@
     <section id="case3-results">
       <Results />
     </section>
+    <NextCaseFooter to="/story/one" label="story/one" />
   </div>
 </template>
 
 <script setup>
 import { RouterLink } from "vue-router";
 import PageNavigation from "../main-page/page-navigation/PageNavigation.vue";
+import NextCaseFooter from "../../components/NextCaseFooter.vue";
 import Summary from "./case3/Summary.vue";
 import Task from "./case3/Task.vue";
 import Process from "./case3/Process.vue";
