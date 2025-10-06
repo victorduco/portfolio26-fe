@@ -1,7 +1,7 @@
 <template>
   <div ref="glassFilterEl" class="glass-filter">
     <svg
-      v-if="staticDisplacementMap && props.intensity >= 0.01"
+      v-if="props.staticDisplacementMap && props.intensity >= 0.01"
       class="glass-filter__svg"
       aria-hidden="true"
     >
@@ -14,7 +14,7 @@
             :height="maskRect.height"
             result="DISPLACEMENT_MAP"
             preserveAspectRatio="xMidYMid slice"
-            :href="staticDisplacementMap"
+            :href="props.staticDisplacementMap"
           />
 
           <GeFilterDisplacementMap
@@ -43,7 +43,7 @@ const props = defineProps({
   staticDisplacementMap: { type: String, required: true },
 });
 
-const { options: o, staticDisplacementMap } = props;
+const { options: o } = props;
 const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
 const glassFilterEl = ref(null);
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
