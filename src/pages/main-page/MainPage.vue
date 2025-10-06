@@ -1,12 +1,5 @@
 <template>
   <div class="main-page">
-    <GeBackground
-      :source-selector="sourceSelector"
-      :render-delay="100"
-      :background-styles="{
-        filter: 'blur(10px) saturate(90%) brightness(0.9) contrast(1)',
-      }"
-    />
     <PageNavigation :sections="navigationSections" @animation-complete="handleNavAnimationComplete" />
     <VueScrollSnap :fullscreen="true">
       <section id="intro" class="item" :class="{ 'intro-visible': introVisible }">
@@ -38,7 +31,6 @@
 import { ref } from "vue";
 import VueScrollSnap from "vue-scroll-snap";
 import Intro from "./intro/Intro.vue";
-import GeBackground from "../../components/glass-effect/GeBackground.vue";
 import Case1 from "./cases/Case1.vue";
 import Case2 from "./cases/Case2.vue";
 import Case3 from "./cases/Case3.vue";
@@ -50,7 +42,6 @@ import { useMeta } from "../../composables/useMeta.js";
 // Устанавливаем мета-теги для главной страницы
 useMeta("home");
 
-const sourceSelector = ref("intro-text-export-node");
 const introVisible = ref(false);
 
 function handleNavAnimationComplete() {

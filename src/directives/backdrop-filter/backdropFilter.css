@@ -1,0 +1,12 @@
+.backdrop-filter-element {
+  position: relative;
+  isolation: isolate;
+}
+
+.backdrop-filter-inner {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}

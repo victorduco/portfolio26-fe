@@ -8,13 +8,13 @@ import { glassEffectConfig } from "./components/keypad/glassEffectConfig.js";
 
 const isUnlocked = ref(false);
 
-// Create global glass options from user config and provide to all descendants
-const globalGlassOptions = createEffectOptions(glassEffectConfig);
-provide("glassDebuggerOptions", globalGlassOptions);
+// // Create global glass options from user config and provide to all descendants
+// const globalGlassOptions = createEffectOptions(glassEffectConfig);
+// provide("glassDebuggerOptions", globalGlassOptions);
 
-// Global intensity control (separate from options)
-const globalIntensity = ref(1);
-provide("glassDebuggerIntensity", globalIntensity);
+// // Global intensity control (separate from options)
+// const globalIntensity = ref(1);
+// provide("glassDebuggerIntensity", globalIntensity);
 
 function handleUnlock() {
   isUnlocked.value = true;
@@ -26,8 +26,8 @@ function handleUnlock() {
   <RouterView v-else />
 
   <!-- Global debugger panel - controls all GlassEffect components -->
-  <GlassEffectDebugger
+  <!-- <GlassEffectDebugger
     :options="globalGlassOptions"
     :intensity="globalIntensity"
-  />
+  /> -->
 </template>

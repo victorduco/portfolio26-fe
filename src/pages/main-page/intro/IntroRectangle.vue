@@ -13,18 +13,10 @@
       marginRight: marginSpring,
     }"
     initial="default"
-    class="mask-element intro-square"
+    class="intro-square"
     :data-state="isActive"
-    v-mask-element="'#171717'"
+    v-backdrop-filter="backdropFilter"
   >
-    <GlassEffect
-      ref="glassEffectRef"
-      :user-options="INTRO_GLASS_CONFIG"
-      :intensity="glassIntensity"
-      class="intro-square-glass"
-    >
-    </GlassEffect>
-
     <motion.div
       class="intro-square-content-wrap"
       :variants="contentWrapVariants"
@@ -54,16 +46,14 @@
 <script setup>
 import { motion } from "motion-v";
 import { computed, ref } from "vue";
-import GlassEffect from "../../../components/glass-effect/GlassEffect.vue";
 import IntroRectangleActive from "./IntroRectangleActive.vue";
-import { INTRO_GLASS_CONFIG } from "./glassConfig.js";
+import { backdropFilter as vBackdropFilter } from "@/directives/backdrop-filter";
 import {
   spring,
   marginSpring,
   boxVariants,
   contentWrapVariants,
   squareContentVariants,
-  glassIntensityVariants,
 } from "./variants.js";
 
 const props = defineProps({
@@ -79,11 +69,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  backdropFilter: {
+    type: Object,
+    default: () => ({
+      blur: "10px",
+      saturate: "100%",
+      brightness: "110%",
+    }),
+  },
 });
 
 const isActive = ref(false);
 const isHovered = ref(false);
-const glassEffectRef = ref(null);
 const motionElement = ref(null);
 
 // Определение состояния анимации
@@ -102,14 +99,6 @@ function toggleState() {
 
   emit("activeChange", isActive.value);
 }
-
-// Динамическая интенсивность по состояниям
-const glassIntensity = computed(() => {
-  if (isActive.value) return glassIntensityVariants.active.intensity;
-  // Не показываем hover интенсивность пока Intro не появился
-  if (isHovered.value && props.introVisible) return glassIntensityVariants.hover.intensity;
-  return glassIntensityVariants.default.intensity;
-});
 
 // Computed additional margin
 const additionalMargin = computed(() => props.activeCount * -30);

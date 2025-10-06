@@ -1,6 +1,3 @@
-import { scale } from "motion-v";
-import { transform } from "typescript";
-
 // Color mappings for different states
 const COLOR_MAP = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
@@ -104,12 +101,6 @@ export const squareContentVariants = {
     hover: { opacity: 0 },
     active: { opacity: 0 },
   },
-};
-
-export const glassIntensityVariants = {
-  default: { intensity: 0 },
-  hover: { intensity: 1 },
-  active: { intensity: 1 },
 };
 
 // Варианты для активного ромба
