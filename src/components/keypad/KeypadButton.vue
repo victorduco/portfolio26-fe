@@ -19,6 +19,7 @@
         class="keypad-number"
         :variants="numberVariants"
         :animate="currentState"
+        :initial="false"
         :transition="isMounted ? spring : { duration: 0 }"
       >
         {{ value }}
