@@ -1,24 +1,26 @@
 <template>
   <div class="case1" ref="caseElement">
-    <div class="video-wrapper">
-      <video
-        ref="videoElement"
-        class="case-video"
-        src="@/assets/case-videos/case1.mp4"
-        muted
-        playsinline
-        @ended="handleVideoEnded"
-      ></video>
+    <div class="case1-content">
+      <div class="case-header">
+        <h2 class="case-title">A Creative Canvas for&nbsp;All</h2>
+        <RouterLink to="/story/one" class="case-link">Open Story</RouterLink>
+      </div>
+      <div class="video-wrapper">
+        <video
+          ref="videoElement"
+          class="case-video"
+          src="@/assets/case-videos/case1.mp4"
+          muted
+          playsinline
+          @ended="handleVideoEnded"
+        ></video>
+        <button v-if="showReplayButton" class="replay-button" @click="replayVideo">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+        </button>
+      </div>
     </div>
-    <button v-if="showReplayButton" class="replay-button" @click="replayVideo">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-      </svg>
-    </button>
-    <RouterLink to="/story/one" class="case-link" style="display: none">
-      <h2>story/one</h2>
-      <p>View Details →</p>
-    </RouterLink>
   </div>
 </template>
 
@@ -99,8 +101,52 @@ onUnmounted(() => {
   position: relative;
 }
 
+.case1-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.case-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 12px;
+}
+
+.case-title {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.case-link {
+  font-family: "Inter", sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  color: #ffffff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s ease;
+  opacity: 0.8;
+}
+
+.case-link:hover {
+  opacity: 1;
+}
+
 .video-wrapper {
-  padding: 24px;
+  position: relative;
+  padding: 12px;
   border-radius: 32px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
@@ -115,34 +161,8 @@ onUnmounted(() => {
   display: block;
   width: 60vw;
   height: auto;
-  border-radius: 16px;
+  border-radius: 20px;
   object-fit: contain;
-}
-
-.case-link {
-  text-decoration: none;
-  color: white;
-  padding: 40px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.case-link:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-4px);
-}
-
-.case-link h2 {
-  margin: 0 0 16px 0;
-  font-size: 48px;
-}
-
-.case-link p {
-  margin: 0;
-  font-size: 18px;
-  opacity: 0.7;
 }
 
 .replay-button {
@@ -162,6 +182,7 @@ onUnmounted(() => {
   color: white;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  z-index: 1;
 }
 
 .replay-button:hover {
