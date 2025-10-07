@@ -54,18 +54,30 @@
         class="keypad-zero"
       />
     </Motion>
+
+    <Motion
+      v-show="showClearButton"
+      tag="button"
+      type="button"
+      class="keypad-clear-button"
+      :variants="keypadGridVariants"
+      :animate="keypadGridState"
+      :transition="keypadGridTransition"
+      :initial="false"
+      @click="handleClear"
+    >
+      Clear
+    </Motion>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
 import GeBackground from "../glass-effect/GeBackground.vue";
 import { useMeta } from "../../composables/useMeta.js";
 import {
-  createDigitVariants,
-  digitTransition,
   keypadGridVariants,
   keypadGridTransition,
   backgroundNumbersVariants,
@@ -89,6 +101,29 @@ const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 
 const isAnimating = ref(false);
+const showClearButton = computed(() => enteredDigits.value.length > 0);
+
+function isEditableTarget(target) {
+  if (!target) {
+    return false;
+  }
+
+  const closestEditable =
+    typeof target.closest === "function"
+      ? target.closest("input, textarea, select, [contenteditable='true']")
+      : null;
+
+  if (closestEditable) {
+    return true;
+  }
+
+  const tagName = target.tagName;
+  if (tagName && ["INPUT", "TEXTAREA", "SELECT"].includes(tagName)) {
+    return true;
+  }
+
+  return Boolean(target.isContentEditable);
+}
 
 async function handleButtonClick(value) {
   // Блокируем ввод если идет анимация или уже введено 4 цифры
@@ -161,6 +196,73 @@ async function handleFailAnimation() {
 
   isAnimating.value = false;
 }
+
+function handleClear() {
+  if (isAnimating.value) {
+    return;
+  }
+
+  enteredDigits.value = [];
+  animationState.value = "initial";
+  bgNumbersState.value = "initial";
+}
+
+function handleBackspace() {
+  if (isAnimating.value || enteredDigits.value.length === 0) {
+    return;
+  }
+
+  enteredDigits.value = enteredDigits.value.slice(0, -1);
+  animationState.value = "initial";
+  bgNumbersState.value = "initial";
+}
+
+function handleKeyDown(event) {
+  if (
+    event.defaultPrevented ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.altKey ||
+    event.shiftKey
+  ) {
+    return;
+  }
+
+  if (event.repeat) {
+    return;
+  }
+
+  if (isEditableTarget(event.target)) {
+    return;
+  }
+
+  if (event.key === "Backspace") {
+    if (enteredDigits.value.length > 0) {
+      event.preventDefault();
+      handleBackspace();
+    }
+    return;
+  }
+
+  if (/^\d$/.test(event.key)) {
+    event.preventDefault();
+    handleButtonClick(Number(event.key));
+  }
+}
+
+onMounted(() => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.addEventListener("keydown", handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.removeEventListener("keydown", handleKeyDown);
+});
 </script>
 
 <style scoped>
@@ -211,5 +313,26 @@ async function handleFailAnimation() {
 
 .keypad-zero {
   grid-column: 2 / 3;
+}
+
+.keypad-clear-button {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  padding: 8px 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.keypad-clear-button:hover {
+  color: #ffffff;
 }
 </style>
