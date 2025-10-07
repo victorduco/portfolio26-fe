@@ -114,7 +114,7 @@ export const squareContentVariants = {
         rotate: -15,
         "--glow-color": getColorWithAlpha(index, 1),
         "--text-glow-color": getColorWithAlpha(index, 1),
-        "--text-shadow-offset": "70px",
+        "--text-shadow-offset": "60px",
         color: getColorWithAlpha(index, 1),
       };
     },
