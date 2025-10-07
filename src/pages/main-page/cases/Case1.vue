@@ -1,10 +1,36 @@
 <template>
   <div class="case1" ref="caseElement">
-    <div class="case1-content">
-      <div class="case-header">
-        <h2 class="case-title">A Creative Canvas for&nbsp;All</h2>
-        <RouterLink to="/story/one" class="case-link">Open Story</RouterLink>
-      </div>
+    <div class="case1-layout">
+      <aside class="case-sidebar">
+        <section class="case-card case-card--info">
+          <h2 class="case-card__title">A Creative Canvas for All People in The Wrold</h2>
+          <ul class="case-card__meta">
+            <li>
+              <span class="case-card__label">Scope</span>
+              <span class="case-card__value">UX Research, Design, Workshops, etc UX Research</span>
+            </li>
+            <li>
+              <span class="case-card__label">Company</span>
+              <span class="case-card__value">UX Research, Design, Workshops, etc UX Research</span>
+            </li>
+            <li>
+              <span class="case-card__label">My role</span>
+              <span class="case-card__value">UX Research, Design, Workshops, etc UX Research</span>
+            </li>
+          </ul>
+        </section>
+        <section class="case-card case-card--fact">
+          <p class="case-card__fact">Tools saves ~9k hours of specialists per year so it helps everybody.</p>
+          <span class="case-card__footnote">Quick fact 1 of 3</span>
+        </section>
+        <RouterLink to="/story/one" class="case-card case-card--cta">
+          <span>Open Story</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="M13 5l7 7-7 7"></path>
+          </svg>
+        </RouterLink>
+      </aside>
       <div class="video-wrapper">
         <video
           ref="videoElement"
@@ -97,57 +123,159 @@ onUnmounted(() => {
   background: #171717;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
+  box-sizing: border-box;
+  padding-inline-start: clamp(32px, 12vw, 120px);
+  padding-inline-end: clamp(24px, 8vw, 96px);
 }
 
-.case1-content {
+.case1-layout {
+  display: grid;
+  grid-template-columns: clamp(280px, 26vw, 360px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.case-sidebar {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
+  gap: 16px;
+  height: 100%;
 }
 
-.case-header {
+.case-card {
+  position: relative;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 12px;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 14px 36px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  min-height: 0;
 }
 
-.case-title {
+.case-card--info {
+  gap: 24px;
+  flex: 1 1 0;
+}
+
+.case-card__title {
   margin: 0;
   font-family: "Inter", sans-serif;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 18px;
-  color: rgba(255, 255, 255, 0.6);
-  white-space: nowrap;
-}
-
-.case-link {
-  font-family: "Inter", sans-serif;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 18px;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 39px;
   color: #ffffff;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: opacity 0.2s ease;
-  opacity: 0.8;
 }
 
-.case-link:hover {
-  opacity: 1;
+.case-card__meta {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.case-card__meta li {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  width: 100%;
+}
+
+.case-card__label {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: left;
+}
+
+.case-card__value {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: left;
+}
+
+.case-card--fact {
+  gap: 16px;
+  flex: 1 1 0;
+}
+
+.case-card__fact {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 23px;
+  line-height: 28px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.case-card__footnote {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.case-card--cta {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 0 0 auto;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.case-card--cta:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.case-card--cta svg {
+  color: currentColor;
+}
+
+.case-card--cta span {
+  flex: 1;
 }
 
 .video-wrapper {
   position: relative;
   padding: 12px;
-  border-radius: 32px;
+  border-radius: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -159,9 +287,10 @@ onUnmounted(() => {
 
 .case-video {
   display: block;
-  width: 60vw;
+  width: 100%;
   height: auto;
-  border-radius: 20px;
+  border-radius: 16px;
+  max-height: 100%;
   object-fit: contain;
 }
 
