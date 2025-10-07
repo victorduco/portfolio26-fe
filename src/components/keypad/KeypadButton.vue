@@ -81,6 +81,7 @@ function handleMouseLeave() {
   place-items: center;
   overflow: hidden;
   transform: rotate(45deg);
+  border: 1px solid #ffffff09;
 }
 
 .keypad-button-glass {

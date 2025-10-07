@@ -8,7 +8,7 @@ export function createEffectOptions(userOptions = {}) {
     glassSaturation: 185,
     glassBrightness: 60,
     glassContrast: 120,
-    highlightReflection: 0.45,
+    highlightReflection: 0.15,
   });
 
   Object.assign(config, userOptions);

@@ -18,9 +18,6 @@
       <section id="case3" class="item">
         <Case3 />
       </section>
-      <section id="values" class="item">
-        <Values />
-      </section>
       <section id="ai-play" class="item">
         <div class="ai-play-placeholder">AI Play - Coming Soon</div>
       </section>
@@ -38,7 +35,6 @@ import Intro from "./intro/Intro.vue";
 import Case1 from "./cases/Case1.vue";
 import Case2 from "./cases/Case2.vue";
 import Case3 from "./cases/Case3.vue";
-import Values from "./values/Values.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "./page-navigation/PageNavigation.vue";
 import { useRoute } from "vue-router";
@@ -114,9 +110,8 @@ const navigationSections = [
   { id: "case1", label: "Story one" },
   { id: "case2", label: "Story two" },
   { id: "case3", label: "Story three" },
-  { id: "values", label: "Vision" },
   { id: "ai-play", label: "AI Play" },
-  { id: "contacts", label: "Self" },
+  { id: "contacts", label: "Contact" },
 ];
 </script>
 
