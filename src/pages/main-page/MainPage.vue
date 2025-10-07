@@ -107,9 +107,9 @@ function handleNavAnimationComplete() {
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
-  { id: "case1", label: "Story one" },
-  { id: "case2", label: "Story two" },
-  { id: "case3", label: "Story three" },
+  { id: "case1", label: "Story One" },
+  { id: "case2", label: "Story Two" },
+  { id: "case3", label: "Story Three" },
   { id: "ai-play", label: "AI Play" },
   { id: "contacts", label: "Contact" },
 ];
