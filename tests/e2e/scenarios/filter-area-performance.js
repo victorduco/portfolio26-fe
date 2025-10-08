@@ -3,6 +3,8 @@ import { setupPerformanceTracking, getPerformanceMetrics, calculateStats } from 
 import { saveResults, appendToLog } from '../helpers/reporter.js';
 import { analyzeResults, saveAnalysis } from '../helpers/analyzer.js';
 
+const writeLine = (text = '') => process.stdout.write(`${text}\n`);
+
 /**
  * Test SVG filter area performance
  *
@@ -28,7 +30,8 @@ export async function testFilterAreaPerformance({
   const browsers = { chromium, webkit, firefox };
   const browserEngine = browsers[browserType] || chromium;
 
-  console.log(`🌐 Browser: ${browserType}\n`);
+  writeLine(`🌐 Browser: ${browserType}`);
+  writeLine();
   const browser = await browserEngine.launch({
     headless,
     ...(browserType === 'webkit' && !headless ? {
@@ -60,7 +63,7 @@ export async function testFilterAreaPerformance({
       try {
         execSync(`osascript -e 'tell application "System Events" to set frontmost of first process whose name contains "Playwright" to true'`, { timeout: 2000 });
       } catch (err) {
-        console.log('⚠️  Could not activate window via AppleScript (non-critical)');
+        writeLine('⚠️  Could not activate window via AppleScript (non-critical)');
       }
       await page.waitForTimeout(300);
     }
@@ -80,9 +83,11 @@ export async function testFilterAreaPerformance({
     await page.setViewportSize(viewportSize);
 
     for (const config of filterConfigs) {
-      console.log('\n' + '═'.repeat(80));
-      console.log(`Testing filter area: ${config.name}`);
-      console.log('═'.repeat(80) + '\n');
+      writeLine();
+      writeLine('═'.repeat(80));
+      writeLine(`Testing filter area: ${config.name}`);
+      writeLine('═'.repeat(80));
+      writeLine();
 
       // Reload page for fresh state
       await page.goto(url);
@@ -93,14 +98,15 @@ export async function testFilterAreaPerformance({
         try {
           execSync(`osascript -e 'tell application "System Events" to tell process "Playwright" to set position of window 1 to {0, 0}'`, { timeout: 2000 });
         } catch (err) {
-          console.log('⚠️  Could not set window position (non-critical)');
+          writeLine('⚠️  Could not set window position (non-critical)');
         }
         await page.waitForTimeout(300);
       }
 
       // Apply filter area modification BEFORE any interaction
       if (config.displayNone) {
-        console.log('🔧 Disabling SVG filter (display: none)...\n');
+        writeLine('🔧 Disabling SVG filter (display: none)...');
+        writeLine();
         await page.evaluate(() => {
           const filterSvgs = document.querySelectorAll('.glass-filter__svg');
           filterSvgs.forEach(svg => {
@@ -108,7 +114,8 @@ export async function testFilterAreaPerformance({
           });
         });
       } else if (config.percent < 100) {
-        console.log(`🔧 Adjusting filter area to ${config.percent}%...\n`);
+        writeLine(`🔧 Adjusting filter area to ${config.percent}%...`);
+        writeLine();
         await page.evaluate((percent) => {
           const filters = document.querySelectorAll('filter');
           filters.forEach(filter => {
@@ -130,14 +137,16 @@ export async function testFilterAreaPerformance({
       // Setup performance tracking
       await setupPerformanceTracking(page);
 
-      console.log('🖱️  Тест: цифра → ховеры → цифра → ховеры → цифра → ховеры\n');
+      writeLine('🖱️  Тест: цифра → ховеры → цифра → ховеры → цифра → ховеры');
+      writeLine();
 
       const interactionMetrics = [];
       const fpsMetrics = [];
 
       // Get all keypad buttons
       const buttons = await page.locator('.keypad-button-hover-wrapper').all();
-      console.log(`📦 Найдено кнопок: ${buttons.length}\n`);
+      writeLine(`📦 Найдено кнопок: ${buttons.length}`);
+      writeLine();
 
       // Helper function for smooth mouse movement
       const smoothMove = async (fromX, fromY, toX, toY, steps = 30, stepDelay = 15) => {
@@ -155,7 +164,7 @@ export async function testFilterAreaPerformance({
 
       // DIGIT 1: Click first digit
       const digit1 = config.digits[0];
-      console.log(`  📌 Цифра 1: Клик на кнопку "${digit1}" (процент: ${config.percent}%)...`);
+      writeLine(`  📌 Цифра 1: Клик на кнопку "${digit1}" (процент: ${config.percent}%)...`);
       const button1Box = await page.locator(`.keypad-button-hover-wrapper:has-text("${digit1}")`).boundingBox();
       if (button1Box) {
         await smoothMove(lastX, lastY, button1Box.x + button1Box.width / 2, button1Box.y + button1Box.height / 2);
@@ -166,7 +175,7 @@ export async function testFilterAreaPerformance({
       }
 
       // HOVERS 1: Horizontal (left-right)
-      console.log('  🖱️  Ховеры 1: Горизонтальное движение (лево-право)...');
+      writeLine('  🖱️  Ховеры 1: Горизонтальное движение (лево-право)...');
       const horizontalPattern = [1, 2, 3, 2, 1, 0]; // Движение по горизонтали
       const hoverStartTime1 = Date.now();
       for (const index of horizontalPattern) {
@@ -181,12 +190,13 @@ export async function testFilterAreaPerformance({
         }
       }
       const hoverDuration1 = Date.now() - hoverStartTime1;
-      console.log(`    ⏱️  Длительность: ${hoverDuration1}ms\n`);
+      writeLine(`    ⏱️  Длительность: ${hoverDuration1}ms`);
+      writeLine();
       interactionMetrics.push({ type: 'hover-horizontal', duration: hoverDuration1 });
 
       // DIGIT 2: Click second digit
       const digit2 = config.digits[1];
-      console.log(`  📌 Цифра 2: Клик на кнопку "${digit2}"...`);
+      writeLine(`  📌 Цифра 2: Клик на кнопку "${digit2}"...`);
       const button2Box = await page.locator(`.keypad-button-hover-wrapper:has-text("${digit2}")`).boundingBox();
       if (button2Box) {
         await smoothMove(lastX, lastY, button2Box.x + button2Box.width / 2, button2Box.y + button2Box.height / 2);
@@ -197,7 +207,7 @@ export async function testFilterAreaPerformance({
       }
 
       // HOVERS 2: Diagonal (top-left to bottom-right)
-      console.log('  🖱️  Ховеры 2: Диагональ (верх-лево → низ-право)...');
+      writeLine('  🖱️  Ховеры 2: Диагональ (верх-лево → низ-право)...');
       const diagonalPattern1 = [1, 5, 9]; // Диагональ
       const hoverStartTime2 = Date.now();
       for (const index of diagonalPattern1) {
@@ -212,12 +222,13 @@ export async function testFilterAreaPerformance({
         }
       }
       const hoverDuration2 = Date.now() - hoverStartTime2;
-      console.log(`    ⏱️  Длительность: ${hoverDuration2}ms\n`);
+      writeLine(`    ⏱️  Длительность: ${hoverDuration2}ms`);
+      writeLine();
       interactionMetrics.push({ type: 'hover-diagonal1', duration: hoverDuration2 });
 
       // DIGIT 3: Click third digit
       const digit3 = config.digits[2];
-      console.log(`  📌 Цифра 3: Клик на кнопку "${digit3}"...`);
+      writeLine(`  📌 Цифра 3: Клик на кнопку "${digit3}"...`);
       const button3Box = await page.locator(`.keypad-button-hover-wrapper:has-text("${digit3}")`).boundingBox();
       if (button3Box) {
         await smoothMove(lastX, lastY, button3Box.x + button3Box.width / 2, button3Box.y + button3Box.height / 2);
@@ -228,7 +239,7 @@ export async function testFilterAreaPerformance({
       }
 
       // HOVERS 3: Diagonal (top-right to bottom-left) + Vertical
-      console.log('  🖱️  Ховеры 3: Диагональ (верх-право → низ-лево) + Вертикаль...');
+      writeLine('  🖱️  Ховеры 3: Диагональ (верх-право → низ-лево) + Вертикаль...');
       const diagonalPattern2 = [3, 5, 7, 4, 1]; // Диагональ обратная + вертикаль
       const hoverStartTime3 = Date.now();
       for (const index of diagonalPattern2) {
@@ -243,14 +254,16 @@ export async function testFilterAreaPerformance({
         }
       }
       const hoverDuration3 = Date.now() - hoverStartTime3;
-      console.log(`    ⏱️  Длительность: ${hoverDuration3}ms\n`);
+      writeLine(`    ⏱️  Длительность: ${hoverDuration3}ms`);
+      writeLine();
       interactionMetrics.push({ type: 'hover-diagonal2-vertical', duration: hoverDuration3 });
 
       // Measure FPS
       let perfMetrics = await getPerformanceMetrics(page);
       if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
-      console.log('✅ Тест завершен (3 цифры + 3 серии ховеров)\n');
+      writeLine('✅ Тест завершен (3 цифры + 3 серии ховеров)');
+      writeLine();
 
       // Get final metrics
       const finalMetrics = await getPerformanceMetrics(page);
@@ -292,19 +305,20 @@ export async function testFilterAreaPerformance({
       configResults.push(configResult);
 
       // Print config summary
-      console.log('📊 РЕЗУЛЬТАТЫ ДЛЯ КОНФИГУРАЦИИ:');
-      console.log('─'.repeat(80));
-      console.log(`  Ховеры (среднее):    ${avgDuration.toFixed(2)}ms`);
-      console.log(`  Средний FPS:         ${fpsStats.avg.toFixed(2)}`);
+      writeLine('📊 РЕЗУЛЬТАТЫ ДЛЯ КОНФИГУРАЦИИ:');
+      writeLine('─'.repeat(80));
+      writeLine(`  Ховеры (среднее):    ${avgDuration.toFixed(2)}ms`);
+      writeLine(`  Средний FPS:         ${fpsStats.avg.toFixed(2)}`);
       if (configResult.memory) {
         const usedMB = Math.round(configResult.memory.used / 1024 / 1024);
-        console.log(`  Память:              ${usedMB}MB`);
+        writeLine(`  Память:              ${usedMB}MB`);
       }
-      console.log('');
+      writeLine();
 
       // Wait before next config (so you can see the result)
       if (filterConfigs.indexOf(config) < filterConfigs.length - 1) {
-        console.log('⏳ Waiting 3 seconds before next configuration...\n');
+        writeLine('⏳ Waiting 3 seconds before next configuration...');
+        writeLine();
         await page.waitForTimeout(3000);
       }
     }
@@ -328,20 +342,20 @@ export async function testFilterAreaPerformance({
   };
 
   // Print comparison table
-  console.log('\n');
-  console.log('═'.repeat(80));
-  console.log('                    СРАВНЕНИЕ КОНФИГУРАЦИЙ ФИЛЬТРА');
-  console.log('═'.repeat(80));
-  console.log('');
-  console.log('Config          | Hovers (avg) | FPS (avg) | Memory (MB)');
-  console.log('─'.repeat(80));
+  writeLine();
+  writeLine('═'.repeat(80));
+  writeLine('                    СРАВНЕНИЕ КОНФИГУРАЦИЙ ФИЛЬТРА');
+  writeLine('═'.repeat(80));
+  writeLine();
+  writeLine('Config          | Hovers (avg) | FPS (avg) | Memory (MB)');
+  writeLine('─'.repeat(80));
 
   configResults.forEach(result => {
     const memoryMB = result.memory
       ? Math.round(result.memory.used / 1024 / 1024).toString().padEnd(11)
       : 'N/A'.padEnd(11);
 
-    console.log(
+    writeLine(
       `${result.config.name.padEnd(15)} | ` +
       `${result.hovers.avg.toFixed(2).padStart(12)}ms | ` +
       `${result.fps.avg.toFixed(2).padStart(9)} | ` +
@@ -349,15 +363,15 @@ export async function testFilterAreaPerformance({
     );
   });
 
-  console.log('');
-  console.log('═'.repeat(80));
-  console.log('');
+  writeLine();
+  writeLine('═'.repeat(80));
+  writeLine();
 
   // Find performance threshold
   const baseline = configResults.find(r => r.config.percent === 100);
   if (baseline) {
-    console.log('🎯 АНАЛИЗ ПОРОГА ПРОИЗВОДИТЕЛЬНОСТИ:');
-    console.log('─'.repeat(80));
+    writeLine('🎯 АНАЛИЗ ПОРОГА ПРОИЗВОДИТЕЛЬНОСТИ:');
+    writeLine('─'.repeat(80));
 
     configResults.forEach(result => {
       if (result.config.percent < 100) {
@@ -367,12 +381,13 @@ export async function testFilterAreaPerformance({
         const hoverSymbol = hoverDiff < 0 ? '✅' : hoverDiff > 10 ? '🚨' : '⚠️';
         const fpsSymbol = fpsDiff > 0 ? '✅' : fpsDiff < -10 ? '🚨' : '⚠️';
 
-        console.log(`\n${result.config.name}:`);
-        console.log(`  ${hoverSymbol} Ховеры: ${hoverDiff > 0 ? '+' : ''}${hoverDiff.toFixed(1)}% от baseline`);
-        console.log(`  ${fpsSymbol} FPS:    ${fpsDiff > 0 ? '+' : ''}${fpsDiff.toFixed(1)}% от baseline`);
+        writeLine();
+        writeLine(`${result.config.name}:`);
+        writeLine(`  ${hoverSymbol} Ховеры: ${hoverDiff > 0 ? '+' : ''}${hoverDiff.toFixed(1)}% от baseline`);
+        writeLine(`  ${fpsSymbol} FPS:    ${fpsDiff > 0 ? '+' : ''}${fpsDiff.toFixed(1)}% от baseline`);
       }
     });
-    console.log('');
+    writeLine();
   }
 
   // Save results and analysis

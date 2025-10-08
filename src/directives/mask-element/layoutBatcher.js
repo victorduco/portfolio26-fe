@@ -44,9 +44,6 @@ class LayoutBatcher {
       return;
     }
 
-    const batchSize = this.tasks.length;
-    const startTime = performance.now();
-
     // ФАЗА 1: Все чтения layout (getBoundingClientRect, getComputedStyle)
     const readResults = [];
     for (const task of this.tasks) {
@@ -54,12 +51,9 @@ class LayoutBatcher {
         const result = task.readFn();
         readResults.push(result);
       } catch (error) {
-        console.error('LayoutBatcher read error:', error);
         readResults.push(null);
       }
     }
-
-    const readTime = performance.now() - startTime;
 
     // ФАЗА 2: Все записи DOM/CSS (setProperty, style changes)
     for (let i = 0; i < this.tasks.length; i++) {
@@ -68,16 +62,9 @@ class LayoutBatcher {
         try {
           task.writeFn(readResults[i]);
         } catch (error) {
-          console.error('LayoutBatcher write error:', error);
+          // Ignore write errors to keep batching resilient
         }
       }
-    }
-
-    const totalTime = performance.now() - startTime;
-
-    // Log только если батч большой и медленный
-    if (batchSize > 1 && totalTime > 16) {
-      console.log(`[LayoutBatcher] Batched ${batchSize} tasks in ${totalTime.toFixed(1)}ms (reads: ${readTime.toFixed(1)}ms)`);
     }
 
     // Очистка

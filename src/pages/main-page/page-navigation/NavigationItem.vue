@@ -162,7 +162,6 @@ function getLabelTransition() {
 }
 
 function handleClick(event) {
-  console.log("NavigationItem clicked:", props.sectionId);
   emit("navigate", props.sectionId);
 }
 </script>

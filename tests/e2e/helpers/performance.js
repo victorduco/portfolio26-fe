@@ -116,9 +116,7 @@ export async function setupPerformanceTracking(page) {
       try {
         observer.observe({ type: 'event', buffered: true });
       } catch (e) {}
-    } catch (e) {
-      console.warn('Some performance observers not supported:', e);
-    }
+    } catch (e) {}
   });
 }
 

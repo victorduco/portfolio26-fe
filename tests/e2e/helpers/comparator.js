@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+const writeLine = (text = '') => process.stdout.write(`${text}\n`);
+
 /**
  * Compare two test results
  */
@@ -206,79 +208,89 @@ export function findLastResults(testName, count = 2) {
  * Print comparison to console
  */
 export function printComparison(comparison) {
-  console.log('\n' + '═'.repeat(80));
-  console.log('                           СРАВНЕНИЕ РЕЗУЛЬТАТОВ');
-  console.log('═'.repeat(80));
+  writeLine();
+  writeLine('═'.repeat(80));
+  writeLine('                           СРАВНЕНИЕ РЕЗУЛЬТАТОВ');
+  writeLine('═'.repeat(80));
 
-  console.log('\n📋 ТЕСТЫ:');
-  console.log('─'.repeat(80));
-  console.log(`  A: ${comparison.testA.comment || 'Без комментария'}`);
-  console.log(`     ${new Date(comparison.testA.timestamp).toLocaleString()}`);
-  console.log(`  B: ${comparison.testB.comment || 'Без комментария'}`);
-  console.log(`     ${new Date(comparison.testB.timestamp).toLocaleString()}`);
+  writeLine();
+  writeLine('📋 ТЕСТЫ:');
+  writeLine('─'.repeat(80));
+  writeLine(`  A: ${comparison.testA.comment || 'Без комментария'}`);
+  writeLine(`     ${new Date(comparison.testA.timestamp).toLocaleString()}`);
+  writeLine(`  B: ${comparison.testB.comment || 'Без комментария'}`);
+  writeLine(`     ${new Date(comparison.testB.timestamp).toLocaleString()}`);
 
   const { diff } = comparison;
 
   // Total time
   if (diff.totalTime) {
-    console.log('\n⏱️  ОБЩЕЕ ВРЕМЯ:');
-    console.log('─'.repeat(80));
-    console.log(`  Было:    ${(diff.totalTime.before / 1000).toFixed(2)}s`);
-    console.log(`  Стало:   ${(diff.totalTime.after / 1000).toFixed(2)}s`);
+    writeLine();
+    writeLine('⏱️  ОБЩЕЕ ВРЕМЯ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Было:    ${(diff.totalTime.before / 1000).toFixed(2)}s`);
+    writeLine(`  Стало:   ${(diff.totalTime.after / 1000).toFixed(2)}s`);
     const icon = diff.totalTime.improved ? '✅' : '⚠️';
     const sign = diff.totalTime.diff > 0 ? '+' : '';
-    console.log(`  Разница: ${icon} ${sign}${(diff.totalTime.diff / 1000).toFixed(2)}s (${sign}${diff.totalTime.percent}%)`);
+    writeLine(`  Разница: ${icon} ${sign}${(diff.totalTime.diff / 1000).toFixed(2)}s (${sign}${diff.totalTime.percent}%)`);
   }
 
   // Resize
   if (diff.resize) {
-    console.log('\n📏 СРЕДНЕЕ ВРЕМЯ РЕСАЙЗА:');
-    console.log('─'.repeat(80));
-    console.log(`  Было:    ${diff.resize.avgDuration.before.toFixed(2)}ms`);
-    console.log(`  Стало:   ${diff.resize.avgDuration.after.toFixed(2)}ms`);
+    writeLine();
+    writeLine('📏 СРЕДНЕЕ ВРЕМЯ РЕСАЙЗА:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Было:    ${diff.resize.avgDuration.before.toFixed(2)}ms`);
+    writeLine(`  Стало:   ${diff.resize.avgDuration.after.toFixed(2)}ms`);
     const icon = diff.resize.avgDuration.improved ? '✅' : '⚠️';
     const sign = diff.resize.avgDuration.diff > 0 ? '+' : '';
-    console.log(`  Разница: ${icon} ${sign}${diff.resize.avgDuration.diff.toFixed(2)}ms (${sign}${diff.resize.avgDuration.percent}%)`);
+    writeLine(`  Разница: ${icon} ${sign}${diff.resize.avgDuration.diff.toFixed(2)}ms (${sign}${diff.resize.avgDuration.percent}%)`);
 
-    console.log(`\n  Min: ${diff.resize.minDuration.before}ms → ${diff.resize.minDuration.after}ms (${diff.resize.minDuration.diff > 0 ? '+' : ''}${diff.resize.minDuration.diff}ms)`);
-    console.log(`  Max: ${diff.resize.maxDuration.before}ms → ${diff.resize.maxDuration.after}ms (${diff.resize.maxDuration.diff > 0 ? '+' : ''}${diff.resize.maxDuration.diff}ms)`);
+    writeLine();
+    writeLine(`  Min: ${diff.resize.minDuration.before}ms → ${diff.resize.minDuration.after}ms (${diff.resize.minDuration.diff > 0 ? '+' : ''}${diff.resize.minDuration.diff}ms)`);
+    writeLine(`  Max: ${diff.resize.maxDuration.before}ms → ${diff.resize.maxDuration.after}ms (${diff.resize.maxDuration.diff > 0 ? '+' : ''}${diff.resize.maxDuration.diff}ms)`);
   }
 
   // FPS
   if (diff.fps && (diff.fps.avg.before > 0 || diff.fps.avg.after > 0)) {
-    console.log('\n🎮 FPS:');
-    console.log('─'.repeat(80));
-    console.log(`  Было:    ${diff.fps.avg.before.toFixed(2)}`);
-    console.log(`  Стало:   ${diff.fps.avg.after.toFixed(2)}`);
+    writeLine();
+    writeLine('🎮 FPS:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Было:    ${diff.fps.avg.before.toFixed(2)}`);
+    writeLine(`  Стало:   ${diff.fps.avg.after.toFixed(2)}`);
     if (diff.fps.avg.before > 0) {
       const icon = diff.fps.avg.improved ? '✅' : '⚠️';
       const sign = diff.fps.avg.diff > 0 ? '+' : '';
-      console.log(`  Разница: ${icon} ${sign}${diff.fps.avg.diff.toFixed(2)} (${sign}${diff.fps.avg.percent}%)`);
+      writeLine(`  Разница: ${icon} ${sign}${diff.fps.avg.diff.toFixed(2)} (${sign}${diff.fps.avg.percent}%)`);
     }
   }
 
   // Memory
   if (diff.memory) {
-    console.log('\n💾 ПАМЯТЬ:');
-    console.log('─'.repeat(80));
-    console.log(`  Было:    ${diff.memory.used.before}MB`);
-    console.log(`  Стало:   ${diff.memory.used.after}MB`);
+    writeLine();
+    writeLine('💾 ПАМЯТЬ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Было:    ${diff.memory.used.before}MB`);
+    writeLine(`  Стало:   ${diff.memory.used.after}MB`);
     const icon = diff.memory.used.improved ? '✅' : '⚠️';
     const sign = diff.memory.used.diff > 0 ? '+' : '';
-    console.log(`  Разница: ${icon} ${sign}${diff.memory.used.diff}MB (${sign}${diff.memory.used.percent}%)`);
+    writeLine(`  Разница: ${icon} ${sign}${diff.memory.used.diff}MB (${sign}${diff.memory.used.percent}%)`);
   }
 
   // Verdict
-  console.log('\n💡 ВЫВОД:');
-  console.log('─'.repeat(80));
-  console.log(`  ${comparison.verdict.message}`);
+  writeLine();
+  writeLine('💡 ВЫВОД:');
+  writeLine('─'.repeat(80));
+  writeLine(`  ${comparison.verdict.message}`);
 
   if (comparison.verdict.improvements.length > 0) {
-    console.log(`  ✅ Улучшения: ${comparison.verdict.improvements.join(', ')}`);
+    writeLine(`  ✅ Улучшения: ${comparison.verdict.improvements.join(', ')}`);
   }
   if (comparison.verdict.regressions.length > 0) {
-    console.log(`  ⚠️  Регрессии: ${comparison.verdict.regressions.join(', ')}`);
+    writeLine(`  ⚠️  Регрессии: ${comparison.verdict.regressions.join(', ')}`);
   }
 
-  console.log('\n' + '═'.repeat(80) + '\n');
+  writeLine();
+  writeLine('═'.repeat(80));
+  writeLine();
 }

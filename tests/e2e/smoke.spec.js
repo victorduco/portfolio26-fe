@@ -39,7 +39,7 @@ test.describe('Post-deploy smoke tests', () => {
 
     // Проверяем, что нет ошибок
     if (errors.length > 0) {
-      console.error('Console errors found:', errors);
+      process.stderr.write(`Console errors found: ${JSON.stringify(errors)}\n`);
     }
     expect(errors).toHaveLength(0);
   });
@@ -78,7 +78,7 @@ test.describe('Post-deploy smoke tests', () => {
 
     // Проверяем, что нет проваленных запросов
     if (failedRequests.length > 0) {
-      console.error('Failed requests:', failedRequests);
+      process.stderr.write(`Failed requests: ${JSON.stringify(failedRequests)}\n`);
     }
     expect(failedRequests).toHaveLength(0);
   });
@@ -93,7 +93,7 @@ test.describe('Post-deploy smoke tests', () => {
 
     const loadTime = Date.now() - startTime;
 
-    console.log(`Page loaded in ${loadTime}ms`);
+    process.stdout.write(`Page loaded in ${loadTime}ms\n`);
 
     // Проверяем, что страница загружается меньше чем за 10 секунд
     expect(loadTime).toBeLessThan(10000);

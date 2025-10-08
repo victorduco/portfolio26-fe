@@ -1,9 +1,11 @@
 <template>
   <div class="case1" ref="caseElement">
     <div class="case1-content">
-      <h2 class="case1-title">Cross-Domain AI Solution for Account Reconcilers</h2>
+      <h2 class="case1-title">
+        Cross-Domain AI Solution for Account Reconcilers
+      </h2>
       <p class="case1-subtitle">Apple</p>
-      <div class="video-wrapper">
+      <motion.div class="video-wrapper" :style="{ rotateX: videoTiltDeg }">
         <video
           ref="videoElement"
           class="case-video"
@@ -12,19 +14,41 @@
           playsinline
           @ended="handleVideoEnded"
         ></video>
-        <button v-if="showReplayButton" class="replay-button" @click="replayVideo">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+        <button
+          v-if="showReplayButton"
+          class="replay-button"
+          @click="replayVideo"
+        >
+          <svg
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+            />
           </svg>
         </button>
-      </div>
-      <RouterLink to="/story/one" class="case1-cta">Open Story</RouterLink>
+      </motion.div>
     </div>
+    <RouterLink to="/story/one" class="case1-cta-floating">Open Story</RouterLink>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import {
+  motion,
+  useScroll,
+  useVelocity,
+  useTransform,
+  useSpring,
+} from "motion-v";
 import { RouterLink } from "vue-router";
 
 const caseElement = ref(null);
@@ -32,6 +56,25 @@ const videoElement = ref(null);
 const showReplayButton = ref(false);
 let observer = null;
 let playTimeout = null;
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+const scrollContainer = ref(null);
+const { scrollY } = useScroll({ container: scrollContainer });
+const scrollVelocity = useVelocity(scrollY);
+const videoTiltRaw = useTransform(scrollVelocity, (velocity = 0) => {
+  if (!Number.isFinite(velocity)) {
+    return 0;
+  }
+  const scaled = velocity / 130;
+  return clamp(scaled, -48, 48);
+});
+const videoTilt = useSpring(videoTiltRaw, {
+  stiffness: 3,
+  damping: 1.5,
+  mass: 0.5,
+});
+const videoTiltDeg = useTransform(videoTilt, (value) => `${value}deg`);
 
 function handleVideoEnded() {
   showReplayButton.value = true;
@@ -77,6 +120,10 @@ onMounted(() => {
   if (caseElement.value) {
     observer.observe(caseElement.value);
   }
+  scrollContainer.value =
+    caseElement.value?.closest(".scroll-snap-container.fullscreen") ??
+    document.querySelector(".scroll-snap-container.fullscreen") ??
+    null;
 });
 
 onUnmounted(() => {
@@ -113,6 +160,8 @@ onUnmounted(() => {
   height: 100%;
   min-height: 0;
   text-align: center;
+  perspective: 1600px;
+  perspective-origin: center;
 }
 
 .case1-title {
@@ -160,27 +209,18 @@ onUnmounted(() => {
   height: 100%;
   max-width: 100%;
   overflow: hidden;
+  transform-style: preserve-3d;
+  transform-origin: center;
+  will-change: transform;
 }
 
 .case-video {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 20px;
+  border-radius: clamp(12px, 1.6vw, 16px);
   max-height: 100%;
   object-fit: contain;
-}
-
-.case1-cta {
-  text-decoration: none;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-style: normal;
-  font-weight: 590;
-  font-size: 21.96px;
-  line-height: 26px;
-  text-align: center;
-  color: #ffffff;
-  opacity: 1;
 }
 
 .replay-button {
@@ -211,5 +251,28 @@ onUnmounted(() => {
 .replay-button svg {
   width: 40px;
   height: 40px;
+}
+
+.case1-cta-floating {
+  position: absolute;
+  top: calc(2vh + 24px);
+  right: -10px;
+  text-decoration: none;
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 26px;
+  color: #ffffff;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .case1-cta-floating {
+    right: 24px;
+    top: calc(2vh + 20px);
+    font-size: 18px;
+    line-height: 22px;
+  }
 }
 </style>

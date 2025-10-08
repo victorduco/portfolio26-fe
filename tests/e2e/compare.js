@@ -14,8 +14,8 @@ async function run() {
   const results = findLastResults('resize-performance', 2);
 
   if (results.length < 2) {
-    console.error('❌ Недостаточно результатов для сравнения.');
-    console.log('   Запусти хотя бы 2 теста: npm run test:perf');
+    process.stderr.write('❌ Недостаточно результатов для сравнения.\n');
+    process.stdout.write('   Запусти хотя бы 2 теста: npm run test:perf\n');
     process.exit(1);
   }
 
@@ -23,7 +23,7 @@ async function run() {
   const comparison = compareResults(resultA, resultB);
 
   if (format === 'json') {
-    console.log(JSON.stringify(comparison, null, 2));
+    process.stdout.write(`${JSON.stringify(comparison, null, 2)}\n`);
   } else {
     printComparison(comparison);
   }
@@ -37,6 +37,6 @@ async function run() {
 }
 
 run().catch(err => {
-  console.error('❌ Comparison failed:', err);
+  process.stderr.write(`❌ Comparison failed: ${err instanceof Error ? err.stack || err.message : String(err)}\n`);
   process.exit(1);
 });

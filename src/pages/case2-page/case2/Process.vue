@@ -15,7 +15,6 @@ onMounted(async () => {
     const markdown = await response.text();
     markdownContent.value = renderMarkdown(markdown);
   } catch (error) {
-    console.error('Error loading markdown:', error);
     markdownContent.value = '<p>Error loading content</p>';
   }
 });

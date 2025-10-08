@@ -1,7 +1,9 @@
 import { chromium, webkit, firefox } from '@playwright/test';
 import { setupPerformanceTracking, getPerformanceMetrics, calculateStats } from '../helpers/performance.js';
 import { saveResults, appendToLog } from '../helpers/reporter.js';
-import { analyzeResults, printDetailedReport, saveAnalysis } from '../helpers/analyzer.js';
+import { analyzeResults, saveAnalysis } from '../helpers/analyzer.js';
+
+const writeLine = (text = '') => process.stdout.write(`${text}\n`);
 
 /**
  * Test UI interaction performance (hardcore stress test)
@@ -29,7 +31,8 @@ export async function testInteractionPerformance({
   const browsers = { chromium, webkit, firefox };
   const browserEngine = browsers[browserType] || chromium;
 
-  console.log(`🌐 Browser: ${browserType}\n`);
+  writeLine(`🌐 Browser: ${browserType}`);
+  writeLine();
   const browser = await browserEngine.launch({
     headless,
     // Force window to front on macOS
@@ -50,7 +53,7 @@ export async function testInteractionPerformance({
         // Activate the frontmost Playwright/WebKit window
         execSync(`osascript -e 'tell application "System Events" to set frontmost of first process whose name contains "Playwright" to true'`, { timeout: 2000 });
       } catch (err) {
-        console.log('⚠️  Could not activate window via AppleScript (non-critical)');
+        writeLine('⚠️  Could not activate window via AppleScript (non-critical)');
       }
       await page.waitForTimeout(300);
     }
@@ -61,7 +64,8 @@ export async function testInteractionPerformance({
     if (cpuThrottling > 1) {
       const client = await page.context().newCDPSession(page);
       await client.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottling });
-      console.log(`⚙️  CPU throttling enabled: ${cpuThrottling}x slowdown\n`);
+      writeLine(`⚙️  CPU throttling enabled: ${cpuThrottling}x slowdown`);
+      writeLine();
     }
 
     // Initial viewport BEFORE goto - larger for WebKit, standard for others
@@ -78,12 +82,12 @@ export async function testInteractionPerformance({
       try {
         execSync(`osascript -e 'tell application "System Events" to tell process "Playwright" to set position of window 1 to {0, 0}'`, { timeout: 2000 });
       } catch (err) {
-        console.log('⚠️  Could not set window position (non-critical)');
+        writeLine('⚠️  Could not set window position (non-critical)');
       }
       await page.waitForTimeout(300);
     }
 
-    console.log('⌨️  Вводим 4 цифры на кейпаде для разблокировки...');
+    writeLine('⌨️  Вводим 4 цифры на кейпаде для разблокировки...');
 
     // Клики по кнопкам кейпада (нужно 4 клика для разблокировки)
     // Используем код: 1, 5, 1, 5
@@ -93,21 +97,23 @@ export async function testInteractionPerformance({
     await page.locator('.keypad-button-hover-wrapper:has-text("1")').click();
     await page.locator('.keypad-button-hover-wrapper:has-text("5")').click();
 
-    console.log('✅ Код введен: 1 5 1 5 (разблокировано)\n');
+    writeLine('✅ Код введен: 1 5 1 5 (разблокировано)');
+    writeLine();
 
     // Ждем загрузки главной страницы и появления прямоугольников
-    console.log('⏳ Ожидание загрузки главной страницы...');
+    writeLine('⏳ Ожидание загрузки главной страницы...');
     await page.waitForTimeout(3000); // Ждем анимацию появления
 
     // Ждем пока прямоугольники появятся
-    console.log('⏳ Ожидание появления прямоугольников...');
+    writeLine('⏳ Ожидание появления прямоугольников...');
     await page.waitForSelector('.intro-square', { timeout: 10000 });
     await page.waitForTimeout(1000); // Дополнительное время на анимацию
 
     // Setup performance tracking
     await setupPerformanceTracking(page);
 
-    console.log(`🎮 Начинаем ${interactionRounds} раундов интенсивного взаимодействия...\n`);
+    writeLine(`🎮 Начинаем ${interactionRounds} раундов интенсивного взаимодействия...`);
+    writeLine();
 
     const interactionMetrics = [];
     const fpsMetrics = [];
@@ -115,14 +121,16 @@ export async function testInteractionPerformance({
     // Get rectangle positions
     const rectangles = await page.locator('.intro-square').all();
     const rectCount = rectangles.length;
-    console.log(`📦 Найдено прямоугольников: ${rectCount}\n`);
+    writeLine(`📦 Найдено прямоугольников: ${rectCount}`);
+    writeLine();
 
     if (rectCount === 0) {
       throw new Error('No rectangles found! Check if main page loaded correctly.');
     }
 
     // Скроллим к первому прямоугольнику и блокируем дальнейший скролл
-    console.log('📍 Скроллим к прямоугольникам и блокируем скролл...\n');
+    writeLine('📍 Скроллим к прямоугольникам и блокируем скролл...');
+    writeLine();
     await rectangles[0].scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
@@ -135,10 +143,11 @@ export async function testInteractionPerformance({
     let totalInteractions = 0;
 
     for (let round = 0; round < interactionRounds; round++) {
-      console.log(`\n🔄 Раунд ${round + 1}/${interactionRounds}`);
+      writeLine();
+      writeLine(`🔄 Раунд ${round + 1}/${interactionRounds}`);
 
       // Pattern 1: Hover каждый прямоугольник по порядку
-      console.log('  Pattern 1: Sequential hovers...');
+      writeLine('  Pattern 1: Sequential hovers...');
       const hoverStartTime = Date.now();
       const hoverTimings = [];
       for (let i = 0; i < rectCount; i++) {
@@ -146,12 +155,12 @@ export async function testInteractionPerformance({
         await rectangles[i].hover();
         const elapsed = Date.now() - start;
         hoverTimings.push(elapsed);
-        console.log(`    Hover ${i+1}: ${elapsed}ms`);
+        writeLine(`    Hover ${i+1}: ${elapsed}ms`);
         await page.waitForTimeout(25);
       }
       const hoverDuration = Date.now() - hoverStartTime;
       const avgHover = (hoverTimings.reduce((a,b) => a+b, 0) / hoverTimings.length).toFixed(2);
-      console.log(`    ⏱️  Среднее hover: ${avgHover}ms, Min: ${Math.min(...hoverTimings)}ms, Max: ${Math.max(...hoverTimings)}ms`);
+      writeLine(`    ⏱️  Среднее hover: ${avgHover}ms, Min: ${Math.min(...hoverTimings)}ms, Max: ${Math.max(...hoverTimings)}ms`);
       interactionMetrics.push({ type: 'hover-sequential', duration: hoverDuration, timings: hoverTimings });
       totalInteractions += rectCount;
 
@@ -160,7 +169,7 @@ export async function testInteractionPerformance({
       if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 2: Клик на каждый для активации
-      console.log('  Pattern 2: Activate all...');
+      writeLine('  Pattern 2: Activate all...');
       const activateStartTime = Date.now();
       for (let i = 0; i < rectCount; i++) {
         await rectangles[i].click({ force: true });
@@ -175,7 +184,7 @@ export async function testInteractionPerformance({
       if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 3: Быстрые зигзагообразные ховеры (стресс-тест)
-      console.log('  Pattern 3: Zigzag hovers (stress)...');
+      writeLine('  Pattern 3: Zigzag hovers (stress)...');
       const zigzagStartTime = Date.now();
       const zigzagPattern = [0, 3, 1, 2, 3, 0, 2, 1]; // Прыгаем между прямоугольниками
       for (const index of zigzagPattern) {
@@ -193,7 +202,7 @@ export async function testInteractionPerformance({
       if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 4: Деактивация в обратном порядке
-      console.log('  Pattern 4: Deactivate reverse...');
+      writeLine('  Pattern 4: Deactivate reverse...');
       const deactivateStartTime = Date.now();
       for (let i = rectCount - 1; i >= 0; i--) {
         await rectangles[i].click({ force: true });
@@ -208,7 +217,7 @@ export async function testInteractionPerformance({
       if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 5: Быстрая активация/деактивация одного и того же
-      console.log('  Pattern 5: Rapid toggle...');
+      writeLine('  Pattern 5: Rapid toggle...');
       const toggleStartTime = Date.now();
       for (let i = 0; i < 3; i++) {
         await rectangles[0].click({ force: true });
@@ -223,7 +232,7 @@ export async function testInteractionPerformance({
       if (perfMetrics.fps > 0) fpsMetrics.push(perfMetrics.fps);
 
       // Pattern 6: Случайные ховеры (имитация реального пользователя)
-      console.log('  Pattern 6: Random hovers...');
+      writeLine('  Pattern 6: Random hovers...');
       const randomStartTime = Date.now();
       for (let i = 0; i < 6; i++) {
         const randomIndex = Math.floor(Math.random() * rectCount);
@@ -240,10 +249,12 @@ export async function testInteractionPerformance({
         fpsMetrics.push(perfMetrics.fps);
       }
 
-      console.log(`  ✅ Раунд завершен | FPS: ${perfMetrics.fps || 'N/A'}`);
+      writeLine(`  ✅ Раунд завершен | FPS: ${perfMetrics.fps || 'N/A'}`);
     }
 
-    console.log(`\n✅ ${interactionRounds} раундов завершено (${totalInteractions} взаимодействий)\n`);
+    writeLine();
+    writeLine(`✅ ${interactionRounds} раундов завершено (${totalInteractions} взаимодействий)`);
+    writeLine();
 
     // Get final metrics
     const finalMetrics = await getPerformanceMetrics(page);
@@ -314,44 +325,44 @@ export async function testInteractionPerformance({
     const analysis = analyzeResults(results);
 
     // Print detailed report
-    console.log('\n');
-    console.log('═'.repeat(80));
-    console.log('                    ДЕТАЛЬНЫЙ АНАЛИЗ ПРОИЗВОДИТЕЛЬНОСТИ ВЗАИМОДЕЙСТВИЙ');
-    console.log('═'.repeat(80));
-    console.log('');
-    console.log('⏱️  ОБЩЕЕ ВРЕМЯ:');
-    console.log('─'.repeat(80));
-    console.log(`  Время теста:       ${results.totalTime.seconds}s (${results.totalTime.ms}ms)`);
-    console.log('');
-    console.log('🎮 СТАТИСТИКА ВЗАИМОДЕЙСТВИЙ:');
-    console.log('─'.repeat(80));
-    console.log(`  Всего взаимодействий: ${totalInteractions}`);
-    console.log(`  Среднее время:        ${overallStats.avg.toFixed(2)}ms`);
-    console.log(`  Min/Max:              ${overallStats.min}ms / ${overallStats.max}ms`);
-    console.log('');
-    console.log('📊 ПО ПАТТЕРНАМ:');
-    console.log('─'.repeat(80));
+    writeLine();
+    writeLine('═'.repeat(80));
+    writeLine('                    ДЕТАЛЬНЫЙ АНАЛИЗ ПРОИЗВОДИТЕЛЬНОСТИ ВЗАИМОДЕЙСТВИЙ');
+    writeLine('═'.repeat(80));
+    writeLine();
+    writeLine('⏱️  ОБЩЕЕ ВРЕМЯ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Время теста:       ${results.totalTime.seconds}s (${results.totalTime.ms}ms)`);
+    writeLine();
+    writeLine('🎮 СТАТИСТИКА ВЗАИМОДЕЙСТВИЙ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Всего взаимодействий: ${totalInteractions}`);
+    writeLine(`  Среднее время:        ${overallStats.avg.toFixed(2)}ms`);
+    writeLine(`  Min/Max:              ${overallStats.min}ms / ${overallStats.max}ms`);
+    writeLine();
+    writeLine('📊 ПО ПАТТЕРНАМ:');
+    writeLine('─'.repeat(80));
     Object.entries(patternStats).forEach(([type, stats]) => {
       const icon = type.includes('hover') ? '🖱️ ' : '👆';
-      console.log(`  ${icon} ${type.padEnd(25)} ${stats.avg.toFixed(2)}ms (${stats.count}x)`);
+      writeLine(`  ${icon} ${type.padEnd(25)} ${stats.avg.toFixed(2)}ms (${stats.count}x)`);
     });
-    console.log('');
-    console.log('🎮 FPS МЕТРИКИ:');
-    console.log('─'.repeat(80));
-    console.log(`  Средний FPS:       ${fpsStats.avg.toFixed(2)}`);
-    console.log(`  Min/Max FPS:       ${fpsStats.min} / ${fpsStats.max}`);
-    console.log('');
+    writeLine();
+    writeLine('🎮 FPS МЕТРИКИ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Средний FPS:       ${fpsStats.avg.toFixed(2)}`);
+    writeLine(`  Min/Max FPS:       ${fpsStats.min} / ${fpsStats.max}`);
+    writeLine();
     if (results.memory) {
       const usedMB = Math.round(results.memory.used / 1024 / 1024);
       const totalMB = Math.round(results.memory.total / 1024 / 1024);
-      console.log('💾 ПАМЯТЬ:');
-      console.log('─'.repeat(80));
-      console.log(`  Использовано:      ${usedMB}MB / ${totalMB}MB`);
-      console.log(`  Процент:           ${((usedMB / totalMB) * 100).toFixed(2)}%`);
-      console.log('');
+      writeLine('💾 ПАМЯТЬ:');
+      writeLine('─'.repeat(80));
+      writeLine(`  Использовано:      ${usedMB}MB / ${totalMB}MB`);
+      writeLine(`  Процент:           ${((usedMB / totalMB) * 100).toFixed(2)}%`);
+      writeLine();
     }
-    console.log('═'.repeat(80));
-    console.log('');
+    writeLine('═'.repeat(80));
+    writeLine();
 
     // Save results and analysis
     saveResults('interaction-performance', results, comment);

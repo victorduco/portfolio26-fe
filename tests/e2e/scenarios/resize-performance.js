@@ -1,8 +1,10 @@
 import { chromium } from '@playwright/test';
 import { setupPerformanceTracking, getPerformanceMetrics, calculateStats } from '../helpers/performance.js';
 import { smoothResize, randomViewportSize, performTrackedResize } from '../helpers/resize.js';
-import { saveResults, appendToLog, printSummary } from '../helpers/reporter.js';
+import { saveResults, appendToLog } from '../helpers/reporter.js';
 import { analyzeResults, printDetailedReport, saveAnalysis } from '../helpers/analyzer.js';
+
+const writeLine = (text = '') => process.stdout.write(`${text}\n`);
 
 /**
  * Test resize performance with keypad input
@@ -24,7 +26,8 @@ export async function testResizePerformance({
     if (cpuThrottling > 1) {
       const client = await page.context().newCDPSession(page);
       await client.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottling });
-      console.log(`⚙️  CPU throttling enabled: ${cpuThrottling}x slowdown\n`);
+      writeLine(`⚙️  CPU throttling enabled: ${cpuThrottling}x slowdown`);
+      writeLine();
     }
 
     await page.goto(url);
@@ -35,15 +38,17 @@ export async function testResizePerformance({
     await page.setViewportSize({ width: currentWidth, height: currentHeight });
 
     // Input keypad code
-    console.log('⌨️  Вводим 1 5 на кейпаде...');
+    writeLine('⌨️  Вводим 1 5 на кейпаде...');
     await page.mouse.click(449, 74);  // 1
     await page.mouse.click(640, 264); // 5
-    console.log('✅ Ввели: 1 5\n');
+    writeLine('✅ Ввели: 1 5');
+    writeLine();
 
     // Setup performance tracking
     await setupPerformanceTracking(page);
 
-    console.log(`🎬 Начинаем ${resizeCount} плавных ресайзов...\n`);
+    writeLine(`🎬 Начинаем ${resizeCount} плавных ресайзов...`);
+    writeLine();
 
     const resizeMetrics = [];
     const fpsMetrics = [];
@@ -73,7 +78,7 @@ export async function testResizePerformance({
         fpsMetrics.push(perfMetrics.fps);
       }
 
-      console.log(
+      writeLine(
         `${i + 1}/${resizeCount}: ${currentWidth}x${currentHeight} → ${targetWidth}x${targetHeight} | ` +
         `${resizeResult.duration}ms | FPS: ${perfMetrics.fps || 'N/A'}`
       );
@@ -82,7 +87,9 @@ export async function testResizePerformance({
       currentHeight = targetHeight;
     }
 
-    console.log(`\n✅ ${resizeCount} ресайзов выполнено\n`);
+    writeLine();
+    writeLine(`✅ ${resizeCount} ресайзов выполнено`);
+    writeLine();
 
     // Get final metrics
     const finalMetrics = await getPerformanceMetrics(page);

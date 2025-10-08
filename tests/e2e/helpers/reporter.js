@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+const writeLine = (text = '') => process.stdout.write(`${text}\n`);
+
 /**
  * Save test results to JSON file
  */
@@ -18,7 +20,8 @@ export function saveResults(testName, results, comment = '') {
 
   fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
 
-  console.log(`\n💾 Results saved to: ${filepath}`);
+  writeLine();
+  writeLine(`💾 Results saved to: ${filepath}`);
   return filepath;
 }
 
@@ -45,21 +48,22 @@ ${'='.repeat(80)}
  * Print summary to console
  */
 export function printSummary(results) {
-  console.log('\n📊 СТАТИСТИКА:');
-  console.log('─'.repeat(50));
+  writeLine();
+  writeLine('📊 СТАТИСТИКА:');
+  writeLine('─'.repeat(50));
 
   if (results.resize) {
-    console.log(`Среднее время ресайза: ${results.resize.avgDuration}ms`);
+    writeLine(`Среднее время ресайза: ${results.resize.avgDuration}ms`);
   }
 
   if (results.fps) {
-    console.log(`Средний FPS: ${results.fps.avg}`);
-    console.log(`Min/Max FPS: ${results.fps.min}/${results.fps.max}`);
+    writeLine(`Средний FPS: ${results.fps.avg}`);
+    writeLine(`Min/Max FPS: ${results.fps.min}/${results.fps.max}`);
   }
 
   if (results.memory) {
-    console.log(`Память: ${results.memory.used}MB / ${results.memory.total}MB`);
+    writeLine(`Память: ${results.memory.used}MB / ${results.memory.total}MB`);
   }
 
-  console.log('─'.repeat(50));
+  writeLine('─'.repeat(50));
 }

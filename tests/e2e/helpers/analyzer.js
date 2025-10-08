@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+const writeLine = (text = '') => process.stdout.write(`${text}\n`);
+
 /**
  * Analyze test results and generate detailed report
  */
@@ -114,95 +116,104 @@ export function analyzeResults(results) {
  * Print detailed analysis report
  */
 export function printDetailedReport(analysis, results = {}) {
-  console.log('\n' + '═'.repeat(80));
-  console.log('                        ДЕТАЛЬНЫЙ АНАЛИЗ ПРОИЗВОДИТЕЛЬНОСТИ');
-  console.log('═'.repeat(80));
+  writeLine();
+  writeLine('═'.repeat(80));
+  writeLine('                        ДЕТАЛЬНЫЙ АНАЛИЗ ПРОИЗВОДИТЕЛЬНОСТИ');
+  writeLine('═'.repeat(80));
 
   // Total test time
   if (results.totalTime) {
-    console.log('\n⏱️  ОБЩЕЕ ВРЕМЯ:');
-    console.log('─'.repeat(80));
-    console.log(`  Время теста:       ${results.totalTime.seconds}s (${results.totalTime.ms}ms)`);
+    writeLine();
+    writeLine('⏱️  ОБЩЕЕ ВРЕМЯ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Время теста:       ${results.totalTime.seconds}s (${results.totalTime.ms}ms)`);
   }
 
   // Resize Summary
   if (analysis.summary.resize) {
     const r = analysis.summary.resize;
-    console.log('\n📏 RESIZE МЕТРИКИ:');
-    console.log('─'.repeat(80));
-    console.log(`  Среднее время:     ${r.avg.toFixed(2)}ms`);
-    console.log(`  Медиана:           ${r.median.toFixed(2)}ms`);
-    console.log(`  Min/Max:           ${r.min}ms / ${r.max}ms`);
-    console.log(`  Стандартное откл:  ${r.std.toFixed(2)}ms`);
-    console.log(`  Общее время:       ${r.total}ms (${(r.total / 1000).toFixed(2)}s)`);
+    writeLine();
+    writeLine('📏 RESIZE МЕТРИКИ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Среднее время:     ${r.avg.toFixed(2)}ms`);
+    writeLine(`  Медиана:           ${r.median.toFixed(2)}ms`);
+    writeLine(`  Min/Max:           ${r.min}ms / ${r.max}ms`);
+    writeLine(`  Стандартное откл:  ${r.std.toFixed(2)}ms`);
+    writeLine(`  Общее время:       ${r.total}ms (${(r.total / 1000).toFixed(2)}s)`);
   }
 
   // Degradation analysis
   if (analysis.details.degradation) {
     const d = analysis.details.degradation;
-    console.log('\n📊 АНАЛИЗ ДЕГРАДАЦИИ:');
-    console.log('─'.repeat(80));
-    console.log(`  Первая половина:   ${d.firstHalfAvg.toFixed(2)}ms`);
-    console.log(`  Вторая половина:   ${d.secondHalfAvg.toFixed(2)}ms`);
-    console.log(`  Изменение:         ${d.degradationPercent > 0 ? '+' : ''}${d.degradationPercent}%`);
-    console.log(`  Деградация:        ${d.isDegrading ? '⚠️  ДА' : '✅ НЕТ'}`);
+    writeLine();
+    writeLine('📊 АНАЛИЗ ДЕГРАДАЦИИ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Первая половина:   ${d.firstHalfAvg.toFixed(2)}ms`);
+    writeLine(`  Вторая половина:   ${d.secondHalfAvg.toFixed(2)}ms`);
+    writeLine(`  Изменение:         ${d.degradationPercent > 0 ? '+' : ''}${d.degradationPercent}%`);
+    writeLine(`  Деградация:        ${d.isDegrading ? '⚠️  ДА' : '✅ НЕТ'}`);
   }
 
   // FPS Summary
   if (analysis.summary.fps) {
     const f = analysis.summary.fps;
-    console.log('\n🎮 FPS МЕТРИКИ:');
-    console.log('─'.repeat(80));
-    console.log(`  Средний FPS:       ${f.avg.toFixed(2)}`);
-    console.log(`  Медиана FPS:       ${f.median.toFixed(2)}`);
-    console.log(`  Min/Max FPS:       ${f.min} / ${f.max}`);
+    writeLine();
+    writeLine('🎮 FPS МЕТРИКИ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Средний FPS:       ${f.avg.toFixed(2)}`);
+    writeLine(`  Медиана FPS:       ${f.median.toFixed(2)}`);
+    writeLine(`  Min/Max FPS:       ${f.min} / ${f.max}`);
     if (results.finalMetrics?.avgFrameTime) {
-      console.log(`  Среднее время кадра: ${results.finalMetrics.avgFrameTime}ms (цель: <16.67ms для 60fps)`);
+      writeLine(`  Среднее время кадра: ${results.finalMetrics.avgFrameTime}ms (цель: <16.67ms для 60fps)`);
     }
-    console.log(`  Стандартное откл:  ${f.std.toFixed(2)}`);
-    console.log(`  Состояние:         ${analysis.details.fpsHealth}`);
+    writeLine(`  Стандартное откл:  ${f.std.toFixed(2)}`);
+    writeLine(`  Состояние:         ${analysis.details.fpsHealth}`);
   }
 
   // Memory Summary
   if (analysis.summary.memory) {
     const m = analysis.summary.memory;
-    console.log('\n💾 ПАМЯТЬ:');
-    console.log('─'.repeat(80));
-    console.log(`  Использовано:      ${m.used}MB / ${m.total}MB`);
-    console.log(`  Процент:           ${m.usagePercent}%`);
-    console.log(`  Доступно:          ${m.available}MB`);
+    writeLine();
+    writeLine('💾 ПАМЯТЬ:');
+    writeLine('─'.repeat(80));
+    writeLine(`  Использовано:      ${m.used}MB / ${m.total}MB`);
+    writeLine(`  Процент:           ${m.usagePercent}%`);
+    writeLine(`  Доступно:          ${m.available}MB`);
   }
 
   // Long Tasks Summary
   if (results.finalMetrics?.longTasks) {
     const lt = results.finalMetrics.longTasks;
-    console.log('\n⏳ ДОЛГИЕ ЗАДАЧИ (>50ms):');
-    console.log('─'.repeat(80));
-    console.log(`  Количество:        ${lt.count}`);
-    console.log(`  Общее время:       ${lt.totalDuration}ms`);
+    writeLine();
+    writeLine('⏳ ДОЛГИЕ ЗАДАЧИ (>50ms):');
+    writeLine('─'.repeat(80));
+    writeLine(`  Количество:        ${lt.count}`);
+    writeLine(`  Общее время:       ${lt.totalDuration}ms`);
     if (lt.count > 0) {
       const avgDuration = (lt.totalDuration / lt.count).toFixed(2);
-      console.log(`  Среднее время:     ${avgDuration}ms`);
-      console.log(`  Состояние:         ${lt.count > 10 ? '⚠️  МНОГО' : lt.count > 5 ? '⚡ НОРМА' : '✅ ХОРОШО'}`);
+      writeLine(`  Среднее время:     ${avgDuration}ms`);
+      writeLine(`  Состояние:         ${lt.count > 10 ? '⚠️  МНОГО' : lt.count > 5 ? '⚡ НОРМА' : '✅ ХОРОШО'}`);
     }
   }
 
   // Navigation Timing
   if (results.finalMetrics?.navigation) {
     const nav = results.finalMetrics.navigation;
-    console.log('\n🚀 ВРЕМЯ ЗАГРУЗКИ:');
-    console.log('─'.repeat(80));
-    if (nav.domContentLoaded) console.log(`  DOM готов:         ${nav.domContentLoaded}ms`);
-    if (nav.domInteractive) console.log(`  DOM интерактивен:  ${nav.domInteractive}ms`);
-    if (nav.loadComplete) console.log(`  Полная загрузка:   ${nav.loadComplete}ms`);
+    writeLine();
+    writeLine('🚀 ВРЕМЯ ЗАГРУЗКИ:');
+    writeLine('─'.repeat(80));
+    if (nav.domContentLoaded) writeLine(`  DOM готов:         ${nav.domContentLoaded}ms`);
+    if (nav.domInteractive) writeLine(`  DOM интерактивен:  ${nav.domInteractive}ms`);
+    if (nav.loadComplete) writeLine(`  Полная загрузка:   ${nav.loadComplete}ms`);
   }
 
   // Timeline
   if (analysis.timeline && analysis.timeline.length > 0) {
-    console.log('\n⏱️  ТАЙМЛАЙН:');
-    console.log('─'.repeat(80));
-    console.log('  Секунда  | Итерация | FPS  | Длительность | Размер');
-    console.log('  ' + '─'.repeat(76));
+    writeLine();
+    writeLine('⏱️  ТАЙМЛАЙН:');
+    writeLine('─'.repeat(80));
+    writeLine('  Секунда  | Итерация | FPS  | Длительность | Размер');
+    writeLine('  ' + '─'.repeat(76));
 
     // Show first 5, middle sample, and last 5
     const tl = analysis.timeline;
@@ -217,20 +228,23 @@ export function printDetailedReport(analysis, results = {}) {
       const iter = String(entry.iteration).padEnd(8);
       const fps = String(entry.fps).padEnd(4);
       const dur = String(entry.duration + 'ms').padEnd(12);
-      console.log(`  ${sec} | ${iter} | ${fps} | ${dur} | ${entry.size}`);
+      writeLine(`  ${sec} | ${iter} | ${fps} | ${dur} | ${entry.size}`);
     });
   }
 
   // Recommendations
   if (analysis.recommendations.length > 0) {
-    console.log('\n💡 РЕКОМЕНДАЦИИ:');
-    console.log('─'.repeat(80));
+    writeLine();
+    writeLine('💡 РЕКОМЕНДАЦИИ:');
+    writeLine('─'.repeat(80));
     analysis.recommendations.forEach(rec => {
-      console.log(`  ${rec}`);
+      writeLine(`  ${rec}`);
     });
   }
 
-  console.log('\n' + '═'.repeat(80) + '\n');
+  writeLine();
+  writeLine('═'.repeat(80));
+  writeLine();
 }
 
 /**
@@ -248,7 +262,7 @@ export function saveAnalysis(testName, analysis) {
   };
 
   fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
-  console.log(`📊 Анализ сохранен: ${filepath}`);
+  writeLine(`📊 Анализ сохранен: ${filepath}`);
 
   return filepath;
 }

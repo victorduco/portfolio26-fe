@@ -128,12 +128,7 @@ let observer = null;
 onMounted(() => {
   const element = numberElement.value?.$el;
   if (element) {
-    observer = new MutationObserver(() => {
-      const value = getComputedStyle(element).getPropertyValue(
-        "--text-shadow-offset"
-      );
-      console.log(`[Rectangle ${props.index}] --text-shadow-offset:`, value);
-    });
+    observer = new MutationObserver(() => {});
 
     observer.observe(element, {
       attributes: true,

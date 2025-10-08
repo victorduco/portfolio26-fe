@@ -112,9 +112,9 @@ function startIntroAnimation() {
             setTimeout(() => {
               introFinished.value = true;
               emit('animationComplete');
-            }, 100);
+            }, 50);
           }, 0);
-        }, 150);
+        }, 75);
       } else {
         introHighlightIndex.value = -1;
         introGreenIndex.value = -1;
@@ -123,7 +123,7 @@ function startIntroAnimation() {
         setTimeout(() => {
           introFinished.value = true;
           emit('animationComplete');
-        }, 500);
+        }, 250);
       }
       return;
     }
@@ -131,16 +131,16 @@ function startIntroAnimation() {
     // Одновременно: делаем зеленым текущий И начинаем затухание предыдущего
     introGreenIndex.value = currentIndex;
 
-    // Вычисляем задержку: начинаем с 176ms (медленно), заканчиваем на 48ms (быстро) - на 20% быстрее
+    // Вычисляем задержку: начинаем с 88ms (медленно), заканчиваем на 24ms (быстро) — в 2 раза быстрее исходного темпа
     const progress = (totalSections - 1 - currentIndex) / (totalSections - 1);
     const easeIn = Math.pow(progress, 2); // ease-in кривая для ускорения
-    const baseDelay = 176 - easeIn * 128; // от 176ms до 48ms (220*0.8 и 160*0.8)
-    const greenDuration = baseDelay * 3; // в 3 раза дольше остается зеленым
+    const baseDelay = (176 - easeIn * 128) * 0.5; // ускоряем в 2 раза: 88ms до 24ms
+    const greenDuration = baseDelay * 3; // длительность пропорционально новой задержке
 
     if (previousIndex !== -1) {
       introFadeOutIndex.value = previousIndex;
 
-      // Через 150ms (время затухания) убираем fadeOut и меняем цвет на белый (пока opacity = 0)
+      // Через 75ms (время затухания) убираем fadeOut и меняем цвет на белый (пока opacity = 0)
       setTimeout(() => {
         introFadeOutIndex.value = -1;
 
@@ -148,7 +148,7 @@ function startIntroAnimation() {
         setTimeout(() => {
           introHighlightIndex.value = previousIndex;
         }, 0);
-      }, 150);
+      }, 75);
     }
 
     previousIndex = currentIndex;
@@ -166,7 +166,7 @@ onMounted(() => {
     // Задержка перед началом анимации меню
     setTimeout(() => {
       startIntroAnimation();
-    }, 500);
+    }, 250);
   } else {
     // Без анимации сразу сообщаем о завершении
     introHighlightIndex.value = -1;

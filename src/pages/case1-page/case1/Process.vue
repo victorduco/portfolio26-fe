@@ -19,7 +19,6 @@ onMounted(async () => {
     // Пока используем простую замену, потом можно улучшить
     markdownContent.value = renderMarkdown(markdown);
   } catch (error) {
-    console.error('Error loading markdown:', error);
     markdownContent.value = '<p>Error loading content</p>';
   }
 });
