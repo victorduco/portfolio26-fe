@@ -130,6 +130,12 @@ const navigationSections = [
   opacity: 1;
 }
 
+#case1.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .ai-play-placeholder {
   width: 100vw;
   height: 100vh;
