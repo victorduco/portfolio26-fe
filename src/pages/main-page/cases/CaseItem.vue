@@ -1,24 +1,22 @@
 <template>
-  <div class="case1" ref="caseElement">
-    <div class="case1-heading">
-      <div class="case1-heading-top">
-        <h3 class="case1-title">
-          Cross-Domain AI Solution for Account Reconcilers
-        </h3>
+  <div class="case-item" ref="caseElement">
+    <div class="case-heading">
+      <div class="case-heading-top">
+        <h3 class="case-title">{{ title }}</h3>
         <NavigationChevron
           type="route"
-          to="/story/one"
+          :to="routeTo"
           direction="forward"
-          aria-label="Open story one"
+          :aria-label="`Open ${subtitle}`"
         />
       </div>
-      <p class="case1-subtitle">Apple</p>
+      <p class="case-subtitle">{{ subtitle }}</p>
     </div>
     <div class="video-wrapper">
       <video
         ref="videoElement"
         class="case-video"
-        src="@/assets/case-videos/case1.mp4"
+        :src="videoSrc"
         muted
         playsinline
         @ended="handleVideoEnded"
@@ -51,6 +49,25 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  subtitle: {
+    type: String,
+    required: true,
+  },
+  videoSrc: {
+    type: String,
+    required: true,
+  },
+  routeTo: {
+    type: String,
+    required: true,
+  },
+});
 
 const caseElement = ref(null);
 const videoElement = ref(null);
@@ -119,7 +136,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.case1 {
+.case-item {
   background: #171717;
   display: flex;
   flex-direction: column;
@@ -135,7 +152,7 @@ onUnmounted(() => {
   width: 100%;
 }
 
-.case1-heading {
+.case-heading {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -143,7 +160,7 @@ onUnmounted(() => {
   gap: 8px;
 }
 
-.case1-heading-top {
+.case-heading-top {
   width: 100%;
   display: flex;
   align-items: center;
@@ -151,13 +168,13 @@ onUnmounted(() => {
   gap: clamp(16px, 4vw, 40px);
 }
 
-.case1-title {
+.case-title {
   margin: 0;
   text-align: left;
   max-width: 560px;
 }
 
-.case1-subtitle {
+.case-subtitle {
   margin: 0;
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
   font-style: normal;
@@ -228,9 +245,8 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .case1-heading {
+  .case-heading {
     gap: 16px;
   }
-
 }
 </style>

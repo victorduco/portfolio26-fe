@@ -9,14 +9,18 @@
       <section id="intro" class="item" :class="{ 'intro-visible': introVisible }">
         <Intro :intro-visible="introVisible" />
       </section>
-      <section id="case1" class="item">
-        <Case1 />
-      </section>
-      <section id="case2" class="item">
-        <Case2 />
-      </section>
-      <section id="case3" class="item">
-        <Case3 />
+      <section
+        v-for="caseData in casesData"
+        :key="caseData.id"
+        :id="caseData.id"
+        class="item case-section"
+      >
+        <CaseItem
+          :title="caseData.title"
+          :subtitle="caseData.subtitle"
+          :video-src="caseData.videoSrc"
+          :route-to="caseData.routeTo"
+        />
       </section>
       <section id="ai-play" class="item">
         <div class="ai-play-placeholder">AI Play - Coming Soon</div>
@@ -32,13 +36,35 @@
 import { computed, nextTick, ref, watch } from "vue";
 import VueScrollSnap from "vue-scroll-snap";
 import Intro from "./intro/Intro.vue";
-import Case1 from "./cases/Case1.vue";
-import Case2 from "./cases/Case2.vue";
-import Case3 from "./cases/Case3.vue";
+import CaseItem from "./cases/CaseItem.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import { useRoute } from "vue-router";
 import { useMeta } from "../../composables/useMeta.js";
+
+const casesData = [
+  {
+    id: "case1",
+    title: "Cross-Domain AI Solution for Account Reconcilers",
+    subtitle: "Apple",
+    videoSrc: new URL("@/assets/case-videos/case1.mp4", import.meta.url).href,
+    routeTo: "/story/one",
+  },
+  {
+    id: "case2",
+    title: "Story Two Title",
+    subtitle: "Client Two",
+    videoSrc: new URL("@/assets/case-videos/case2.mp4", import.meta.url).href,
+    routeTo: "/story/two",
+  },
+  {
+    id: "case3",
+    title: "Story Three Title",
+    subtitle: "Client Three",
+    videoSrc: new URL("@/assets/case-videos/case3.mp4", import.meta.url).href,
+    routeTo: "/story/three",
+  },
+];
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
@@ -106,7 +132,7 @@ function handleNavAnimationComplete() {
   opacity: 1;
 }
 
-#case1.item {
+.case-section.item {
   display: flex;
   align-items: center;
   justify-content: center;
