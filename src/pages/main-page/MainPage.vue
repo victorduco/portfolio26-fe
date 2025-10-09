@@ -110,6 +110,8 @@ function handleNavAnimationComplete() {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100dvh;
+  height: 100dvh;
 }
 
 .ai-play-placeholder {

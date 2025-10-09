@@ -131,6 +131,8 @@ onUnmounted(() => {
   margin: auto;
   text-align: left;
   gap: clamp(16px, 2vh, 24px);
+  max-height: 100dvh;
+  width: 100%;
 }
 
 .case1-heading {
@@ -171,7 +173,7 @@ onUnmounted(() => {
 .video-wrapper {
   padding: clamp(8px, 1.4vw, 12px);
   border-radius: 20px;
-  width: auto;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -183,6 +185,8 @@ onUnmounted(() => {
   overflow: hidden;
   transform-style: preserve-3d;
   transform-origin: center;
+  aspect-ratio: 1662 / 1080;
+  max-height: 100%;
 }
 
 .case-video {
@@ -190,8 +194,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   border-radius: clamp(12px, 1.6vw, 16px);
-  max-height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .replay-button {
