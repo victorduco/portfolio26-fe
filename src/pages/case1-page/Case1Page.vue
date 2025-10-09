@@ -1,6 +1,12 @@
 <template>
   <div class="case1-page">
-    <RouterLink to="/" class="back-button">← Back to Home</RouterLink>
+    <NavigationChevron
+      class="case-page-back"
+      type="route"
+      to="/"
+      direction="back"
+      aria-label="Back to home"
+    />
     <PageNavigation :sections="navigationSections" :enable-intro-animation="false" />
     <section id="case1-summary">
       <Summary />
@@ -19,7 +25,7 @@
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router";
+import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import PageNavigation from "../main-page/page-navigation/PageNavigation.vue";
 import NextCaseFooter from "../../components/NextCaseFooter.vue";
 import Summary from "./case1/Summary.vue";
@@ -46,31 +52,17 @@ const navigationSections = [
   position: relative;
 }
 
-.back-button {
+.case-page-back {
   position: fixed;
   top: 48px;
   left: 48px;
   z-index: 1001;
-  padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-
-.back-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateX(-4px);
 }
 
 @media (max-width: 768px) {
-  .back-button {
+  .case-page-back {
     top: 24px;
     left: 24px;
-    padding: 8px 16px;
-    font-size: 14px;
   }
 }
 </style>

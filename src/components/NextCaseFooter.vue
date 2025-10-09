@@ -1,15 +1,24 @@
 <template>
   <footer class="next-case-footer">
-    <RouterLink :to="to" class="next-case-footer__link">
-      <span class="next-case-footer__label">Next case</span>
-      <span class="next-case-footer__target">{{ label }}</span>
-      <span aria-hidden="true" class="next-case-footer__arrow">→</span>
-    </RouterLink>
+    <div class="next-case-footer__content">
+      <RouterLink :to="to" class="next-case-footer__text" :aria-label="`Open ${label}`">
+        <span class="next-case-footer__label">Next case</span>
+        <span class="next-case-footer__target">{{ label }}</span>
+      </RouterLink>
+      <NavigationChevron
+        class="next-case-footer__chevron"
+        type="route"
+        :to="to"
+        direction="forward"
+        :aria-label="`Open ${label}`"
+      />
+    </div>
   </footer>
 </template>
 
 <script setup>
 import { RouterLink } from "vue-router";
+import NavigationChevron from "@/components/common/NavigationChevron.vue";
 
 const props = defineProps({
   to: {
@@ -31,22 +40,32 @@ const props = defineProps({
   justify-content: center;
 }
 
-.next-case-footer__link {
+.next-case-footer__content {
   display: inline-flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
+  align-items: center;
+  gap: 24px;
   padding: 32px 40px;
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.06);
   color: #ffffff;
-  text-decoration: none;
   transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.next-case-footer__link:hover {
+.next-case-footer__content:hover {
   transform: translateY(-4px);
   background: rgba(255, 255, 255, 0.1);
+}
+
+.next-case-footer__content:hover .nav-chevron__inner {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.next-case-footer__text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
 }
 
 .next-case-footer__label {
@@ -61,9 +80,8 @@ const props = defineProps({
   font-weight: 600;
 }
 
-.next-case-footer__arrow {
-  font-size: 24px;
-  opacity: 0.8;
+.next-case-footer__chevron {
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
@@ -72,10 +90,12 @@ const props = defineProps({
     padding: 48px 0 72px;
   }
 
-  .next-case-footer__link {
+  .next-case-footer__content {
     width: 100%;
     padding: 24px;
     border-radius: 20px;
+    justify-content: space-between;
+    gap: 16px;
   }
 
   .next-case-footer__target {
