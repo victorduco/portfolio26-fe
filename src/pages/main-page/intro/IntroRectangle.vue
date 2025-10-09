@@ -36,12 +36,16 @@
       >
         {{ index + 1 }}
       </motion.div>
-      <motion.div
+      <motion.svg
         class="intro-content-bullet"
         :variants="squareContentVariants.bullet"
         :animate="getAnimationState()"
-        >•</motion.div
+        viewBox="0 0 40 40"
+        width="40"
+        height="40"
       >
+        <circle cx="20" cy="20" r="8" />
+      </motion.svg>
     </motion.div>
 
     <IntroRectangleActive :index="index" :is-active="isActive" />
@@ -223,9 +227,12 @@ onUnmounted(() => {
 
 .intro-content-bullet {
   position: absolute;
-  color: #3d3d3d;
-  font-size: 60px;
-  line-height: 1;
+  width: 40px;
+  height: 40px;
+  fill: #3d3d3d;
   user-select: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
