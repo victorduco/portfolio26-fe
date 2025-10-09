@@ -16,7 +16,6 @@
             preserveAspectRatio="xMidYMid slice"
             :href="props.staticDisplacementMap"
           />
-
           <GeFilterDisplacementMap
             :displacement-scale="o.displacementScale"
             :intensity="props.intensity"
@@ -28,14 +27,10 @@
 </template>
 
 <script setup>
-import {
-  onMounted,
-  onBeforeUnmount,
-  nextTick,
-  ref,
-} from "vue";
+import { onMounted, onBeforeUnmount, nextTick, ref } from "vue";
 import GeFilterDisplacementMap from "./GeFilterDisplacementMap.vue";
 import { layoutBatcher } from "@/directives/mask-element/layoutBatcher";
+
 const props = defineProps({
   options: { type: Object, required: true },
   intensity: { type: Number, required: true },
@@ -49,31 +44,19 @@ const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
 let maskElement = null;
 let resizeObserver = null;
 
-const updateMaskRect = (source) => {
-  const reason = typeof source === "string" ? source : source?.type || "manual";
-
-  if (!maskElement) {
-    return;
-  }
+const updateMaskRect = () => {
+  if (!maskElement) return;
 
   layoutBatcher.scheduleTask(
-    // READ фаза
-    () => {
-      const rect = maskElement.getBoundingClientRect();
-      return rect;
-    },
-    // WRITE фаза
+    () => maskElement.getBoundingClientRect(),
     (rect) => {
-      if (!rect) {
-        return;
-      }
-      const nextRect = {
+      if (!rect) return;
+      maskRect.value = {
         left: Math.round(rect.left + window.scrollX),
         top: Math.round(rect.top + window.scrollY),
         width: Math.round(rect.width),
         height: Math.round(rect.height),
       };
-      maskRect.value = nextRect;
     }
   );
 };
@@ -86,12 +69,10 @@ const toggleListeners = (attach) => {
 
 const cleanup = () => {
   resizeObserver?.disconnect();
-  resizeObserver = null;
   toggleListeners(false);
 };
 
 const applyFilterToMaskElement = () => {
-  // Try to find .mask-element - it can be a parent or the wrapper itself
   let el = glassFilterEl.value?.parentElement;
   while (el) {
     if (el.classList?.contains("mask-element")) {
@@ -101,17 +82,12 @@ const applyFilterToMaskElement = () => {
     el = el.parentElement;
   }
 
-  if (!maskElement) {
-    return;
-  }
+  if (!maskElement) return;
 
   maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);
+  updateMaskRect();
 
-  updateMaskRect("initial");
-  resizeObserver?.disconnect();
-  resizeObserver = new ResizeObserver(() => {
-    updateMaskRect("resize-observer");
-  });
+  resizeObserver = new ResizeObserver(updateMaskRect);
   resizeObserver.observe(maskElement);
   toggleListeners(true);
 };
@@ -121,9 +97,7 @@ onMounted(async () => {
   applyFilterToMaskElement();
 });
 
-onBeforeUnmount(() => {
-  cleanup();
-});
+onBeforeUnmount(cleanup);
 
 defineExpose({ filterId });
 </script>

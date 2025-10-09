@@ -49,64 +49,39 @@ const navigationSections = [
   { id: "contacts", label: "Contact" },
 ];
 
-// Устанавливаем мета-теги для главной страницы
 useMeta("home");
 
 const route = useRoute();
-
 const introVisible = ref(false);
 const scrollContainerRef = ref(null);
 
-const shouldPlayNavIntro = computed(() => {
-  return !route.meta?.skipNavIntro;
-});
+const shouldPlayNavIntro = computed(() => !route.meta?.skipNavIntro);
 
 watch(
-  shouldPlayNavIntro,
-  (play) => {
+  () => [shouldPlayNavIntro.value, route.meta?.restoreScrollTop],
+  async ([play, scrollTop]) => {
     introVisible.value = !play;
-  },
-  { immediate: true }
-);
 
-const restoreScrollTop = computed(() => {
-  return typeof route.meta?.restoreScrollTop === "number"
-    ? route.meta.restoreScrollTop
-    : null;
-});
+    if (scrollTop != null && typeof window !== "undefined") {
+      await nextTick();
+      requestAnimationFrame(() => {
+        if (!scrollContainerRef.value) {
+          scrollContainerRef.value = document.querySelector(".scroll-snap-container.fullscreen");
+        }
 
-watch(
-  restoreScrollTop,
-  async (value) => {
-    if (value === null) {
-      return;
+        const container = scrollContainerRef.value;
+        if (container) {
+          const previousBehavior = container.style.scrollBehavior;
+          container.style.scrollBehavior = "auto";
+          container.scrollTop = scrollTop;
+          requestAnimationFrame(() => {
+            container.style.scrollBehavior = previousBehavior;
+          });
+        } else {
+          window.scrollTo({ top: scrollTop, behavior: "auto" });
+        }
+      });
     }
-
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    await nextTick();
-    requestAnimationFrame(() => {
-      if (!scrollContainerRef.value) {
-        scrollContainerRef.value = document.querySelector(
-          ".scroll-snap-container.fullscreen"
-        );
-      }
-
-      const container = scrollContainerRef.value;
-
-      if (container) {
-        const previousBehavior = container.style.scrollBehavior;
-        container.style.scrollBehavior = "auto";
-        container.scrollTop = value;
-        requestAnimationFrame(() => {
-          container.style.scrollBehavior = previousBehavior;
-        });
-      } else {
-        window.scrollTo({ top: value, behavior: "auto" });
-      }
-    });
   },
   { immediate: true }
 );
