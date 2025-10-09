@@ -9,12 +9,7 @@
     @click="emit('click', value)"
   >
     <div class="keypad-button-wrapper" v-mask-element="'#171717'">
-      <GlassEffect
-        class="keypad-button-glass"
-        :user-options="glassEffectConfig"
-      >
-      </GlassEffect>
-
+      <GlassEffect class="keypad-button-glass" :user-options="glassEffectConfig" />
       <motion.div
         class="keypad-number"
         :variants="numberVariants"
@@ -35,7 +30,7 @@ import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
 import { glassEffectConfig } from "./glassEffectConfig.js";
 
-const props = defineProps({
+defineProps({
   value: {
     type: [Number, String],
     required: true,
@@ -56,9 +51,7 @@ onMounted(() => {
 
 function handleMouseEnter() {
   isHovered.value = true;
-  if (currentState.value !== "pressed") {
-    currentState.value = "hover";
-  }
+  if (currentState.value !== "pressed") currentState.value = "hover";
 }
 
 function handleMouseLeave() {

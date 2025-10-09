@@ -9,7 +9,6 @@
       }"
     />
 
-    <!-- Фоновый слой с введенными цифрами -->
     <Motion
       tag="div"
       class="background-numbers"
@@ -22,19 +21,12 @@
         v-for="(digit, index) in enteredDigits"
         :key="index"
         class="background-digit"
-        :style="{
-          color: animationState === 'success'
-            ? '#00FFBC'
-            : animationState === 'fail'
-              ? '#FF83A2'
-              : colors[index % colors.length]
-        }"
+        :style="{ color: getDigitColor(index) }"
       >
         {{ digit }}
       </div>
     </Motion>
 
-    <!-- Сетка кнопок -->
     <Motion
       tag="div"
       class="keypad-grid"
@@ -84,157 +76,88 @@ import {
   backgroundNumbersTransition,
 } from "./variants.js";
 
-// Устанавливаем мета-теги для Keypad
 useMeta("keypad");
 
 const emit = defineEmits(["unlock"]);
 
-// Массив введенных цифр
 const enteredDigits = ref([]);
-
-// Массив цветов для каждой последующей цифры
 const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
-// Состояния анимации
 const animationState = ref("initial");
 const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
-
 const isAnimating = ref(false);
+
 const showClearButton = computed(() => enteredDigits.value.length > 0);
 
-function isEditableTarget(target) {
-  if (!target) {
-    return false;
+const getDigitColor = (index) => {
+  if (animationState.value === "success") return "#00FFBC";
+  if (animationState.value === "fail") return "#FF83A2";
+  return colors[index % colors.length];
+};
+
+const isEditableTarget = (target) => {
+  if (!target) return false;
+  const editable = target.closest?.("input, textarea, select, [contenteditable='true']");
+  return Boolean(editable || target.isContentEditable);
+};
+
+const animateFadeSequence = async (colorState, shouldUnlock) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  keypadGridState.value = "fadeOut";
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  animationState.value = colorState;
+  await new Promise((resolve) => setTimeout(resolve, colorState === "success" ? 500 : 1000));
+
+  bgNumbersState.value = "fadeOut";
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  if (shouldUnlock) {
+    emit("unlock");
+  } else {
+    enteredDigits.value = [];
+    animationState.value = "initial";
+    bgNumbersState.value = "initial";
+    keypadGridState.value = "initial";
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    isAnimating.value = false;
   }
-
-  const closestEditable =
-    typeof target.closest === "function"
-      ? target.closest("input, textarea, select, [contenteditable='true']")
-      : null;
-
-  if (closestEditable) {
-    return true;
-  }
-
-  const tagName = target.tagName;
-  if (tagName && ["INPUT", "TEXTAREA", "SELECT"].includes(tagName)) {
-    return true;
-  }
-
-  return Boolean(target.isContentEditable);
-}
+};
 
 async function handleButtonClick(value) {
-  // Блокируем ввод если идет анимация или уже введено 4 цифры
-  if (isAnimating.value || enteredDigits.value.length >= 4) {
-    return;
-  }
+  if (isAnimating.value || enteredDigits.value.length >= 4) return;
 
   enteredDigits.value.push(value);
 
-  // После ввода 4 цифр запускаем анимацию
   if (enteredDigits.value.length === 4) {
     isAnimating.value = true;
-
-    // Проверка кода (пока хардкод, потом бекенд)
     const code = enteredDigits.value.join("");
-    const isCorrectCode = code === "8651";
-
-    if (isCorrectCode) {
-      await handleSuccessAnimation();
-    } else {
-      await handleFailAnimation();
-    }
+    const isCorrect = code === "8651";
+    await animateFadeSequence(isCorrect ? "success" : "fail", isCorrect);
   }
-}
-
-async function handleSuccessAnimation() {
-  // 1. Ждем 0.5 сек
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 2. Fade out клавиатуры (0.5 сек) + ждем завершения
-  keypadGridState.value = "fadeOut";
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  // 3. Цвета становятся зелеными (0.5 сек)
-  animationState.value = "success";
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 4. Fade out цифр (0.5 сек)
-  bgNumbersState.value = "fadeOut";
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 5. Открываем главную
-  emit("unlock");
-}
-
-async function handleFailAnimation() {
-  // 1. Ждем 0.5 сек
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 2. Fade out клавиатуры (0.5 сек) + ждем завершения
-  keypadGridState.value = "fadeOut";
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  // 3. Цвета становятся розовыми (0.5 сек)
-  animationState.value = "fail";
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  // 4. Fade out цифр (0.5 сек)
-  bgNumbersState.value = "fadeOut";
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 5. Сброс - убираем цифры, возвращаем состояния
-  enteredDigits.value = [];
-  animationState.value = "initial";
-  bgNumbersState.value = "initial";
-
-  // 6. Клавиатура появляется обратно (0.5 сек)
-  keypadGridState.value = "initial";
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  isAnimating.value = false;
 }
 
 function handleClear() {
-  if (isAnimating.value) {
-    return;
-  }
-
+  if (isAnimating.value) return;
   enteredDigits.value = [];
   animationState.value = "initial";
   bgNumbersState.value = "initial";
 }
 
 function handleBackspace() {
-  if (isAnimating.value || enteredDigits.value.length === 0) {
-    return;
-  }
-
+  if (isAnimating.value || enteredDigits.value.length === 0) return;
   enteredDigits.value = enteredDigits.value.slice(0, -1);
   animationState.value = "initial";
   bgNumbersState.value = "initial";
 }
 
 function handleKeyDown(event) {
-  if (
-    event.defaultPrevented ||
-    event.metaKey ||
-    event.ctrlKey ||
-    event.altKey ||
-    event.shiftKey
-  ) {
-    return;
-  }
+  if (event.defaultPrevented || event.metaKey || event.ctrlKey ||
+      event.altKey || event.shiftKey || event.repeat) return;
 
-  if (event.repeat) {
-    return;
-  }
-
-  if (isEditableTarget(event.target)) {
-    return;
-  }
+  if (isEditableTarget(event.target)) return;
 
   if (event.key === "Backspace") {
     if (enteredDigits.value.length > 0) {
@@ -251,17 +174,15 @@ function handleKeyDown(event) {
 }
 
 onMounted(() => {
-  if (typeof window === "undefined") {
-    return;
+  if (typeof window !== "undefined") {
+    window.addEventListener("keydown", handleKeyDown);
   }
-  window.addEventListener("keydown", handleKeyDown);
 });
 
 onBeforeUnmount(() => {
-  if (typeof window === "undefined") {
-    return;
+  if (typeof window !== "undefined") {
+    window.removeEventListener("keydown", handleKeyDown);
   }
-  window.removeEventListener("keydown", handleKeyDown);
 });
 </script>
 
