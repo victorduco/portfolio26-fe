@@ -29,7 +29,7 @@
 
 <script setup>
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
-import PageNavigation from "../main-page/page-navigation/PageNavigation.vue";
+import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import Summary from "./case3/Summary.vue";
 import Task from "./case3/Task.vue";
 import Process from "./case3/Process.vue";

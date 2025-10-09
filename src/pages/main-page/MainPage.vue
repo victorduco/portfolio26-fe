@@ -36,7 +36,7 @@ import Case1 from "./cases/Case1.vue";
 import Case2 from "./cases/Case2.vue";
 import Case3 from "./cases/Case3.vue";
 import Contacts from "./contacts/Contacts.vue";
-import PageNavigation from "./page-navigation/PageNavigation.vue";
+import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import { useRoute } from "vue-router";
 import { useMeta } from "../../composables/useMeta.js";
 
