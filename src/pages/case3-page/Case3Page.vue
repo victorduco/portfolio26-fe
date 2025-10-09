@@ -23,19 +23,19 @@
     <section id="case3-results">
       <Results />
     </section>
-    <NextCaseFooter to="/story/one" label="story/one" />
+    <AppFooter />
   </div>
 </template>
 
 <script setup>
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import PageNavigation from "../main-page/page-navigation/PageNavigation.vue";
-import NextCaseFooter from "../../components/NextCaseFooter.vue";
 import Summary from "./case3/Summary.vue";
 import Task from "./case3/Task.vue";
 import Process from "./case3/Process.vue";
 import Results from "./case3/Results.vue";
 import { useMeta } from "../../composables/useMeta.js";
+import AppFooter from "../../components/app-footer/AppFooter.vue";
 
 // Устанавливаем мета-теги для Case 3
 useMeta("case3");
