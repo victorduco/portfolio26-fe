@@ -29,7 +29,7 @@
       </div>
       <p class="case1-subtitle">Apple</p>
     </div>
-    <motion.div class="video-wrapper" :style="{ rotateX: videoTiltDeg }">
+    <div class="video-wrapper">
       <video
         ref="videoElement"
         class="case-video"
@@ -58,19 +58,12 @@
           />
         </svg>
       </button>
-    </motion.div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import {
-  motion,
-  useScroll,
-  useVelocity,
-  useTransform,
-  useSpring,
-} from "motion-v";
 import { RouterLink } from "vue-router";
 
 const caseElement = ref(null);
@@ -78,25 +71,6 @@ const videoElement = ref(null);
 const showReplayButton = ref(false);
 let observer = null;
 let playTimeout = null;
-
-const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-const scrollContainer = ref(null);
-const { scrollY } = useScroll({ container: scrollContainer });
-const scrollVelocity = useVelocity(scrollY);
-const videoTiltRaw = useTransform(scrollVelocity, (velocity = 0) => {
-  if (!Number.isFinite(velocity)) {
-    return 0;
-  }
-  const scaled = velocity / 130;
-  return clamp(scaled, -48, 48);
-});
-const videoTilt = useSpring(videoTiltRaw, {
-  stiffness: 3,
-  damping: 1.5,
-  mass: 0.5,
-});
-const videoTiltDeg = useTransform(videoTilt, (value) => `${value}deg`);
 
 function handleVideoEnded() {
   showReplayButton.value = true;
@@ -142,10 +116,6 @@ onMounted(() => {
   if (caseElement.value) {
     observer.observe(caseElement.value);
   }
-  scrollContainer.value =
-    caseElement.value?.closest(".scroll-snap-container.fullscreen") ??
-    document.querySelector(".scroll-snap-container.fullscreen") ??
-    null;
 });
 
 onUnmounted(() => {
