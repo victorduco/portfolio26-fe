@@ -61,26 +61,23 @@ function renderMarkdown(md) {
   max-width: 900px;
   margin: 0 auto;
   color: #ffffff;
+  --font-size-h1: clamp(32px, 6vw, 48px);
+  --font-size-h2: clamp(24px, 4vw, 32px);
+  --font-size-h3: clamp(20px, 3vw, 24px);
 }
 
 .markdown-content :deep(h1) {
-  font-size: 48px;
-  font-weight: 700;
   margin-bottom: 32px;
   color: #ffffff;
 }
 
 .markdown-content :deep(h2) {
-  font-size: 32px;
-  font-weight: 600;
   margin-top: 48px;
   margin-bottom: 24px;
   color: #ffffff;
 }
 
 .markdown-content :deep(h3) {
-  font-size: 24px;
-  font-weight: 600;
   margin-top: 32px;
   margin-bottom: 16px;
   color: #e5e5e5;
@@ -143,16 +140,10 @@ function renderMarkdown(md) {
     padding: 60px 24px 24px;
   }
 
-  .markdown-content :deep(h1) {
-    font-size: 36px;
-  }
-
-  .markdown-content :deep(h2) {
-    font-size: 28px;
-  }
-
-  .markdown-content :deep(h3) {
-    font-size: 20px;
+  .markdown-content {
+    --font-size-h1: 36px;
+    --font-size-h2: 28px;
+    --font-size-h3: 20px;
   }
 }
 </style>

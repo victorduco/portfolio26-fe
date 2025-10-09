@@ -1,7 +1,7 @@
 <template>
   <div class="case3">
     <RouterLink to="/story/three" class="case-link">
-      <h2>story/three</h2>
+      <h3>story/three</h3>
       <p>View Details →</p>
     </RouterLink>
   </div>
@@ -36,9 +36,8 @@ import { RouterLink } from "vue-router";
   transform: translateY(-4px);
 }
 
-.case-link h2 {
+.case-link h3 {
   margin: 0 0 16px 0;
-  font-size: 48px;
 }
 
 .case-link p {

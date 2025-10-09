@@ -2,9 +2,9 @@
   <div class="case1" ref="caseElement">
     <div class="case1-heading">
       <div class="case1-heading-top">
-        <h2 class="case1-title">
+        <h3 class="case1-title">
           Cross-Domain AI Solution for Account Reconcilers
-        </h2>
+        </h3>
         <NavigationChevron
           type="route"
           to="/story/one"
@@ -150,13 +150,7 @@ onUnmounted(() => {
 
 .case1-title {
   margin: 0;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-style: normal;
-  font-weight: 590;
-  font-size: 28.96px;
-  line-height: 35px;
   text-align: left;
-  color: #ffffff;
   max-width: min(100%, 560px);
 }
 

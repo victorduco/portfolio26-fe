@@ -3,22 +3,99 @@
 :root {
   --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-size-h1: clamp(40px, 5vw, 64px);
+  --font-size-h2: clamp(32px, 4vw, 48px);
+  --font-size-h3: clamp(24px, 3vw, 32px);
+  --font-size-h4: clamp(20px, 2.5vw, 24px);
+  --font-size-h5: clamp(18px, 2vw, 20px);
+  --font-size-h6: clamp(16px, 1.8vw, 18px);
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.2;
+  --line-height-relaxed: 1.35;
 }
 
+h1,
 .h1 {
   font-family: var(--font-family-base);
-  font-weight: 500;
-  font-size: 64px;
-  line-height: 77px;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.01em;
   color: var(--color-text-primary);
+  margin: 0;
+}
+
+h2,
+.h2 {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-snug);
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+h3,
+.h3 {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-snug);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+h4,
+.h4 {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-h4);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+h5,
+.h5 {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-h5);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+h6,
+.h6 {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-h6);
+  line-height: var(--line-height-relaxed);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+p {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
 .body1 {
   font-family: var(--font-family-base);
-  font-weight: 300;
+  font-weight: var(--font-weight-regular);
   font-size: 32px;
-  line-height: 46px;
+  line-height: 1.45;
   color: var(--color-text-secondary);
   margin: 0;
 }
