@@ -5,6 +5,7 @@
     class="nav-chevron"
     :class="directionClass"
     :aria-label="computedAriaLabel"
+    v-hover-distortion="hoverValue"
   >
     <div class="nav-chevron__inner" aria-hidden="true">
       <svg
@@ -28,6 +29,7 @@
     class="nav-chevron"
     :class="directionClass"
     :aria-label="computedAriaLabel"
+    v-hover-distortion="hoverValue"
     @click="handleButtonClick"
   >
     <div class="nav-chevron__inner" aria-hidden="true">
@@ -71,6 +73,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  hoverIntensity: {
+    type: [Number, String],
+    default: 4,
+  },
 });
 
 const router = useRouter();
@@ -80,6 +86,11 @@ const directionClass = computed(() =>
 );
 
 const linkTarget = computed(() => props.to ?? "/");
+
+const hoverValue = computed(() => {
+  const parsed = Number(props.hoverIntensity);
+  return Number.isFinite(parsed) ? parsed : 4;
+});
 
 const computedAriaLabel = computed(() => {
   if (props.ariaLabel) {

@@ -10,7 +10,6 @@
           to="/story/one"
           direction="forward"
           aria-label="Open story one"
-          v-hover-distortion="4"
         />
       </div>
       <p class="case1-subtitle">Apple</p>

@@ -7,7 +7,10 @@
       direction="back"
       aria-label="Back to home"
     />
-    <PageNavigation :sections="navigationSections" :enable-intro-animation="false" />
+    <PageNavigation
+      :sections="navigationSections"
+      :enable-intro-animation="false"
+    />
     <section id="case3-summary">
       <Summary />
     </section>

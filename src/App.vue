@@ -23,11 +23,26 @@ function handleUnlock() {
 
 <template>
   <Keypad v-if="!isUnlocked" @unlock="handleUnlock" />
-  <RouterView v-else />
 
-  <!-- Global debugger panel - controls all GlassEffect components -->
-  <!-- <GlassEffectDebugger
-    :options="globalGlassOptions"
-    :intensity="globalIntensity"
-  /> -->
+  <div v-else class="app-shell">
+    <main class="app-main">
+      <RouterView />
+    </main>
+
+    <!-- Global debugger panel - controls all GlassEffect components -->
+    <!-- <GlassEffectDebugger
+      :options="globalGlassOptions"
+      :intensity="globalIntensity"
+    /> -->
+  </div>
 </template>
+
+<style scoped>
+.app-shell {
+  width: 100%;
+}
+
+.app-main {
+  width: 100%;
+}
+</style>
