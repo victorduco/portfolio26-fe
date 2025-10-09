@@ -1,12 +1,11 @@
 <template>
   <motion.li
-    ref="motionElement"
     @hoverStart="isHovered = true"
     @hoverEnd="isHovered = false"
     @click="toggleState"
     :custom="{ index, additionalMargin }"
     :variants="boxVariants"
-    :animate="getAnimationState()"
+    :animate="animationState"
     :transition="{
       default: spring,
       marginLeft: marginSpring,
@@ -14,20 +13,20 @@
     }"
     initial="default"
     class="intro-square"
+    :class="{ 'is-intro-visible': introVisible }"
     :data-state="isActive"
     v-backdrop-filter="backdropFilter"
   >
     <motion.div
       class="intro-square-content-wrap"
       :variants="contentWrapVariants"
-      :animate="getAnimationState()"
+      :animate="animationState"
       :transition="spring"
     >
       <motion.div
-        ref="numberElement"
         class="intro-content-number"
         :variants="squareContentVariants.number"
-        :animate="getAnimationState()"
+        :animate="animationState"
         :custom="index"
         :transition="{
           default: spring,
@@ -39,7 +38,7 @@
       <motion.svg
         class="intro-content-bullet"
         :variants="squareContentVariants.bullet"
-        :animate="getAnimationState()"
+        :animate="animationState"
         viewBox="0 0 40 40"
         width="40"
         height="40"
@@ -54,7 +53,7 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { computed, ref, onMounted, onUnmounted, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import IntroRectangleActive from "./IntroRectangleActive.vue";
 import { backdropFilter as vBackdropFilter } from "@/directives/backdrop-filter";
 import {
@@ -95,17 +94,15 @@ const props = defineProps({
 
 const isActive = ref(false);
 const isHovered = ref(false);
-const motionElement = ref(null);
-const numberElement = ref(null);
 
-// Определение состояния анимации
-function getAnimationState() {
+// Определение состояния анимации (computed для переиспользования)
+const animationState = computed(() => {
   // Обычные интерактивные состояния
   if (isActive.value) return "active";
   // Не показываем hover пока Intro не появился
   if (isHovered.value && props.introVisible) return "hover";
   return "default";
-}
+});
 const emit = defineEmits(["activeChange"]);
 
 function toggleState() {
@@ -125,25 +122,6 @@ watch(() => props.forceClose, (newVal) => {
 
 // Computed additional margin
 const additionalMargin = computed(() => props.activeCount * -30);
-
-// Watch text-shadow-offset changes
-let observer = null;
-
-onMounted(() => {
-  const element = numberElement.value?.$el;
-  if (element) {
-    observer = new MutationObserver(() => {});
-
-    observer.observe(element, {
-      attributes: true,
-      attributeFilter: ["style"],
-    });
-  }
-});
-
-onUnmounted(() => {
-  observer?.disconnect();
-});
 </script>
 
 <style scoped>
@@ -185,17 +163,12 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-.intro-square[data-state="true"],
-.intro-square:hover {
+.intro-square[data-state="true"] {
   z-index: 6;
 }
 
-.intro-square-glass {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
+.intro-square.is-intro-visible:hover {
+  z-index: 6;
 }
 
 .intro-square-content-wrap {

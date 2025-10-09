@@ -67,39 +67,36 @@ const subtitleState = ref("hidden");
 const rectanglesState = ref("hidden");
 const showRectangles = ref(false);
 
-// Варианты анимации
-const titleVariants = {
+// Shared animation variants
+const sharedVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
 
-const subtitleVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
+const titleVariants = sharedVariants;
+const subtitleVariants = sharedVariants;
+const rectanglesVariants = sharedVariants;
 
-const rectanglesVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
+// Shared transition base config
+const baseTransition = {
+  type: "tween",
+  ease: [0.4, 0, 0.2, 1],
 };
 
 // Transition конфиги
 const titleTransition = {
-  type: "tween",
+  ...baseTransition,
   duration: 0.6,
-  ease: [0.4, 0, 0.2, 1],
 };
 
 const subtitleTransition = {
-  type: "tween",
+  ...baseTransition,
   duration: 0.5,
-  ease: [0.4, 0, 0.2, 1],
 };
 
 const rectanglesTransition = {
-  type: "tween",
+  ...baseTransition,
   duration: 0.4,
-  ease: [0.4, 0, 0.2, 1],
 };
 
 // Последовательная анимация при появлении intro
@@ -107,6 +104,11 @@ watch(
   () => props.introVisible,
   async (newVal) => {
     if (!newVal) {
+      // Reset animations when intro becomes invisible
+      titleState.value = "hidden";
+      subtitleState.value = "hidden";
+      rectanglesState.value = "hidden";
+      showRectangles.value = false;
       return;
     }
 
@@ -133,7 +135,7 @@ function handleActiveChange(isActive) {
 let observer = null;
 
 onMounted(() => {
-  const introSection = document.getElementById('intro');
+  const introSection = document.getElementById('intro-text-export-node');
   if (introSection) {
     observer = new IntersectionObserver(
       (entries) => {
@@ -234,7 +236,14 @@ onUnmounted(() => {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     column-gap: 50px;
-    row-gap: -100px;
+  }
+
+  .intro-list > * {
+    margin-top: -100px;
+  }
+
+  .intro-list > *:nth-child(-n + 5) {
+    margin-top: 0;
   }
 }
 </style>

@@ -27,6 +27,7 @@
         v-if="showReplayButton"
         class="replay-button"
         @click="replayVideo"
+        aria-label="Replay video"
       >
         <svg
           width="64"
@@ -65,7 +66,9 @@ function replayVideo() {
   showReplayButton.value = false;
   if (videoElement.value) {
     videoElement.value.currentTime = 0;
-    videoElement.value.play();
+    videoElement.value.play().catch(() => {
+      showReplayButton.value = true;
+    });
   }
 }
 
@@ -78,7 +81,9 @@ onMounted(() => {
           playTimeout = setTimeout(() => {
             if (videoElement.value) {
               showReplayButton.value = false;
-              videoElement.value.play();
+              videoElement.value.play().catch(() => {
+                showReplayButton.value = true;
+              });
             }
           }, 500);
         } else {
@@ -115,8 +120,6 @@ onUnmounted(() => {
 
 <style scoped>
 .case1 {
-  width: auto;
-  height: auto;
   background: #171717;
   display: flex;
   flex-direction: column;
@@ -127,8 +130,6 @@ onUnmounted(() => {
   padding: 2vh 10vw;
   margin: auto;
   text-align: left;
-  perspective: 1600px;
-  perspective-origin: center;
   gap: clamp(16px, 2vh, 24px);
 }
 
@@ -151,7 +152,7 @@ onUnmounted(() => {
 .case1-title {
   margin: 0;
   text-align: left;
-  max-width: min(100%, 560px);
+  max-width: 560px;
 }
 
 .case1-subtitle {
@@ -164,7 +165,7 @@ onUnmounted(() => {
   text-align: left;
   color: #ffffff;
   opacity: 0.6;
-  max-width: min(100%, 480px);
+  max-width: 480px;
 }
 
 .video-wrapper {
@@ -182,7 +183,6 @@ onUnmounted(() => {
   overflow: hidden;
   transform-style: preserve-3d;
   transform-origin: center;
-  will-change: transform;
 }
 
 .case-video {
@@ -202,8 +202,8 @@ onUnmounted(() => {
   background: rgba(0, 0, 0, 0.7);
   border: none;
   border-radius: 50%;
-  width: 80px;
-  height: 80px;
+  width: clamp(60px, 10vw, 80px);
+  height: clamp(60px, 10vw, 80px);
   display: flex;
   align-items: center;
   justify-content: center;

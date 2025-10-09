@@ -40,12 +40,22 @@ import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import { useRoute } from "vue-router";
 import { useMeta } from "../../composables/useMeta.js";
 
+const navigationSections = [
+  { id: "intro", label: "Intro" },
+  { id: "case1", label: "Story One" },
+  { id: "case2", label: "Story Two" },
+  { id: "case3", label: "Story Three" },
+  { id: "ai-play", label: "AI Play" },
+  { id: "contacts", label: "Contact" },
+];
+
 // Устанавливаем мета-теги для главной страницы
 useMeta("home");
 
 const route = useRoute();
 
 const introVisible = ref(false);
+const scrollContainerRef = ref(null);
 
 const shouldPlayNavIntro = computed(() => {
   return !route.meta?.skipNavIntro;
@@ -54,11 +64,7 @@ const shouldPlayNavIntro = computed(() => {
 watch(
   shouldPlayNavIntro,
   (play) => {
-    if (play) {
-      introVisible.value = false;
-    } else {
-      introVisible.value = true;
-    }
+    introVisible.value = !play;
   },
   { immediate: true }
 );
@@ -82,9 +88,13 @@ watch(
 
     await nextTick();
     requestAnimationFrame(() => {
-      const container = document.querySelector(
-        ".scroll-snap-container.fullscreen"
-      );
+      if (!scrollContainerRef.value) {
+        scrollContainerRef.value = document.querySelector(
+          ".scroll-snap-container.fullscreen"
+        );
+      }
+
+      const container = scrollContainerRef.value;
 
       if (container) {
         const previousBehavior = container.style.scrollBehavior;
@@ -104,20 +114,11 @@ watch(
 function handleNavAnimationComplete() {
   introVisible.value = true;
 }
-
-const navigationSections = [
-  { id: "intro", label: "Intro" },
-  { id: "case1", label: "Story One" },
-  { id: "case2", label: "Story Two" },
-  { id: "case3", label: "Story Three" },
-  { id: "ai-play", label: "AI Play" },
-  { id: "contacts", label: "Contact" },
-];
 </script>
 
 <style scoped>
 .main-page {
-  width: 100vw;
+  width: 100%;
   background: #171717;
 }
 
@@ -137,8 +138,8 @@ const navigationSections = [
 }
 
 .ai-play-placeholder {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
