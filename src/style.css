@@ -1,6 +1,18 @@
+/* Import design tokens and utilities */
+@import './styles/tokens.css';
+@import './styles/utilities.css';
+
+/* Global box-sizing reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 /* Global baseline styling */
 body {
   margin: 0;
+  padding: 0;
   font-family: var(
     --font-family-base,
     "Inter",
@@ -12,6 +24,8 @@ body {
   background: #171717;
   color: var(--color-text-primary);
   min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 :root {
@@ -21,7 +35,18 @@ body {
 #app {
   width: 100%;
   min-height: 100vh;
+  max-width: 100vw;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: flex-start;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Global focus styles for keyboard navigation accessibility */
+*:focus-visible {
+  outline: 2px solid rgba(39, 169, 255, 0.8);
+  outline-offset: 4px;
+  border-radius: 4px;
 }

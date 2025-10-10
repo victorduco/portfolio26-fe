@@ -1,0 +1,64 @@
+/* Design tokens for responsive design system */
+
+:root {
+  /* Spacing scale (4px module) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
+
+  /* Adaptive gutters (horizontal padding) */
+  --gutter: 16px;
+
+  /* Container max-width */
+  --container-max: 100%;
+
+  /* Touch targets (minimum size for tappable elements) */
+  --tap-min: 44px;
+
+  /* Typography base (for body text) */
+  --fs-body: clamp(14px, 1.6vw, 16px);
+  --lh-body: 1.7;
+}
+
+@media (min-width: 600px) {
+  :root {
+    --gutter: 24px;
+    --container-max: min(90vw, 680px);
+    --lh-body: 1.65;
+  }
+}
+
+@media (min-width: 900px) {
+  :root {
+    --gutter: 32px;
+    --container-max: min(92vw, 960px);
+    --lh-body: 1.6;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --gutter: 40px;
+    --container-max: min(92vw, 1140px);
+    --lh-body: 1.5;
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --gutter: 48px;
+    --container-max: min(92vw, 1280px);
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --gutter: 60px;
+    --container-max: min(80vw, 1440px);
+  }
+}

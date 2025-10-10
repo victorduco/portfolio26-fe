@@ -85,16 +85,17 @@ h6,
 p {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-regular);
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: var(--color-text-secondary);
   margin: 0;
+  max-width: 70ch;
 }
 
 .body1 {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-regular);
-  font-size: 32px;
+  font-size: clamp(20px, 3vw, 32px);
   line-height: 1.45;
   color: var(--color-text-secondary);
   margin: 0;

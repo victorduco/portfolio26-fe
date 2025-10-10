@@ -188,48 +188,95 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .keypad-container {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #171717;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .background-numbers {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  gap: 0px;
-  align-items: center;
-  justify-content: center;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  row-gap: 0px;
+  column-gap: 0px;
   pointer-events: none;
   z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .background-numbers {
+    display: flex;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .background-digit {
-  font-size: 700px;
+  width: 100%;
+  height: 100%;
+  font-size: clamp(150px, 40vmax, 500px);
   font-weight: 400;
-  line-height: 1;
+  line-height: 0.9;
   opacity: 1;
   user-select: none;
-  margin: 0 -30px;
+  margin: 0;
+  padding: 0;
   transition: color 0.5s ease;
+  display: grid;
+  place-items: center;
+}
+
+/* Первые две цифры (верхняя строка) - place-items: end center */
+.background-digit:nth-child(1),
+.background-digit:nth-child(2) {
+  place-items: end center;
+}
+
+/* Последние две цифры (нижняя строка) - place-items: start center */
+.background-digit:nth-child(3),
+.background-digit:nth-child(4) {
+  place-items: start center;
+}
+
+@media (min-width: 768px) {
+  .background-digit {
+    width: auto;
+    height: auto;
+    font-size: clamp(280px, 50vw, 700px);
+    line-height: 1;
+    margin: 0 clamp(-10px, -2vw, -30px);
+    display: block;
+  }
 }
 
 .keypad-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap: 80px;
-  padding: 40px;
+  gap: clamp(32px, 8vw, 80px);
+  padding: clamp(24px, 4vw, 40px);
   position: relative;
   z-index: 10;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .keypad-zero {
@@ -238,7 +285,7 @@ onBeforeUnmount(() => {
 
 .keypad-clear-button {
   position: absolute;
-  bottom: 32px;
+  bottom: max(32px, calc(env(safe-area-inset-bottom) + 16px));
   left: 50%;
   transform: translateX(-50%);
   background: transparent;

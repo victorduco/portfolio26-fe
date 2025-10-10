@@ -1,3 +1,8 @@
+// Check if user prefers reduced motion
+const prefersReducedMotion = typeof window !== 'undefined'
+  ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  : false;
+
 // Анимация для цифр после завершения ввода
 // Создаем варианты для каждого цвета
 export const createDigitVariants = (color) => ({
@@ -9,9 +14,9 @@ export const createDigitVariants = (color) => ({
   },
 });
 
-export const digitTransition = {
-  duration: 0.3,
-};
+export const digitTransition = prefersReducedMotion
+  ? { duration: 0 }
+  : { duration: 0.3 };
 
 // Анимация fade out для клавиатуры
 export const keypadGridVariants = {
@@ -23,11 +28,13 @@ export const keypadGridVariants = {
   },
 };
 
-export const keypadGridTransition = {
-  type: "tween",
-  duration: 0.5,
-  ease: "easeOut",
-};
+export const keypadGridTransition = prefersReducedMotion
+  ? { duration: 0 }
+  : {
+      type: "tween",
+      duration: 0.5,
+      ease: "easeOut",
+    };
 
 // Анимация fade out для цифр (после клавиатуры)
 export const backgroundNumbersVariants = {
@@ -39,8 +46,10 @@ export const backgroundNumbersVariants = {
   },
 };
 
-export const backgroundNumbersTransition = {
-  type: "tween",
-  duration: 0.5,
-  ease: "easeOut",
-};
+export const backgroundNumbersTransition = prefersReducedMotion
+  ? { duration: 0 }
+  : {
+      type: "tween",
+      duration: 0.5,
+      ease: "easeOut",
+    };

@@ -67,9 +67,9 @@ function handleMouseLeave() {
 
 .keypad-button-wrapper {
   position: relative;
-  width: 110px;
-  height: 110px;
-  border-radius: 28px;
+  width: clamp(72px, 18vw, 110px);
+  height: clamp(72px, 18vw, 110px);
+  border-radius: clamp(18px, 4.5vw, 28px);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -88,7 +88,7 @@ function handleMouseLeave() {
 .keypad-number {
   position: absolute;
   inset: 0;
-  font-size: 30px;
+  font-size: clamp(24px, 6vw, 30px);
   font-weight: 600;
   line-height: 1;
   user-select: none;
