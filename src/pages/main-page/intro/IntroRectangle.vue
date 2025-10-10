@@ -6,11 +6,7 @@
     :custom="{ index, additionalMargin }"
     :variants="boxVariants"
     :animate="animationState"
-    :transition="{
-      default: spring,
-      marginLeft: marginSpring,
-      marginRight: marginSpring,
-    }"
+    :transition="boxTransition"
     initial="default"
     class="intro-square"
     :class="{ 'is-intro-visible': introVisible }"
@@ -103,6 +99,31 @@ const animationState = computed(() => {
   if (isHovered.value && props.introVisible) return "hover";
   return "default";
 });
+
+// Мягкая пружина для обратной анимации (active -> default)
+const boxTransition = computed(() => {
+  if (isActive.value) {
+    // При открытии - обычная пружина
+    return {
+      default: spring,
+      marginLeft: marginSpring,
+      marginRight: marginSpring,
+    };
+  } else {
+    // При закрытии - более мягкая пружина (меньше колебаний)
+    return {
+      default: {
+        type: "spring",
+        stiffness: 70,
+        damping: 18,
+        mass: 1.2,
+      },
+      marginLeft: marginSpring,
+      marginRight: marginSpring,
+    };
+  }
+});
+
 const emit = defineEmits(["activeChange"]);
 
 function toggleState() {

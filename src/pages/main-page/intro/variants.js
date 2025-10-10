@@ -82,17 +82,14 @@ export const boxVariants = {
     };
   },
   active: ({ index, additionalMargin }) => {
-    // Компенсация для поворота: диагональ 600px при 45° ≈ 848px
-    // Четные элементы (нижние) нужно раздвинуть чтобы не наезжали на соседей
-    const baseMarginLeft = index % 2 === 0 ? -80 : -50;
-    const baseMarginRight = index % 2 === 0 ? -80 : -50;
+    const baseMargin = -50;
     const gridCol = index * 2 + 1;
     // Четные (0,2) - нижний ряд, нечетные (1,3) - верхний ряд
     const topOffset = index % 2 === 0 ? "-300px" : "-600px";
     return {
       "--element-side-size": "600px",
-      marginLeft: `${baseMarginLeft + additionalMargin}px`,
-      marginRight: `${baseMarginRight}px`,
+      marginLeft: `${baseMargin + additionalMargin}px`,
+      marginRight: `${baseMargin}px`,
       marginTop: topOffset,
       gridColumn: gridCol,
       gridRow: index % 2 === 0 ? "2" : "1",
