@@ -111,7 +111,7 @@ export const contentWrapVariants = {
 // Объединенные варианты для контента (цифра и точка)
 export const squareContentVariants = {
   number: {
-    default: () => ({
+    default: (_index) => ({
       opacity: 0,
       scale: 1,
       color: "rgba(255,255,255,0)",
@@ -129,7 +129,7 @@ export const squareContentVariants = {
         color: getColorWithAlpha(index, 1),
       };
     },
-    active: () => ({
+    active: (_index) => ({
       opacity: 0,
       color: "rgba(255,255,255,0)",
       "--glow-color": "rgba(255,255,255,0)",
