@@ -1,463 +1,362 @@
-# План адаптивного дизайна для проекта p26
+# План адаптивной доработки p26
 
-## Общая стратегия
-
-**Политика:** Mobile-first
-**Поддержка:** ≥360px (все что меньше — не поддерживается)
-**Брейкпоинты:** 360px (xs), 600px (sm), 900px (md), 1200px (lg), 1600px (xl), 1920px (xxl)
+**Версия:** 3.0 | **Дата:** 2025-10-09 | **Стратегия:** Mobile-first | **Поддержка:** ≥360px
 
 ---
 
-## Фаза 1: Инфраструктура и токены (Foundation)
+## 0. Контекст и ограничения
 
-### 1.1 Создание системы дизайн-токенов
+### Текущее состояние
+- ✅ Typography частично использует `clamp()` ([typography.css](src/styles/typography.css))
+- ✅ Некоторые компоненты имеют единичные `@media (max-width: 768px)` query
+- ❌ Нет системы токенов (spacing, containers, gutters)
+- ❌ Нет utilities.css
+- ❌ 16 файлов используют `100vw/100vh` → риск горизонтального скролла
+- ❌ Фиксированные `px` значения во всех компонентах (Keypad: 110px, gap: 80px; Intro: 120px, gap: 80px)
+
+### Критические ограничения (НЕ ТРОГАТЬ)
+- **[GeBackground.vue:76-84](src/components/glass-effect/GeBackground.vue)** — resize listener ВЫКЛЮЧЕН (деградация +468%)
+- **[maskElement.js](src/directives/mask-element/maskElement.js)** — ResizeObserver критичен для glass-effect
+- **Performance testing** — обязателен после каждой фазы (`npm run test:perf`, `npm run test:compare`)
+
+### Брейкпоинты
+```
+360px (xs) → 600px (sm) → 900px (md) → 1200px (lg) → 1600px (xl) → 1920px (xxl)
+```
+
+---
+
+## 1. Пайплайн работы
+
+**Для каждой фазы:**
+```bash
+# 1. Реализация изменений
+# 2. Локальная проверка
+npm run dev
+
+# 3. Проверка сборки
+npm run build
+
+# 4. Performance baseline/сравнение
+npm run test:perf -- --comment="Phase X completed"
+npm run test:compare  # Сравнить с предыдущим
+
+# 5. E2E на трех viewport'ах
+npm run test:e2e  # 1280x800 (default)
+
+# 6. Ручная проверка: 360, 768, 1280, 1920px
+```
+
+**Критерии деградации:**
+- ✅ Good: <100ms avg resize, >30 FPS, <20% degradation
+- ⚠️  Warning: 100-500ms, 15-30 FPS, 20-100% degradation
+- 🚨 Critical: >500ms, <15 FPS, >100% degradation → откат изменений
+
+---
+
+## 2. Фаза 1: Foundation (1 день)
+
+### 2.1 Создать систему токенов
 
 **Файл:** `src/styles/tokens.css`
 
-**Содержание:**
-
 ```css
 :root {
-  /* Spacing (модуль 4px) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
+  /* Spacing (4px module) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
 
-  /* Gutters */
-  --container-gutter: 16px;
-
-  /* Interactive zones */
-  --tap-min: 44px;
+  /* Gutters (adaptive) */
+  --gutter: 16px;
 
   /* Container max-width */
   --container-max: 100%;
 
-  /* Typography base */
-  --fs-body: clamp(14px, 1.8vw, 16px);
+  /* Touch targets */
+  --tap-min: 44px;
+
+  /* Typography base (для body текста) */
+  --fs-body: clamp(14px, 1.6vw, 16px);
   --lh-body: 1.7;
 }
 
-/* sm: ≥600px */
 @media (min-width: 600px) {
   :root {
-    --container-gutter: 20px;
+    --gutter: 24px;
     --container-max: min(90vw, 680px);
     --lh-body: 1.65;
   }
 }
 
-/* md: ≥900px */
 @media (min-width: 900px) {
   :root {
-    --container-gutter: 24px;
+    --gutter: 32px;
     --container-max: min(92vw, 960px);
     --lh-body: 1.6;
   }
 }
 
-/* lg: ≥1200px */
 @media (min-width: 1200px) {
   :root {
-    --container-gutter: 28px;
+    --gutter: 40px;
     --container-max: min(92vw, 1140px);
     --lh-body: 1.5;
   }
 }
 
-/* xl: ≥1600px */
 @media (min-width: 1600px) {
   :root {
-    --container-gutter: 32px;
+    --gutter: 48px;
     --container-max: min(92vw, 1280px);
   }
 }
 
-/* xxl: ≥1920px */
 @media (min-width: 1920px) {
   :root {
-    --container-gutter: 36px;
+    --gutter: 60px;
     --container-max: min(80vw, 1440px);
   }
 }
 ```
 
 **Задачи:**
-- ✅ Создать файл `src/styles/tokens.css`
-- ✅ Импортировать в `src/style.css`: `@import './styles/tokens.css';`
-- ✅ Определить все spacing переменные
-- ✅ Настроить gutters для каждого брейкпоинта
-- ✅ Настроить container max-width для каждого брейкпоинта
+- [ ] Создать `src/styles/tokens.css`
+- [ ] Импортировать в `src/style.css` (первой строкой): `@import './styles/tokens.css';`
+- [ ] Обновить [typography.css](src/styles/typography.css): добавить `--lh-body` использование
+- [ ] Убрать `width: 100%` из `#app` в [style.css](src/style.css), оставить только `min-height: 100vh`
+
+**Acceptance:**
+- Токены доступны во всех компонентах
+- Нет горизонтального скролла на 360px и 1920px
+- `npm run build` успешен
 
 ---
 
-### 1.2 Обновление типографической системы
-
-**Файл:** `src/styles/typography.css`
-
-**Изменения:**
-
-```css
-:root {
-  /* Typography scale с clamp */
-  --font-size-h1: clamp(28px, 5vw, 64px);
-  --font-size-h2: clamp(24px, 4vw, 48px);
-  --font-size-h3: clamp(20px, 3vw, 32px);
-  --font-size-h4: clamp(18px, 2.5vw, 24px);
-  --font-size-h5: clamp(16px, 2vw, 20px);
-  --font-size-h6: clamp(14px, 1.8vw, 18px);
-
-  /* Line-heights */
-  --line-height-tight: 1.15;
-  --line-height-snug: 1.25;
-  --line-height-relaxed: 1.45;
-}
-
-/* Body текст */
-p, .body-text {
-  font-size: clamp(14px, 1.8vw, 16px);
-  line-height: var(--lh-body);
-  max-width: 70ch; /* Ограничение длины строки */
-}
-
-/* Интерактивный текст (кнопки, ссылки) */
-button, a, .interactive-text {
-  font-size: clamp(14px, 1.6vw, 18px);
-  line-height: 1.2;
-}
-
-/* Заголовки с adaptive line-height */
-@media (min-width: 900px) {
-  :root {
-    --line-height-relaxed: 1.5;
-  }
-}
-
-@media (min-width: 1200px) {
-  :root {
-    --line-height-relaxed: 1.55;
-  }
-}
-```
-
-**Задачи:**
-- ✅ Обновить все CSS-переменные для шрифтов на clamp()
-- ✅ Добавить адаптивные line-height через media queries
-- ✅ Добавить max-width: 70ch для текстовых блоков
-- ✅ Обеспечить переносы заголовков на 2 строки на мобильных
-
----
-
-### 1.3 Создание CSS-утилит и миксинов
+### 2.2 Создать utilities
 
 **Файл:** `src/styles/utilities.css`
 
-**Содержание:**
-
 ```css
-/* Container queries utilities */
+/* Container */
 .u-container {
-  container-type: inline-size;
-  padding: var(--space-6);
+  width: 100%;
+  max-width: var(--container-max);
+  padding-inline: var(--gutter);
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+/* Stack (vertical flex) */
+.u-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.u-stack-lg { gap: var(--space-lg); }
+.u-stack-xl { gap: var(--space-xl); }
+
+/* Cluster (horizontal flex wrap) */
+.u-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+/* Grid auto-fit */
+.u-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--gutter);
 }
 
 /* Safe areas */
 .u-safe-bottom {
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
 }
 
-/* Grid utilities */
-.u-grid-auto {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--container-gutter);
-}
+/* Visibility */
+.u-hide-sm { display: none; }
+@media (min-width: 600px) { .u-hide-sm { display: block; } }
 
-/* Flex utilities */
-.u-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
+.u-show-sm { display: block; }
+@media (min-width: 600px) { .u-show-sm { display: none; } }
 
-.u-cluster {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-}
-
-/* Text utilities */
-.u-text-center-mobile {
-  text-align: left;
-}
-
-@media (max-width: 899px) {
-  .u-text-center-mobile {
-    text-align: center;
-  }
-}
-
-/* Touch targets */
-.u-tap-target {
-  min-width: var(--tap-min);
-  min-height: var(--tap-min);
+/* Screen reader only */
+.u-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 ```
 
 **Задачи:**
-- ✅ Создать файл `src/styles/utilities.css`
-- ✅ Добавить container queries утилиты
-- ✅ Добавить safe-area утилиты
-- ✅ Добавить grid/flex утилиты
-- ✅ Импортировать в `src/style.css`
+- [ ] Создать `src/styles/utilities.css`
+- [ ] Импортировать в `src/style.css`: `@import './styles/utilities.css';`
+
+**Acceptance:**
+- Классы работают во всех компонентах
+- `npm run build` успешен
 
 ---
 
-## Фаза 2: Keypad (Экран разблокировки)
+## 3. Фаза 2: Keypad (1,5 дня)
 
-### 2.1 Keypad.vue - основной контейнер
+### 3.1 Keypad.vue — основной контейнер
 
-**Файл:** `src/components/keypad/Keypad.vue`
+**Файл:** [src/components/keypad/Keypad.vue](src/components/keypad/Keypad.vue)
 
-**Текущее состояние:**
-- Grid gap: 80px (фиксированный)
-- Padding: 40px (фиксированный)
-- Background-digit font-size: 700px (фиксированный)
+**Текущие проблемы:**
+- `.keypad-container`: `width: 100vw` → горизонтальный скролл
+- `.keypad-grid`: фиксированный `gap: 80px`, `padding: 40px`
+- `.background-digit`: фиксированный `font-size: 700px`
 
-**Целевое состояние (по брейкпоинтам):**
+**Изменения:**
 
-| Брейкпоинт | Grid gap | Padding | Background digit |
-|------------|----------|---------|------------------|
-| xs (360-599) | 32px | 24px | clamp(280px, 50vw, 400px) |
-| sm (600-899) | 48px | 32px | clamp(400px, 45vw, 550px) |
-| md (900-1199) | 64px | 36px | clamp(550px, 40vw, 650px) |
-| lg+ (≥1200) | 80px | 40px | clamp(650px, 35vw, 700px) |
-
-**Изменения в коде:**
-
-```vue
-<style scoped>
-.keypad-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  gap: 32px;  /* xs базовое */
-  padding: 24px;  /* xs базовое */
-  position: relative;
-  z-index: 10;
+```css
+.keypad-container {
+  width: 100%;  /* было 100vw */
+  height: 100vh;
+  /* остальное без изменений */
 }
 
-@media (min-width: 600px) {
-  .keypad-grid {
-    gap: 48px;
-    padding: 32px;
-  }
-}
-
-@media (min-width: 900px) {
-  .keypad-grid {
-    gap: 64px;
-    padding: 36px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .keypad-grid {
-    gap: 80px;
-    padding: 40px;
-  }
+.background-numbers {
+  width: 100%;  /* было 100vw */
+  /* остальное без изменений */
 }
 
 .background-digit {
-  font-size: clamp(280px, 50vw, 700px);
-  font-weight: 400;
-  line-height: 1;
-  opacity: 1;
-  user-select: none;
-  margin: 0 -30px;
-  transition: color 0.5s ease;
+  font-size: clamp(280px, 50vw, 700px);  /* было 700px */
+  margin: 0 clamp(-10px, -2vw, -30px);   /* было -30px */
+  /* остальное без изменений */
 }
 
-@media (min-width: 600px) {
-  .background-digit {
-    margin: 0 -50px;
-  }
+.keypad-grid {
+  gap: clamp(32px, 8vw, 80px);  /* было 80px */
+  padding: clamp(24px, 4vw, 40px);  /* было 40px */
+  /* остальное без изменений */
 }
 
-@media (min-width: 900px) {
-  .background-digit {
-    margin: 0 -70px;
-  }
+.keypad-clear-button {
+  bottom: max(32px, env(safe-area-inset-bottom) + 16px);  /* было 32px */
+  /* остальное без изменений */
 }
-</style>
 ```
 
 **Задачи:**
-- ✅ Заменить фиксированный gap на адаптивный с media queries
-- ✅ Заменить фиксированный padding на адаптивный
-- ✅ Заменить font-size на clamp() для .background-digit
-- ✅ Протестировать на всех брейкпоинтах
-- ✅ Убедиться что кейпад остается центрированным
+- [ ] Заменить `100vw` на `100%` в `.keypad-container` и `.background-numbers`
+- [ ] Применить `clamp()` для `gap`, `padding`, `font-size`
+- [ ] Добавить safe-area для `.keypad-clear-button`
 
 ---
 
-### 2.2 KeypadButton.vue - кнопки
+### 3.2 KeypadButton.vue — кнопки
 
-**Файл:** `src/components/keypad/KeypadButton.vue`
+**Файл:** [src/components/keypad/KeypadButton.vue](src/components/keypad/KeypadButton.vue)
 
-**Текущее состояние:**
-- Width/Height: 110px (фиксированный)
-- Border-radius: 28px (фиксированный)
-- Font-size: 30px (фиксированный)
+**Текущие значения:**
+- `width/height: 110px` (фиксированный)
+- `border-radius: 28px` (фиксированный)
+- `font-size: 30px` (фиксированный)
 
-**Целевое состояние:**
+**Целевые значения:**
 
-| Брейкпоинт | Size | Border-radius | Font-size |
-|------------|------|---------------|-----------|
-| xs (360-599) | 72px | 18px | 22px |
-| sm (600-899) | 80px | 20px | 24px |
-| md (900-1199) | 88px | 22px | 26px |
-| lg+ (≥1200) | 110px | 28px | 30px |
+| Breakpoint | Size | Border-radius | Font |
+|------------|------|---------------|------|
+| xs (360-599) | 72px | 18px | 24px |
+| sm (600-899) | 88px | 22px | 26px |
+| md+ (≥900) | 110px | 28px | 30px |
 
-**Изменения в коде:**
+**Изменения:**
 
-```vue
-<style scoped>
+```css
 .keypad-button-wrapper {
-  position: relative;
-  width: 72px;  /* xs базовое */
-  height: 72px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  transform: rotate(45deg);
-  border: 1px solid #ffffff09;
-}
-
-@media (min-width: 600px) {
-  .keypad-button-wrapper {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
-  }
-}
-
-@media (min-width: 900px) {
-  .keypad-button-wrapper {
-    width: 88px;
-    height: 88px;
-    border-radius: 22px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .keypad-button-wrapper {
-    width: 110px;
-    height: 110px;
-    border-radius: 28px;
-  }
+  width: clamp(72px, 18vw, 110px);
+  height: clamp(72px, 18vw, 110px);
+  border-radius: clamp(18px, 4.5vw, 28px);
+  /* остальное без изменений */
 }
 
 .keypad-number {
-  font-size: 22px;  /* xs базовое */
-  /* остальные стили */
+  font-size: clamp(24px, 6vw, 30px);
+  /* остальное без изменений */
 }
-
-@media (min-width: 600px) {
-  .keypad-number {
-    font-size: 24px;
-  }
-}
-
-@media (min-width: 900px) {
-  .keypad-number {
-    font-size: 26px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .keypad-number {
-    font-size: 30px;
-  }
-}
-</style>
 ```
 
 **Задачи:**
-- ✅ Добавить адаптивные размеры кнопок
-- ✅ Добавить адаптивный border-radius
-- ✅ Добавить адаптивный font-size для чисел
-- ✅ Убедиться что touch target ≥44px на всех экранах
-- ✅ Протестировать hover/pressed состояния
+- [ ] Применить `clamp()` для размеров кнопки
+- [ ] Применить `clamp()` для `border-radius` и `font-size`
+- [ ] Добавить `:focus-visible` стиль (ring outline)
+
+**Acceptance:**
+- На 360px: кнопки ≥72px (≥tap-min 44px) ✅
+- На 1920px: кнопки 110px
+- Нет горизонтального скролла
+- E2E `npm run test:interaction` проходит
+- Performance: деградация <20%
 
 ---
 
-## Фаза 3: MainPage - Intro секция
+### 3.3 Motion-v варианты для mobile
 
-### 3.1 Intro.vue - Hero + Rectangles
+**Файл:** [src/components/keypad/variants.js](src/components/keypad/variants.js)
 
-**Файл:** `src/pages/main-page/intro/Intro.vue`
+**Задачи:**
+- [ ] Проверить длительность анимаций (если >300ms на mobile → сократить на 30-50%)
+- [ ] Добавить поддержку `prefers-reduced-motion` (установить `duration: 0`)
 
-**Текущее состояние:**
-- Padding-inline: clamp(32px, 12vw, 120px)
-- Padding-block: clamp(48px, 12vh, 96px)
-- Grid rectangles: 4 колонки × 5 рядов
-- Gap: 80px (фиксированный)
+---
 
-**Целевое состояние:**
+## 4. Фаза 3: Intro Section (2 дня)
 
-| Брейкпоинт | Layout | Grid | Gap | Title align |
-|------------|--------|------|-----|-------------|
-| xs (360-599) | 2×2 | 2 col × 2 row | 32px | center |
-| sm (600-899) | 2×2 | 2 col × 2 row | 40px | center |
-| md (900-1199) | 4 col (80%) | 4 col × 5 row | 60px | left |
-| lg+ (≥1200) | 4 col (100%) | 4 col × 5 row | 80px | left |
+### 4.1 Intro.vue — Hero + Rectangles
 
-**Изменения в коде:**
+**Файл:** [src/pages/main-page/intro/Intro.vue](src/pages/main-page/intro/Intro.vue)
 
-```vue
-<style scoped>
+**Текущие проблемы:**
+- `.intro-hero`: `width: 100vw` → горизонтальный скролл
+- `.intro-list`: фиксированный `gap: 80px`, grid `4 col × 5 row` всегда
+- Media query только для `768px` (не mobile-first)
+
+**Целевое поведение:**
+
+| Breakpoint | Grid | Gap | Text align |
+|------------|------|-----|------------|
+| xs-sm (<900) | 2×2 | 40px | center |
+| md+ (≥900) | 4×5 | 80px | left |
+
+**Изменения:**
+
+```css
 .intro-hero {
+  width: 100%;  /* было 100vw */
+  height: 100vh;
   padding-block: clamp(40px, 10vh, 96px);
   padding-inline-start: clamp(24px, 8vw, 120px);
   padding-inline-end: clamp(16px, 4vw, 48px);
-  text-align: left;
-}
-
-@media (max-width: 899px) {
-  .intro-hero {
-    text-align: center;
-  }
-}
-
-.intro-hero__title {
-  max-width: 100%;
-}
-
-@media (min-width: 900px) {
-  .intro-hero__title {
-    max-width: 1000px;
-  }
+  /* остальное */
 }
 
 .intro-list {
-  /* xs/sm: 2×2 grid */
-  display: grid;
+  /* Base (xs-sm): 2×2 grid */
   grid-template-columns: repeat(2, fit-content(100px));
   grid-template-rows: repeat(2, 1fr);
-  gap: 32px;
-}
-
-@media (min-width: 600px) {
-  .intro-list {
-    gap: 40px;
-  }
+  gap: clamp(32px, 8vw, 60px);
+  max-width: 100%;  /* было 110vw */
+  max-height: 100%;  /* было 110vh */
+  /* остальное */
 }
 
 @media (min-width: 900px) {
@@ -465,442 +364,180 @@ button, a, .interactive-text {
     /* md+: 4×5 grid */
     grid-template-columns: repeat(4, fit-content(100px));
     grid-template-rows: repeat(5, 1fr);
-    gap: 60px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .intro-list {
     gap: 80px;
   }
 }
-</style>
+
+/* Удалить старый @media (max-width: 768px) блок */
 ```
 
 **Задачи:**
-- ✅ Адаптировать padding для hero секции
-- ✅ Переключить grid с 4×5 на 2×2 для мобильных
-- ✅ Центрировать текст на sm/xs
-- ✅ Адаптировать gap между rectangles
-- ✅ Обеспечить правильное позиционирование с anchor positioning
-
-**Дополнительная логика (JS):**
-- На sm/xs: ограничить количество одновременно открытых rectangles до 1
-- При открытии нового — закрывать предыдущий
+- [ ] Заменить `100vw` на `100%`
+- [ ] Изменить grid на mobile-first подход (2×2 → 4×5)
+- [ ] Убрать `max-width: 110vw`, `max-height: 110vh` (причина overflow)
+- [ ] Применить `clamp()` для padding
+- [ ] Удалить старый media query для 768px
 
 ---
 
-### 3.2 IntroRectangle.vue - интерактивные ромбы
+### 4.2 IntroRectangle.vue
 
-**Файл:** `src/pages/main-page/intro/IntroRectangle.vue`
+**Файл:** [src/pages/main-page/intro/IntroRectangle.vue](src/pages/main-page/intro/IntroRectangle.vue)
 
-**Текущее состояние:**
+**Текущие значения:**
 - `--element-side-size: 120px` (фиксированный)
-- Border-radius: 28px (фиксированный)
-- Font-size: 70px (фиксированный)
+- `border-radius: 28px` (фиксированный)
+- `font-size: 70px` для числа (фиксированный)
 
-**Целевое состояние:**
+**Целевые значения:**
 
-| Брейкпоинт | Size | Border-radius | Font-size (number) |
-|------------|------|---------------|--------------------|
-| xs (360-599) | 80px | 20px | 50px |
-| sm (600-899) | 90px | 20px | 55px |
-| md (900-1199) | 100px | 24px | 60px |
-| lg+ (≥1200) | 120px | 28px | 70px |
+| Breakpoint | Size | Border-radius | Font |
+|------------|------|---------------|------|
+| xs-sm (<600) | 80px | 20px | 48px |
+| sm-md (600-899) | 100px | 24px | 60px |
+| md+ (≥900) | 120px | 28px | 70px |
 
-**Изменения в коде:**
+**Изменения:**
 
-```vue
-<style scoped>
+```css
 .intro-square {
-  --element-side-size: 80px;  /* xs базовое */
-  border-radius: 20px;
-  /* остальные стили */
-}
-
-@media (min-width: 600px) {
-  .intro-square {
-    --element-side-size: 90px;
-  }
-}
-
-@media (min-width: 900px) {
-  .intro-square {
-    --element-side-size: 100px;
-    border-radius: 24px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .intro-square {
-    --element-side-size: 120px;
-    border-radius: 28px;
-  }
+  --element-side-size: clamp(80px, 20vw, 120px);
+  border-radius: clamp(20px, 5vw, 28px);
+  /* остальное */
 }
 
 .intro-content-number {
-  font-size: 50px;  /* xs базовое */
+  font-size: clamp(48px, 12vw, 70px);
+  /* остальное */
 }
-
-@media (min-width: 600px) {
-  .intro-content-number {
-    font-size: 55px;
-  }
-}
-
-@media (min-width: 900px) {
-  .intro-content-number {
-    font-size: 60px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .intro-content-number {
-    font-size: 70px;
-  }
-}
-</style>
-```
-
-**Дополнительная логика (JS):**
-
-```vue
-<script setup>
-import { computed, ref, watch, inject } from 'vue';
-
-// Inject viewport size для определения режима
-const isMobile = inject('isMobile', ref(false));
-
-const emit = defineEmits(['activeChange', 'requestClose']);
-
-function toggleState() {
-  isHovered.value = false;
-
-  // На мобильных: при открытии - запрашиваем закрытие других
-  if (isMobile.value && !isActive.value) {
-    emit('requestClose', props.index);
-  }
-
-  isActive.value = !isActive.value;
-  emit('activeChange', isActive.value);
-}
-</script>
 ```
 
 **Задачи:**
-- ✅ Адаптировать размер ромбов
-- ✅ Адаптировать border-radius
-- ✅ Адаптировать font-size для чисел
-- ✅ Добавить логику закрытия других ромбов на мобильных
-- ✅ Убедиться что touch target ≥44px
+- [ ] Применить `clamp()` для `--element-side-size`
+- [ ] Применить `clamp()` для `border-radius` и `font-size`
+- [ ] Проверить margin анимации (не используют ли фиксированные `px` из [variants.js](src/pages/main-page/intro/variants.js))
+
+**Acceptance:**
+- На 360px: rectangles 80×80px (≥tap-min) ✅
+- На 1920px: rectangles 120×120px
+- Grid 2×2 на mobile, 4×5 на desktop
+- Нет горизонтального скролла
+- Performance: деградация <20%
 
 ---
 
-## Фаза 4: Page Navigation (Навигация)
+## 5. Фаза 4: Navigation (1 день)
 
-### 4.1 PageNavigation.vue - Desktop версия
+### 5.1 PageNavigation.vue
 
-**Файл:** `src/components/page-navigation/PageNavigation.vue`
+**Файл:** [src/components/page-navigation/PageNavigation.vue](src/components/page-navigation/PageNavigation.vue)
 
 **Текущее состояние:**
-- Fixed right: 48px, top: 50%
-- Вертикальная колонка
-- Только одна версия для всех экранов
+- Всегда fixed справа (`right: 48px`)
+- Одна версия для всех экранов
+- Media query только для `768px` (right: 24px)
 
-**Целевое состояние:**
+**Целевое поведение:**
 
-| Брейкпоинт | Режим | Position |
-|------------|-------|----------|
-| xs (360-599) | Кнопка + overlay menu | Fixed top-right |
-| sm (600-899) | Кнопка + overlay menu | Fixed top-right |
-| md (900-1199) | Панель справа (уменьшенная) | right: 32px |
-| lg+ (≥1200) | Панель справа (полная) | right: 48px |
+| Breakpoint | Position | Right |
+|------------|----------|-------|
+| xs-sm (<900) | Sticky bottom bar | N/A |
+| md+ (≥900) | Fixed right | clamp(32px, 4vw, 48px) |
 
-**Изменения в коде:**
+**Изменения:**
 
-```vue
-<template>
-  <!-- Desktop: панель справа -->
-  <nav
-    v-if="!isMobile"
-    class="page-navigation"
-    aria-label="Page sections navigation"
-  >
-    <NavigationItem
-      v-for="(section, index) in sections"
-      :key="section.id"
-      :label="section.label"
-      :section-id="section.id"
-      :is-active="activeSection === section.id"
-    />
-  </nav>
-
-  <!-- Mobile: кнопка + overlay -->
-  <div v-else class="page-navigation-mobile">
-    <button
-      class="nav-toggle"
-      @click="isMenuOpen = !isMenuOpen"
-      :aria-expanded="isMenuOpen"
-      aria-label="Toggle navigation menu"
-    >
-      <svg v-if="!isMenuOpen" width="24" height="24" viewBox="0 0 24 24">
-        <!-- Hamburger icon -->
-        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" />
-      </svg>
-      <svg v-else width="24" height="24" viewBox="0 0 24 24">
-        <!-- Close icon -->
-        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" />
-      </svg>
-    </button>
-
-    <!-- Overlay menu -->
-    <Teleport to="body">
-      <Transition name="menu-fade">
-        <div
-          v-if="isMenuOpen"
-          class="nav-overlay"
-          @click="isMenuOpen = false"
-        >
-          <nav
-            class="nav-overlay-menu"
-            @click.stop
-            aria-label="Page sections navigation"
-          >
-            <NavigationItem
-              v-for="(section, index) in sections"
-              :key="section.id"
-              :label="section.label"
-              :section-id="section.id"
-              :is-active="activeSection === section.id"
-              :mobile="true"
-              @navigate="handleMobileNavigate"
-            />
-          </nav>
-        </div>
-      </Transition>
-    </Teleport>
-  </div>
-</template>
-
-<script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-
-const isMobile = ref(false);
-const isMenuOpen = ref(false);
-
-function updateMobileState() {
-  isMobile.value = window.innerWidth < 900;
-}
-
-function handleMobileNavigate(sectionId) {
-  handleNavigate(sectionId);
-  isMenuOpen.value = false;  // Закрываем меню после навигации
-}
-
-onMounted(() => {
-  updateMobileState();
-  window.addEventListener('resize', updateMobileState);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateMobileState);
-});
-</script>
-
-<style scoped>
-/* Desktop navigation */
-.page-navigation {
-  position: fixed;
-  right: 32px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  z-index: 1000;
-  padding: 24px 0;
-}
-
-@media (min-width: 1200px) {
+**Mobile (sticky bottom bar):**
+```css
+@media (max-width: 899px) {
   .page-navigation {
-    right: 48px;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: auto;
+    top: auto;
+    transform: none;
+    flex-direction: row;
+    width: 100%;
+    padding: var(--space-md);
+    padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+    gap: var(--space-sm);
+    overflow-x: auto;
+    background: rgba(23, 23, 23, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
+```
 
-/* Mobile navigation */
-.page-navigation-mobile {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: 1001;
+**Desktop:**
+```css
+@media (min-width: 900px) {
+  .page-navigation {
+    right: clamp(32px, 4vw, 48px);
+    /* остальное без изменений */
+  }
 }
-
-.nav-toggle {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  background: rgba(23, 23, 23, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.nav-toggle:hover {
-  background: rgba(23, 23, 23, 0.95);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.nav-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: grid;
-  place-items: center;
-  z-index: 1000;
-}
-
-.nav-overlay-menu {
-  background: #171717;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 32px 24px;
-  min-width: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Transitions */
-.menu-fade-enter-active,
-.menu-fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.menu-fade-enter-from,
-.menu-fade-leave-to {
-  opacity: 0;
-}
-</style>
 ```
 
 **Задачи:**
-- ✅ Создать мобильную версию с кнопкой
-- ✅ Добавить overlay menu с анимацией
-- ✅ Использовать Teleport для overlay
-- ✅ Добавить auto-close при навигации
-- ✅ Адаптировать desktop версию (right padding)
-- ✅ Обеспечить accessibility (aria-labels, keyboard navigation)
+- [ ] Реализовать sticky bottom bar для mobile (<900px)
+- [ ] Добавить safe-area padding для bottom bar
+- [ ] Обновить desktop positioning с `clamp()`
+- [ ] Убрать старый media query для 768px
+- [ ] Обеспечить `:focus-visible` и keyboard navigation
+
+**Acceptance:**
+- На 360-899px: navigation внизу экрана (sticky)
+- На 900px+: navigation справа (fixed)
+- Lighthouse Accessibility ≥90
+- Клавиатурная навигация работает
 
 ---
 
-## Фаза 5: Cases Section (Секции кейсов)
+## 6. Фаза 5: Cases Section (1 день)
 
-### 5.1 CaseItem.vue
+### 6.1 CaseItem.vue
 
-**Файл:** `src/pages/main-page/cases/CaseItem.vue`
+**Файл:** [src/pages/main-page/cases/CaseItem.vue](src/pages/main-page/cases/CaseItem.vue)
 
-**Текущее состояние:**
-- Flex-direction: column (всегда)
-- Padding: 2vh 10vw
-- Gap: clamp(16px, 2vh, 24px)
+**Текущие проблемы:**
+- `padding: 2vh 10vw` → на узких экранах мало места
+- Фиксированные `max-width` для заголовков
+- `.replay-button`: `clamp(60px, 10vw, 80px)` → на 360px может быть <44px
 
-**Целевое состояние:**
+**Целевые значения:**
 
-| Брейкпоинт | Layout | Padding | Button position |
-|------------|--------|---------|-----------------|
-| xs (360-599) | Column | 2vh 4vw | Under text |
-| sm (600-899) | Column | 2vh 6vw | Under text |
-| md (900-1199) | Column (centered) | 2vh 8vw | Right of title |
-| lg-xl (≥1200) | Column | 2vh 10vw | Right of title |
-| xxl (≥1920) | Column (max-width) | 2vh auto | Right of title |
+| Breakpoint | Padding-inline | Text align |
+|------------|----------------|------------|
+| xs (<600) | 4vw | center |
+| sm (600-899) | 6vw | center |
+| md+ (≥900) | 10vw | left |
 
-**Изменения в коде:**
+**Изменения:**
 
-```vue
-<style scoped>
+```css
 .case-item {
-  background: #171717;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  box-sizing: border-box;
-  padding: 2vh 4vw;  /* xs базовое */
-  margin: auto;
-  text-align: left;
-  gap: clamp(16px, 2vh, 24px);
-  max-height: 100dvh;
-  width: 100%;
-}
-
-@media (min-width: 600px) {
-  .case-item {
-    padding: 2vh 6vw;
-  }
-}
-
-@media (min-width: 900px) {
-  .case-item {
-    padding: 2vh 8vw;
-    text-align: center;  /* Центрирование на md */
-  }
-}
-
-@media (min-width: 1200px) {
-  .case-item {
-    padding: 2vh 10vw;
-    text-align: left;  /* Возврат к left на lg+ */
-  }
-}
-
-@media (min-width: 1920px) {
-  .case-item {
-    max-width: 1440px;
-    padding: 2vh 0;
-  }
-}
-
-.case-heading {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  padding: 2vh clamp(16px, 4vw, 10vw);
+  padding-bottom: max(2vh, env(safe-area-inset-bottom));
+  /* остальное */
 }
 
 @media (max-width: 899px) {
-  .case-heading {
-    align-items: center;  /* Центрирование на мобильных */
+  .case-heading,
+  .case-title,
+  .case-subtitle {
+    text-align: center;
   }
-}
 
-.case-heading-top {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: clamp(16px, 4vw, 40px);
-  flex-direction: column;  /* Column на мобильных */
-}
-
-@media (min-width: 900px) {
   .case-heading-top {
-    flex-direction: row;  /* Row на десктопе */
+    flex-direction: column;
     align-items: center;
   }
 }
 
 .case-title {
-  margin: 0;
-  text-align: left;
+  font-size: clamp(20px, 4vw, 32px);
   max-width: 100%;
-  font-size: clamp(20px, 4vw, 32px);  /* Адаптивный размер */
 }
 
 @media (min-width: 900px) {
@@ -909,182 +546,58 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 899px) {
-  .case-title {
-    text-align: center;
-  }
-}
-
-.case-subtitle {
-  margin: 0;
-  font-size: clamp(14px, 1.6vw, 16px);
-  text-align: left;
-  max-width: 100%;
-}
-
-@media (min-width: 900px) {
-  .case-subtitle {
-    max-width: 480px;
-  }
-}
-
-@media (max-width: 899px) {
-  .case-subtitle {
-    text-align: center;
-  }
-}
-
-.video-wrapper {
-  padding: clamp(8px, 1.4vw, 12px);
-  border-radius: clamp(12px, 2vw, 20px);
-  width: 100%;
-  aspect-ratio: 1662 / 1080;
-}
-
 .replay-button {
-  width: clamp(48px, 12vw, 80px);
-  height: clamp(48px, 12vw, 80px);
+  width: clamp(48px, 10vw, 80px);  /* было 60px */
+  height: clamp(48px, 10vw, 80px);
+  /* остальное */
 }
 
 .replay-button svg {
-  width: clamp(24px, 6vw, 40px);
-  height: clamp(24px, 6vw, 40px);
+  width: clamp(24px, 5vw, 40px);
+  height: clamp(24px, 5vw, 40px);
 }
-</style>
 ```
 
 **Задачи:**
-- ✅ Адаптировать padding для всех брейкпоинтов
-- ✅ Переключить layout кнопки (column на мобильных)
-- ✅ Центрировать текст на sm/xs
-- ✅ Адаптировать font-size заголовков
-- ✅ Адаптировать video-wrapper и replay-button
-- ✅ Добавить max-width для xxl экранов
+- [ ] Адаптировать `padding` с `clamp()`
+- [ ] Центрировать текст на mobile (<900px)
+- [ ] Убедиться `.replay-button` ≥48px на всех экранах
+- [ ] Добавить safe-area padding
+- [ ] Применить `clamp()` для заголовков
+
+**Acceptance:**
+- На 360px: текст центрирован, replay button ≥48px
+- На 900px+: текст слева, layout стабилен
+- Нет горизонтального скролла
 
 ---
 
-## Фаза 6: Case Page (Страница кейса)
+## 7. Фаза 6: Case Pages (2 дня)
 
-### 6.1 CasePage.vue
+### 7.1 CasePage.vue и все case*-page компоненты
 
-**Файл:** `src/pages/case-page/CasePage.vue`
+**Файлы:**
+- [src/pages/case-page/CasePage.vue](src/pages/case-page/CasePage.vue)
+- [src/pages/case1-page/case1/Process.vue](src/pages/case1-page/case1/Process.vue) (и аналогичные: Task, Results, Summary для case1/2/3)
 
-**Текущее состояние:**
-- `.case-page-back`: top: 48px, left: 48px
-- Media query только для 768px
+**Текущие проблемы:**
+- Все используют `width: 100vw` → горизонтальный скролл
+- Фиксированные `padding` значения
+- Media query только для `768px`
 
-**Целевое состояние:**
+**Изменения (применить ко ВСЕМ case page файлам):**
 
-| Брейкпоинт | Top | Left |
-|------------|-----|------|
-| xs (360-599) | 16px | 16px |
-| sm (600-899) | 24px | 24px |
-| md (900-1199) | 32px | 32px |
-| lg+ (≥1200) | 48px | 48px |
-
-**Изменения в коде:**
-
-```vue
-<style scoped>
-.case-page-back {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1001;
-}
-
-@media (min-width: 600px) {
-  .case-page-back {
-    top: 24px;
-    left: 24px;
-  }
-}
-
-@media (min-width: 900px) {
-  .case-page-back {
-    top: 32px;
-    left: 32px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .case-page-back {
-    top: 48px;
-    left: 48px;
-  }
-}
-</style>
-```
-
-**Задачи:**
-- ✅ Обновить positioning для всех брейкпоинтов
-- ✅ Удалить старый media query для 768px
-
----
-
-### 6.2 Process.vue (и аналогичные секции)
-
-**Файл:** `src/pages/case1-page/case1/Process.vue`
-
-**Текущее состояние:**
-- Padding: 80px 48px 48px
-- Max-width: 900px (фиксированный)
-- Одна media query для 768px
-
-**Целевое состояние:**
-
-| Брейкпоинт | Padding | Max-width | Text align |
-|------------|---------|-----------|------------|
-| xs (360-599) | 48px 16px 24px | 100% | left |
-| sm (600-899) | 60px 24px 32px | 100% | left |
-| md (900-1199) | 72px 32px 40px | 680px | center |
-| lg (1200-1599) | 80px 48px 48px | 960px | left |
-| xl+ (≥1600) | 96px 60px 60px | 1140px | left |
-
-**Изменения в коде:**
-
-```vue
-<style scoped>
-.case1-process {
-  width: 100vw;
-  min-height: 100vh;
-  background: #171717;
-  padding: 48px 16px 24px;  /* xs базовое */
-  padding-bottom: max(24px, env(safe-area-inset-bottom));  /* Safe area */
-}
-
-@media (min-width: 600px) {
-  .case1-process {
-    padding: 60px 24px 32px;
-    padding-bottom: max(32px, env(safe-area-inset-bottom));
-  }
-}
-
-@media (min-width: 900px) {
-  .case1-process {
-    padding: 72px 32px 40px;
-    padding-bottom: max(40px, env(safe-area-inset-bottom));
-  }
-}
-
-@media (min-width: 1200px) {
-  .case1-process {
-    padding: 80px 48px 48px;
-    padding-bottom: max(48px, env(safe-area-inset-bottom));
-  }
-}
-
-@media (min-width: 1600px) {
-  .case1-process {
-    padding: 96px 60px 60px;
-    padding-bottom: max(60px, env(safe-area-inset-bottom));
-  }
+```css
+/* Например, Process.vue, Task.vue, Results.vue */
+.case1-process {  /* или .case1-task, .case1-results и т.д. */
+  width: 100%;  /* было 100vw */
+  padding: clamp(48px, 8vh, 96px) clamp(16px, 4vw, 60px) clamp(24px, 4vh, 60px);
+  padding-bottom: max(clamp(24px, 4vh, 60px), env(safe-area-inset-bottom));
+  /* остальное */
 }
 
 .markdown-content {
   max-width: 100%;
-  margin: 0 auto;
-  color: #ffffff;
 }
 
 @media (min-width: 900px) {
@@ -1099,552 +612,267 @@ onUnmounted(() => {
   }
 }
 
-@media (min-width: 1600px) {
-  .markdown-content {
-    max-width: 1140px;
-  }
-}
-
-/* Typography адаптация */
+/* Deep selectors для типографики */
 .markdown-content :deep(h1) {
   font-size: clamp(28px, 6vw, 48px);
-  margin-bottom: clamp(24px, 4vh, 32px);
 }
 
 .markdown-content :deep(h2) {
   font-size: clamp(22px, 4vw, 32px);
-  margin-top: clamp(32px, 6vh, 48px);
-  margin-bottom: clamp(16px, 3vh, 24px);
-}
-
-.markdown-content :deep(h3) {
-  font-size: clamp(18px, 3vw, 24px);
-  margin-top: clamp(24px, 4vh, 32px);
-  margin-bottom: clamp(12px, 2vh, 16px);
 }
 
 .markdown-content :deep(p) {
-  font-size: clamp(14px, 1.6vw, 16px);
+  font-size: var(--fs-body);
   line-height: var(--lh-body);
-  margin-bottom: clamp(12px, 2vh, 16px);
-  max-width: 70ch;  /* Ограничение длины строки */
+  max-width: 70ch;
 }
-
-.markdown-content :deep(li) {
-  font-size: clamp(14px, 1.6vw, 16px);
-  line-height: var(--lh-body);
-}
-</style>
 ```
 
 **Задачи:**
-- ✅ Адаптировать padding для всех брейкпоинтов
-- ✅ Добавить safe-area-inset-bottom
-- ✅ Адаптировать max-width контента
-- ✅ Обновить типографику на clamp()
-- ✅ Добавить max-width: 70ch для параграфов
-- ✅ Применить аналогичные изменения к Task.vue, Results.vue, Summary.vue
+- [ ] Заменить `100vw` на `100%` во всех case page компонентах
+- [ ] Применить `clamp()` для padding
+- [ ] Добавить safe-area padding
+- [ ] Адаптировать `max-width` для контента по брейкпоинтам
+- [ ] Обновить типографику через `:deep()` селекторы
+- [ ] Убрать старые media queries для 768px
+
+**Acceptance:**
+- Все case pages без горизонтального скролла на 360-1920px
+- Контент ограничен `max-width` на больших экранах
+- Typography адаптивна
 
 ---
 
-## Фаза 7: Typography global refinement
+### 7.2 CasePage.vue — back button
 
-### 7.1 Финальная адаптация типографики
+**Файл:** [src/pages/case-page/CasePage.vue](src/pages/case-page/CasePage.vue)
 
-**Файл:** `src/styles/typography.css`
-
-**Полный обновленный код:**
+**Изменения:**
 
 ```css
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
-
-:root {
-  --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* Adaptive font sizes */
-  --font-size-h1: clamp(28px, 5vw, 64px);
-  --font-size-h2: clamp(24px, 4vw, 48px);
-  --font-size-h3: clamp(20px, 3vw, 32px);
-  --font-size-h4: clamp(18px, 2.5vw, 24px);
-  --font-size-h5: clamp(16px, 2vw, 20px);
-  --font-size-h6: clamp(14px, 1.8vw, 18px);
-
-  /* Line-heights (адаптируются через tokens.css) */
-  --line-height-tight: 1.15;
-  --line-height-snug: 1.25;
-  --line-height-relaxed: 1.45;
+.case-page-back {
+  top: clamp(16px, 2vw, 48px);
+  left: clamp(16px, 2vw, 48px);
+  /* остальное */
 }
+```
 
-/* Заголовки */
-h1, .h1 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h1);
-  line-height: var(--line-height-tight);
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin: 0;
-}
+**Задачи:**
+- [ ] Применить `clamp()` для `top` и `left`
+- [ ] Убрать media query для 768px
 
-h2, .h2 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h2);
-  line-height: var(--line-height-snug);
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin: 0;
-}
+---
 
-h3, .h3 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h3);
-  line-height: var(--line-height-snug);
-  color: var(--color-text-primary);
-  margin: 0;
-}
+## 8. Фаза 7: Final Polish (0,5 дня)
 
-h4, .h4 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h4);
-  line-height: var(--line-height-relaxed);
-  color: var(--color-text-primary);
-  margin: 0;
-}
+### 8.1 Typography финализация
 
-h5, .h5 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
-  font-size: var(--font-size-h5);
-  line-height: var(--line-height-relaxed);
-  color: var(--color-text-primary);
-  margin: 0;
-}
+**Файл:** [src/styles/typography.css](src/styles/typography.css)
 
-h6, .h6 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
-  font-size: var(--font-size-h6);
-  line-height: var(--line-height-relaxed);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
+**Задачи:**
+- [ ] Обновить `p` на использование `var(--fs-body)` и `var(--lh-body)`
+- [ ] Добавить `max-width: 70ch` для параграфов
+- [ ] Убедиться что `.body1` использует `clamp()`: `clamp(20px, 3vw, 32px)`
 
-/* Body текст */
+**Изменения:**
+
+```css
 p {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
-  font-size: clamp(14px, 1.6vw, 16px);
+  font-size: var(--fs-body);
   line-height: var(--lh-body);
-  color: var(--color-text-secondary);
-  margin: 0;
   max-width: 70ch;
+  /* остальное */
 }
 
 .body1 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
   font-size: clamp(20px, 3vw, 32px);
-  line-height: 1.45;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-/* Адаптация line-height для больших экранов */
-@media (min-width: 900px) {
-  :root {
-    --line-height-relaxed: 1.5;
-  }
-}
-
-@media (min-width: 1200px) {
-  :root {
-    --line-height-relaxed: 1.55;
-  }
+  /* остальное */
 }
 ```
 
-**Задачи:**
-- ✅ Обновить все font-size на clamp()
-- ✅ Добавить max-width: 70ch для параграфов
-- ✅ Адаптировать line-height через media queries
-- ✅ Обеспечить переносы заголовков на мобильных
-
 ---
 
-## Фаза 8: Safe areas и accessibility
+### 8.2 Focus states и accessibility
 
-### 8.1 Mobile safe areas
+**Задачи:**
+- [ ] Добавить `:focus-visible` ко всем интерактивным элементам (кнопки, ссылки, navigation items)
+- [ ] Проверить `aria-label` на всех кнопках без текста
+- [ ] Убедиться что все touch targets ≥44×44px
 
-**Элементы требующие safe-area:**
-- Footer
-- Fixed bottom buttons
-- Keypad clear button
-- Mobile navigation overlay
-- Case page sections (bottom padding)
-
-**Паттерн применения:**
+**Global focus style (добавить в `style.css`):**
 
 ```css
-.element-with-bottom-padding {
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
-}
-
-.element-with-full-safe-areas {
-  padding-top: max(16px, env(safe-area-inset-top));
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
-  padding-left: max(16px, env(safe-area-inset-left));
-  padding-right: max(16px, env(safe-area-inset-right));
+*:focus-visible {
+  outline: 2px solid rgba(39, 169, 255, 0.8);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 ```
 
-**Файлы для обновления:**
-- `src/components/keypad/Keypad.vue` - .keypad-clear-button
-- `src/components/page-navigation/PageNavigation.vue` - .nav-overlay-menu
-- `src/components/app-footer/AppFooter.vue` - footer элемент
-- `src/pages/case1-page/case1/Process.vue` - .case1-process
-
-**Задачи:**
-- ✅ Добавить safe-area-inset для всех bottom элементов
-- ✅ Протестировать на реальных устройствах с notch
-- ✅ Убедиться что контент не перекрывается системными элементами
-
 ---
 
-### 8.2 Touch targets и accessibility
+## 9. Фаза 8: Testing & Documentation (0,5 дня)
 
-**Требования:**
-- Минимальный размер touch target: 44×44pt
-- Минимальный отступ между интерактивными элементами: 8px
-- Все интерактивные элементы должны иметь aria-labels
-- Keyboard navigation для всех интерактивных элементов
-
-**Проверка и исправление:**
-
-| Компонент | Текущий size | Требуемый | Статус |
-|-----------|--------------|-----------|--------|
-| KeypadButton (xs) | 72×72px | ≥44×44pt | ✅ OK |
-| IntroRectangle (xs) | 80×80px | ≥44×44pt | ✅ OK |
-| NavigationChevron | проверить | ≥44×44pt | ⚠️ Проверить |
-| nav-toggle (mobile) | 48×48px | ≥44×44pt | ✅ OK |
-| replay-button (xs) | 48×48px | ≥44×44pt | ✅ OK |
+### 9.1 E2E тестирование
 
 **Задачи:**
-- ✅ Проверить все кликабельные элементы
-- ✅ Добавить aria-labels где отсутствуют
-- ✅ Обеспечить keyboard navigation
-- ✅ Добавить focus-visible стили
-- ✅ Протестировать с screen reader
+- [ ] Обновить [tests/e2e/scenarios/interaction-performance.js](tests/e2e/scenarios/interaction-performance.js) для работы с mobile layout
+- [ ] Запустить полный e2e на трех viewport'ах: 360, 768, 1280
+- [ ] Убедиться что все сценарии проходят без ошибок
 
----
+**Команды:**
+```bash
+# Keypad interaction (критичный)
+npm run test:interaction -- --comment="Final responsive check"
 
-## Фаза 9: Container Queries (прогрессивное улучшение)
-
-### 9.1 Применение container queries для независимых компонентов
-
-**Кандидаты для container queries:**
-- CaseItem.vue - адаптация по ширине секции
-- Card компоненты (если появятся)
-- Modal/Dialog компоненты
-
-**Пример для CaseItem.vue:**
-
-```vue
-<style scoped>
-.case-item {
-  container-type: inline-size;
-  container-name: case-card;
-  /* остальные стили */
-}
-
-/* Container queries вместо media queries */
-@container case-card (min-width: 600px) {
-  .case-heading-top {
-    flex-direction: row;
-  }
-}
-
-@container case-card (min-width: 900px) {
-  .case-title {
-    max-width: 560px;
-  }
-}
+# Resize performance (не должна быть деградации)
+npm run test:perf -- --comment="Final responsive check"
+npm run test:compare  # Сравнить с baseline
 ```
 
-**Задачи:**
-- ✅ Добавить `container-type: inline-size` для подходящих компонентов
-- ✅ Заменить media queries на @container где уместно
-- ✅ Обеспечить fallback для браузеров без поддержки
-- ✅ Протестировать в разных браузерах
+---
+
+### 9.2 Ручное тестирование
+
+**Чек-лист:**
+- [ ] 360px (iPhone SE): нет горизонтального скролла, tap targets ≥44px
+- [ ] 768px (iPad): layout корректен, navigation sticky внизу
+- [ ] 1280px (MacBook): navigation справа, intro grid 4×5
+- [ ] 1920px (Desktop): контент ограничен max-width, нет растягивания
+
+**Устройства/браузеры:**
+- [ ] iOS Safari (реальное устройство или симулятор) — проверить safe areas
+- [ ] Android Chrome
+- [ ] Desktop Chrome/Firefox
 
 ---
 
-## Фаза 10: Testing & Performance
-
-### 10.1 Обновление E2E тестов
-
-**Файл:** `tests/e2e/scenarios/interaction-performance.js`
-
-**Добавить тесты для viewport размеров:**
-
-```javascript
-const viewportSizes = [
-  { width: 375, height: 667, name: 'iPhone SE' },
-  { width: 390, height: 844, name: 'iPhone 13' },
-  { width: 768, height: 1024, name: 'iPad' },
-  { width: 1024, height: 768, name: 'iPad Landscape' },
-  { width: 1440, height: 900, name: 'Desktop' },
-  { width: 1920, height: 1080, name: 'Large Desktop' },
-];
-
-for (const viewport of viewportSizes) {
-  await page.setViewportSize({
-    width: viewport.width,
-    height: viewport.height
-  });
-
-  // Run performance tests
-  await runInteractionTests();
-}
-```
+### 9.3 Документация
 
 **Задачи:**
-- ✅ Добавить multi-viewport тестирование
-- ✅ Проверить performance на каждом брейкпоинте
-- ✅ Убедиться что GeBackground не деградирует на мобильных
-- ✅ Проверить touch interactions на мобильных viewport
+- [ ] Обновить [CLAUDE.md](CLAUDE.md): добавить секцию "Responsive Design System"
+- [ ] Создать краткую таблицу токенов и брейкпоинтов в CLAUDE.md
+- [ ] Добавить примеры использования utilities классов
 
----
-
-### 10.2 Performance оптимизации
-
-**Оптимизации для мобильных:**
-
-1. **Условная загрузка эффектов:**
-```javascript
-// В компонентах с тяжелыми эффектами
-const isMobile = window.innerWidth < 900;
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-const shouldUseHeavyEffects = !isMobile && !reduceMotion;
-```
-
-2. **Media queries для prefers-reduced-motion:**
-```css
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-```
-
-3. **Lazy loading для мобильных:**
-```vue
-<template>
-  <component
-    :is="isMobile ? 'div' : GeBackground"
-    v-bind="backgroundProps"
-  />
-</template>
-```
-
-**Задачи:**
-- ✅ Добавить условную загрузку для тяжелых эффектов
-- ✅ Реализовать prefers-reduced-motion
-- ✅ Оптимизировать изображения для разных DPI
-- ✅ Проверить bundle size после изменений
-- ✅ Измерить FPS на мобильных устройствах
-
----
-
-## Фаза 11: Документация
-
-### 11.1 Создание RESPONSIVE.md
-
-**Файл:** `RESPONSIVE.md`
-
-**Содержание:**
-- Обзор адаптивной системы
-- Брейкпоинты и их использование
-- Дизайн-токены и переменные
-- Примеры использования
-- Container queries guidelines
-- Accessibility checklist
-- Testing procedures
-
-**Задачи:**
-- ✅ Создать comprehensive документацию
-- ✅ Добавить примеры кода
-- ✅ Описать все брейкпоинты
-- ✅ Документировать дизайн-токены
-
----
-
-### 11.2 Обновление CLAUDE.md
-
-**Файл:** `CLAUDE.md`
-
-**Добавить секцию:**
+**Пример для CLAUDE.md:**
 
 ```markdown
 ## Responsive Design System
 
-### Breakpoints
-- xs: 360px - Mobile small
-- sm: 600px - Mobile large
-- md: 900px - Tablet
-- lg: 1200px - Desktop
-- xl: 1600px - Large desktop
-- xxl: 1920px - Extra large desktop
+**Breakpoints:** 360 (xs), 600 (sm), 900 (md), 1200 (lg), 1600 (xl), 1920 (xxl)
 
-### Design Tokens
-All design tokens are defined in `src/styles/tokens.css` and include:
-- Spacing scale (--space-*)
-- Container gutters (--container-gutter)
-- Typography scale (--font-size-*)
-- Interactive zones (--tap-min)
+**Tokens:** [src/styles/tokens.css](src/styles/tokens.css)
+- Spacing: `--space-xs` to `--space-4xl`
+- Gutters: `--gutter` (adaptive per breakpoint)
+- Container: `--container-max` (adaptive per breakpoint)
 
-### Mobile-First Approach
-All components use mobile-first methodology. Start with mobile styles and enhance for larger screens using min-width media queries.
+**Utilities:** [src/styles/utilities.css](src/styles/utilities.css)
+- `.u-container` — adaptive container with gutters
+- `.u-stack` — vertical flex layout
+- `.u-safe-bottom` — safe area padding
 
-### Key Files
-- `src/styles/tokens.css` - Design tokens
-- `src/styles/typography.css` - Typography system
-- `src/styles/utilities.css` - CSS utilities
-- `RESPONSIVE.md` - Full responsive documentation
+**Performance constraints:**
+- After ANY responsive changes: `npm run test:perf && npm run test:compare`
+- Target: <20% degradation vs baseline
 ```
 
-**Задачи:**
-- ✅ Обновить CLAUDE.md с responsive информацией
-- ✅ Добавить ссылки на ключевые файлы
-- ✅ Документировать подход к адаптиву
+---
+
+## 10. Критерии приемки (Definition of Done)
+
+### Функциональность
+- ✅ Все компоненты адаптированы для 360-1920px
+- ✅ Нет горизонтального скролла на всех брейкпоинтах
+- ✅ Touch targets ≥44×44px
+- ✅ Navigation: sticky bottom на mobile, fixed right на desktop
+- ✅ Intro grid: 2×2 на mobile, 4×5 на desktop
+
+### Performance
+- ✅ Performance degradation <20% vs baseline
+- ✅ `npm run test:perf` проходит
+- ✅ `npm run test:interaction` проходит
+- ✅ FPS >30 на всех viewport'ах
+
+### Accessibility
+- ✅ Lighthouse Accessibility ≥90
+- ✅ `:focus-visible` на всех интерактивах
+- ✅ Клавиатурная навигация работает
+- ✅ `aria-label` на всех кнопках без текста
+
+### Code Quality
+- ✅ Используются токены из `tokens.css`
+- ✅ Нет дублирующихся CSS правил (используются utilities)
+- ✅ Mobile-first подход (base styles + `@media (min-width:)`)
+- ✅ Нет `100vw/100vh` за исключением обоснованных случаев
+
+### Documentation
+- ✅ CLAUDE.md обновлен с responsive системой
+- ✅ Все новые токены и utilities задокументированы
+- ✅ Чек-лист тестирования актуален
 
 ---
 
-## Deliverables (Итоговые результаты)
+## 11. Риски и митигация
 
-### Новые файлы:
-1. ✅ `src/styles/tokens.css` - дизайн-токены
-2. ✅ `src/styles/utilities.css` - CSS-утилиты
-3. ✅ `RESPONSIVE.md` - документация по адаптиву
-4. ✅ `RESPONSIVE_PLAN.md` - этот план (для референса)
-
-### Обновленные файлы:
-
-**Стили:**
-- ✅ `src/styles/typography.css` - адаптивная типографика
-- ✅ `src/style.css` - импорты новых файлов
-
-**Keypad:**
-- ✅ `src/components/keypad/Keypad.vue`
-- ✅ `src/components/keypad/KeypadButton.vue`
-
-**Main Page:**
-- ✅ `src/pages/main-page/intro/Intro.vue`
-- ✅ `src/pages/main-page/intro/IntroRectangle.vue`
-- ✅ `src/pages/main-page/cases/CaseItem.vue`
-
-**Navigation:**
-- ✅ `src/components/page-navigation/PageNavigation.vue`
-- ✅ `src/components/page-navigation/NavigationItem.vue`
-
-**Case Pages:**
-- ✅ `src/pages/case-page/CasePage.vue`
-- ✅ `src/pages/case1-page/case1/Process.vue`
-- ✅ `src/pages/case1-page/case1/Task.vue`
-- ✅ `src/pages/case1-page/case1/Results.vue`
-- ✅ `src/pages/case1-page/case1/Summary.vue`
-- ✅ Аналогично для case2 и case3
-
-**Tests:**
-- ✅ `tests/e2e/scenarios/interaction-performance.js`
-- ✅ `tests/e2e/helpers/viewport-tests.js` (новый)
-
-**Documentation:**
-- ✅ `CLAUDE.md` - обновления
-- ✅ `RESPONSIVE.md` - новая документация
+| Риск | Вероятность | Влияние | Митигация |
+|------|-------------|---------|-----------|
+| Performance деградация от обилия `clamp()` | Средняя | Высокое | Профилировать после каждой фазы, откат при >20% |
+| Motion-v анимации ломаются на mobile | Средняя | Среднее | Короткие тайминги, `prefers-reduced-motion` |
+| Safe areas конфликтуют с positioning | Средняя | Среднее | Тестировать на iOS до слияния |
+| Container queries не поддерживаются | Низкая | Низкое | Использовать только для progressive enhancement, fallback на media queries |
 
 ---
 
-## Порядок выполнения (Рекомендуемый)
+## 12. Оценка времени
 
-1. **Старт:** Фаза 1 (Инфраструктура) - закладываем фундамент
-2. **Далее:** Фаза 2 (Keypad) - самый простой компонент для тестирования
-3. **Потом:** Фаза 7 (Typography) - применяем глобально
-4. **Затем:** Фаза 3 (Intro) - сложная логика с rectangles
-5. **После:** Фаза 4 (Navigation) - требует новых компонентов
-6. **Далее:** Фаза 5 (Cases) - множество элементов
-7. **Потом:** Фаза 6 (Case Pages) - применяем паттерны
-8. **Затем:** Фаза 8 (Safe areas) - финальные штрихи
-9. **После:** Фаза 9 (Container queries) - прогрессивное улучшение
-10. **Финал:** Фазы 10-11 (Testing + Docs) - закрепляем результат
-
----
-
-## Критерии приемки
-
-### Функциональные:
-- ✅ Все компоненты адаптируются на всех брейкпоинтах (360px - 1920px+)
-- ✅ Navigation переключается на mobile версию на sm/xs
-- ✅ Rectangles переключаются на 2×2 grid на sm/xs
-- ✅ Все touch targets ≥44×44pt
-- ✅ Safe areas применены где необходимо
-
-### Визуальные:
-- ✅ Текст читаем на всех размерах экрана
-- ✅ Элементы не перекрываются
-- ✅ Spacing консистентен
-- ✅ Typography масштабируется плавно
-
-### Performance:
-- ✅ Нет деградации производительности на мобильных
-- ✅ FPS ≥30 на всех брейкпоинтах
-- ✅ GeBackground работает корректно на мобильных
-
-### Accessibility:
-- ✅ Все интерактивные элементы доступны с клавиатуры
-- ✅ Aria-labels присутствуют
-- ✅ Screen reader навигация работает
-- ✅ Focus-visible стили применены
-
-### Testing:
-- ✅ E2E тесты проходят на всех viewport размерах
-- ✅ Performance тесты показывают приемлемые результаты
-- ✅ Ручное тестирование на реальных устройствах
+| Фаза | Время | Описание |
+|------|-------|----------|
+| 1. Foundation | 1 день | Токены + utilities |
+| 2. Keypad | 1.5 дня | Layout + buttons + variants |
+| 3. Intro | 2 дня | Hero + rectangles + grid |
+| 4. Navigation | 1 день | Mobile bottom bar + desktop |
+| 5. Cases | 1 день | CaseItem адаптация |
+| 6. Case Pages | 2 дня | Все case page компоненты |
+| 7. Final Polish | 0.5 дня | Typography + focus + a11y |
+| 8. Testing & Docs | 0.5 дня | E2E + ручное + документация |
+| **Итого** | **9.5 дней** | ~2 недели с запасом |
 
 ---
 
-## Риски и митигация
+## 13. Контрольные точки
 
-| Риск | Вероятность | Воздействие | Митигация |
-|------|-------------|-------------|-----------|
-| GeBackground деградирует на мобильных | Высокая | Критическое | Условная загрузка, fallback |
-| Container queries не поддерживаются | Средняя | Среднее | Graceful degradation, fallback на media queries |
-| Слишком много брейкпоинтов | Низкая | Среднее | Использовать clamp() где возможно |
-| Performance падает на слабых устройствах | Средняя | Высокое | CPU throttling тесты, оптимизация |
-
----
-
-## Следующие шаги после завершения
-
-1. **A/B тестирование** - сравнить метрики до/после
-2. **User testing** - получить feedback на реальных устройствах
-3. **Analytics** - отслеживать bounce rate по viewport размерам
-4. **Optimization** - дальнейшая оптимизация узких мест
-5. **Documentation** - поддерживать документацию актуальной
+- **После Фазы 1:** Ревью токенов (блокирует остальные фазы)
+- **После Фазы 2:** Демо Keypad на 360/1280px
+- **После Фазы 4:** Демо Navigation на mobile/desktop
+- **После Фазы 6:** Регресс всех case pages
+- **Финал:** Общий демо + утверждение документации
 
 ---
 
-**Дата создания:** 2025-10-09
-**Версия:** 1.0
-**Статус:** Планирование завершено, готово к реализации
+## Приложение: Полезные команды
+
+```bash
+# Development
+npm run dev
+
+# Performance testing
+npm run test:perf -- --comment="Description"
+npm run test:compare
+
+# E2E
+npm run test:e2e
+npm run test:interaction
+
+# Build
+npm run build
+
+# Найти все 100vw/100vh
+rg -g '*.vue' -e '100vh|100vw' src/
+
+# Найти фиксированные px (для рефакторинга)
+rg -g '*.vue' -e '\d+px' src/components/keypad/
+```
+
+---
+
+**Последнее обновление:** 2025-10-09 | **Версия:** 3.0
