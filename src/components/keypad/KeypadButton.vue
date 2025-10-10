@@ -1,6 +1,6 @@
 <template>
   <div
-    v-hover-distortion="4"
+    v-hover-distortion="!isMobile ? 4 : null"
     class="keypad-button-hover-wrapper"
     @mousedown="currentState = 'pressed'"
     @mouseup="currentState = isHovered ? 'hover' : 'default'"
@@ -8,8 +8,34 @@
     @mouseenter="handleMouseEnter"
     @click="emit('click', value)"
   >
-    <div class="keypad-button-wrapper" v-mask-element="'#171717'">
-      <GlassEffect class="keypad-button-glass" :user-options="glassEffectConfig" />
+    <!-- Desktop: mask-element + GlassEffect -->
+    <div
+      v-if="!isMobile"
+      class="keypad-button-wrapper"
+      v-mask-element="'#171717'"
+    >
+      <GlassEffect
+        class="keypad-button-glass"
+        :user-options="glassEffectConfig"
+      />
+
+      <motion.div
+        class="keypad-number"
+        :variants="numberVariants"
+        :animate="currentState"
+        :initial="false"
+        :transition="isMounted ? spring : { duration: 0 }"
+      >
+        {{ value }}
+      </motion.div>
+    </div>
+
+    <!-- Mobile: backdrop-filter only -->
+    <div
+      v-else
+      class="keypad-button-wrapper"
+      v-backdrop-filter="backdropFilterOptions"
+    >
       <motion.div
         class="keypad-number"
         :variants="numberVariants"
@@ -29,6 +55,7 @@ import { motion } from "motion-v";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
 import { glassEffectConfig } from "./glassEffectConfig.js";
+import { useIsMobile } from "../../composables/useMediaQuery.js";
 
 defineProps({
   value: {
@@ -38,6 +65,15 @@ defineProps({
 });
 
 const emit = defineEmits(["click"]);
+
+const isMobile = useIsMobile();
+
+// Backdrop filter options for mobile (same as IntroRectangle)
+const backdropFilterOptions = {
+  blur: "15px",
+  saturate: "100%",
+  brightness: "100%",
+};
 
 const currentState = ref("default");
 const isHovered = ref(false);

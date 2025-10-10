@@ -31,6 +31,11 @@ const updateCSSProperties = (el, props) => {
 
 export const hoverDistortion = {
   mounted(el, binding) {
+    // Don't mount if value is null or false
+    if (binding.value === null || binding.value === false) {
+      return;
+    }
+
     const scope = effectScope();
 
     const state = scope.run(() => {
@@ -230,6 +235,21 @@ export const hoverDistortion = {
   },
 
   updated(el, binding) {
+    // If value becomes null/false, unmount
+    if (binding.value === null || binding.value === false) {
+      if (el._hoverDistortion) {
+        hoverDistortion.unmounted(el);
+      }
+      return;
+    }
+
+    // If it was null before and now has value, mount
+    if (!el._hoverDistortion && (binding.oldValue === null || binding.oldValue === false)) {
+      hoverDistortion.mounted(el, binding);
+      return;
+    }
+
+    // Otherwise just update options
     el._hoverDistortion?.updateOptions?.(binding.value);
   },
 
