@@ -48,11 +48,14 @@ export const textShadowSpring = {
 export const boxVariants = {
   default: ({ index, additionalMargin }) => {
     const baseMargin = 0;
+    // Колонки: 1, 3, 5, 7 (пропускаем четные для пустых ячеек)
+    const gridCol = index * 2 + 1;
     return {
       "--element-side-size": "120px",
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
-      y: 0,
+      gridColumn: gridCol,
+      gridRow: "1",
       rotate: 0,
       scale: 1,
       "--border-color": "#ffffff10",
@@ -62,11 +65,14 @@ export const boxVariants = {
   },
   hover: ({ index, additionalMargin }) => {
     const baseMargin = 0;
+    const gridCol = index * 2 + 1;
 
     return {
       "--element-side-size": "400px",
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
+      gridColumn: gridCol,
+      gridRow: "1",
       marginTop: "-150px",
       rotate: 15,
       scale: 1,
@@ -76,12 +82,20 @@ export const boxVariants = {
     };
   },
   active: ({ index, additionalMargin }) => {
-    const baseMargin = -50;
+    // Компенсация для поворота: диагональ 600px при 45° ≈ 848px
+    // Четные элементы (нижние) нужно раздвинуть чтобы не наезжали на соседей
+    const baseMarginLeft = index % 2 === 0 ? -80 : -50;
+    const baseMarginRight = index % 2 === 0 ? -80 : -50;
+    const gridCol = index * 2 + 1;
+    // Четные (0,2) - нижний ряд, нечетные (1,3) - верхний ряд
+    const topOffset = index % 2 === 0 ? "-300px" : "-600px";
     return {
       "--element-side-size": "600px",
-      marginLeft: `${baseMargin + additionalMargin}px`,
-      marginRight: `${baseMargin}px`,
-      y: index % 2 === 0 ? "-25%" : "-115%",
+      marginLeft: `${baseMarginLeft + additionalMargin}px`,
+      marginRight: `${baseMarginRight}px`,
+      marginTop: topOffset,
+      gridColumn: gridCol,
+      gridRow: index % 2 === 0 ? "2" : "1",
       rotate: 45,
       scale: 1,
       "--border-color": getBorderColorWithAlpha(index, 0),
@@ -100,12 +114,12 @@ export const contentWrapVariants = {
 // Объединенные варианты для контента (цифра и точка)
 export const squareContentVariants = {
   number: {
-    default: (index) => ({
+    default: () => ({
       opacity: 0,
       scale: 1,
       color: "rgba(255,255,255,0)",
-      "--glow-color": getColorWithAlpha(index, 0),
-      "--text-glow-color": getColorWithAlpha(index, 0),
+      "--glow-color": "rgba(255,255,255,0)",
+      "--text-glow-color": "rgba(255,255,255,0)",
       "--text-shadow-offset": "0px",
     }),
     hover: (index) => {

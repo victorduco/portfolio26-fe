@@ -135,7 +135,7 @@ function handleActiveChange(isActive) {
 let observer = null;
 
 onMounted(() => {
-  const introSection = document.getElementById('intro-text-export-node');
+  const introSection = document.getElementById("intro-text-export-node");
   if (introSection) {
     observer = new IntersectionObserver(
       (entries) => {
@@ -203,15 +203,19 @@ onUnmounted(() => {
   margin-top: 64px;
 
   display: grid;
+  /* Колонки: элемент - пустая - элемент - пустая - элемент - пустая - элемент */
   grid-template-columns:
-    fit-content(100px) fit-content(100px) fit-content(100px)
+    fit-content(100px) clamp(40px, 6vw, 80px)
+    fit-content(100px) clamp(40px, 6vw, 80px)
+    fit-content(100px) clamp(40px, 6vw, 80px)
     fit-content(100px);
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  /* 2 ряда с перекрытием: верхний и нижний, элементы занимают оба ряда */
+  grid-template-rows: 150px 150px;
 
   max-width: 110vw;
   max-height: 110vh;
-  gap: 80px;
-  place-items: start start;
+  gap: 0;
+  place-items: center start;
 
   padding: 0;
   list-style: none;
