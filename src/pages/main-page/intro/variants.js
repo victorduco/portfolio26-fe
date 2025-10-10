@@ -129,11 +129,11 @@ export const squareContentVariants = {
         color: getColorWithAlpha(index, 1),
       };
     },
-    active: (index) => ({
+    active: () => ({
       opacity: 0,
       color: "rgba(255,255,255,0)",
-      "--glow-color": getColorWithAlpha(index, 0),
-      "--text-glow-color": getColorWithAlpha(index, 0),
+      "--glow-color": "rgba(255,255,255,0)",
+      "--text-glow-color": "rgba(255,255,255,0)",
       "--text-shadow-offset": "0px",
     }),
   },
