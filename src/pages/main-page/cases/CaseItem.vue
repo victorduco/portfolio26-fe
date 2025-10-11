@@ -1,16 +1,17 @@
 <template>
   <div class="case-item" ref="caseElement">
     <div class="case-heading">
-      <div class="case-heading-top">
+      <div class="case-heading-text">
         <h3 class="case-title">{{ title }}</h3>
-        <NavigationChevron
-          type="route"
-          :to="routeTo"
-          direction="forward"
-          :aria-label="`Open ${subtitle}`"
-        />
+        <p class="case-subtitle">{{ subtitle }}</p>
       </div>
-      <p class="case-subtitle">{{ subtitle }}</p>
+      <NavigationChevron
+        class="case-heading-action"
+        type="route"
+        :to="routeTo"
+        direction="forward"
+        :aria-label="`Open ${subtitle}`"
+      />
     </div>
     <div class="video-wrapper">
       <video
@@ -155,17 +156,17 @@ onUnmounted(() => {
 .case-heading {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.case-heading-top {
-  width: 100%;
-  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: clamp(16px, 4vw, 40px);
+  flex-wrap: wrap;
+}
+
+.case-heading-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .case-title {
@@ -185,6 +186,11 @@ onUnmounted(() => {
   color: #ffffff;
   opacity: 0.6;
   max-width: 480px;
+}
+
+.case-heading-action {
+  flex-shrink: 0;
+  align-self: center;
 }
 
 .video-wrapper {
@@ -246,7 +252,13 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .case-heading {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 16px;
+  }
+
+  .case-heading-action {
+    align-self: flex-start;
   }
 }
 </style>
