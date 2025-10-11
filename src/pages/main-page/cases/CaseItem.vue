@@ -12,6 +12,7 @@
           :to="routeTo"
           direction="forward"
           :aria-label="`Open ${subtitle}`"
+          @click="handleNavigationClick"
         />
       </div>
       <div class="video-wrapper">
@@ -57,6 +58,11 @@ const props = defineProps({
 const caseElement = ref(null);
 const caseVideo = ref(null);
 let observer = null;
+
+function handleNavigationClick() {
+  // Save video state before navigating
+  caseVideo.value?.handleStoryLinkClick();
+}
 
 onMounted(() => {
   observer = new IntersectionObserver(

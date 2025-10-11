@@ -157,6 +157,7 @@
           :to="props.finalLink"
           @mouseenter="linkHovered = true"
           @mouseleave="linkHovered = false"
+          @click="handleStoryLinkClick"
         >
           <motion.div
             class="case-video-final-diamond"
@@ -203,9 +204,9 @@
 </template>
 
 <script setup>
-import { onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { motion } from "motion-v";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 
 const props = defineProps({
   src: {
@@ -222,6 +223,9 @@ const props = defineProps({
   },
 });
 
+const router = useRouter();
+const route = useRoute();
+
 const videoElement = ref(null);
 const showFinalOverlay = ref(false);
 const finalOverlayState = ref("hidden");
@@ -235,6 +239,89 @@ const playHovered = ref(false);
 const restartHovered = ref(false);
 const finalRestartHovered = ref(false);
 const linkHovered = ref(false);
+const wasStateRestored = ref(false); // Track if state was restored
+const shouldSaveState = ref(false); // Track if we should save state on unmount
+
+// Storage key based on video src
+const getStorageKey = () => `video-state-${props.src}`;
+
+// Save video state to sessionStorage (only when navigating to story page)
+function saveVideoState() {
+  const video = getVideoElement();
+  if (!video) return;
+
+  const state = {
+    currentTime: video.currentTime,
+    isPlaying: isPlaying.value,
+    isMuted: isMuted.value,
+    hasStartedPlayback: hasStartedPlayback.value,
+    showFinalOverlay: showFinalOverlay.value,
+    timestamp: Date.now(),
+  };
+
+  sessionStorage.setItem(getStorageKey(), JSON.stringify(state));
+}
+
+// Clear video state from sessionStorage
+function clearVideoState() {
+  sessionStorage.removeItem(getStorageKey());
+}
+
+// Restore video state from sessionStorage
+function restoreVideoState() {
+  try {
+    const stored = sessionStorage.getItem(getStorageKey());
+    if (!stored) return false;
+
+    const state = JSON.parse(stored);
+    const video = getVideoElement();
+    if (!video) return false;
+
+    // Check if state is recent (within 5 minutes)
+    const isRecent = Date.now() - state.timestamp < 5 * 60 * 1000;
+    if (!isRecent) {
+      clearVideoState();
+      return false;
+    }
+
+    // Restore video state
+    video.currentTime = state.currentTime || 0;
+    isMuted.value = state.isMuted || false;
+    video.muted = isMuted.value;
+    hasStartedPlayback.value = state.hasStartedPlayback || false;
+    showFinalOverlay.value = state.showFinalOverlay || false;
+
+    if (showFinalOverlay.value) {
+      finalOverlayState.value = "visible";
+      videoState.value = "hidden";
+    } else if (hasStartedPlayback.value) {
+      videoState.value = "visible";
+      if (state.isPlaying) {
+        video
+          .play()
+          .then(() => {
+            isPlaying.value = true;
+          })
+          .catch(() => {
+            isPlaying.value = false;
+          });
+      }
+    }
+
+    wasStateRestored.value = true;
+    return true;
+  } catch (error) {
+    console.error("Failed to restore video state:", error);
+    clearVideoState();
+    return false;
+  }
+}
+
+// Check if we're navigating from a story page
+function isComingFromStory() {
+  // Check if there's stored state - this means we came back from story
+  return sessionStorage.getItem(getStorageKey()) !== null;
+}
 
 let playTimeout = null;
 let initialHoldTimeout = null;
@@ -388,10 +475,16 @@ function replayVideo() {
 
   videoState.value = "visible";
   video.currentTime = 0;
+
+  // Clear saved state when replaying
+  clearVideoState();
+  wasStateRestored.value = false;
+
   video
     .play()
     .then(() => {
       hasStartedPlayback.value = true;
+      isPlaying.value = true;
     })
     .catch(() => {
       // If playback fails, restore final overlay so the user keeps controls
@@ -411,7 +504,13 @@ function schedulePlay(delay = 500) {
 }
 
 function handleEnter() {
-  if (!showFinalOverlay.value) {
+  // Don't auto-play if we just restored state
+  if (wasStateRestored.value) {
+    wasStateRestored.value = false;
+    return;
+  }
+
+  if (!showFinalOverlay.value && !hasStartedPlayback.value) {
     videoState.value = "visible";
     schedulePlay();
   }
@@ -461,10 +560,42 @@ function restartVideo() {
   if (!video) return;
 
   video.currentTime = 0;
+
+  // Clear saved state when restarting
+  clearVideoState();
+  wasStateRestored.value = false;
+
   video.play().then(() => {
     isPlaying.value = true;
   });
 }
+
+// Handle click on story link - save state before navigation
+function handleStoryLinkClick() {
+  if (hasStartedPlayback.value) {
+    saveVideoState();
+  }
+}
+
+onMounted(() => {
+  // Try to restore state only if coming from story page
+  const video = getVideoElement();
+  if (video && isComingFromStory()) {
+    // Wait for video metadata to be loaded
+    video.addEventListener(
+      "loadedmetadata",
+      () => {
+        restoreVideoState();
+      },
+      { once: true }
+    );
+
+    // If metadata is already loaded
+    if (video.readyState >= 1) {
+      restoreVideoState();
+    }
+  }
+});
 
 onUnmounted(() => {
   const video = getVideoElement();
@@ -482,6 +613,7 @@ onUnmounted(() => {
 defineExpose({
   handleEnter,
   handleLeave,
+  handleStoryLinkClick, // Expose for external navigation clicks
 });
 </script>
 

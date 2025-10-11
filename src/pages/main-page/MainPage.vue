@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import VueScrollSnap from "vue-scroll-snap";
 import Intro from "./intro/Intro.vue";
 import CaseItem from "./cases/CaseItem.vue";
@@ -124,6 +124,18 @@ watch(
 function handleNavAnimationComplete() {
   introVisible.value = true;
 }
+
+// Clear video states if not coming from story page
+onMounted(() => {
+  const cameFromStory = route.meta?.skipNavIntro;
+  if (!cameFromStory) {
+    // Clear all video states if not returning from story
+    casesData.forEach((caseData) => {
+      const key = `video-state-${caseData.videoSrc}`;
+      sessionStorage.removeItem(key);
+    });
+  }
+});
 </script>
 
 <style scoped>
