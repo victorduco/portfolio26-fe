@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Vue 3 portfolio project with advanced visual effects (glass-effect, distortion, animations) and comprehensive performance testing infrastructure. The app features a keypad unlock mechanism leading to a main page with interactive rectangles and case studies.
+Vue 3 portfolio project featuring a keypad unlock mechanism, glass-effect visual components, and animated case study presentations. Built with Vite and uses advanced visual effects including distortion, glass morphism, and smooth animations via motion-v.
 
 ## Development Commands
 
@@ -14,70 +14,14 @@ npm run dev                          # Start dev server (http://localhost:5173)
 npm run build                        # Production build
 npm run preview                      # Preview production build
 
-# Performance Testing (IMPORTANT)
-npm run test:perf -- --comment="Description"                    # Resize performance test
-npm run test:perf:headless -- --comment="Description"           # Resize test (headless)
-npm run test:interaction -- --comment="Description"             # UI interaction test
-npm run test:interaction:headless -- --comment="Description"    # Interaction test (headless)
-npm run test:perf -- --cpu=4 --comment="Mid-range device"       # With CPU throttling
-npm run test:interaction -- --browser=webkit --comment="Safari" # Different browser
-npm run test:compare                                            # Compare last two tests
-npm run test:compare:json                                       # Compare with JSON output
+# Testing (Playwright E2E)
+npm run test:e2e                     # Run E2E tests (headless)
+npm run test:e2e:headed              # Run E2E tests (visible browser)
 
-# E2E Testing
-npm run test:e2e                     # Playwright tests (headless)
-npm run test:e2e:headed              # Playwright tests (visible browser)
-```
-
-## Critical Performance Rules
-
-### GeBackground Component - MAIN PERFORMANCE BOTTLENECK
-
-**Location:** `src/components/glass-effect/GeBackground.vue`
-
-**CRITICAL:** The resize listener MUST remain disabled (lines 76-84):
-```javascript
-// PERFORMANCE: resize listener DISABLED
-// Causes 4x slowdown and +468% performance degradation
-// window.addEventListener("resize", handleResize, { passive: true });
-```
-
-**Why:**
-- Uses `toPng` from `html-to-image` (~50-200ms per call)
-- With resize listener: 10.85s total, 467ms avg resize, +468% degradation ❌
-- Without resize listener: 2.61s total, 74ms avg resize, no degradation ✅
-
-**Only regenerates on:**
-- Component mount
-- `watchData` changes (e.g., Keypad digit input)
-
-If resize support is needed, add debounce (300-500ms minimum).
-
-### Performance Testing Workflow
-
-**Before making changes:**
-```bash
-npm run test:perf -- --comment="Baseline before changes"
-```
-
-**After changes:**
-```bash
-npm run test:perf -- --comment="After optimization"
-npm run test:compare
-```
-
-**Performance targets:**
-- ✅ Good: <100ms avg resize, >30 FPS, <20% degradation
-- ⚠️ Warning: 100-500ms, 15-30 FPS, 20-100% degradation
-- 🚨 Critical: >500ms, <15 FPS, >100% degradation
-
-### CPU Throttling for Device Testing
-
-```bash
---cpu=1  # No throttling (powerful desktop) - default
---cpu=4  # Mid-range laptop - use for PR validation
---cpu=6  # Low-end device - test for broad audience
---cpu=8  # Very weak device/old mobile
+# Documentation
+npm run docs:dev                     # Start VitePress docs dev server
+npm run docs:build                   # Build documentation
+npm run docs:preview                 # Preview built documentation
 ```
 
 ## Architecture
@@ -86,158 +30,146 @@ npm run test:compare
 
 ```
 App.vue (Main entry)
-├── Keypad (unlock screen, 4 digits required)
-│   ├── KeypadButton (10 buttons with glass-effect + directives)
-│   └── GeBackground (CRITICAL: generates PNG background)
+├── Keypad (unlock screen, requires code "8651")
+│   ├── KeypadButton (10 buttons with glass-effect)
+│   ├── GeBackground (generates PNG background from DOM)
+│   └── Motion animations (background digits + grid)
 │
 └── RouterView (after unlock)
-    └── MainPage
-        ├── Intro (hero + 4 interactive rectangles)
-        ├── Cases (Case1, Case2, Case3)
-        ├── Values
+    └── MainPage (scroll-snap sections)
+        ├── Intro (hero with 4 interactive rectangles)
+        ├── CaseItem (3 case studies with videos)
+        ├── AI Play (placeholder)
         └── Contacts
 ```
 
-### Key Directives (Applied to Interactive Elements)
+### Key Pages
 
-**`v-mask-element`** (`src/directives/mask-element/maskElement.js`)
-- Uses **ResizeObserver** - DO NOT DISABLE (critical for glass-effect)
-- Syncs background positioning via `syncBackground.js`
-- Uses `layoutBatcher.js` to batch DOM reads/writes (prevents layout thrashing)
+- **MainPage** (`src/pages/main-page/MainPage.vue`): Uses `vue-scroll-snap` for fullscreen snap sections. Manages navigation intro animations and scroll position restoration when returning from case pages.
 
-**`v-hover-distortion`** (`src/directives/hover-distortion/hoverDistortion.js`)
-- Applies transform distortion on hover
-- Has resize listener (minimal performance impact)
-- Used on KeypadButton components
+- **CasePage** (`src/pages/case-page/CasePage.vue`): Individual case study pages with Task/Process/Results structure. Receives `caseId` prop for content selection.
 
 ### Glass Effect System
 
-**Core components:**
-- `GlassEffect.vue` - Main wrapper component
-- `GeFilter.vue` - SVG filter orchestrator with ResizeObserver
-- Individual filters: `GeNoise`, `GeLight`, `GeHighlight`, etc.
+**Core Components:**
+- `GlassEffect.vue` - Main wrapper combining displacement + highlight effects
+- `GeBackground.vue` - Converts DOM to PNG background using `html-to-image`
+- `GeDisplacement.vue` - SVG displacement map effects
+- `GeHighlight.vue` - Light/reflection highlights
 
-**Performance characteristics:**
-- Uses SVG filters (feGaussianBlur, feDisplacementMap, etc.)
-- Has resize listener + ResizeObserver in GeFilter
-- Applied to every KeypadButton (10 instances)
+**Performance Note:** GeBackground uses `toPng()` which is CPU-intensive (~50-200ms). Component only regenerates on mount or when `watchData` changes (e.g., keypad digits). Disabled on mobile devices for performance.
 
-### Layout Batching Optimization
+### Custom Directives
 
-**Location:** `src/directives/mask-element/layoutBatcher.js`
+**`v-mask-element`** (`src/directives/mask-element/maskElement.js`)
+- Creates inner element for background masking
+- Uses ResizeObserver to sync background positioning
+- Uses `layoutBatcher.js` to prevent layout thrashing
 
-Batches all DOM read/write operations in a single requestAnimationFrame:
-1. **Read phase:** Collect all getBoundingClientRect calls
-2. **Write phase:** Apply all style changes
-3. **Result:** Prevents layout thrashing, reduces reflows
+**`v-hover-distortion`** (`src/directives/hover-distortion/hoverDistortion.js`)
+- Applies 3D distortion transform on hover
+- Manages CSS variables for light/parallax/rotation effects
+- Has window resize listener for rect cache updates
+- Can be disabled by passing `null` or `false` as value
 
-Used by `v-mask-element` directive on every interactive element.
+### Layout Optimization
 
-## Testing Infrastructure
+**`layoutBatcher.js`** (`src/directives/mask-element/layoutBatcher.js`)
+- Singleton pattern preventing layout thrashing
+- Batches all DOM reads in one phase, writes in another
+- Uses single requestAnimationFrame for all scheduled tasks
+- Critical for performance with multiple interactive elements
 
-### Two Test Scenarios
+### Routing & Navigation
 
-**1. Resize Performance Test** (`tests/e2e/scenarios/resize-performance.js`)
-- 20 random viewport resizes
-- Measures: time, FPS, memory, degradation
-- Detects performance regression over time
+**Router** (`src/router/index.js`)
+- Routes: `/` (MainPage), `/story/one`, `/story/two`, `/story/three`
+- Preserves scroll position when navigating from home to case and back
+- Sets meta flags (`skipNavIntro`, `restoreScrollTop`) for animation control
 
-**2. Interaction Performance Test** (`tests/e2e/scenarios/interaction-performance.js`)
-- Hardcore stress test with 6 interaction patterns:
-  - Sequential hovers
-  - Activate all
-  - Zigzag hovers (stress test)
-  - Deactivate reverse
-  - Rapid toggle
-  - Random hovers
-- 150+ interactions per test run
-- Uses keypad code: 1515 (4 digits required for unlock)
-- Scroll is locked to prevent viewport issues
-- Supports multiple browsers via `--browser` flag
+**PageNavigation** (`src/components/page-navigation/PageNavigation.vue`)
+- Animated navigation with motion-v variants
+- Skips intro animation when returning from case pages
+- Emits `animation-complete` to trigger content visibility
 
-### Browser Support
+### Animation Library
 
-```bash
---browser=chromium  # Default (best for consistent results)
---browser=webkit    # Safari engine (slower, may need increased timeouts)
---browser=firefox   # Firefox engine
+Uses **motion-v** (Vue wrapper for Framer Motion):
+- `<Motion>` component with `:variants`, `:animate`, `:transition` props
+- Variants defined in separate files (e.g., `variants.js`, `keypadVariants.js`)
+- Spring and timing-based transitions
+
+Example usage in `IntroRectangle.vue`, `Keypad.vue`, `PageNavigation.vue`.
+
+## Key Composables
+
+**`useMediaQuery.js`** - Reactive media query composable
+- `useIsMobile()` - Detects screens < 768px
+- `useHasHover()` - Detects hover capability
+- `useIsTouchDevice()` - Detects touch devices
+
+**`useMeta.js`** - Dynamic meta tags management for SEO
+
+## Project Structure
+
+```
+src/
+├── assets/              # Static assets (videos, displacement maps)
+├── components/
+│   ├── app-footer/      # Footer component
+│   ├── glass-effect/    # Glass effect system components
+│   ├── glass-debugger/  # Dev tools for glass effects
+│   ├── keypad/          # Unlock keypad components
+│   ├── page-navigation/ # Section navigation
+│   └── common/          # Shared components
+├── composables/         # Vue composables (media queries, meta)
+├── directives/          # Custom Vue directives
+│   ├── mask-element/    # Background masking + batching
+│   ├── hover-distortion/# 3D hover effects
+│   └── backdrop-filter/ # Backdrop filter utilities
+├── pages/               # Route pages
+│   ├── main-page/       # Home page with sections
+│   ├── case-page/       # Case study wrapper
+│   ├── case1-page/      # Case 1 content
+│   ├── case2-page/      # Case 2 content
+│   └── case3-page/      # Case 3 content
+├── router/              # Vue Router config
+├── config/              # App configuration
+└── styles/              # Global styles
 ```
 
-**Note:** WebKit must be installed: `npx playwright install webkit`
+## Important Implementation Details
 
-### Test Results Location
+### Keypad Unlock Code
 
-All results saved to `tests/e2e/results/`:
-- `resize-performance-*.json` - Raw performance data
-- `resize-performance-analysis-*.json` - Analyzed metrics
-- `interaction-performance-*.json` - Interaction test data
+The correct unlock code is **8651** (hardcoded in [Keypad.vue:142](src/components/keypad/Keypad.vue#L142)). Code requires exactly 4 digits.
 
-### Known Performance Baselines
+### Scroll Behavior
 
-From extensive testing (see `.clinerules`):
-- **SVG + resize listener:** 10.85s, 467ms avg, +468% degradation ❌
-- **PNG + resize listener:** 5.17s, 187ms avg, +501% degradation ⚠️
-- **PNG without resize:** 2.61s, 74ms avg, no degradation ✅
+- MainPage uses custom scroll position tracking in router
+- Scroll container selector: `.scroll-snap-container.fullscreen`
+- Preserves position via `scrollPositions` Map in router
 
-## Performance Debugging Process
+### Path Aliases
 
-When degradation is detected:
+Uses `@` alias pointing to `src/` directory (configured in [vite.config.js:12](vite.config.js#L12)).
 
-1. **Check GeBackground first** (most common culprit)
-   - Verify resize listener is disabled in `GeBackground.vue`
-   - Confirm using `toPng` not `toSvg`
+### Mobile Optimizations
 
-2. **Identify components with resize/ResizeObserver:**
-   ```bash
-   grep -r "addEventListener.*resize" src/ --include="*.vue" --include="*.js"
-   grep -r "ResizeObserver" src/ --include="*.vue" --include="*.js"
-   ```
-
-3. **Systematic component elimination:**
-   - Comment out suspected component
-   - Run `npm run test:perf -- --comment="Without ComponentName"`
-   - Compare: `npm run test:compare`
-   - Repeat until degradation disappears
-
-4. **Check these hot spots:**
-   - `src/components/glass-effect/GeBackground.vue` - resize listener
-   - `src/components/glass-effect/GeFilter.vue` - SVG filters + ResizeObserver
-   - `src/directives/mask-element/maskElement.js` - ResizeObserver (don't disable!)
-   - `src/directives/hover-distortion/hoverDistortion.js` - resize listener
-
-## Important File Locations
-
-**Performance-critical files:**
-- `src/components/glass-effect/GeBackground.vue` - Main bottleneck when resize enabled
-- `src/directives/mask-element/layoutBatcher.js` - Prevents layout thrashing
-- `src/directives/mask-element/syncBackground.js` - Background sync logic
-- `src/components/glass-effect/GeFilter.vue` - SVG filter system
-
-**Test infrastructure:**
-- `tests/e2e/run.js` - Test runner entry point
-- `tests/e2e/compare.js` - Results comparison tool
-- `tests/e2e/helpers/performance.js` - FPS/memory tracking
-- `tests/e2e/helpers/analyzer.js` - Degradation detection
-
-**Configuration:**
-- `.clinerules` - Performance testing rules and known baselines
-- `tests/e2e/README.md` - Comprehensive testing documentation
-
-## Motion-v Animation Library
-
-This project uses `motion-v` for Vue 3 animations. Components use:
-- `<motion.div>` - Animated HTML elements
-- `:variants` - Animation state definitions
-- `:animate` - Current animation state
-- `:transition` - Spring/timing configs
-
-See `IntroRectangle.vue` for reference implementation.
+- GeBackground disabled on mobile (performance)
+- Responsive layouts via `useMediaQuery` composables
+- Different grid layouts for keypad background digits (2x2 grid on mobile, horizontal on desktop)
 
 ## Common Gotchas
 
-1. **Keypad requires 4 digits** - Tests use code "1515" (4 clicks to unlock)
-2. **Viewport matters** - Tests use 1280x800 for consistent coordinates
-3. **WebKit is slower** - May need increased timeouts vs Chromium
-4. **ResizeObserver in v-mask-element** - Never disable, critical for glass-effect
-5. **Scroll blocking in tests** - Interaction test disables scroll to prevent viewport issues
-6. **Headless mode** - Use `:headless` suffix or `--headless` flag for faster CI testing
+1. **GeBackground Performance** - Avoid adding resize listeners. Only regenerates on mount or `watchData` changes.
+
+2. **ResizeObserver in v-mask-element** - Required for glass-effect, do not remove.
+
+3. **Layout Batching** - When adding new interactive elements with background sync, use `layoutBatcher` to prevent performance issues.
+
+4. **motion-v Syntax** - Uses kebab-case props (`:animate`, `:variants`) not PascalCase.
+
+5. **Scroll Container** - MainPage uses VueScrollSnap which creates `.scroll-snap-container.fullscreen` element, affecting scroll position logic.
+
+6. **Keypad Digits** - Background digit layout changes based on screen size (grid vs horizontal flex).
