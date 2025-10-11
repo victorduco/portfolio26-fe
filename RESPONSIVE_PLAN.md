@@ -4,17 +4,89 @@
 
 ---
 
-## 0. Контекст и ограничения
+## Прогресс
 
-### Текущее состояние
-- ✅ Typography частично использует `clamp()` ([typography.css](src/styles/typography.css))
-- ✅ Некоторые компоненты имеют единичные `@media (max-width: 768px)` query
-- ❌ Нет системы токенов (spacing, containers, gutters)
-- ❌ Нет utilities.css
-- ❌ 16 файлов используют `100vw/100vh` → риск горизонтального скролла
-- ❌ Фиксированные `px` значения во всех компонентах (Keypad: 110px, gap: 80px; Intro: 120px, gap: 80px)
+### ✅ Выполнено
+- **Keypad** — адаптирован для mobile/landscape (добавлен `useIsLandscape()` composable)
 
-### Критические ограничения (НЕ ТРОГАТЬ)
+---
+
+## Важные заметки для будущих работ
+
+### Из опыта работы с Keypad:
+1. **Viewport units на mobile:**
+   - Всегда использовать `100dvh` вместо `100vh` для fullscreen контейнеров
+   - Добавлять `touch-action: none` если нужно полностью запретить скролл
+   - Фиксировать min/max высоту для предотвращения overflow
+
+2. **Position для overlay элементов:**
+   - Clear button и подобные элементы лучше делать `position: fixed` вместо `absolute`
+   - Всегда добавлять высокий `z-index` (20+) для overlay элементов
+   - Использовать `env(safe-area-inset-bottom)` для iOS
+
+3. **Backdrop-filter на iOS Safari:**
+   - Hardware acceleration добавлен в `backdrop-filter directive` ([backdropFilter.css](src/directives/backdrop-filter/backdropFilter.css))
+   - Известная проблема: черный фон до первого скролла (частично решена)
+   - Возможно понадобится fallback `background-color` для критичных элементов
+
+4. **Landscape режим:**
+   - `useIsLandscape()` composable доступен в `useMediaQuery.js`
+   - В landscape нужно отключать тяжелые эффекты (GeBackground, hover-distortion, glass-effect)
+   - Размеры элементов должны базироваться на `vh` вместо `vw` в landscape
+   - Media query: `@media (orientation: landscape) and (max-height: 700px)`
+
+5. **Размеры для разных экранов:**
+   - Использовать `clamp()` с viewport units: `clamp(min-mobile, responsive, max-desktop)`
+   - Пример: `clamp(50px, 11vh, 90px)` — работает на всех размерах
+   - В landscape предпочитать `vh` для sizing вместо `vw`
+
+### Паттерны для применения в других компонентах:
+
+```css
+/* Fullscreen контейнер (как в Keypad) */
+.container {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  touch-action: none; /* если нужен запрет скролла */
+}
+
+/* Overlay элементы (как Clear button) */
+.overlay-button {
+  position: fixed;
+  bottom: max(32px, calc(env(safe-area-inset-bottom) + 16px));
+  z-index: 100;
+}
+
+/* Адаптивные размеры */
+.element {
+  width: clamp(72px, 18vw, 110px);
+  gap: clamp(8px, 2vh, 20px);
+}
+
+/* Landscape адаптация */
+@media (orientation: landscape) and (max-height: 700px) {
+  .element {
+    width: clamp(50px, 11vh, 90px); /* vh вместо vw */
+    gap: clamp(8px, 2vh, 16px);
+  }
+}
+```
+
+### Composables:
+- `useIsMobile()` — определяет `(max-width: 767px)`
+- `useIsLandscape()` — определяет `(orientation: landscape)`
+- `useHasHover()` — определяет `(hover: hover)`
+- `useIsTouchDevice()` — определяет `(pointer: coarse)`
+
+Использовать для условного рендеринга тяжелых компонентов и эффектов.
+
+---
+
+## Критические ограничения (НЕ ТРОГАТЬ)
 - **[GeBackground.vue:76-84](src/components/glass-effect/GeBackground.vue)** — resize listener ВЫКЛЮЧЕН (деградация +468%)
 - **[maskElement.js](src/directives/mask-element/maskElement.js)** — ResizeObserver критичен для glass-effect
 - **Performance testing** — обязателен после каждой фазы (`npm run test:perf`, `npm run test:compare`)
@@ -26,7 +98,19 @@
 
 ---
 
-## 1. Пайплайн работы
+## Оставшиеся фазы
+
+### Фаза 1: Foundation (токены, utilities)
+### Фаза 3: Intro Section
+### Фаза 4: Navigation
+### Фаза 5: Cases Section
+### Фаза 6: Case Pages
+### Фаза 7: Final Polish
+### Фаза 8: Testing & Documentation
+
+---
+
+## Пайплайн работы
 
 **Для каждой фазы:**
 ```bash
