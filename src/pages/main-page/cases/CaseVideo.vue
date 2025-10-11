@@ -149,9 +149,11 @@
       :initial="false"
     >
       <div class="case-video-final-content">
-        <h2 class="case-video-final-title">Dive Deeper into the Design Process</h2>
-        <RouterLink 
-          class="case-video-final-link" 
+        <h2 class="case-video-final-title">
+          Dive Deeper into the Design Process
+        </h2>
+        <RouterLink
+          class="case-video-final-link"
           :to="finalLink"
           @mouseenter="linkHovered = true"
           @mouseleave="linkHovered = false"
@@ -162,9 +164,7 @@
             :variants="diamondVariants"
             :transition="diamondTransition"
           />
-          <span class="case-video-final-link-text">
-            Open Story
-          </span>
+          <span class="case-video-final-link-text"> Open Story </span>
         </RouterLink>
       </div>
 

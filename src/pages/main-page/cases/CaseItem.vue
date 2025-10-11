@@ -14,11 +14,7 @@
       />
     </div>
     <div class="video-wrapper">
-      <CaseVideo
-        ref="caseVideo"
-        :src="videoSrc"
-        :final-link="routeTo"
-      />
+      <CaseVideo ref="caseVideo" :src="videoSrc" :final-link="routeTo" />
     </div>
   </div>
 </template>
