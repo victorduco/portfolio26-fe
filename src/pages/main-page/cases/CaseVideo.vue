@@ -141,31 +141,6 @@
     </motion.div>
 
     <motion.div
-      v-if="showInitialOverlay"
-      class="case-video-initial"
-      :animate="initialOverlayState"
-      :variants="overlayVariants"
-      :transition="overlayTransition"
-      :initial="false"
-      aria-hidden="true"
-    >
-      <svg
-        class="case-video-initial-icon"
-        viewBox="0 0 80 80"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="4" />
-        <path
-          d="M34 28L54 40L34 52V28Z"
-          fill="currentColor"
-          stroke="currentColor"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </motion.div>
-
-    <motion.div
       v-if="showFinalOverlay"
       class="case-video-final"
       :animate="finalOverlayState"
@@ -173,10 +148,25 @@
       :transition="overlayTransition"
       :initial="false"
     >
-      <p class="case-video-final-text">{{ finalText }}</p>
-      <RouterLink class="case-video-final-link" :to="finalLink">
-        View case
-      </RouterLink>
+      <div class="case-video-final-content">
+        <h2 class="case-video-final-title">Dive Deeper into the Design Process</h2>
+        <RouterLink 
+          class="case-video-final-link" 
+          :to="finalLink"
+          @mouseenter="linkHovered = true"
+          @mouseleave="linkHovered = false"
+        >
+          <motion.div
+            class="case-video-final-diamond"
+            :animate="linkHovered ? 'hover' : 'default'"
+            :variants="diamondVariants"
+            :transition="diamondTransition"
+          />
+          <span class="case-video-final-link-text">
+            Open Story
+          </span>
+        </RouterLink>
+      </div>
 
       <!-- Restart button positioned like during playback -->
       <div class="case-video-final-controls">
@@ -221,10 +211,6 @@ defineProps({
     type: String,
     required: true,
   },
-  finalText: {
-    type: String,
-    required: true,
-  },
   finalLink: {
     type: String,
     required: true,
@@ -232,13 +218,10 @@ defineProps({
 });
 
 const videoElement = ref(null);
-const showInitialOverlay = ref(false);
 const showFinalOverlay = ref(false);
-const initialOverlayState = ref("hidden");
 const finalOverlayState = ref("hidden");
 const videoState = ref("hidden");
 const hasStartedPlayback = ref(false);
-const initialSequenceRunning = ref(false);
 const isHovering = ref(false);
 const isPlaying = ref(false);
 const isMuted = ref(false);
@@ -246,6 +229,7 @@ const muteHovered = ref(false);
 const playHovered = ref(false);
 const restartHovered = ref(false);
 const finalRestartHovered = ref(false);
+const linkHovered = ref(false);
 
 let playTimeout = null;
 let initialHoldTimeout = null;
@@ -322,6 +306,24 @@ const iconTransition = {
   mass: 1.2,
 };
 
+const diamondVariants = {
+  default: {
+    rotate: 45,
+    backgroundColor: "#979797",
+  },
+  hover: {
+    rotate: 0,
+    backgroundColor: "#979797",
+  },
+};
+
+const diamondTransition = {
+  type: "spring",
+  stiffness: 320,
+  damping: 11,
+  mass: 1.2,
+};
+
 function clearInitialTimers() {
   if (initialHoldTimeout) {
     clearTimeout(initialHoldTimeout);
@@ -340,45 +342,6 @@ function clearFinalTimers() {
   }
 }
 
-function startInitialSequence() {
-  if (initialSequenceRunning.value || hasStartedPlayback.value) return;
-
-  if (playTimeout) {
-    clearTimeout(playTimeout);
-    playTimeout = null;
-  }
-
-  initialSequenceRunning.value = true;
-  showInitialOverlay.value = true;
-  initialOverlayState.value = "visible";
-  videoState.value = "hidden";
-
-  initialHoldTimeout = setTimeout(() => {
-    initialOverlayState.value = "hidden";
-    videoState.value = "visible";
-    if (!hasStartedPlayback.value) {
-      schedulePlay(500);
-    }
-  }, 1000);
-
-  initialCleanupTimeout = setTimeout(() => {
-    showInitialOverlay.value = false;
-    initialSequenceRunning.value = false;
-    if (!hasStartedPlayback.value) {
-      schedulePlay(0);
-    }
-  }, 1500);
-}
-
-function resetInitialSequence() {
-  if (hasStartedPlayback.value) return;
-  clearInitialTimers();
-  initialSequenceRunning.value = false;
-  showInitialOverlay.value = false;
-  initialOverlayState.value = "hidden";
-  videoState.value = "hidden";
-}
-
 function attemptPlay() {
   const video = getVideoElement();
   if (!video || showFinalOverlay.value) return;
@@ -391,9 +354,7 @@ function attemptPlay() {
     .then(() => {
       hasStartedPlayback.value = true;
       isPlaying.value = true;
-      if (!initialSequenceRunning.value) {
-        videoState.value = "visible";
-      }
+      videoState.value = "visible";
     })
     .catch(() => {
       /* Ignore autoplay rejections */
@@ -445,9 +406,7 @@ function schedulePlay(delay = 500) {
 }
 
 function handleEnter() {
-  if (!hasStartedPlayback.value) {
-    startInitialSequence();
-  } else if (!showFinalOverlay.value) {
+  if (!showFinalOverlay.value) {
     videoState.value = "visible";
     schedulePlay();
   }
@@ -465,9 +424,7 @@ function handleLeave() {
     isPlaying.value = false;
   }
 
-  if (!hasStartedPlayback.value) {
-    resetInitialSequence();
-  } else if (!showFinalOverlay.value) {
+  if (!showFinalOverlay.value) {
     videoState.value = "hidden";
   }
 }
@@ -545,7 +502,6 @@ defineExpose({
   z-index: 1;
 }
 
-.case-video-initial,
 .case-video-final {
   position: absolute;
   inset: 0;
@@ -557,43 +513,58 @@ defineExpose({
   gap: clamp(12px, 2vw, 20px);
   border-radius: inherit;
   z-index: 2;
-  pointer-events: none;
-}
-
-.case-video-initial {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.case-video-initial-icon {
-  width: clamp(48px, 8vw, 72px);
-  height: clamp(48px, 8vw, 72px);
-}
-
-.case-video-final {
   background: #ffffff;
   color: #171717;
-  align-items: flex-start;
   pointer-events: auto;
 }
 
-.case-video-final-text {
+.case-video-final-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  max-width: 80%;
+}
+
+.case-video-final-title {
   margin: 0;
-  font-size: clamp(18px, 2.2vw, 24px);
-  font-weight: 500;
-  line-height: 1.3;
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #333333;
 }
 
 .case-video-final-link {
-  font-size: clamp(14px, 1.8vw, 16px);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
   font-weight: 500;
-  color: #171717;
+  font-size: 20px;
+  line-height: 19px;
+  color: #333333;
   text-decoration: none;
-  border-bottom: 1px solid rgba(23, 23, 23, 0.25);
+  transition: color 0.2s ease, font-size 0.2s ease;
 }
 
 .case-video-final-link:hover {
-  border-bottom-color: rgba(23, 23, 23, 0.5);
+  color: #000000;
+  font-size: 20px;
+}
+
+.case-video-final-link-text {
+  display: inline;
+  transition: inherit;
+}
+
+.case-video-final-diamond {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
 }
 
 .case-video-final-controls {

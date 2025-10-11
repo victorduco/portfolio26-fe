@@ -24,7 +24,6 @@
           :subtitle="caseData.subtitle"
           :video-src="caseData.videoSrc"
           :route-to="caseData.routeTo"
-          :final-text="caseData.finalText"
         />
       </section>
       <section id="ai-play" class="item">
@@ -55,7 +54,6 @@ const casesData = [
     subtitle: "Apple",
     videoSrc: new URL("@/assets/case-videos/case1.mp4", import.meta.url).href,
     routeTo: "/story/one",
-    finalText: "Explore the full Cross-Domain AI case study.",
   },
   {
     id: "case2",
@@ -63,7 +61,6 @@ const casesData = [
     subtitle: "Client Two",
     videoSrc: new URL("@/assets/case-videos/case2.mp4", import.meta.url).href,
     routeTo: "/story/two",
-    finalText: "Dive into the second story and see the full solution.",
   },
   {
     id: "case3",
@@ -71,7 +68,6 @@ const casesData = [
     subtitle: "Client Three",
     videoSrc: new URL("@/assets/case-videos/case3.mp4", import.meta.url).href,
     routeTo: "/story/three",
-    finalText: "Read how we delivered results for Story Three.",
   },
 ];
 

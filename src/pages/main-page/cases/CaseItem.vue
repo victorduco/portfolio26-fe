@@ -17,7 +17,6 @@
       <CaseVideo
         ref="caseVideo"
         :src="videoSrc"
-        :final-text="finalText"
         :final-link="routeTo"
       />
     </div>
@@ -43,10 +42,6 @@ defineProps({
     required: true,
   },
   routeTo: {
-    type: String,
-    required: true,
-  },
-  finalText: {
     type: String,
     required: true,
   },
