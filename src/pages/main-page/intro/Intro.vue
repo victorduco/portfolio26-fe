@@ -38,7 +38,7 @@
           aria-hidden="true"
           class="intro-scroll-hint-icon"
         />
-        <span class="intro-scroll-hint-text">Scroll to Story 1</span>
+        <span class="intro-scroll-hint-text">Scroll to Story One</span>
       </span>
     </Motion>
   </section>
