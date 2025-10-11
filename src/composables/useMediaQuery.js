@@ -84,3 +84,13 @@ export function useIsTouchDevice() {
 export function useIsLandscape() {
   return useMediaQuery('(orientation: landscape)');
 }
+
+/**
+ * Detects mobile devices in landscape orientation
+ * Used for performance optimization - disables heavy effects on small landscape screens
+ *
+ * @returns {Ref<boolean>} - true if landscape orientation with height < 700px
+ */
+export function useIsLandscapeMobile() {
+  return useMediaQuery('(orientation: landscape) and (max-height: 700px)');
+}

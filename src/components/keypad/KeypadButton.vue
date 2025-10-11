@@ -1,6 +1,6 @@
 <template>
   <div
-    v-hover-distortion="!isMobile && !isLandscape ? 4 : null"
+    v-hover-distortion="!isMobile && !isLandscapeMobile ? 4 : null"
     class="keypad-button-hover-wrapper"
     @mousedown="currentState = 'pressed'"
     @mouseup="currentState = isHovered ? 'hover' : 'default'"
@@ -10,7 +10,7 @@
   >
     <!-- Desktop portrait: mask-element + GlassEffect -->
     <div
-      v-if="!isMobile && !isLandscape"
+      v-if="!isMobile && !isLandscapeMobile"
       class="keypad-button-wrapper"
       v-mask-element="'#171717'"
     >
@@ -55,7 +55,7 @@ import { motion } from "motion-v";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
 import { glassEffectConfig } from "./glassEffectConfig.js";
-import { useIsMobile, useIsLandscape } from "../../composables/useMediaQuery.js";
+import { useIsMobile, useIsLandscapeMobile } from "../../composables/useMediaQuery.js";
 
 defineProps({
   value: {
@@ -67,7 +67,7 @@ defineProps({
 const emit = defineEmits(["click"]);
 
 const isMobile = useIsMobile();
-const isLandscape = useIsLandscape();
+const isLandscapeMobile = useIsLandscapeMobile();
 
 // Backdrop filter options for mobile (same as IntroRectangle)
 const backdropFilterOptions = {
