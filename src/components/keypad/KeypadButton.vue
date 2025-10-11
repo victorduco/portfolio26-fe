@@ -112,7 +112,6 @@ function handleMouseLeave() {
   overflow: hidden;
   transform: rotate(45deg);
   border: 1px solid #ffffff09;
-  background-color: rgba(23, 23, 23, 0.3);
 }
 
 .keypad-button-glass {
