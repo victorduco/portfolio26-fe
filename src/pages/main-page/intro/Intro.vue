@@ -23,6 +23,24 @@
         else to write here.
       </Motion>
     </div>
+    <Motion
+      tag="div"
+      class="intro-scroll-hint"
+      :variants="scrollHintVariants"
+      :animate="scrollHintState"
+      :transition="scrollHintTransition"
+      :initial="'hidden'"
+    >
+      <span class="intro-scroll-hint-content">
+        <img
+          :src="storyNavIcon"
+          alt=""
+          aria-hidden="true"
+          class="intro-scroll-hint-icon"
+        />
+        <span class="intro-scroll-hint-text">Scroll to Story 1</span>
+      </span>
+    </Motion>
   </section>
 
   <Motion
@@ -49,6 +67,7 @@
 import { ref, watch, onMounted, onUnmounted } from "vue";
 import { Motion } from "motion-v";
 import IntroRectangle from "./IntroRectangle.vue";
+import storyNavIcon from "@/assets/icons/headphones.svg";
 
 const props = defineProps({
   introVisible: {
@@ -66,6 +85,7 @@ const titleState = ref("hidden");
 const subtitleState = ref("hidden");
 const rectanglesState = ref("hidden");
 const showRectangles = ref(false);
+const scrollHintState = ref("hidden");
 
 // Shared animation variants
 const sharedVariants = {
@@ -76,6 +96,7 @@ const sharedVariants = {
 const titleVariants = sharedVariants;
 const subtitleVariants = sharedVariants;
 const rectanglesVariants = sharedVariants;
+const scrollHintVariants = sharedVariants;
 
 // Shared transition base config
 const baseTransition = {
@@ -99,6 +120,11 @@ const rectanglesTransition = {
   duration: 0.4,
 };
 
+const scrollHintTransition = {
+  ...baseTransition,
+  duration: 0.4,
+};
+
 // Последовательная анимация при появлении intro
 watch(
   () => props.introVisible,
@@ -109,6 +135,7 @@ watch(
       subtitleState.value = "hidden";
       rectanglesState.value = "hidden";
       showRectangles.value = false;
+      scrollHintState.value = "hidden";
       return;
     }
 
@@ -123,6 +150,9 @@ watch(
     // 3. Квадратики
     rectanglesState.value = "visible";
     showRectangles.value = true;
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    scrollHintState.value = "visible";
   },
   { immediate: true }
 );
@@ -223,14 +253,37 @@ onUnmounted(() => {
   z-index: 5;
 }
 
-@media (max-width: 768px) {
-  .intro-hero {
-    min-height: auto;
-    padding-block: clamp(40px, 12vh, 72px);
-    padding-inline-start: clamp(24px, 16vw, 72px);
-    padding-inline-end: clamp(16px, 8vw, 48px);
-  }
+.intro-scroll-hint {
+  position: absolute;
+  bottom: max(32px, calc(env(safe-area-inset-bottom) + 16px));
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
 
+.intro-scroll-hint-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.intro-scroll-hint-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  pointer-events: none;
+  opacity: 0.67;
+}
+
+@media (min-width: 900px) {
   .intro-list {
     /* Adjust fallback calculation for mobile padding */
     top: calc(50vh + 50px + clamp(40px, 12vh, 72px));

@@ -10,6 +10,7 @@
       :intro-green="introGreenIndex === index"
       :intro-fade-out="introFadeOutIndex === index"
       :intro-complete="introFinished"
+      :icon="section.icon"
       @navigate="handleNavigate"
     />
   </nav>

@@ -6,7 +6,11 @@
       @animation-complete="handleNavAnimationComplete"
     />
     <VueScrollSnap :fullscreen="true">
-      <section id="intro" class="item" :class="{ 'intro-visible': introVisible }">
+      <section
+        id="intro"
+        class="item"
+        :class="{ 'intro-visible': introVisible }"
+      >
         <Intro :intro-visible="introVisible" />
       </section>
       <section
@@ -39,6 +43,7 @@ import Intro from "./intro/Intro.vue";
 import CaseItem from "./cases/CaseItem.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
+import storyNavIcon from "@/assets/icons/headphones.svg";
 import { useRoute } from "vue-router";
 import { useMeta } from "../../composables/useMeta.js";
 
@@ -68,9 +73,9 @@ const casesData = [
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
-  { id: "case1", label: "Story One" },
-  { id: "case2", label: "Story Two" },
-  { id: "case3", label: "Story Three" },
+  { id: "case1", label: "Story One", icon: storyNavIcon },
+  { id: "case2", label: "Story Two", icon: storyNavIcon },
+  { id: "case3", label: "Story Three", icon: storyNavIcon },
   { id: "ai-play", label: "AI Play" },
   { id: "contacts", label: "Contact" },
 ];
@@ -92,7 +97,9 @@ watch(
       await nextTick();
       requestAnimationFrame(() => {
         if (!scrollContainerRef.value) {
-          scrollContainerRef.value = document.querySelector(".scroll-snap-container.fullscreen");
+          scrollContainerRef.value = document.querySelector(
+            ".scroll-snap-container.fullscreen"
+          );
         }
 
         const container = scrollContainerRef.value;

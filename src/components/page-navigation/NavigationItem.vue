@@ -15,7 +15,16 @@
       :transition="getLabelTransition()"
       :initial="'default'"
     >
-      {{ label }}
+      <span class="nav-item-label-content">
+        <img
+          v-if="icon"
+          :src="icon"
+          alt=""
+          aria-hidden="true"
+          class="nav-item-icon"
+        />
+        <span class="nav-item-label-text">{{ label }}</span>
+      </span>
     </motion.div>
     <motion.div
       class="nav-item"
@@ -47,6 +56,10 @@ const props = defineProps({
   label: {
     type: String,
     required: true,
+  },
+  icon: {
+    type: String,
+    default: "",
   },
   sectionId: {
     type: String,
@@ -200,5 +213,22 @@ function handleClick(event) {
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
+}
+
+.nav-item-label-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-item-label-text {
+  line-height: 1;
+}
+
+.nav-item-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  pointer-events: none;
 }
 </style>
