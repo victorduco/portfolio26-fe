@@ -1,8 +1,8 @@
 <template>
   <div class="keypad-container">
-    <!-- GeBackground disabled on mobile for performance -->
+    <!-- GeBackground disabled on mobile and landscape for performance -->
     <GeBackground
-      v-if="!isMobile"
+      v-if="!isMobile && !isLandscape"
       source-selector="keypad-bg-export"
       :watch-data="enteredDigits"
       :render-delay="0"
@@ -71,7 +71,7 @@ import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
 import GeBackground from "../glass-effect/GeBackground.vue";
 import { useMeta } from "../../composables/useMeta.js";
-import { useIsMobile } from "../../composables/useMediaQuery.js";
+import { useIsMobile, useIsLandscape } from "../../composables/useMediaQuery.js";
 import {
   keypadGridVariants,
   keypadGridTransition,
@@ -80,6 +80,7 @@ import {
 } from "./variants.js";
 
 const isMobile = useIsMobile();
+const isLandscape = useIsLandscape();
 
 useMeta("keypad");
 

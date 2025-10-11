@@ -75,3 +75,12 @@ export function useHasHover() {
 export function useIsTouchDevice() {
   return useMediaQuery('(pointer: coarse)');
 }
+
+/**
+ * Detects landscape orientation
+ *
+ * @returns {Ref<boolean>} - true if landscape orientation
+ */
+export function useIsLandscape() {
+  return useMediaQuery('(orientation: landscape)');
+}
