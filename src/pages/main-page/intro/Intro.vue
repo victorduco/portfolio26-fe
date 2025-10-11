@@ -287,7 +287,8 @@ onUnmounted(() => {
       fit-content(100px) clamp(40px, 6vw, 80px)
       fit-content(100px) clamp(40px, 6vw, 80px)
       fit-content(100px);
-    grid-template-rows: 150px 150px;
+    /* 3 rows: top content, gap, bottom content */
+    grid-template-rows: 150px clamp(40px, 6vw, 80px) 150px;
     gap: 0;
 
     left: clamp(32px, 12vw, 120px);

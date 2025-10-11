@@ -84,7 +84,7 @@ const getResponsiveSizes = () => {
 };
 
 // Helper to get grid position based on viewport and index
-const getGridPosition = (index) => {
+const getGridPosition = (index, state = 'default') => {
   const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
 
   // Mobile (<900px): 2x2 grid
@@ -96,6 +96,14 @@ const getGridPosition = (index) => {
 
   // Desktop (≥900px): 4x1 horizontal with gap columns
   const gridCol = index * 2 + 1; // 1, 3, 5, 7
+
+  // В active state используем 2 ряда с gap строкой между ними
+  if (state === 'active') {
+    const gridRow = index % 2 === 0 ? 1 : 3; // четные в строку 1, нечетные в строку 3
+    return { gridColumn: gridCol, gridRow };
+  }
+
+  // В default и hover все в одну строку
   return { gridColumn: gridCol, gridRow: 1 };
 };
 
@@ -104,7 +112,7 @@ export const boxVariants = {
   default: ({ index, additionalMargin }) => {
     const baseMargin = 0;
     const sizes = getResponsiveSizes();
-    const position = getGridPosition(index);
+    const position = getGridPosition(index, 'default');
 
     return {
       "--element-side-size": sizes.default,
@@ -122,7 +130,7 @@ export const boxVariants = {
   hover: ({ index, additionalMargin }) => {
     const baseMargin = 0;
     const sizes = getResponsiveSizes();
-    const position = getGridPosition(index);
+    const position = getGridPosition(index, 'hover');
 
     return {
       "--element-side-size": sizes.hover,
@@ -139,9 +147,12 @@ export const boxVariants = {
     };
   },
   active: ({ index, additionalMargin }) => {
-    const baseMargin = -50;
+    const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
+    // На десктопе используем 0, чтобы сохранить gap между элементами
+    // На мобиле используем отрицательный отступ для компактности
+    const baseMargin = width >= 900 ? 0 : -50;
     const sizes = getResponsiveSizes();
-    const position = getGridPosition(index);
+    const position = getGridPosition(index, 'active');
     const topOffset = index % 2 === 0 ? sizes.activeTopOffsetEven : sizes.activeTopOffsetOdd;
 
     return {
