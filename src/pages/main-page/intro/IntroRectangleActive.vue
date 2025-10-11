@@ -43,22 +43,22 @@ const props = defineProps({
 // Уникальный контент для каждого блока
 const contentData = [
   {
-    title: "Design System Architecture",
+    title: "Vision",
     description:
       "Building consistent and scalable UI components that work seamlessly across all platforms and devices",
   },
   {
-    title: "User Experience Design",
+    title: "Technology",
     description:
       "Creating intuitive and delightful interactions that help users achieve their goals with minimal friction",
   },
   {
-    title: "Performance Optimization Strategy",
+    title: "Scale",
     description:
       "Maximizing speed and efficiency through careful code analysis and modern best practices for web",
   },
   {
-    title: "Accessibility Standards Compliance",
+    title: "Connection",
     description:
       "Making digital content available and usable for everyone regardless of their abilities or disabilities",
   },

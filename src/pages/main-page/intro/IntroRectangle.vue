@@ -9,8 +9,9 @@
     :transition="boxTransition"
     initial="default"
     class="intro-square"
-    :class="{ 'is-intro-visible': introVisible }"
+    :class="{ 'is-intro-visible': introVisible, 'should-animate': shouldAnimate }"
     :data-state="isActive"
+    :style="{ opacity: shouldAnimate ? 1 : 0 }"
     v-backdrop-filter="backdropFilter"
   >
     <motion.div
@@ -74,6 +75,10 @@ const props = defineProps({
     default: false,
   },
   forceClose: {
+    type: Boolean,
+    default: false,
+  },
+  shouldAnimate: {
     type: Boolean,
     default: false,
   },
@@ -162,6 +167,7 @@ const additionalMargin = computed(() => props.activeCount * -30);
   border-radius: clamp(20px, 5vw, 28px);
   transform-origin: 50% 50%;
   border: 2px solid var(--border-color);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .intro-square::after {

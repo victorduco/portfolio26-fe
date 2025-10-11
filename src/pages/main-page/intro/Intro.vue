@@ -9,7 +9,7 @@
         :transition="titleTransition"
         :initial="'hidden'"
       >
-        Rectangles That Rules Numbers
+        Victor Diukov
       </Motion>
       <Motion
         tag="p"
@@ -19,8 +19,9 @@
         :transition="subtitleTransition"
         :initial="'hidden'"
       >
-        This is story of me and how UX can change things around us. Something
-        else to write here.
+        Currently designing for&nbsp;Apple. Bringing experience
+        from&nbsp;large&#8209;scale B2B&nbsp;&&nbsp;FinTech products
+        with&nbsp;a&nbsp;background in&nbsp;product&nbsp;management.
       </Motion>
     </div>
     <Motion
@@ -43,14 +44,7 @@
     </Motion>
   </section>
 
-  <Motion
-    tag="ul"
-    class="intro-list"
-    :variants="rectanglesVariants"
-    :animate="rectanglesState"
-    :transition="rectanglesTransition"
-    :initial="'hidden'"
-  >
+  <ul class="intro-list">
     <IntroRectangle
       v-for="(_, index) in rects"
       :key="index"
@@ -58,9 +52,10 @@
       :active-count="activeCount"
       :intro-visible="showRectangles"
       :force-close="forceCloseAll"
+      :should-animate="rectangleStates[index]"
       @active-change="handleActiveChange"
     />
-  </Motion>
+  </ul>
 </template>
 
 <script setup>
@@ -83,7 +78,7 @@ const forceCloseAll = ref(false); // Флаг для принудительно�
 // Состояния анимации
 const titleState = ref("hidden");
 const subtitleState = ref("hidden");
-const rectanglesState = ref("hidden");
+const rectangleStates = ref([false, false, false, false]); // Индивидуальные состояния для каждого rectangle
 const showRectangles = ref(false);
 const scrollHintState = ref("hidden");
 
@@ -95,7 +90,6 @@ const sharedVariants = {
 
 const titleVariants = sharedVariants;
 const subtitleVariants = sharedVariants;
-const rectanglesVariants = sharedVariants;
 const scrollHintVariants = sharedVariants;
 
 // Shared transition base config
@@ -115,15 +109,15 @@ const subtitleTransition = {
   duration: 0.5,
 };
 
-const rectanglesTransition = {
-  ...baseTransition,
-  duration: 0.4,
-};
-
 const scrollHintTransition = {
   ...baseTransition,
   duration: 0.4,
 };
+
+// Ease-in-out функция для плавного изменения скорости
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
 
 // Последовательная анимация при появлении intro
 watch(
@@ -133,25 +127,42 @@ watch(
       // Reset animations when intro becomes invisible
       titleState.value = "hidden";
       subtitleState.value = "hidden";
-      rectanglesState.value = "hidden";
+      rectangleStates.value = [false, false, false, false];
       showRectangles.value = false;
       scrollHintState.value = "hidden";
       return;
     }
 
+    // Общее количество шагов: Title, Subtitle, 4 Rectangle, ScrollHint = 7 шагов
+    const totalSteps = 7;
+
+    // Базовые задержки: медленный старт и конец (400ms), середина (250ms)
+    const minDelay = 250;
+    const maxDelay = 400;
+
+    function getDelay(stepIndex) {
+      const progress = stepIndex / (totalSteps - 1);
+      const eased = easeInOutCubic(progress);
+      // Инвертируем easing: в начале и конце медленно (большие задержки), в середине быстро (маленькие задержки)
+      return maxDelay - eased * (maxDelay - minDelay);
+    }
+
     // 1. Заголовок
     titleState.value = "visible";
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, getDelay(0)));
 
     // 2. Подзаголовок
     subtitleState.value = "visible";
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, getDelay(1)));
 
-    // 3. Квадратики
-    rectanglesState.value = "visible";
+    // 3-6. Прямоугольники по одному
     showRectangles.value = true;
+    for (let i = 0; i < 4; i++) {
+      rectangleStates.value[i] = true;
+      await new Promise((resolve) => setTimeout(resolve, getDelay(2 + i)));
+    }
 
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    // 7. Scroll hint
     scrollHintState.value = "visible";
   },
   { immediate: true }
@@ -212,12 +223,12 @@ onUnmounted(() => {
 }
 
 .intro-hero__title {
-  max-width: 1000px;
+  max-width: 880px;
   display: grid;
   gap: 24px;
   position: relative;
   z-index: 1;
-  margin-bottom: 20vh;
+  margin-bottom: 22vh;
   anchor-name: --title;
   place-items: start start;
 }
@@ -259,7 +270,7 @@ onUnmounted(() => {
   left: clamp(32px, 12vw, 120px);
   top: 50%;
   transform: translateY(-50%);
-  margin-top: 0;
+  margin-top: 64px;
 }
 
 .intro-scroll-hint {
