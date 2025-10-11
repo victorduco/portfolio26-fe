@@ -16,8 +16,6 @@ const currentYear = new Date().getFullYear();
 .app-footer {
   width: 100%;
   padding: 24px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 15, 15, 0.95);
 }
 
 .app-footer__inner {

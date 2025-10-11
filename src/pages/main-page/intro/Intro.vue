@@ -201,10 +201,11 @@ onUnmounted(() => {
 
   align-content: center;
   justify-items: start;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
-  padding-block: clamp(48px, 12vh, 96px);
-  padding-inline-start: clamp(32px, 12vw, 120px);
+  padding-block: clamp(40px, 10vh, 96px);
+  padding-inline-start: clamp(24px, 8vw, 120px);
+  padding-inline-end: clamp(16px, 4vw, 48px);
   box-sizing: border-box;
   overflow: visible;
   grid-template-columns: repeat(auto-fill, min-content);
@@ -224,27 +225,22 @@ onUnmounted(() => {
 .intro-list {
   position: absolute;
   /* Fallback for browsers without anchor support */
-  top: calc(50vh + 50px + clamp(48px, 12vh, 96px));
-  left: clamp(32px, 12vw, 120px);
+  top: calc(50vh + 50px + clamp(40px, 10vh, 96px));
+  left: clamp(24px, 8vw, 120px);
 
   /* Anchor positioning for supported browsers */
   position-anchor: --title;
   top: anchor(bottom);
-  margin-top: 64px;
+  margin-top: clamp(32px, 8vh, 64px);
 
   display: grid;
-  /* Колонки: элемент - пустая - элемент - пустая - элемент - пустая - элемент */
-  grid-template-columns:
-    fit-content(100px) clamp(40px, 6vw, 80px)
-    fit-content(100px) clamp(40px, 6vw, 80px)
-    fit-content(100px) clamp(40px, 6vw, 80px)
-    fit-content(100px);
-  /* 2 ряда с перекрытием: верхний и нижний, элементы занимают оба ряда */
-  grid-template-rows: 150px 150px;
+  /* Base (mobile): 2x2 grid */
+  grid-template-columns: repeat(2, fit-content(100px));
+  grid-template-rows: repeat(2, 1fr);
+  gap: clamp(32px, 8vw, 60px);
 
-  max-width: 110vw;
-  max-height: 110vh;
-  gap: 0;
+  max-width: 100%;
+  max-height: 100%;
   place-items: center start;
 
   padding: 0;
@@ -285,22 +281,17 @@ onUnmounted(() => {
 
 @media (min-width: 900px) {
   .intro-list {
-    /* Adjust fallback calculation for mobile padding */
-    top: calc(50vh + 50px + clamp(40px, 12vh, 72px));
-    left: clamp(24px, 16vw, 72px);
+    /* Desktop: 4 columns horizontal layout with gap columns */
+    grid-template-columns:
+      fit-content(100px) clamp(40px, 6vw, 80px)
+      fit-content(100px) clamp(40px, 6vw, 80px)
+      fit-content(100px) clamp(40px, 6vw, 80px)
+      fit-content(100px);
+    grid-template-rows: 150px 150px;
+    gap: 0;
 
-    /* Adaptive grid for mobile */
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    column-gap: 50px;
-  }
-
-  .intro-list > * {
-    margin-top: -100px;
-  }
-
-  .intro-list > *:nth-child(-n + 5) {
-    margin-top: 0;
+    left: clamp(32px, 12vw, 120px);
+    margin-top: 64px;
   }
 }
 </style>

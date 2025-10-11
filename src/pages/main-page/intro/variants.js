@@ -44,18 +44,74 @@ export const textShadowSpring = {
   delay: 0.2,
 };
 
+// Helper to get responsive size multipliers based on viewport
+const getResponsiveSizes = () => {
+  const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
+
+  // Mobile: base 80px
+  if (width < 600) {
+    return {
+      default: "80px",
+      hover: "280px",  // 3.5x
+      active: "400px", // 5x
+      hoverTopOffset: "-100px",
+      activeTopOffsetEven: "-200px",
+      activeTopOffsetOdd: "-400px"
+    };
+  }
+
+  // Tablet: base 100px
+  if (width < 900) {
+    return {
+      default: "100px",
+      hover: "340px",  // 3.4x
+      active: "500px", // 5x
+      hoverTopOffset: "-125px",
+      activeTopOffsetEven: "-250px",
+      activeTopOffsetOdd: "-500px"
+    };
+  }
+
+  // Desktop: base 120px (original)
+  return {
+    default: "120px",
+    hover: "400px",
+    active: "600px",
+    hoverTopOffset: "-150px",
+    activeTopOffsetEven: "-300px",
+    activeTopOffsetOdd: "-600px"
+  };
+};
+
+// Helper to get grid position based on viewport and index
+const getGridPosition = (index) => {
+  const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
+
+  // Mobile (<900px): 2x2 grid
+  if (width < 900) {
+    const row = Math.floor(index / 2) + 1; // 0,1 -> row 1; 2,3 -> row 2
+    const col = (index % 2) + 1; // 0,2 -> col 1; 1,3 -> col 2
+    return { gridColumn: col, gridRow: row };
+  }
+
+  // Desktop (≥900px): 4x1 horizontal with gap columns
+  const gridCol = index * 2 + 1; // 1, 3, 5, 7
+  return { gridColumn: gridCol, gridRow: 1 };
+};
+
 // main box
 export const boxVariants = {
   default: ({ index, additionalMargin }) => {
     const baseMargin = 0;
-    // Колонки: 1, 3, 5, 7 (пропускаем четные для пустых ячеек)
-    const gridCol = index * 2 + 1;
+    const sizes = getResponsiveSizes();
+    const position = getGridPosition(index);
+
     return {
-      "--element-side-size": "120px",
+      "--element-side-size": sizes.default,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
-      gridColumn: gridCol,
-      gridRow: "1",
+      gridColumn: position.gridColumn,
+      gridRow: position.gridRow,
       rotate: 0,
       scale: 1,
       "--border-color": "#ffffff10",
@@ -65,15 +121,16 @@ export const boxVariants = {
   },
   hover: ({ index, additionalMargin }) => {
     const baseMargin = 0;
-    const gridCol = index * 2 + 1;
+    const sizes = getResponsiveSizes();
+    const position = getGridPosition(index);
 
     return {
-      "--element-side-size": "400px",
+      "--element-side-size": sizes.hover,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
-      gridColumn: gridCol,
-      gridRow: "1",
-      marginTop: "-150px",
+      gridColumn: position.gridColumn,
+      gridRow: position.gridRow,
+      marginTop: sizes.hoverTopOffset,
       rotate: 15,
       scale: 1,
       "--border-color": getBorderColorWithAlpha(index, 0.1),
@@ -83,16 +140,17 @@ export const boxVariants = {
   },
   active: ({ index, additionalMargin }) => {
     const baseMargin = -50;
-    const gridCol = index * 2 + 1;
-    // Четные (0,2) - нижний ряд, нечетные (1,3) - верхний ряд
-    const topOffset = index % 2 === 0 ? "-300px" : "-600px";
+    const sizes = getResponsiveSizes();
+    const position = getGridPosition(index);
+    const topOffset = index % 2 === 0 ? sizes.activeTopOffsetEven : sizes.activeTopOffsetOdd;
+
     return {
-      "--element-side-size": "600px",
+      "--element-side-size": sizes.active,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
       marginTop: topOffset,
-      gridColumn: gridCol,
-      gridRow: index % 2 === 0 ? "2" : "1",
+      gridColumn: position.gridColumn,
+      gridRow: position.gridRow,
       rotate: 45,
       scale: 1,
       "--border-color": getBorderColorWithAlpha(index, 0),

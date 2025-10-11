@@ -147,7 +147,7 @@ const additionalMargin = computed(() => props.activeCount * -30);
 
 <style scoped>
 .intro-square {
-  --element-side-size: 120px;
+  --element-side-size: clamp(80px, 20vw, 120px);
   --border-gradient: transparent;
   --glow-color: transparent;
   --border-color: #222;
@@ -165,7 +165,7 @@ const additionalMargin = computed(() => props.activeCount * -30);
   cursor: pointer;
   z-index: 5;
   inset: 0;
-  border-radius: 28px;
+  border-radius: clamp(20px, 5vw, 28px);
   transform-origin: 50% 50%;
   border: 2px solid var(--border-color);
 }
@@ -192,6 +192,12 @@ const additionalMargin = computed(() => props.activeCount * -30);
   z-index: 6;
 }
 
+.intro-square:focus-visible {
+  outline: 2px solid rgba(39, 169, 255, 0.8);
+  outline-offset: 4px;
+  z-index: 10;
+}
+
 .intro-square-content-wrap {
   display: grid;
   place-items: center;
@@ -205,7 +211,7 @@ const additionalMargin = computed(() => props.activeCount * -30);
   position: absolute;
   color: var(--color-square-content);
   font-weight: 600;
-  font-size: 70px;
+  font-size: clamp(48px, 12vw, 70px);
   line-height: 1;
   user-select: none;
   text-shadow: calc(-1 * var(--text-shadow-offset)) var(--text-shadow-offset)
@@ -221,8 +227,8 @@ const additionalMargin = computed(() => props.activeCount * -30);
 
 .intro-content-bullet {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: clamp(32px, 8vw, 40px);
+  height: clamp(32px, 8vw, 40px);
   fill: #3d3d3d;
   user-select: none;
   top: 50%;
