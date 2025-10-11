@@ -135,4 +135,17 @@ function handleMouseLeave() {
   place-items: center;
   z-index: 1;
 }
+
+/* Landscape mode: smaller buttons and text */
+@media (orientation: landscape) and (max-height: 700px) {
+  .keypad-button-wrapper {
+    width: clamp(50px, 11vh, 90px);
+    height: clamp(50px, 11vh, 90px);
+    border-radius: clamp(12px, 2.75vh, 22px);
+  }
+
+  .keypad-number {
+    font-size: clamp(18px, 4.5vh, 26px);
+  }
+}
 </style>

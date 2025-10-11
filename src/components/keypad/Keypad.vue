@@ -291,6 +291,15 @@ onBeforeUnmount(() => {
   max-height: 100%;
 }
 
+/* Landscape mode: reduce spacing to fit all buttons */
+@media (orientation: landscape) and (max-height: 700px) {
+  .keypad-grid {
+    gap: clamp(8px, 2vh, 20px);
+    padding: clamp(12px, 2vh, 24px);
+    max-height: 90dvh;
+  }
+}
+
 .keypad-zero {
   grid-column: 2 / 3;
 }
