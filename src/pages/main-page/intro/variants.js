@@ -23,25 +23,23 @@ const getBorderColorWithAlpha = (index, alpha) => {
 
 export const spring = {
   type: "spring",
-  stiffness: 57, // достаточно жёсткая пружина
-  damping: 13, // небольшое затухание → несколько колебаний
+  stiffness: 70, // унифицированная жёсткость для всех свойств
+  damping: 15, // небольшое затухание для плавности
   mass: 1.5, // инерция побольше для реализма
 };
 
 export const marginSpring = {
   type: "spring",
-  stiffness: 100, // достаточно жёсткая пружина
-  damping: 13, // небольшое затухание → несколько колебаний
-  mass: 1.5, // инерция побольше для реализма
-  delay: 0.1,
+  stiffness: 70, // та же жёсткость что и основная пружина
+  damping: 15,
+  mass: 1.5,
 };
 
 export const textShadowSpring = {
   type: "spring",
-  stiffness: 100,
-  damping: 13,
+  stiffness: 70,
+  damping: 15,
   mass: 1.5,
-  delay: 0.2,
 };
 
 // Helper to get responsive size multipliers based on viewport
@@ -84,7 +82,7 @@ const getResponsiveSizes = () => {
 };
 
 // Helper to get grid position based on viewport and index
-const getGridPosition = (index, state = 'default') => {
+const getGridPosition = (index) => {
   const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
 
   // Mobile (<900px): 2x2 grid
@@ -94,30 +92,21 @@ const getGridPosition = (index, state = 'default') => {
     return { gridColumn: col, gridRow: row };
   }
 
-  // Desktop (≥900px): 4x1 horizontal with gap columns
+  // Desktop (≥900px): статичные позиции для всех состояний
   const gridCol = index * 2 + 1; // 1, 3, 5, 7
+  const gridRow = index % 2 === 0 ? 1 : 3; // четные всегда в row 1, нечетные всегда в row 3
 
-  // В active state используем 2 ряда с gap строкой между ними
-  if (state === 'active') {
-    const gridRow = index % 2 === 0 ? 1 : 3; // четные в строку 1, нечетные в строку 3
-    return { gridColumn: gridCol, gridRow };
-  }
-
-  // В default и hover все в одну строку
-  return { gridColumn: gridCol, gridRow: 1 };
+  return { gridColumn: gridCol, gridRow };
 };
 
 // main box
 export const boxVariants = {
-  default: ({ index, additionalMargin }) => {
-    const baseMargin = 0;
+  default: ({ index }) => {
     const sizes = getResponsiveSizes();
-    const position = getGridPosition(index, 'default');
+    const position = getGridPosition(index);
 
     return {
       "--element-side-size": sizes.default,
-      marginLeft: `${baseMargin + additionalMargin}px`,
-      marginRight: `${baseMargin}px`,
       gridColumn: position.gridColumn,
       gridRow: position.gridRow,
       rotate: 0,
@@ -127,18 +116,14 @@ export const boxVariants = {
       "--glow-color": getBorderColorWithAlpha(index, 0),
     };
   },
-  hover: ({ index, additionalMargin }) => {
-    const baseMargin = 0;
+  hover: ({ index }) => {
     const sizes = getResponsiveSizes();
-    const position = getGridPosition(index, 'hover');
+    const position = getGridPosition(index);
 
     return {
       "--element-side-size": sizes.hover,
-      marginLeft: `${baseMargin + additionalMargin}px`,
-      marginRight: `${baseMargin}px`,
       gridColumn: position.gridColumn,
       gridRow: position.gridRow,
-      marginTop: sizes.hoverTopOffset,
       rotate: 15,
       scale: 1,
       "--border-color": getBorderColorWithAlpha(index, 0.1),
@@ -146,20 +131,12 @@ export const boxVariants = {
       "--glow-color": getBorderColorWithAlpha(index, 0.2),
     };
   },
-  active: ({ index, additionalMargin }) => {
-    const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
-    // На десктопе используем 0, чтобы сохранить gap между элементами
-    // На мобиле используем отрицательный отступ для компактности
-    const baseMargin = width >= 900 ? 0 : -50;
+  active: ({ index }) => {
     const sizes = getResponsiveSizes();
-    const position = getGridPosition(index, 'active');
-    const topOffset = index % 2 === 0 ? sizes.activeTopOffsetEven : sizes.activeTopOffsetOdd;
+    const position = getGridPosition(index);
 
     return {
       "--element-side-size": sizes.active,
-      marginLeft: `${baseMargin + additionalMargin}px`,
-      marginRight: `${baseMargin}px`,
-      marginTop: topOffset,
       gridColumn: position.gridColumn,
       gridRow: position.gridRow,
       rotate: 45,

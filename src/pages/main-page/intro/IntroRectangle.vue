@@ -3,7 +3,7 @@
     @hoverStart="isHovered = true"
     @hoverEnd="isHovered = false"
     @click="toggleState"
-    :custom="{ index, additionalMargin }"
+    :custom="{ index }"
     :variants="boxVariants"
     :animate="animationState"
     :transition="boxTransition"
@@ -54,7 +54,6 @@ import IntroRectangleActive from "./IntroRectangleActive.vue";
 import { backdropFilter as vBackdropFilter } from "@/directives/backdrop-filter";
 import {
   spring,
-  marginSpring,
   textShadowSpring,
   boxVariants,
   contentWrapVariants,
@@ -104,22 +103,14 @@ const animationState = computed(() => {
 const boxTransition = computed(() => {
   if (isActive.value) {
     // При открытии - обычная пружина
-    return {
-      default: spring,
-      marginLeft: marginSpring,
-      marginRight: marginSpring,
-    };
+    return spring;
   } else {
     // При закрытии - более мягкая пружина (меньше колебаний)
     return {
-      default: {
-        type: "spring",
-        stiffness: 70,
-        damping: 18,
-        mass: 1.2,
-      },
-      marginLeft: marginSpring,
-      marginRight: marginSpring,
+      type: "spring",
+      stiffness: 70,
+      damping: 18,
+      mass: 1.2,
     };
   }
 });
@@ -134,15 +125,15 @@ function toggleState() {
 }
 
 // Следим за forceClose и закрываем с анимацией
-watch(() => props.forceClose, (newVal) => {
-  if (newVal && isActive.value) {
-    isActive.value = false;
-    emit("activeChange", false);
+watch(
+  () => props.forceClose,
+  (newVal) => {
+    if (newVal && isActive.value) {
+      isActive.value = false;
+      emit("activeChange", false);
+    }
   }
-});
-
-// Computed additional margin
-const additionalMargin = computed(() => props.activeCount * -30);
+);
 </script>
 
 <style scoped>
