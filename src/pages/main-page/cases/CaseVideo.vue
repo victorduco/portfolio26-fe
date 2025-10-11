@@ -14,7 +14,7 @@
       <video
         ref="videoElement"
         class="case-video-element"
-        :src="src"
+        :src="props.src"
         muted
         playsinline
         @ended="handleVideoEnded"
@@ -154,7 +154,7 @@
         </h2>
         <RouterLink
           class="case-video-final-link"
-          :to="finalLink"
+          :to="props.finalLink"
           @mouseenter="linkHovered = true"
           @mouseleave="linkHovered = false"
         >
@@ -218,7 +218,7 @@ const props = defineProps({
   },
   diamondColor: {
     type: String,
-    default: "#979797",
+    default: "#319BF8",
   },
 });
 
@@ -314,11 +314,11 @@ const iconTransition = {
 const diamondVariants = {
   default: {
     rotate: 45,
-    backgroundColor: "#979797",
+    backgroundColor: "#319BF8",
   },
   hover: {
     rotate: 0,
-    backgroundColor: "#979797",
+    backgroundColor: "#319BF8",
   },
 };
 
