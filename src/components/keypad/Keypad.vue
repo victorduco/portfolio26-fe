@@ -196,6 +196,10 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100vh;
   height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,6 +213,7 @@ onBeforeUnmount(() => {
   padding: 0;
   overflow: hidden;
   box-sizing: border-box;
+  touch-action: none;
 }
 
 .background-numbers {
