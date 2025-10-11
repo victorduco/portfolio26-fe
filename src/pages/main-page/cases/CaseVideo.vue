@@ -160,6 +160,7 @@
         >
           <motion.div
             class="case-video-final-diamond"
+            :style="{ backgroundColor: props.diamondColor }"
             :animate="linkHovered ? 'hover' : 'default'"
             :variants="diamondVariants"
             :transition="diamondTransition"
@@ -206,7 +207,7 @@ import { onUnmounted, ref } from "vue";
 import { motion } from "motion-v";
 import { RouterLink } from "vue-router";
 
-defineProps({
+const props = defineProps({
   src: {
     type: String,
     required: true,
@@ -214,6 +215,10 @@ defineProps({
   finalLink: {
     type: String,
     required: true,
+  },
+  diamondColor: {
+    type: String,
+    default: "#979797",
   },
 });
 
@@ -494,6 +499,7 @@ defineExpose({
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: clamp(12px, 1.6vw, 16px);
 }
 
 .case-video-shell {

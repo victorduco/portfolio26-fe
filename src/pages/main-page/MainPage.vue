@@ -24,6 +24,7 @@
           :subtitle="caseData.subtitle"
           :video-src="caseData.videoSrc"
           :route-to="caseData.routeTo"
+          :primary-color="caseData.primaryColor"
         />
       </section>
       <section id="ai-play" class="item">
@@ -54,6 +55,7 @@ const casesData = [
     subtitle: "Apple",
     videoSrc: new URL("@/assets/case-videos/case1.mp4", import.meta.url).href,
     routeTo: "/story/one",
+    primaryColor: "#319BF8",
   },
   {
     id: "case2",
