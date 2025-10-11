@@ -225,19 +225,13 @@ onUnmounted(() => {
 .intro-list {
   position: absolute;
   /* Fallback for browsers without anchor support */
-  top: calc(50vh + 50px + clamp(40px, 10vh, 96px));
-  left: clamp(24px, 8vw, 120px);
 
   /* Anchor positioning for supported browsers */
   position-anchor: --title;
   top: anchor(bottom);
-  margin-top: clamp(32px, 8vh, 64px);
 
   display: grid;
   /* Base (mobile): 2x2 grid */
-  grid-template-columns: repeat(2, fit-content(100px));
-  grid-template-rows: repeat(2, 1fr);
-  gap: clamp(32px, 8vw, 60px);
 
   max-width: 100%;
   max-height: 100%;
@@ -247,6 +241,25 @@ onUnmounted(() => {
   list-style: none;
   pointer-events: auto;
   z-index: 5;
+
+  /* Desktop: 4 columns horizontal layout with gap columns */
+  grid-template-columns:
+    fit-content(100px) clamp(40px, 6vw, 80px)
+    fit-content(100px) clamp(40px, 6vw, 80px)
+    fit-content(100px) clamp(40px, 6vw, 80px)
+    fit-content(100px);
+  /* 2 rows: верх и низ */
+  grid-template-rows:
+    0px /* row 1: четные прибиты к верху */
+    0px; /* row 2: нечетные прибиты к низу */
+  row-gap: 0;
+  column-gap: -500px;
+
+  /* Центрирование для роста в обе стороны */
+  left: clamp(32px, 12vw, 120px);
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 0;
 }
 
 .intro-scroll-hint {
@@ -281,21 +294,6 @@ onUnmounted(() => {
 
 @media (min-width: 900px) {
   .intro-list {
-    /* Desktop: 4 columns horizontal layout with gap columns */
-    grid-template-columns:
-      fit-content(100px) clamp(40px, 6vw, 80px)
-      fit-content(100px) clamp(40px, 6vw, 80px)
-      fit-content(100px) clamp(40px, 6vw, 80px)
-      fit-content(100px);
-    /* 3 rows: top, gap, bottom */
-    grid-template-rows:
-      minmax(150px, auto)        /* row 1: верх */
-      clamp(40px, 6vw, 80px)     /* row 2: gap */
-      minmax(150px, auto);       /* row 3: низ */
-    gap: 0;
-
-    left: clamp(32px, 12vw, 120px);
-    margin-top: 64px;
   }
 }
 </style>

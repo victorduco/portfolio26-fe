@@ -3,7 +3,7 @@
     @hoverStart="isHovered = true"
     @hoverEnd="isHovered = false"
     @click="toggleState"
-    :custom="{ index }"
+    :custom="{ index, additionalMargin }"
     :variants="boxVariants"
     :animate="animationState"
     :transition="boxTransition"
@@ -134,6 +134,9 @@ watch(
     }
   }
 );
+
+// Computed additional margin для сдвига влево при активации
+const additionalMargin = computed(() => props.activeCount * -30);
 </script>
 
 <style scoped>
