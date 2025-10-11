@@ -14,44 +14,22 @@
       />
     </div>
     <div class="video-wrapper">
-      <video
-        ref="videoElement"
-        class="case-video"
+      <CaseVideo
+        ref="caseVideo"
         :src="videoSrc"
-        muted
-        playsinline
-        @ended="handleVideoEnded"
-      ></video>
-      <button
-        v-if="showReplayButton"
-        class="replay-button"
-        @click="replayVideo"
-        aria-label="Replay video"
-      >
-        <svg
-          width="64"
-          height="64"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
-          />
-        </svg>
-      </button>
+        :final-text="finalText"
+        :final-link="routeTo"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import CaseVideo from "./CaseVideo.vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     required: true,
@@ -68,56 +46,29 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  finalText: {
+    type: String,
+    required: true,
+  },
 });
 
 const caseElement = ref(null);
-const videoElement = ref(null);
-const showReplayButton = ref(false);
+const caseVideo = ref(null);
 let observer = null;
-let playTimeout = null;
-
-function handleVideoEnded() {
-  showReplayButton.value = true;
-}
-
-function replayVideo() {
-  showReplayButton.value = false;
-  if (videoElement.value) {
-    videoElement.value.currentTime = 0;
-    videoElement.value.play().catch(() => {
-      showReplayButton.value = true;
-    });
-  }
-}
 
 onMounted(() => {
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // Запускаем видео через 0.5 секунды после появления в области видимости
-          playTimeout = setTimeout(() => {
-            if (videoElement.value) {
-              showReplayButton.value = false;
-              videoElement.value.play().catch(() => {
-                showReplayButton.value = true;
-              });
-            }
-          }, 500);
+          caseVideo.value?.handleEnter();
         } else {
-          // Очищаем таймаут и останавливаем видео при выходе из области видимости
-          if (playTimeout) {
-            clearTimeout(playTimeout);
-            playTimeout = null;
-          }
-          if (videoElement.value) {
-            videoElement.value.pause();
-          }
+          caseVideo.value?.handleLeave();
         }
       });
     },
     {
-      threshold: 0.5, // Секция должна быть видна хотя бы на 50%
+      threshold: 0.5,
     }
   );
 
@@ -127,11 +78,12 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  if (observer && caseElement.value) {
+    observer.unobserve(caseElement.value);
+  }
   if (observer) {
     observer.disconnect();
-  }
-  if (playTimeout) {
-    clearTimeout(playTimeout);
+    observer = null;
   }
 });
 </script>
@@ -210,44 +162,6 @@ onUnmounted(() => {
   transform-origin: center;
   aspect-ratio: 1662 / 1080;
   max-height: 100%;
-}
-
-.case-video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: clamp(12px, 1.6vw, 16px);
-  object-fit: cover;
-}
-
-.replay-button {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.7);
-  border: none;
-  border-radius: 50%;
-  width: clamp(60px, 10vw, 80px);
-  height: clamp(60px, 10vw, 80px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  z-index: 1;
-}
-
-.replay-button:hover {
-  background: rgba(0, 0, 0, 0.9);
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.replay-button svg {
-  width: 40px;
-  height: 40px;
 }
 
 @media (max-width: 768px) {
