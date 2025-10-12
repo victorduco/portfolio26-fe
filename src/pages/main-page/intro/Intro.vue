@@ -75,6 +75,23 @@ const rects = Array(4).fill(null);
 const activeCount = ref(0);
 const forceCloseAll = ref(false); // Флаг для принудительного закрытия
 
+// Обработчик клика вне блоков
+function handleClickOutside(event) {
+  // Проверяем, есть ли активные блоки
+  if (activeCount.value === 0) return;
+
+  // Проверяем, был ли клик по элементу .intro-square или его потомкам
+  const clickedSquare = event.target.closest('.intro-square');
+  if (!clickedSquare) {
+    // Клик был вне всех блоков - закрываем все
+    forceCloseAll.value = true;
+    // Сбрасываем флаг после небольшой задержки
+    setTimeout(() => {
+      forceCloseAll.value = false;
+    }, 50);
+  }
+}
+
 // Состояния анимации
 const titleState = ref("hidden");
 const subtitleState = ref("hidden");
@@ -198,10 +215,15 @@ onMounted(() => {
 
     observer.observe(introSection);
   }
+
+  // Добавляем обработчик клика вне блоков
+  document.addEventListener('click', handleClickOutside);
 });
 
 onUnmounted(() => {
   observer?.disconnect();
+  // Удаляем обработчик клика при размонтировании
+  document.removeEventListener('click', handleClickOutside);
 });
 </script>
 

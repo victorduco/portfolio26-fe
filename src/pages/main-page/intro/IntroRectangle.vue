@@ -184,11 +184,11 @@ function getIconClass(index) {
 }
 
 .intro-square[data-state="true"] {
-  z-index: 6;
+  z-index: 100;
 }
 
 .intro-square.is-intro-visible:hover {
-  z-index: 6;
+  z-index: 100;
 }
 
 .intro-square:focus-visible {
