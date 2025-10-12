@@ -20,8 +20,8 @@
         :initial="'hidden'"
       >
         Currently designing for&nbsp;Apple. Bringing experience
-        from&nbsp;large&#8209;scale B2B&nbsp;&&nbsp;FinTech products
-        with&nbsp;a&nbsp;background in&nbsp;product&nbsp;management.
+        from&nbsp;large&#8209;scale B2B & FinTech with&nbsp;a&nbsp;product
+        management&nbsp;background.
       </Motion>
     </div>
     <Motion
@@ -223,7 +223,7 @@ onUnmounted(() => {
 }
 
 .intro-hero__title {
-  max-width: 880px;
+  max-width: 900px;
   display: grid;
   gap: 24px;
   position: relative;
