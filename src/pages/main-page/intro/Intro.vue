@@ -273,7 +273,7 @@ onUnmounted(() => {
   padding: 0;
   list-style: none;
   pointer-events: auto;
-  z-index: 5;
+  z-index: 10001;
 
   /* Desktop: 4 columns horizontal layout with gap columns */
   grid-template-columns:

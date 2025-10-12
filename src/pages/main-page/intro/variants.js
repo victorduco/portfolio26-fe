@@ -115,6 +115,7 @@ export const boxVariants = {
       marginRight: `${baseMargin}px`,
       rotate: 0,
       scale: 1,
+      zIndex: 5,
       "--border-color": "#ffffff10",
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0),
@@ -140,6 +141,7 @@ export const boxVariants = {
       y: `${yOffset}px`,
       rotate: 15,
       scale: 1,
+      zIndex: 10000,
       "--border-color": getBorderColorWithAlpha(index, 0.1),
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0.2),
@@ -164,6 +166,7 @@ export const boxVariants = {
       y, // расходятся от центра симметрично
       rotate: 45,
       scale: 1,
+      zIndex: 10000,
       "--border-color": getBorderColorWithAlpha(index, 0),
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0),
