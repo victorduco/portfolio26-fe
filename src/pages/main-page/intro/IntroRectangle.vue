@@ -9,7 +9,10 @@
     :transition="boxTransition"
     initial="default"
     class="intro-square"
-    :class="{ 'is-intro-visible': introVisible, 'should-animate': shouldAnimate }"
+    :class="{
+      'is-intro-visible': introVisible,
+      'should-animate': shouldAnimate,
+    }"
     :data-state="isActive"
     :style="{ opacity: shouldAnimate ? 1 : 0 }"
     v-backdrop-filter="backdropFilter"
@@ -32,16 +35,12 @@
       >
         {{ index + 1 }}
       </motion.div>
-      <motion.svg
+      <motion.i
         class="intro-content-bullet"
+        :class="getIconClass(index)"
         :variants="squareContentVariants.bullet"
         :animate="animationState"
-        viewBox="0 0 40 40"
-        width="40"
-        height="40"
-      >
-        <circle cx="20" cy="20" r="8" />
-      </motion.svg>
+      ></motion.i>
     </motion.div>
 
     <IntroRectangleActive :index="index" :is-active="isActive" />
@@ -142,6 +141,12 @@ watch(
 
 // Computed additional margin для сдвига влево при активации
 const additionalMargin = computed(() => props.activeCount * -30);
+
+// Получаем класс иконки в зависимости от индекса (0-3 -> icon-a, icon-b, icon-c, icon-d)
+function getIconClass(index) {
+  const iconNames = ["icon-a", "icon-b", "icon-c", "icon-d"];
+  return iconNames[index] || "icon-a";
+}
 </script>
 
 <style scoped>
@@ -164,7 +169,7 @@ const additionalMargin = computed(() => props.activeCount * -30);
   cursor: pointer;
   z-index: 5;
   inset: 0;
-  border-radius: clamp(20px, 5vw, 28px);
+  border-radius: 24px;
   transform-origin: 50% 50%;
   border: 2px solid var(--border-color);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -227,12 +232,15 @@ const additionalMargin = computed(() => props.activeCount * -30);
 
 .intro-content-bullet {
   position: absolute;
-  width: clamp(32px, 8vw, 40px);
-  height: clamp(32px, 8vw, 40px);
-  fill: #3d3d3d;
+  font-size: 24px;
+  color: #7c7c7c;
   user-select: none;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 </style>
