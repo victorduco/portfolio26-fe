@@ -1,5 +1,10 @@
 <template>
-  <nav class="page-navigation" aria-label="Page sections navigation">
+  <!-- Desktop версия (текущая) -->
+  <nav
+    v-if="!isMobile"
+    class="page-navigation"
+    aria-label="Page sections navigation"
+  >
     <NavigationItem
       v-for="(section, index) in sections"
       :key="section.id"
@@ -14,11 +19,54 @@
       @navigate="handleNavigate"
     />
   </nav>
+
+  <!-- Mobile версия -->
+  <div v-else class="page-navigation-mobile">
+    <!-- Кнопка-иконка -->
+    <button
+      class="menu-toggle"
+      @click="toggleMenu"
+      aria-label="Navigation menu"
+      :aria-expanded="isMenuOpen"
+    >
+      <img src="@/assets/icons/menu.svg" alt="" />
+    </button>
+
+    <!-- Dropdown overlay -->
+    <Transition name="dropdown">
+      <div
+        v-if="isMenuOpen"
+        class="menu-overlay"
+        @click.self="toggleMenu"
+        @keydown.escape="toggleMenu"
+      >
+        <nav class="menu-dropdown">
+          <NavigationItem
+            v-for="(section, index) in sections"
+            :key="section.id"
+            :label="section.label"
+            :section-id="section.id"
+            :is-active="activeSection === section.id"
+            :icon="section.icon"
+            :mobile-mode="true"
+            @navigate="handleMobileNavigate"
+          />
+        </nav>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import NavigationItem from "./NavigationItem.vue";
+import {
+  useMediaQuery,
+  NAVIGATION_MOBILE,
+} from "@/composables/useMediaQuery.js";
+
+const isMobile = useMediaQuery(NAVIGATION_MOBILE);
+const isMenuOpen = ref(false);
 
 const props = defineProps({
   sections: {
@@ -53,6 +101,10 @@ const introGreenIndex = ref(-1);
 const introFadeOutIndex = ref(-1);
 let observer = null;
 
+function toggleMenu() {
+  isMenuOpen.value = !isMenuOpen.value;
+}
+
 function handleNavigate(sectionId) {
   const element = document.getElementById(sectionId);
   if (element) {
@@ -61,6 +113,11 @@ function handleNavigate(sectionId) {
       block: "start",
     });
   }
+}
+
+function handleMobileNavigate(sectionId) {
+  isMenuOpen.value = false; // закрываем меню
+  handleNavigate(sectionId); // существующая логика скролла
 }
 
 function setupIntersectionObserver() {
@@ -86,7 +143,7 @@ function setupIntersectionObserver() {
   });
 }
 
-const emit = defineEmits(['animationComplete']);
+const emit = defineEmits(["animationComplete"]);
 
 function startIntroAnimation() {
   const totalSections = props.sections.length;
@@ -112,7 +169,7 @@ function startIntroAnimation() {
             // Уведомляем родителя что анимация завершена
             setTimeout(() => {
               introFinished.value = true;
-              emit('animationComplete');
+              emit("animationComplete");
             }, 50);
           }, 0);
         }, 75);
@@ -123,7 +180,7 @@ function startIntroAnimation() {
         activeSection.value = props.sections[0]?.id || "";
         setTimeout(() => {
           introFinished.value = true;
-          emit('animationComplete');
+          emit("animationComplete");
         }, 250);
       }
       return;
@@ -163,7 +220,9 @@ function startIntroAnimation() {
 onMounted(() => {
   setupIntersectionObserver();
 
-  if (props.enableIntroAnimation) {
+  const shouldRunIntro = props.enableIntroAnimation && !isMobile.value;
+
+  if (shouldRunIntro) {
     // Задержка перед началом анимации меню
     setTimeout(() => {
       startIntroAnimation();
@@ -177,7 +236,7 @@ onMounted(() => {
     introFinished.value = true;
 
     setTimeout(() => {
-      emit('animationComplete');
+      emit("animationComplete");
     }, 0);
   }
 });
@@ -200,6 +259,108 @@ onUnmounted(() => {
   gap: 0;
   z-index: 1000;
   padding: 24px 0;
+}
+
+/* Mobile версия */
+.page-navigation-mobile {
+  position: fixed;
+  top: var(--space-lg, 24px);
+  right: var(--space-lg, 24px);
+  z-index: 100;
+}
+
+.menu-toggle {
+  width: var(--tap-min, 44px);
+  height: var(--tap-min, 44px);
+  border-radius: 8px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.menu-toggle:hover {
+  background: rgba(20, 20, 20, 1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.menu-toggle:focus-visible {
+  outline: 2px solid rgba(39, 169, 255, 0.8);
+  outline-offset: 4px;
+}
+
+.menu-toggle img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-end;
+  padding: 80px var(--space-lg, 24px) var(--space-lg, 24px);
+  padding-bottom: max(var(--space-lg, 24px), env(safe-area-inset-bottom));
+}
+
+.menu-dropdown {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: var(--space-sm, 8px) 0;
+  max-width: 280px;
+  width: 100%;
+  max-height: 100dvh;
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Transitions */
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+}
+
+.dropdown-enter-active .menu-dropdown,
+.dropdown-leave-active .menu-dropdown {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.dropdown-enter-from .menu-dropdown {
+  transform: translateY(-16px);
+  opacity: 0;
+}
+
+.dropdown-leave-to .menu-dropdown {
+  transform: translateY(-16px);
+  opacity: 0;
+}
+
+/* Поддержка prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-enter-active,
+  .dropdown-leave-active,
+  .dropdown-enter-active .menu-dropdown,
+  .dropdown-leave-active .menu-dropdown {
+    transition-duration: 0.01ms;
+  }
+
+  .dropdown-enter-from .menu-dropdown,
+  .dropdown-leave-to .menu-dropdown {
+    transform: none;
+  }
 }
 
 @media (max-width: 768px) {

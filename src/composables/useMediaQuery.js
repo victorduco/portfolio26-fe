@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from "vue";
 
 /**
  * Reactive media query composable
@@ -14,7 +14,7 @@ export function useMediaQuery(query) {
   const matches = ref(false);
 
   onMounted(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const mediaQuery = window.matchMedia(query);
 
@@ -28,7 +28,7 @@ export function useMediaQuery(query) {
 
     // Modern browsers
     if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handler);
+      mediaQuery.addEventListener("change", handler);
     } else {
       // Fallback for older browsers
       mediaQuery.addListener(handler);
@@ -37,7 +37,7 @@ export function useMediaQuery(query) {
     // Cleanup
     onUnmounted(() => {
       if (mediaQuery.removeEventListener) {
-        mediaQuery.removeEventListener('change', handler);
+        mediaQuery.removeEventListener("change", handler);
       } else {
         mediaQuery.removeListener(handler);
       }
@@ -48,13 +48,18 @@ export function useMediaQuery(query) {
 }
 
 /**
+ * Media query constants for consistent breakpoints
+ */
+export const NAVIGATION_MOBILE = "(max-width: 899px)";
+
+/**
  * Detects mobile devices (screens < 768px)
  * Based on standard tablet/mobile breakpoint
  *
  * @returns {Ref<boolean>} - true if mobile device
  */
 export function useIsMobile() {
-  return useMediaQuery('(max-width: 767px)');
+  return useMediaQuery("(max-width: 767px)");
 }
 
 /**
@@ -64,7 +69,7 @@ export function useIsMobile() {
  * @returns {Ref<boolean>} - true if device supports hover
  */
 export function useHasHover() {
-  return useMediaQuery('(hover: hover)');
+  return useMediaQuery("(hover: hover)");
 }
 
 /**
@@ -73,7 +78,7 @@ export function useHasHover() {
  * @returns {Ref<boolean>} - true if touch device
  */
 export function useIsTouchDevice() {
-  return useMediaQuery('(pointer: coarse)');
+  return useMediaQuery("(pointer: coarse)");
 }
 
 /**
@@ -82,7 +87,7 @@ export function useIsTouchDevice() {
  * @returns {Ref<boolean>} - true if landscape orientation
  */
 export function useIsLandscape() {
-  return useMediaQuery('(orientation: landscape)');
+  return useMediaQuery("(orientation: landscape)");
 }
 
 /**
@@ -92,5 +97,5 @@ export function useIsLandscape() {
  * @returns {Ref<boolean>} - true if landscape orientation with height < 700px
  */
 export function useIsLandscapeMobile() {
-  return useMediaQuery('(orientation: landscape) and (max-height: 700px)');
+  return useMediaQuery("(orientation: landscape) and (max-height: 700px)");
 }

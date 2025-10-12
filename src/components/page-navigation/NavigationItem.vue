@@ -1,6 +1,7 @@
 <template>
   <button
     class="nav-item-wrapper"
+    :class="{ mobile: mobileMode }"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
     @click="handleClick"
@@ -17,7 +18,7 @@
     >
       <span class="nav-item-label-content">
         <img
-          v-if="icon"
+          v-if="icon && !mobileMode"
           :src="icon"
           alt=""
           aria-hidden="true"
@@ -27,6 +28,7 @@
       </span>
     </motion.div>
     <motion.div
+      v-if="!mobileMode"
       class="nav-item"
       :variants="navItemVariants"
       :animate="getSquareAnimationState()"
@@ -85,6 +87,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  mobileMode: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["navigate"]);
@@ -93,6 +99,13 @@ const isHovered = ref(false);
 const isPressed = ref(false);
 
 function getAnimationState() {
+  // Упрощенная логика для mobile
+  if (props.mobileMode) {
+    if (isPressed.value) return "pressed";
+    if (props.isActive) return "active";
+    return "default";
+  }
+
   // Приоритет: fadeOut > зеленый > highlight > остальное
   if (props.introFadeOut) return "introFadeOut";
   if (props.introGreen) return "introGreen";
@@ -108,27 +121,39 @@ const hasAppeared = ref(false);
 const hasBeenIntroHighlighted = ref(false);
 
 // Отслеживаем когда квадрат и текст должны появиться
-watch(() => props.introHighlight, (newVal) => {
-  if (newVal) {
-    hasAppeared.value = true;
-    hasBeenIntroHighlighted.value = true;
-  }
-}, { flush: 'sync' });
+watch(
+  () => props.introHighlight,
+  (newVal) => {
+    if (newVal) {
+      hasAppeared.value = true;
+      hasBeenIntroHighlighted.value = true;
+    }
+  },
+  { flush: "sync" }
+);
 
 // Также отслеживаем зеленое состояние
-watch(() => props.introGreen, (newVal) => {
-  if (newVal) {
-    hasAppeared.value = true;
-    hasBeenIntroHighlighted.value = true;
-  }
-}, { flush: 'sync' });
+watch(
+  () => props.introGreen,
+  (newVal) => {
+    if (newVal) {
+      hasAppeared.value = true;
+      hasBeenIntroHighlighted.value = true;
+    }
+  },
+  { flush: "sync" }
+);
 
-watch(() => props.introComplete, (newVal) => {
-  if (newVal) {
-    hasAppeared.value = true;
-    hasBeenIntroHighlighted.value = true;
-  }
-}, { immediate: true });
+watch(
+  () => props.introComplete,
+  (newVal) => {
+    if (newVal) {
+      hasAppeared.value = true;
+      hasBeenIntroHighlighted.value = true;
+    }
+  },
+  { immediate: true }
+);
 
 function getSquareAnimationState() {
   // Приоритет: зеленый > highlight > остальное
@@ -194,8 +219,28 @@ function handleClick(event) {
 }
 
 .nav-item-wrapper:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline: 2px solid rgba(39, 169, 255, 0.8);
   outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Mobile версия */
+.nav-item-wrapper.mobile {
+  width: 100%;
+  justify-content: flex-start;
+  padding: var(--space-md, 16px) var(--space-lg, 24px);
+  min-height: var(--tap-min, 44px);
+  gap: var(--space-sm, 8px);
+}
+
+.mobile .nav-item-label {
+  opacity: 1 !important; /* переопределяем motion-v варианты */
+  position: static;
+  font-size: 16px;
+}
+
+.mobile.nav-item-wrapper:active {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-item {
