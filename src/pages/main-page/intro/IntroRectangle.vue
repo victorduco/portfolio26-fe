@@ -133,7 +133,7 @@ watch(
 );
 
 // Computed additional margin для сдвига влево при активации
-const additionalMargin = computed(() => props.activeCount * -30);
+const additionalMargin = computed(() => props.activeCount * -40);
 
 // Получаем класс иконки в зависимости от индекса
 // Маппинг: Vision→icon-d, Connection→icon-a, Technology→icon-c, Scale→icon-b

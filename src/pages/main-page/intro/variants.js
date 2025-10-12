@@ -78,7 +78,7 @@ const getResponsiveSizes = () => {
     active: "600px",
     hoverTopOffset: "-150px",
     activeTopOffsetEven: "-100px",
-    activeTopOffsetOdd: "-700px", // было -600px, уменьшено в 1.5 раза
+    activeTopOffsetOdd: "-600px", // было -600px, уменьшено в 1.5 раза
   };
 };
 
@@ -146,7 +146,7 @@ export const boxVariants = {
     };
   },
   active: ({ index, additionalMargin }) => {
-    const baseMargin = -50;
+    const baseMargin = -45;
     const sizes = getResponsiveSizes();
     const position = getGridPosition(index);
     // Центрируем активные элементы: четные вниз, нечетные вверх
