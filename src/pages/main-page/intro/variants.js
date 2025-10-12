@@ -55,7 +55,7 @@ const getResponsiveSizes = () => {
       active: "400px", // 5x
       hoverTopOffset: "-100px",
       activeTopOffsetEven: "-200px",
-      activeTopOffsetOdd: "-400px",
+      activeTopOffsetOdd: "-400px", // было -400px, уменьшено в 1.5 раза
     };
   }
 
@@ -67,7 +67,7 @@ const getResponsiveSizes = () => {
       active: "500px", // 5x
       hoverTopOffset: "-125px",
       activeTopOffsetEven: "-250px",
-      activeTopOffsetOdd: "-500px",
+      activeTopOffsetOdd: "-500px", // было -500px, уменьшено в 1.5 раза
     };
   }
 
@@ -77,8 +77,8 @@ const getResponsiveSizes = () => {
     hover: "400px",
     active: "600px",
     hoverTopOffset: "-150px",
-    activeTopOffsetEven: "-300px",
-    activeTopOffsetOdd: "-600px",
+    activeTopOffsetEven: "-100px",
+    activeTopOffsetOdd: "-700px", // было -600px, уменьшено в 1.5 раза
   };
 };
 
@@ -125,12 +125,19 @@ export const boxVariants = {
     const sizes = getResponsiveSizes();
     const position = getGridPosition(index);
 
+    // Вычисляем сдвиг вверх как половину от увеличения размера
+    const defaultSize = parseInt(sizes.default);
+    const hoverSize = parseInt(sizes.hover);
+    const sizeIncrease = hoverSize - defaultSize;
+    const yOffset = -(sizeIncrease / 2);
+
     return {
       "--element-side-size": sizes.hover,
       gridColumn: position.gridColumn,
       gridRow: position.gridRow,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
+      y: `${yOffset}px`,
       rotate: 15,
       scale: 1,
       "--border-color": getBorderColorWithAlpha(index, 0.1),
@@ -142,10 +149,11 @@ export const boxVariants = {
     const baseMargin = -50;
     const sizes = getResponsiveSizes();
     const position = getGridPosition(index);
-    // Сходятся к центру + поднимаем всю группу выше
-    // Четные: опускаются к центру, но с общим сдвигом вверх
-    // Нечетные: поднимаются к центру, с еще большим сдвигом вверх
-    const y = index % 2 === 0 ? "0%" : "-100%";
+    // Центрируем активные элементы: четные вниз, нечетные вверх
+    // Четные (0, 2): смещаются вниз (используем activeTopOffsetEven с инверсией знака)
+    // Нечетные (1, 3): смещаются вверх (используем activeTopOffsetOdd как есть)
+    const y =
+      index % 2 === 0 ? sizes.activeTopOffsetEven : sizes.activeTopOffsetOdd; // оставляем отрицательное значение для смещения вверх
 
     return {
       "--element-side-size": sizes.active,
@@ -153,7 +161,7 @@ export const boxVariants = {
       gridRow: position.gridRow,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
-      y, // поднимаем всю группу вверх
+      y, // расходятся от центра симметрично
       rotate: 45,
       scale: 1,
       "--border-color": getBorderColorWithAlpha(index, 0),
