@@ -23,23 +23,16 @@
       :animate="animationState"
       :transition="spring"
     >
-      <motion.div
-        class="intro-content-number"
-        :variants="squareContentVariants.number"
+      <motion.i
+        class="intro-content-icon"
+        :class="getIconClass(index)"
+        :variants="squareContentVariants.icon"
         :animate="animationState"
         :custom="index"
         :transition="{
           default: spring,
           '--text-shadow-offset': textShadowSpring,
         }"
-      >
-        {{ index + 1 }}
-      </motion.div>
-      <motion.i
-        class="intro-content-bullet"
-        :class="getIconClass(index)"
-        :variants="squareContentVariants.bullet"
-        :animate="animationState"
       ></motion.i>
     </motion.div>
 
@@ -142,9 +135,10 @@ watch(
 // Computed additional margin для сдвига влево при активации
 const additionalMargin = computed(() => props.activeCount * -30);
 
-// Получаем класс иконки в зависимости от индекса (0-3 -> icon-a, icon-b, icon-c, icon-d)
+// Получаем класс иконки в зависимости от индекса
+// Маппинг: Vision→icon-d, Connection→icon-a, Technology→icon-c, Scale→icon-b
 function getIconClass(index) {
-  const iconNames = ["icon-a", "icon-b", "icon-c", "icon-d"];
+  const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];
   return iconNames[index] || "icon-a";
 }
 </script>
@@ -169,7 +163,7 @@ function getIconClass(index) {
   cursor: pointer;
   z-index: 5;
   inset: 0;
-  border-radius: 24px;
+  border-radius: 16px;
   transform-origin: 50% 50%;
   border: 2px solid var(--border-color);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -212,35 +206,21 @@ function getIconClass(index) {
   inset: 0;
 }
 
-.intro-content-number {
+.intro-content-icon {
   position: absolute;
-  color: var(--color-square-content);
+  font-size: 24px;
   font-weight: 600;
-  font-size: clamp(48px, 12vw, 70px);
   line-height: 1;
   user-select: none;
   text-shadow: calc(-1 * var(--text-shadow-offset)) var(--text-shadow-offset)
-      85px var(--text-glow-color),
-    var(--text-shadow-offset) var(--text-shadow-offset) 85px
-      var(--text-glow-color),
-    calc(-1 * var(--text-shadow-offset)) var(--text-shadow-offset) 80px
-      var(--text-glow-color),
-    var(--text-shadow-offset) var(--text-shadow-offset) 80px
-      var(--text-glow-color),
-    0px 0px 50px var(--text-glow-color);
+      calc(var(--text-shadow-offset) - 5px) var(--text-glow-color),
+    var(--text-shadow-offset) var(--text-shadow-offset)
+      calc(var(--text-shadow-offset) - 5px) var(--text-glow-color),
+    0px 0px calc(var(--text-shadow-offset) - 5px) var(--text-glow-color);
 }
 
-.intro-content-bullet {
-  position: absolute;
-  font-size: 24px;
-  color: #7c7c7c;
-  user-select: none;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+.intro-content-icon::before {
+  margin: 0;
+  width: auto;
 }
 </style>

@@ -12,7 +12,7 @@
       :animate="isActive ? 'active' : 'hidden'"
       :transition="spring"
     >
-      <div class="intro-active-number">{{ index + 1 }}</div>
+      <i class="intro-active-number" :class="getIconClass(index)"></i>
       <h3 class="intro-active-title">{{ contentData[index]?.title }}</h3>
       <p class="intro-active-description">
         {{ contentData[index]?.description }}
@@ -48,6 +48,11 @@ const contentData = [
       "Building consistent and scalable UI components that work seamlessly across all platforms and devices",
   },
   {
+    title: "Connection",
+    description:
+      "Making digital content available and usable for everyone regardless of their abilities or disabilities",
+  },
+  {
     title: "Technology",
     description:
       "Creating intuitive and delightful interactions that help users achieve their goals with minimal friction",
@@ -57,12 +62,14 @@ const contentData = [
     description:
       "Maximizing speed and efficiency through careful code analysis and modern best practices for web",
   },
-  {
-    title: "Connection",
-    description:
-      "Making digital content available and usable for everyone regardless of their abilities or disabilities",
-  },
 ];
+
+// Получаем класс иконки в зависимости от индекса
+// Маппинг: Vision→icon-d, Connection→icon-a, Technology→icon-c, Scale→icon-b
+function getIconClass(index) {
+  const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];
+  return iconNames[index] || "icon-a";
+}
 </script>
 
 <style scoped>
@@ -99,6 +106,12 @@ const contentData = [
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.intro-active-number::before {
+  margin: 0;
+  width: auto;
+  display: block;
 }
 
 .intro-active-title {

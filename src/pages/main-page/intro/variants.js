@@ -40,6 +40,7 @@ export const textShadowSpring = {
   stiffness: 70,
   damping: 15,
   mass: 1.5,
+  delay: 0.1, // 100ms задержка
 };
 
 // Helper to get responsive size multipliers based on viewport
@@ -168,39 +169,35 @@ export const contentWrapVariants = {
   active: {},
 };
 
-// Объединенные варианты для контента (цифра и точка)
+// Объединенные варианты для контента (одна иконка для всех состояний)
 export const squareContentVariants = {
-  number: {
+  icon: {
     default: (_index) => ({
-      opacity: 0,
+      opacity: 1,
       scale: 1,
-      color: "rgba(255,255,255,0)",
-      "--glow-color": "rgba(255,255,255,0)",
+      rotate: 0,
+      color: "#7c7c7c",
       "--text-glow-color": "rgba(255,255,255,0)",
       "--text-shadow-offset": "0px",
     }),
     hover: (index) => {
       return {
         opacity: 1,
+        scale: 2.9,
         rotate: -15,
-        "--glow-color": getColorWithAlpha(index, 1),
-        "--text-glow-color": getColorWithAlpha(index, 1),
-        "--text-shadow-offset": "60px",
+        "--text-glow-color": getColorWithAlpha(index, 0.4),
+        "--text-shadow-offset": "20px",
         color: getColorWithAlpha(index, 1),
       };
     },
     active: (_index) => ({
       opacity: 0,
+      scale: 0.8,
+      rotate: 0,
       color: "rgba(255,255,255,0)",
-      "--glow-color": "rgba(255,255,255,0)",
       "--text-glow-color": "rgba(255,255,255,0)",
       "--text-shadow-offset": "0px",
     }),
-  },
-  bullet: {
-    default: { opacity: 1 },
-    hover: { opacity: 0 },
-    active: { opacity: 0 },
   },
 };
 
