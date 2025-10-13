@@ -37,12 +37,12 @@ export const META_CONFIG = {
   getTitle(pageKey) {
     const page = this.pages[pageKey];
     if (!page) return this.siteName;
-    
+
     // Для страниц где title совпадает с siteName, не дублируем
     if (page.title === this.siteName) {
       return this.siteName;
     }
-    
+
     // Для остальных добавляем separator и siteName
     return `${page.title}${this.separator}${this.siteName}`;
   },
