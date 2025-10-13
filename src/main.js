@@ -4,11 +4,11 @@ import "./styles/typography.css";
 import "./style.css";
 import "./styles/glass.css";
 import "./assets/fonts/fontello/fontello-icons.css";
-import App from "./App.vue";
+import { RouterView } from "vue-router";
 import directivesPlugin from "./plugins/directives.js";
 import router from "./router/index.js";
 
-const app = createApp(App);
+const app = createApp(RouterView);
 app.use(directivesPlugin);
 app.use(router);
 app.mount("#app");

@@ -29,15 +29,6 @@
       </div>
     </Motion>
 
-    <!-- Error/Status Message -->
-    <div v-if="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-
-    <div v-if="rateLimited" class="rate-limit-message">
-      Too many attempts. Please wait {{ remainingTime }}s
-    </div>
-
     <Motion
       tag="div"
       class="keypad-grid"
@@ -99,7 +90,7 @@ useMeta("keypad");
 const emit = defineEmits(["unlock"]);
 
 // API URL from environment
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const enteredDigits = ref([]);
 const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
@@ -116,9 +107,7 @@ const rateLimited = ref(false);
 const remainingTime = ref(0);
 let rateLimitTimer = null;
 
-const showClearButton = computed(
-  () => enteredDigits.value.length > 0 && !isAnimating.value
-);
+const showClearButton = computed(() => enteredDigits.value.length > 0);
 
 const getDigitColor = (index) => {
   if (animationState.value === "success") return "#00FFBC";
@@ -204,10 +193,7 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   if (shouldUnlock) {
-    // Redirect to original URL
-    const params = new URLSearchParams(window.location.search);
-    const next = params.get("next") || "/";
-    window.location.replace(next);
+    emit("unlock");
   } else {
     enteredDigits.value = [];
     animationState.value = "initial";
@@ -219,16 +205,9 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
 };
 
 async function handleButtonClick(value) {
-  if (
-    isAnimating.value ||
-    loading.value ||
-    rateLimited.value ||
-    enteredDigits.value.length >= 4
-  )
-    return;
+  if (isAnimating.value || enteredDigits.value.length >= 4) return;
 
   enteredDigits.value.push(value);
-  errorMessage.value = ""; // Clear any previous errors
 
   if (enteredDigits.value.length === 4) {
     isAnimating.value = true;
@@ -255,25 +234,17 @@ async function handleButtonClick(value) {
 }
 
 function handleClear() {
-  if (isAnimating.value || loading.value) return;
+  if (isAnimating.value) return;
   enteredDigits.value = [];
   animationState.value = "initial";
   bgNumbersState.value = "initial";
-  errorMessage.value = "";
 }
 
 function handleBackspace() {
-  if (
-    isAnimating.value ||
-    loading.value ||
-    rateLimited.value ||
-    enteredDigits.value.length === 0
-  )
-    return;
+  if (isAnimating.value || enteredDigits.value.length === 0) return;
   enteredDigits.value = enteredDigits.value.slice(0, -1);
   animationState.value = "initial";
   bgNumbersState.value = "initial";
-  errorMessage.value = "";
 }
 
 function handleKeyDown(event) {
@@ -404,38 +375,6 @@ onBeforeUnmount(() => {
     margin: 0 clamp(-10px, -2vw, -30px);
     display: block;
   }
-}
-
-.error-message {
-  position: absolute;
-  top: max(40px, calc(env(safe-area-inset-top) + 24px));
-  left: 50%;
-  transform: translateX(-50%);
-  color: #ff83a2;
-  font-size: 16px;
-  font-weight: 500;
-  text-align: center;
-  z-index: 20;
-  padding: 12px 24px;
-  background: rgba(255, 131, 162, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-}
-
-.rate-limit-message {
-  position: absolute;
-  top: max(100px, calc(env(safe-area-inset-top) + 84px));
-  left: 50%;
-  transform: translateX(-50%);
-  color: #ffff78;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  z-index: 20;
-  padding: 8px 20px;
-  background: rgba(255, 255, 120, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
 }
 
 .keypad-grid {

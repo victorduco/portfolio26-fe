@@ -3,11 +3,22 @@
 </template>
 
 <script setup>
+import { useRouter, useRoute } from "vue-router";
+import { resetAuthCache } from "./router/index.js";
 import Keypad from "./components/keypad/Keypad.vue";
 
+const router = useRouter();
+const route = useRoute();
+
 const handleUnlock = () => {
-  // Успешная авторизация - редирект выполнится внутри Keypad
-  console.log("Authentication successful");
+  // Сбрасываем кэш аутентификации
+  resetAuthCache();
+
+  // Успешная авторизация - редирект на страницу из next параметра
+  const next = route.query.next || "/";
+
+  // Используем Vue Router для навигации
+  router.push(next);
 };
 </script>
 
