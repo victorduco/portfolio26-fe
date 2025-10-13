@@ -5,6 +5,7 @@ This project includes comprehensive favicon and meta tag configuration for optim
 ## Generated Files
 
 ### Favicons
+
 - `favicon-light.svg` - Light theme favicon (black diamond on transparent)
 - `favicon-dark.svg` - Dark theme favicon (white diamond on transparent)
 - `favicon-16x16.png` - 16x16 PNG favicon
@@ -15,10 +16,12 @@ This project includes comprehensive favicon and meta tag configuration for optim
 - `android-chrome-512x512.png` - 512x512 PNG for Android
 
 ### Social Media
+
 - `og-image.png` - 1200x630 Open Graph image for social media sharing
 - `og-image.svg` - Source SVG for OG image
 
 ### Technical Files
+
 - `site.webmanifest` - PWA manifest file
 - `robots.txt` - Search engine crawler instructions (only home page indexed)
 - `sitemap.xml` - Site structure for search engines
@@ -51,16 +54,18 @@ The following meta tags are configured in `index.html`:
 Meta tags are dynamically updated on route changes via `src/composables/useMeta.js`:
 
 ```javascript
-import { useMeta } from '@/composables/useMeta';
+import { useMeta } from "@/composables/useMeta";
 
 // In your component
-useMeta('home'); // Updates title, description, OG tags
+useMeta("home"); // Updates title, description, OG tags
 ```
 
 ## SEO Configuration
 
 ### robots.txt
+
 Only the home page is indexed. All other pages are disallowed:
+
 ```
 User-agent: *
 Allow: /$
@@ -68,11 +73,13 @@ Disallow: /
 ```
 
 ### sitemap.xml
+
 Contains only the home page URL for search engines.
 
 ## Theme Color
 
 The site supports adaptive theme colors:
+
 - **Dark mode**: `#000000` (black)
 - **Light mode**: `#FFFFFF` (white)
 
@@ -81,6 +88,7 @@ This affects the mobile browser's address bar color.
 ## Design
 
 The favicon features a rounded diamond shape (rotated 45° square with rounded corners):
+
 - **Light theme**: Black diamond on transparent background
 - **Dark theme**: White diamond on transparent background
 

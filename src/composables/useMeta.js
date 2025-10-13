@@ -12,7 +12,9 @@ export function useMeta(pageKey) {
   const setOrUpdateMeta = (selector, attributes) => {
     let element = document.querySelector(selector);
     if (!element) {
-      const tagName = selector.includes('[property=') ? 'meta' : selector.split('[')[0];
+      const tagName = selector.includes("[property=")
+        ? "meta"
+        : selector.split("[")[0];
       element = document.createElement(tagName);
       document.head.appendChild(element);
     }
