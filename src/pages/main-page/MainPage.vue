@@ -1,5 +1,4 @@
 <template>
-  <!-- Oct 12 disbled original main page layout
   <div class="main-page">
     <PageNavigation
       :sections="navigationSections"
@@ -36,27 +35,18 @@
       </section>
     </VueScrollSnap>
   </div>
-  Oct 12 disbled original main page layout -->
-  <div>
-    <img :src="storyNavIcon" alt="Headphones icon" width="16" height="16" /> <small>main page</small>
-  </div>
 </template>
 
 <script setup>
-// Oct 12 disbled minimal main page script
-import storyNavIcon from "@/assets/icons/headphones.svg"; // Oct 12 disbled
-import { useMeta } from "../../composables/useMeta.js"; // Oct 12 disbled
-
-useMeta("home"); // Oct 12 disbled
-
-/* Oct 12 disbled original script
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import VueScrollSnap from "vue-scroll-snap";
 import Intro from "./intro/Intro.vue";
 import CaseItem from "./cases/CaseItem.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
+import storyNavIcon from "@/assets/icons/headphones.svg";
 import { useRoute } from "vue-router";
+import { useMeta } from "../../composables/useMeta.js";
 
 const casesData = [
   {
@@ -91,6 +81,8 @@ const navigationSections = [
   { id: "ai-play", label: "AI Play" },
   { id: "contacts", label: "Contact" },
 ];
+
+useMeta("home");
 
 const route = useRoute();
 const introVisible = ref(false);
@@ -142,11 +134,9 @@ onMounted(() => {
     });
   }
 });
-*/
 </script>
 
 <style scoped>
-/* Oct 12 disbled original styles
 .main-page {
   width: 100%;
   background: #171717;
@@ -178,5 +168,4 @@ onMounted(() => {
   font-size: 48px;
   color: rgba(255, 255, 255, 0.3);
 }
-*/
 </style>
