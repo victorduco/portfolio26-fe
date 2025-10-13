@@ -207,6 +207,9 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
 async function handleButtonClick(value) {
   if (isAnimating.value || enteredDigits.value.length >= 4) return;
 
+  // 🔍 PROFILING: Start timing
+  window.__keypadProfile = { clickTime: performance.now() };
+  
   enteredDigits.value.push(value);
 
   if (enteredDigits.value.length === 4) {
