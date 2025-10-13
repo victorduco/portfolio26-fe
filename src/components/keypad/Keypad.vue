@@ -209,7 +209,7 @@ async function handleButtonClick(value) {
 
   // 🔍 PROFILING: Start timing
   window.__keypadProfile = { clickTime: performance.now() };
-  
+
   enteredDigits.value.push(value);
 
   if (enteredDigits.value.length === 4) {

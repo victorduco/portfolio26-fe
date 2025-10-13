@@ -18,7 +18,7 @@ export function syncBackground(el, innerElement) {
       if (syncStartTime && profile) {
         profile.maskReadStartTime = performance.now();
       }
-      
+
       const rect = el.getBoundingClientRect();
       const style = getComputedStyle(el);
 
@@ -56,19 +56,19 @@ export function syncBackground(el, innerElement) {
     // WRITE фаза - применяем изменения
     (data) => {
       if (!data) return;
-      
+
       // 🔍 PROFILING: Write phase started
       if (profile?.maskReadCompleteTime) {
         profile.maskWriteStartTime = performance.now();
       }
-      
+
       const { offset, rotation, scale } = data;
 
       innerElement.style.setProperty("--x-offset", Math.round(offset.x) + "px");
       innerElement.style.setProperty("--y-offset", Math.round(offset.y) + "px");
       innerElement.style.setProperty("--rotation", -rotation + "deg");
       innerElement.style.setProperty("--scale", String(1 / scale));
-      
+
       // 🔍 PROFILING: Write phase complete
       if (profile?.maskWriteStartTime) {
         profile.maskWriteCompleteTime = performance.now();
