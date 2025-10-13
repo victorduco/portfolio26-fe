@@ -90,7 +90,7 @@ useMeta("keypad");
 const emit = defineEmits(["unlock"]);
 
 // API URL from environment
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const enteredDigits = ref([]);
 const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];

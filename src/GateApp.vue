@@ -9,7 +9,7 @@ import { ref, onMounted } from "vue";
 import Keypad from "./components/keypad/Keypad.vue";
 
 // API URL from environment
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const checking = ref(true);
 
