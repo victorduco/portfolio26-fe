@@ -9,33 +9,75 @@ import { META_CONFIG } from "../config/meta.js";
 export function useMeta(pageKey) {
   const route = useRoute();
 
+  const setOrUpdateMeta = (selector, attributes) => {
+    let element = document.querySelector(selector);
+    if (!element) {
+      const tagName = selector.includes('[property=') ? 'meta' : selector.split('[')[0];
+      element = document.createElement(tagName);
+      document.head.appendChild(element);
+    }
+    Object.entries(attributes).forEach(([key, value]) => {
+      element.setAttribute(key, value);
+    });
+  };
+
   const updateMeta = () => {
-    // Обновляем title
+    // Получаем данные для страницы
     const title = META_CONFIG.getTitle(pageKey);
+    const description = META_CONFIG.getDescription(pageKey);
+    const url = `https://www.victorduco.com${route.path}`;
+    const ogImage = "https://www.victorduco.com/og-image.png";
+
+    // Обновляем title
     document.title = title;
 
     // Обновляем description
-    const description = META_CONFIG.getDescription(pageKey);
-    let metaDescription = document.querySelector('meta[name="description"]');
+    setOrUpdateMeta('meta[name="description"]', {
+      name: "description",
+      content: description,
+    });
 
-    if (!metaDescription) {
-      metaDescription = document.createElement("meta");
-      metaDescription.name = "description";
-      document.head.appendChild(metaDescription);
-    }
+    // Обновляем Open Graph теги
+    setOrUpdateMeta('meta[property="og:title"]', {
+      property: "og:title",
+      content: title,
+    });
 
-    metaDescription.content = description;
+    setOrUpdateMeta('meta[property="og:description"]', {
+      property: "og:description",
+      content: description,
+    });
 
-    // Обновляем favicon
-    let linkFavicon = document.querySelector('link[rel="icon"]');
+    setOrUpdateMeta('meta[property="og:url"]', {
+      property: "og:url",
+      content: url,
+    });
 
-    if (!linkFavicon) {
-      linkFavicon = document.createElement("link");
-      linkFavicon.rel = "icon";
-      document.head.appendChild(linkFavicon);
-    }
+    setOrUpdateMeta('meta[property="og:image"]', {
+      property: "og:image",
+      content: ogImage,
+    });
 
-    linkFavicon.href = META_CONFIG.favicon;
+    // Обновляем Twitter Card теги
+    setOrUpdateMeta('meta[property="twitter:title"]', {
+      property: "twitter:title",
+      content: title,
+    });
+
+    setOrUpdateMeta('meta[property="twitter:description"]', {
+      property: "twitter:description",
+      content: description,
+    });
+
+    setOrUpdateMeta('meta[property="twitter:url"]', {
+      property: "twitter:url",
+      content: url,
+    });
+
+    setOrUpdateMeta('meta[property="twitter:image"]', {
+      property: "twitter:image",
+      content: ogImage,
+    });
   };
 
   onMounted(() => {

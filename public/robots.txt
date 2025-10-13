@@ -1,0 +1,9 @@
+# robots.txt for Victor Diukov Portfolio
+# Only allow indexing of the home page
+
+User-agent: *
+Allow: /$
+Disallow: /
+
+# Sitemap location
+Sitemap: https://www.victorduco.com/sitemap.xml
