@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import MainPage from "../pages/main-page/MainPage.vue";
 import CasePage from "../pages/case-page/CasePage.vue";
 import GateApp from "../GateApp.vue";
+import { mixpanel } from "../plugins/mixpanel.js";
 
 const routes = [
   {
@@ -132,6 +133,18 @@ router.beforeEach(async (to, from, next) => {
   }
 
   next();
+});
+
+// Track page views after navigation
+router.afterEach((to, from) => {
+  if (mixpanel) {
+    mixpanel.track("Page View", {
+      page: to.path,
+      page_name: to.name,
+      from_page: from.path,
+      from_page_name: from.name,
+    });
+  }
 });
 
 export default router;
