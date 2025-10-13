@@ -1,8 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainPage from "../pages/main-page/MainPage.vue";
 import CasePage from "../pages/case-page/CasePage.vue";
+import GateApp from "../GateApp.vue";
 
 const routes = [
+  {
+    path: "/gate",
+    name: "Gate",
+    component: GateApp,
+    meta: { public: true }, // Публичный роут, не требует авторизации
+  },
   {
     path: "/",
     name: "Home",
@@ -57,11 +64,43 @@ const router = createRouter({
   },
 });
 
-router.beforeEach((to, from, next) => {
+// API URL from environment
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+// Проверка авторизации
+let authCheckPromise = null;
+async function checkAuth() {
+  if (authCheckPromise) return authCheckPromise;
+  
+  authCheckPromise = (async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/whoami`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      return response.ok && data.ok;
+    } catch (err) {
+      console.error("Auth check error:", err);
+      return false;
+    }
+  })();
+  
+  return authCheckPromise;
+}
+
+// Функция для сброса кэша аутентификации
+export function resetAuthCache() {
+  authCheckPromise = null;
+}
+
+router.beforeEach(async (to, from, next) => {
+  // Сохраняем позицию скролла
   if (from.path === "/") {
     scrollPositions.set("/", getScrollTop());
   }
 
+  // Мета для навигации и скролла
   if (to.path === "/") {
     const cameFromStory = from.path?.startsWith("/story");
     to.meta.skipNavIntro = Boolean(cameFromStory);
@@ -72,6 +111,23 @@ router.beforeEach((to, from, next) => {
     to.meta.skipNavIntro = false;
     to.meta.restoreScrollTop = undefined;
   }
+
+  // Проверка авторизации для защищённых роутов
+  if (!to.meta.public) {
+    const isAuthenticated = await checkAuth();
+    
+    if (!isAuthenticated) {
+      // Не авторизован - редирект на /gate с параметром next
+      if (to.path !== "/gate") {
+        next({
+          path: "/gate",
+          query: { next: to.fullPath },
+        });
+        return;
+      }
+    }
+  }
+
   next();
 });
 

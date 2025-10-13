@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "node:url";
-import { resolve } from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,12 +11,6 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, "index.html"),
-        gate: resolve(__dirname, "gate.html"),
-      },
-    },
     manifest: true,
   },
 });
