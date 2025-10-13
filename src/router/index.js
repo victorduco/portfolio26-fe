@@ -53,7 +53,10 @@ const router = createRouter({
       const savedScroll = scrollPositions.get("/");
       if (savedScroll !== undefined) {
         return new Promise((resolve) => {
-          setTimeout(() => resolve({ top: savedScroll, behavior: "instant" }), 50);
+          setTimeout(
+            () => resolve({ top: savedScroll, behavior: "instant" }),
+            50
+          );
         });
       }
     }
@@ -71,7 +74,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 let authCheckPromise = null;
 async function checkAuth() {
   if (authCheckPromise) return authCheckPromise;
-  
+
   authCheckPromise = (async () => {
     try {
       const response = await fetch(`${API_URL}/api/whoami`, {
@@ -85,7 +88,7 @@ async function checkAuth() {
       return false;
     }
   })();
-  
+
   return authCheckPromise;
 }
 
@@ -115,7 +118,7 @@ router.beforeEach(async (to, from, next) => {
   // Проверка авторизации для защищённых роутов
   if (!to.meta.public) {
     const isAuthenticated = await checkAuth();
-    
+
     if (!isAuthenticated) {
       // Не авторизован - редирект на /gate с параметром next
       if (to.path !== "/gate") {

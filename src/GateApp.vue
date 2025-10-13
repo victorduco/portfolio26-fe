@@ -13,10 +13,10 @@ const route = useRoute();
 const handleUnlock = () => {
   // Сбрасываем кэш аутентификации
   resetAuthCache();
-  
+
   // Успешная авторизация - редирект на страницу из next параметра
   const next = route.query.next || "/";
-  
+
   // Используем Vue Router для навигации
   router.push(next);
 };
