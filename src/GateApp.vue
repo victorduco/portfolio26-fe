@@ -5,12 +5,18 @@
 <script setup>
 import { useRouter, useRoute } from "vue-router";
 import { resetAuthCache } from "./router/index.js";
+import { mixpanel } from "./plugins/mixpanel.js";
 import Keypad from "./components/keypad/Keypad.vue";
 
 const router = useRouter();
 const route = useRoute();
 
 const handleUnlock = () => {
+  // Track successful unlock event
+  mixpanel.track("Gate Unlocked", {
+    destination: route.query.next || "/",
+  });
+
   // Сбрасываем кэш аутентификации
   resetAuthCache();
 
