@@ -1,7 +1,7 @@
 // Конфигурация мета-тегов для всего сайта
 export const META_CONFIG = {
   // Общая часть, которая добавляется ко всем страницам
-  siteName: "VDCP26",
+  siteName: "Victor Diukov",
   separator: " | ",
 
   // Путь к favicon
@@ -10,31 +10,41 @@ export const META_CONFIG = {
   // Мета-данные для каждой страницы
   pages: {
     keypad: {
-      title: "Enter Code",
+      title: "Victor Diukov",
       description: "Enter the code to unlock the portfolio",
     },
     home: {
-      title: "Portfolio",
+      title: "Victor Diukov",
       description: "UX Designer Portfolio - Rectangles That Rules Numbers",
     },
     case1: {
-      title: "Case Study 1",
-      description: "Design System Architecture - Building consistent and scalable UI components",
+      title: "Story One",
+      description:
+        "Design System Architecture - Building consistent and scalable UI components",
     },
     case2: {
-      title: "Case Study 2",
-      description: "User Experience Design - Creating intuitive and delightful interactions",
+      title: "Story Two",
+      description:
+        "User Experience Design - Creating intuitive and delightful interactions",
     },
     case3: {
-      title: "Case Study 3",
+      title: "Story Three",
       description: "Performance Optimization - Maximizing speed and efficiency",
     },
   },
 
   // Генерация полного title
   getTitle(pageKey) {
-    const pageTitle = this.pages[pageKey]?.title || "Page";
-    return `${pageTitle}${this.separator}${this.siteName}`;
+    const page = this.pages[pageKey];
+    if (!page) return this.siteName;
+
+    // Для страниц где title совпадает с siteName, не дублируем
+    if (page.title === this.siteName) {
+      return this.siteName;
+    }
+
+    // Для остальных добавляем separator и siteName
+    return `${page.title}${this.separator}${this.siteName}`;
   },
 
   // Получение description
