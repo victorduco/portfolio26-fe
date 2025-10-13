@@ -1,7 +1,7 @@
 // Конфигурация мета-тегов для всего сайта
 export const META_CONFIG = {
   // Общая часть, которая добавляется ко всем страницам
-  siteName: "VDCP26",
+  siteName: "Victor Diukov",
   separator: " | ",
 
   // Путь к favicon
@@ -10,23 +10,23 @@ export const META_CONFIG = {
   // Мета-данные для каждой страницы
   pages: {
     keypad: {
-      title: "Enter Code",
+      title: "Victor Diukov",
       description: "Enter the code to unlock the portfolio",
     },
     home: {
-      title: "Portfolio",
+      title: "Victor Diukov",
       description: "UX Designer Portfolio - Rectangles That Rules Numbers",
     },
     case1: {
-      title: "Case Study 1",
+      title: "Story One",
       description: "Design System Architecture - Building consistent and scalable UI components",
     },
     case2: {
-      title: "Case Study 2",
+      title: "Story Two",
       description: "User Experience Design - Creating intuitive and delightful interactions",
     },
     case3: {
-      title: "Case Study 3",
+      title: "Story Three",
       description: "Performance Optimization - Maximizing speed and efficiency",
     },
   },
