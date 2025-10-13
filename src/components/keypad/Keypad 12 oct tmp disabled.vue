@@ -29,15 +29,6 @@
       </div>
     </Motion>
 
-    <!-- Error/Status Message -->
-    <div v-if="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-
-    <div v-if="rateLimited" class="rate-limit-message">
-      Too many attempts. Please wait {{ remainingTime }}s
-    </div>
-
     <Motion
       tag="div"
       class="keypad-grid"
@@ -80,10 +71,7 @@ import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
 import GeBackground from "../glass-effect/GeBackground.vue";
 import { useMeta } from "../../composables/useMeta.js";
-import {
-  useIsMobile,
-  useIsLandscapeMobile,
-} from "../../composables/useMediaQuery.js";
+import { useIsMobile, useIsLandscapeMobile } from "../../composables/useMediaQuery.js";
 import {
   keypadGridVariants,
   keypadGridTransition,
@@ -98,9 +86,6 @@ useMeta("keypad");
 
 const emit = defineEmits(["unlock"]);
 
-// API URL from environment
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
 const enteredDigits = ref([]);
 const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
@@ -109,16 +94,7 @@ const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
 
-// Backend integration
-const loading = ref(false);
-const errorMessage = ref("");
-const rateLimited = ref(false);
-const remainingTime = ref(0);
-let rateLimitTimer = null;
-
-const showClearButton = computed(
-  () => enteredDigits.value.length > 0 && !isAnimating.value
-);
+const showClearButton = computed(() => enteredDigits.value.length > 0);
 
 const getDigitColor = (index) => {
   if (animationState.value === "success") return "#00FFBC";
@@ -128,65 +104,8 @@ const getDigitColor = (index) => {
 
 const isEditableTarget = (target) => {
   if (!target) return false;
-  const editable = target.closest?.(
-    "input, textarea, select, [contenteditable='true']"
-  );
+  const editable = target.closest?.("input, textarea, select, [contenteditable='true']");
   return Boolean(editable || target.isContentEditable);
-};
-
-const startRateLimitTimer = () => {
-  if (rateLimitTimer) {
-    clearInterval(rateLimitTimer);
-  }
-
-  rateLimitTimer = setInterval(() => {
-    remainingTime.value--;
-    if (remainingTime.value <= 0) {
-      rateLimited.value = false;
-      clearInterval(rateLimitTimer);
-      rateLimitTimer = null;
-    }
-  }, 1000);
-};
-
-const checkCodeWithBackend = async (code) => {
-  loading.value = true;
-  errorMessage.value = "";
-
-  try {
-    const response = await fetch(`${API_URL}/api/check-code`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // IMPORTANT for cookies!
-      body: JSON.stringify({ code }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok && data.ok) {
-      // Success
-      return { success: true };
-    } else if (response.status === 429) {
-      // Rate limited
-      rateLimited.value = true;
-      remainingTime.value = 60;
-      startRateLimitTimer();
-      errorMessage.value = data.error || "Too many attempts";
-      return { success: false, rateLimited: true };
-    } else {
-      // Invalid code
-      errorMessage.value = data.error || "Invalid code";
-      return { success: false };
-    }
-  } catch (err) {
-    console.error("Error checking code:", err);
-    errorMessage.value = "Network error. Please try again.";
-    return { success: false };
-  } finally {
-    loading.value = false;
-  }
 };
 
 const animateFadeSequence = async (colorState, shouldUnlock) => {
@@ -196,18 +115,13 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   animationState.value = colorState;
-  await new Promise((resolve) =>
-    setTimeout(resolve, colorState === "success" ? 500 : 1000)
-  );
+  await new Promise((resolve) => setTimeout(resolve, colorState === "success" ? 500 : 1000));
 
   bgNumbersState.value = "fadeOut";
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   if (shouldUnlock) {
-    // Redirect to original URL
-    const params = new URLSearchParams(window.location.search);
-    const next = params.get("next") || "/";
-    window.location.replace(next);
+    emit("unlock");
   } else {
     enteredDigits.value = [];
     animationState.value = "initial";
@@ -219,73 +133,35 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
 };
 
 async function handleButtonClick(value) {
-  if (
-    isAnimating.value ||
-    loading.value ||
-    rateLimited.value ||
-    enteredDigits.value.length >= 4
-  )
-    return;
+  if (isAnimating.value || enteredDigits.value.length >= 4) return;
 
   enteredDigits.value.push(value);
-  errorMessage.value = ""; // Clear any previous errors
 
   if (enteredDigits.value.length === 4) {
     isAnimating.value = true;
     const code = enteredDigits.value.join("");
-
-    // Check code with backend
-    const result = await checkCodeWithBackend(code);
-
-    if (result.rateLimited) {
-      // Rate limited - reset immediately
-      enteredDigits.value = [];
-      animationState.value = "initial";
-      bgNumbersState.value = "initial";
-      keypadGridState.value = "initial";
-      isAnimating.value = false;
-    } else {
-      // Animate success or failure
-      await animateFadeSequence(
-        result.success ? "success" : "fail",
-        result.success
-      );
-    }
+    const isCorrect = code === "8651";
+    await animateFadeSequence(isCorrect ? "success" : "fail", isCorrect);
   }
 }
 
 function handleClear() {
-  if (isAnimating.value || loading.value) return;
+  if (isAnimating.value) return;
   enteredDigits.value = [];
   animationState.value = "initial";
   bgNumbersState.value = "initial";
-  errorMessage.value = "";
 }
 
 function handleBackspace() {
-  if (
-    isAnimating.value ||
-    loading.value ||
-    rateLimited.value ||
-    enteredDigits.value.length === 0
-  )
-    return;
+  if (isAnimating.value || enteredDigits.value.length === 0) return;
   enteredDigits.value = enteredDigits.value.slice(0, -1);
   animationState.value = "initial";
   bgNumbersState.value = "initial";
-  errorMessage.value = "";
 }
 
 function handleKeyDown(event) {
-  if (
-    event.defaultPrevented ||
-    event.metaKey ||
-    event.ctrlKey ||
-    event.altKey ||
-    event.shiftKey ||
-    event.repeat
-  )
-    return;
+  if (event.defaultPrevented || event.metaKey || event.ctrlKey ||
+      event.altKey || event.shiftKey || event.repeat) return;
 
   if (isEditableTarget(event.target)) return;
 
@@ -312,9 +188,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (typeof window !== "undefined") {
     window.removeEventListener("keydown", handleKeyDown);
-  }
-  if (rateLimitTimer) {
-    clearInterval(rateLimitTimer);
   }
 });
 </script>
@@ -406,38 +279,6 @@ onBeforeUnmount(() => {
   }
 }
 
-.error-message {
-  position: absolute;
-  top: max(40px, calc(env(safe-area-inset-top) + 24px));
-  left: 50%;
-  transform: translateX(-50%);
-  color: #ff83a2;
-  font-size: 16px;
-  font-weight: 500;
-  text-align: center;
-  z-index: 20;
-  padding: 12px 24px;
-  background: rgba(255, 131, 162, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-}
-
-.rate-limit-message {
-  position: absolute;
-  top: max(100px, calc(env(safe-area-inset-top) + 84px));
-  left: 50%;
-  transform: translateX(-50%);
-  color: #ffff78;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  z-index: 20;
-  padding: 8px 20px;
-  background: rgba(255, 255, 120, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-}
-
 .keypad-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -478,7 +319,6 @@ onBeforeUnmount(() => {
   padding: 8px 12px;
   cursor: pointer;
   text-decoration: none;
-  z-index: 20;
 }
 
 .keypad-clear-button:hover {

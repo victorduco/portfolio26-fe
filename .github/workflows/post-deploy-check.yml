@@ -27,7 +27,7 @@ jobs:
             echo "Attempt $i/5..."
 
             # Делаем запрос и получаем HTTP код
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://vdcp26-c16bb5775681.herokuapp.com || echo "000")
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://portfolio26-fe-70528f6245b6.herokuapp.com || echo "000")
 
             echo "Got HTTP code: $HTTP_CODE"
 
@@ -57,7 +57,7 @@ jobs:
           echo "Fetching page content..."
 
           # Получаем содержимое страницы
-          CONTENT=$(curl -s https://vdcp26-c16bb5775681.herokuapp.com)
+          CONTENT=$(curl -s https://portfolio26-fe-70528f6245b6.herokuapp.com)
 
           # Проверяем, что HTML не пустой
           if [ -z "$CONTENT" ]; then
