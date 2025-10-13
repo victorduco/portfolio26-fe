@@ -19,11 +19,13 @@ export const META_CONFIG = {
     },
     case1: {
       title: "Story One",
-      description: "Design System Architecture - Building consistent and scalable UI components",
+      description:
+        "Design System Architecture - Building consistent and scalable UI components",
     },
     case2: {
       title: "Story Two",
-      description: "User Experience Design - Creating intuitive and delightful interactions",
+      description:
+        "User Experience Design - Creating intuitive and delightful interactions",
     },
     case3: {
       title: "Story Three",
@@ -33,8 +35,16 @@ export const META_CONFIG = {
 
   // Генерация полного title
   getTitle(pageKey) {
-    const pageTitle = this.pages[pageKey]?.title || "Page";
-    return `${pageTitle}${this.separator}${this.siteName}`;
+    const page = this.pages[pageKey];
+    if (!page) return this.siteName;
+    
+    // Для страниц где title совпадает с siteName, не дублируем
+    if (page.title === this.siteName) {
+      return this.siteName;
+    }
+    
+    // Для остальных добавляем separator и siteName
+    return `${page.title}${this.separator}${this.siteName}`;
   },
 
   // Получение description
