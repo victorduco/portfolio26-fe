@@ -8,11 +8,13 @@
 ## 📦 Приложения на Heroku
 
 ### Frontend: `portfolio26-fe`
+
 - **URL:** https://portfolio26-fe-70528f6245b6.herokuapp.com
 - **Git:** https://git.heroku.com/portfolio26-fe.git
 - **Статус:** ✅ Создано и настроено
 
 ### Backend: `portfolio26-be`
+
 - **URL:** https://portfolio26-be-c17efea7c1e6.herokuapp.com
 - **Git:** https://git.heroku.com/portfolio26-be.git
 - **Статус:** ✅ Работает
@@ -22,6 +24,7 @@
 ## ⚙️ Конфигурация
 
 ### Frontend (portfolio26-fe)
+
 ```bash
 VITE_API_URL=https://portfolio26-be-c17efea7c1e6.herokuapp.com
 ```
@@ -31,11 +34,13 @@ VITE_API_URL=https://portfolio26-be-c17efea7c1e6.herokuapp.com
 ### Локальная разработка
 
 **.env (development)**
+
 ```bash
 VITE_API_URL=http://localhost:3000
 ```
 
 **.env.production**
+
 ```bash
 VITE_API_URL=https://portfolio26-be-c17efea7c1e6.herokuapp.com
 ```
@@ -45,13 +50,17 @@ VITE_API_URL=https://portfolio26-be-c17efea7c1e6.herokuapp.com
 ## 🚀 Деплой
 
 ### GitHub Actions (Автоматический)
+
 При push в ветку `main`:
+
 ```yaml
 .github/workflows/deploy.yml
 ```
+
 Автоматически деплоит на `portfolio26-fe`
 
 ### Ручной деплой
+
 ```bash
 git push heroku dev:main
 # или из main ветки:
@@ -63,6 +72,7 @@ git push heroku main
 ## ✅ Что настроено
 
 ### 1. Backend API ✅
+
 - ✅ `/health` - health check работает
 - ✅ `/api/check-code` - проверка кода доступа
 - ✅ `/api/whoami` - проверка авторизации
@@ -70,6 +80,7 @@ git push heroku main
 - ✅ Cookies (httpOnly) работают
 
 ### 2. Frontend ✅
+
 - ✅ Heroku приложение создано
 - ✅ `VITE_API_URL` установлен в Config Vars
 - ✅ Git remote настроен
@@ -79,6 +90,7 @@ git push heroku main
 - ✅ Deploy workflow обновлен
 
 ### 3. Билд и деплой ✅
+
 - ✅ `npm run build` успешно собирается
 - ✅ URL бэкенда встраивается в билд
 - ✅ Procfile настроен для Heroku
@@ -90,6 +102,7 @@ git push heroku main
 ## 🧪 Проверка работы
 
 ### 1. Проверка Backend
+
 ```bash
 # Health check
 curl https://portfolio26-be-c17efea7c1e6.herokuapp.com/health
@@ -104,6 +117,7 @@ curl -X POST https://portfolio26-be-c17efea7c1e6.herokuapp.com/api/check-code \
 ```
 
 ### 2. После деплоя Frontend
+
 ```bash
 # Открыть приложение
 heroku open --app portfolio26-fe
@@ -122,6 +136,7 @@ heroku config --app portfolio26-fe
 ### Для полного запуска в production:
 
 1. **Задеплоить фронтенд:**
+
    ```bash
    git add .
    git commit -m "Production auth setup complete"
@@ -131,6 +146,7 @@ heroku config --app portfolio26-fe
    ```
 
 2. **Проверить работу:**
+
    - Открыть https://portfolio26-fe-70528f6245b6.herokuapp.com
    - Должен быть редирект на `/gate`
    - Ввести код доступа
@@ -146,21 +162,27 @@ heroku config --app portfolio26-fe
 ## 🔍 Troubleshooting
 
 ### Network error при авторизации
+
 **Решение:** Проверить, что VITE_API_URL правильно встроен в билд:
+
 ```bash
 npm run build
 grep -r "portfolio26-be" dist/
 ```
 
 ### Cookie не устанавливается
+
 **Решение:** Проверить настройки на бэкенде:
+
 ```bash
 heroku config --app portfolio26-be | grep COOKIE_SECURE
 # Должно быть: COOKIE_SECURE=true
 ```
 
 ### Приложение не открывается
+
 **Решение:** Проверить логи:
+
 ```bash
 heroku logs --tail --app portfolio26-fe
 ```
@@ -220,6 +242,7 @@ heroku logs --tail --app portfolio26-fe
 **Все готово для работы с авторизацией на продакшене!**
 
 Остался последний шаг - задеплоить фронтенд командой:
+
 ```bash
 git push heroku dev:main
 ```
@@ -229,6 +252,7 @@ git push heroku dev:main
 ---
 
 **Контакты:**
+
 - Frontend: https://portfolio26-fe-70528f6245b6.herokuapp.com
 - Backend: https://portfolio26-be-c17efea7c1e6.herokuapp.com
 - GitHub: https://github.com/victorduco/p26
