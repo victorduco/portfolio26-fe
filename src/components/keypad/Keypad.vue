@@ -25,6 +25,7 @@
     ></div>
 
     <Motion
+      v-if="!isResetting"
       tag="div"
       class="keypad-grid"
       :variants="keypadGridVariants"
@@ -90,6 +91,7 @@ const animationState = ref("initial");
 const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
+const isResetting = ref(false);
 
 let resizeTimer = null;
 
@@ -271,17 +273,20 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
 
   bgNumbersState.value = "fadeOut";
   await new Promise((resolve) => setTimeout(resolve, 500));
-  
+
   if (shouldUnlock) {
     emit("unlock");
   } else {
     // Hide overlay - watch will set color to transparent
     animationState.value = "initial";
-    
-    // Wait for overlay to fully fade and color to become transparent
-    await new Promise((resolve) => setTimeout(resolve, 550));
 
-    // Now clear digits and backgrounds while everything is invisible
+    // Wait for overlay to fully fade
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Unmount keypad buttons to clear all cached state
+    isResetting.value = true;
+
+    // Now clear digits and backgrounds
     enteredDigits.value = [];
 
     // Wait for watch to clear backgrounds
@@ -293,11 +298,15 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
     // Extra delay to ensure everything is cleared
     await new Promise((resolve) => setTimeout(resolve, 50));
 
-    // Now fade components back in - everything is clean
+    // Reset states
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
-    
-    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Remount keypad buttons - everything is clean
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    isResetting.value = false;
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
     isAnimating.value = false;
   }
 };
