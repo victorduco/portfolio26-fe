@@ -3,7 +3,7 @@
     @hoverStart="isHovered = true"
     @hoverEnd="isHovered = false"
     @click="toggleState"
-    :custom="{ index, additionalMargin }"
+    :custom="{ index, additionalMargin, isMobileLayout, isSmallestBreakpoints }"
     :variants="boxVariants"
     :animate="animationState"
     :transition="boxTransition"
@@ -12,6 +12,10 @@
     :class="{
       'is-intro-visible': introVisible,
       'should-animate': shouldAnimate,
+      'intro-square--mobile': isMobileLayout,
+      'intro-square--mobile-active': isMobileLayout && isActive,
+      'intro-square--smallest': isSmallestBreakpoints,
+      'intro-square--smallest-active': isSmallestBreakpoints && isActive,
     }"
     :data-state="isActive"
     :style="{ opacity: shouldAnimate ? 1 : 0 }"
@@ -36,7 +40,13 @@
       ></motion.i>
     </motion.div>
 
-    <IntroRectangleActive :index="index" :is-active="isActive" />
+    <IntroRectangleActive
+      :index="index"
+      :is-active="isActive"
+      :is-mobile-layout="isMobileLayout"
+      :is-smallest-breakpoints="isSmallestBreakpoints"
+      @close="handleMobileCloseRequest"
+    />
   </motion.li>
 </template>
 
@@ -48,10 +58,13 @@ import { backdropFilter as vBackdropFilter } from "@/directives/backdrop-filter"
 import {
   spring,
   textShadowSpring,
-  boxVariants,
   contentWrapVariants,
   squareContentVariants,
+  useBoxVariants,
 } from "./variants.js";
+
+// Используем реактивные варианты с обработкой resize
+const boxVariants = useBoxVariants();
 
 const props = defineProps({
   index: {
@@ -74,6 +87,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isMobileLayout: {
+    type: Boolean,
+    default: false,
+  },
+  isSmallestBreakpoints: {
+    type: Boolean,
+    default: false,
+  },
+  activeMobileIndex: {
+    type: Number,
+    default: -1,
+  },
   backdropFilter: {
     type: Object,
     default: () => ({
@@ -84,11 +109,24 @@ const props = defineProps({
   },
 });
 
-const isActive = ref(false);
+const localActive = ref(false);
 const isHovered = ref(false);
+
+const isActive = computed(() => {
+  // На двух наименьших брейкпоинтах используем fullscreen модальный режим
+  if (props.isSmallestBreakpoints || props.isMobileLayout) {
+    return props.activeMobileIndex === props.index;
+  }
+  return localActive.value;
+});
 
 // Определение состояния анимации (computed для переиспользования)
 const animationState = computed(() => {
+  // На двух наименьших брейкпоинтах: только default или active (без hover)
+  if (props.isSmallestBreakpoints || props.isMobileLayout) {
+    if (isActive.value) return "active";
+    return "default";
+  }
   // Обычные интерактивные состояния
   if (isActive.value) return "active";
   // Не показываем hover пока Intro не появился
@@ -112,34 +150,71 @@ const boxTransition = computed(() => {
   }
 });
 
-const emit = defineEmits(["activeChange"]);
+const emit = defineEmits(["activeChange", "mobileOpen", "mobileClose"]);
 
 function toggleState() {
   isHovered.value = false;
-  isActive.value = !isActive.value;
+  // На двух наименьших брейкпоинтах используем fullscreen модальный режим
+  if (props.isSmallestBreakpoints || props.isMobileLayout) {
+    if (isActive.value) {
+      handleMobileCloseRequest();
+    } else {
+      emit("mobileOpen", props.index);
+      emit("activeChange", true);
+    }
+    return;
+  }
 
-  emit("activeChange", isActive.value);
+  localActive.value = !localActive.value;
+  emit("activeChange", localActive.value);
 }
 
 // Следим за forceClose и закрываем с анимацией
 watch(
   () => props.forceClose,
   (newVal) => {
-    if (newVal && isActive.value) {
-      isActive.value = false;
+    if (!props.isMobileLayout && !props.isSmallestBreakpoints && newVal && isActive.value) {
+      localActive.value = false;
       emit("activeChange", false);
     }
   }
 );
 
 // Computed additional margin для сдвига влево при активации
-const additionalMargin = computed(() => props.activeCount * -40);
+// На маленьких брейкпоинтах не сдвигаем
+const additionalMargin = computed(() =>
+  (props.isMobileLayout || props.isSmallestBreakpoints) ? 0 : props.activeCount * -40
+);
 
 // Получаем класс иконки в зависимости от индекса
 // Маппинг: Vision→icon-d, Connection→icon-a, Technology→icon-c, Scale→icon-b
 function getIconClass(index) {
   const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];
   return iconNames[index] || "icon-a";
+}
+
+watch(
+  () => props.isMobileLayout,
+  (isMobile) => {
+    if (isMobile) {
+      localActive.value = false;
+    }
+  }
+);
+
+watch(
+  () => props.isSmallestBreakpoints,
+  (isSmallest) => {
+    if (isSmallest) {
+      localActive.value = false;
+    }
+  }
+);
+
+function handleMobileCloseRequest() {
+  if (!props.isMobileLayout && !props.isSmallestBreakpoints) return;
+  emit("mobileClose", props.index);
+  emit("activeChange", false);
 }
 </script>
 
@@ -222,5 +297,18 @@ function getIconClass(index) {
 .intro-content-icon::before {
   margin: 0;
   width: auto;
+}
+
+/* Стили для двух наименьших брейкпоинтов (xs + sm: 360-600px) */
+@media (max-width: 600px) {
+  /* На маленьких экранах отключаем hover эффект */
+  .intro-square--smallest.is-intro-visible:hover {
+    z-index: 5;
+  }
+  
+  /* Активный квадрат не сдвигает другие */
+  .intro-square--smallest-active {
+    position: relative;
+  }
 }
 </style>

@@ -53,7 +53,12 @@
       :intro-visible="showRectangles"
       :force-close="forceCloseAll"
       :should-animate="rectangleStates[index]"
+      :is-mobile-layout="isMobileLayout"
+      :is-smallest-breakpoints="isSmallestBreakpoints"
+      :active-mobile-index="activeMobileIndex"
       @active-change="handleActiveChange"
+      @mobile-open="handleMobileOpen"
+      @mobile-close="handleMobileClose"
     />
   </ul>
 </template>
@@ -63,6 +68,11 @@ import { ref, watch, onMounted, onUnmounted } from "vue";
 import { Motion } from "motion-v";
 import IntroRectangle from "./IntroRectangle.vue";
 import storyNavIcon from "@/assets/icons/headphones.svg";
+import {
+  NAVIGATION_MOBILE,
+  INTRO_MOBILE_FULLSCREEN,
+  useMediaQuery,
+} from "@/composables/useMediaQuery.js";
 
 const props = defineProps({
   introVisible: {
@@ -74,6 +84,9 @@ const props = defineProps({
 const rects = Array(4).fill(null);
 const activeCount = ref(0);
 const forceCloseAll = ref(false); // Флаг для принудительного закрытия
+const isMobileLayout = useMediaQuery(NAVIGATION_MOBILE);
+const isSmallestBreakpoints = useMediaQuery(INTRO_MOBILE_FULLSCREEN);
+const activeMobileIndex = ref(-1);
 
 // Обработчик клика вне блоков
 function handleClickOutside(event) {
@@ -82,6 +95,23 @@ function handleClickOutside(event) {
 
   // Проверяем, был ли клик по элементу .intro-square или его потомкам
   const clickedSquare = event.target.closest('.intro-square');
+  
+  // На двух наименьших брейкпоинтах используем fullscreen модальный режим
+  if (isSmallestBreakpoints.value) {
+    if (!clickedSquare && activeMobileIndex.value !== -1) {
+      handleMobileClose();
+    }
+    return;
+  }
+  
+  // На мобильных (но не на самых маленьких) также используем mobile логику
+  if (isMobileLayout.value) {
+    if (!clickedSquare && activeMobileIndex.value !== -1) {
+      handleMobileClose();
+    }
+    return;
+  }
+
   if (!clickedSquare) {
     // Клик был вне всех блоков - закрываем все
     forceCloseAll.value = true;
@@ -147,6 +177,8 @@ watch(
       rectangleStates.value = [false, false, false, false];
       showRectangles.value = false;
       scrollHintState.value = "hidden";
+      activeMobileIndex.value = -1;
+      activeCount.value = 0;
       return;
     }
 
@@ -186,7 +218,12 @@ watch(
 );
 
 function handleActiveChange(isActive) {
-  activeCount.value += isActive ? 1 : -1;
+  if (isMobileLayout.value) {
+    // На мобильной верстке количество активных всегда 0 или 1
+    activeCount.value = isActive ? 1 : 0;
+  } else {
+    activeCount.value += isActive ? 1 : -1;
+  }
 }
 
 // Отслеживаем скролл и сбрасываем квадраты при уходе из viewport
@@ -201,10 +238,16 @@ onMounted(() => {
           // Если секция полностью ушла из viewport
           if (!entry.isIntersecting && activeCount.value > 0) {
             // Принудительно закрываем все квадраты одновременно с анимацией
-            forceCloseAll.value = true;
+            if (isMobileLayout.value || isSmallestBreakpoints.value) {
+              handleMobileClose();
+            } else {
+              forceCloseAll.value = true;
+            }
           } else if (entry.isIntersecting) {
             // Когда возвращаемся - снимаем блокировку
-            forceCloseAll.value = false;
+            if (!isMobileLayout.value && !isSmallestBreakpoints.value) {
+              forceCloseAll.value = false;
+            }
           }
         });
       },
@@ -224,6 +267,23 @@ onUnmounted(() => {
   observer?.disconnect();
   // Удаляем обработчик клика при размонтировании
   document.removeEventListener('click', handleClickOutside);
+});
+
+function handleMobileOpen(index) {
+  activeMobileIndex.value = index;
+  activeCount.value = 1;
+}
+
+function handleMobileClose() {
+  activeMobileIndex.value = -1;
+  activeCount.value = 0;
+}
+
+watch(isMobileLayout, (isMobile) => {
+  if (!isMobile) {
+    handleMobileClose();
+    forceCloseAll.value = false;
+  }
 });
 </script>
 
@@ -325,8 +385,20 @@ onUnmounted(() => {
   opacity: 0.67;
 }
 
-@media (min-width: 900px) {
+/* Скрываем rectangles на мобильных устройствах */
+@media (max-width: 899px) {
   .intro-list {
+    display: none;
+  }
+  
+  /* Центрируем текст по вертикали, добавляем горизонтальные отступы */
+  .intro-hero__title {
+    margin-bottom: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-left: clamp(16px, 4vw, 32px);
+    padding-right: clamp(16px, 4vw, 32px);
   }
 }
 </style>
