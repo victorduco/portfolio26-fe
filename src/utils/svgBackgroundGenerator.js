@@ -8,25 +8,27 @@
 const COLORS = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 const IMAGE_WIDTH = 1920;
 const IMAGE_HEIGHT = 1080;
-const DIGIT_WIDTH = 400;
-const DIGIT_HEIGHT = 700;
+const DIGIT_WIDTH = 500;
+const DIGIT_HEIGHT = 1000;
 
 /**
  * Generate composite SVG with all digits placed horizontally
  * @param {number[]} digits - Array of digits (1-4 digits)
+ * @param {string[]} customColors - Optional array of colors (if not provided, uses default COLORS)
  * @returns {string} - Complete SVG string
  */
-export function generateCompositeSVG(digits) {
+export function generateCompositeSVG(digits, customColors = null) {
   if (!Array.isArray(digits) || digits.length === 0) {
     return null;
   }
 
+  const colorsToUse = customColors || COLORS;
   const totalDigitsWidth = DIGIT_WIDTH * digits.length;
 
   // Generate each digit as a group with x offset
   const digitElements = digits
     .map((digit, index) => {
-      const color = COLORS[index % COLORS.length];
+      const color = colorsToUse[index % colorsToUse.length];
       const xOffset = index * DIGIT_WIDTH;
 
       return `
@@ -39,10 +41,11 @@ export function generateCompositeSVG(digits) {
           preserveAspectRatio="xMidYMid meet"
         >
           <text
+            class="digit-text"
             x="350"
             y="400"
             font-size="825"
-            font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
+            font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
             font-weight="400"
             text-anchor="middle"
             dominant-baseline="central"
@@ -69,6 +72,11 @@ export function generateCompositeSVG(digits) {
       xmlns:xlink="http://www.w3.org/1999/xlink"
       preserveAspectRatio="xMidYMid meet"
     >
+      <style>
+        .digit-text {
+          transition: fill 0.5s ease;
+        }
+      </style>
       <g transform="translate(${xOffset}, ${yOffset})">
         ${digitElements}
       </g>

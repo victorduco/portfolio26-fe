@@ -17,7 +17,10 @@ export const maskElement = {
       requestAnimationFrame(sync);
 
       const observer = new MutationObserver(sync);
-      observer.observe(el, { attributes: true, attributeFilter: ["style", "class"] });
+      observer.observe(el, {
+        attributes: true,
+        attributeFilter: ["style", "class"],
+      });
 
       const ro = new ResizeObserver(sync);
       ro.observe(el);

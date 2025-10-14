@@ -14,10 +14,10 @@
       class="keypad-button-wrapper"
       v-mask-element="'#171717'"
     >
-      <!-- <GlassEffect
+      <GlassEffect
         class="keypad-button-glass"
         :user-options="glassEffectConfig"
-      /> -->
+      />
 
       <motion.div
         class="keypad-number"

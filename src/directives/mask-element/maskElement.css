@@ -16,10 +16,7 @@
   background-repeat: no-repeat;
   pointer-events: none;
   opacity: 1;
-  filter: var(
-    --glass-filter,
-    blur(10px) saturate(90%) brightness(0.9) contrast(1)
-  );
+  filter: var(--glass-filter, blur(15px) saturate(100%) brightness(90%));
   position: absolute;
   overflow: visible;
   z-index: 1;

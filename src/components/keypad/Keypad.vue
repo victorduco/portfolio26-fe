@@ -1,14 +1,25 @@
 <template>
   <div class="keypad-container">
+    <!-- Base layer with normal colors -->
     <Motion
       tag="div"
-      class="background-numbers"
+      class="background-numbers background-numbers-base"
       id="keypad-bg-export"
       :variants="backgroundNumbersVariants"
       :animate="bgNumbersState"
       :transition="backgroundNumbersTransition"
     >
     </Motion>
+
+    <!-- Overlay layer with success/fail colors -->
+    <div
+      :class="[
+        'background-numbers',
+        'background-numbers-overlay',
+        { 'is-visible': animationState !== 'initial' }
+      ]"
+    >
+    </div>
 
     <Motion
       tag="div"
@@ -82,48 +93,74 @@ const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
 
-// Generate SVG background from entered digits
-const backgroundSVG = computed(() => {
+// Generate base SVG background with normal colors
+const backgroundSVGBase = computed(() => {
   if (enteredDigits.value.length === 0) return "";
+
+  // Always use normal colors for base layer
   const svg = generateCompositeSVG(enteredDigits.value);
   console.log(
-    "🎨 Generated SVG for digits:",
+    "🎨 Generated BASE SVG for digits:",
     enteredDigits.value,
     svg ? "OK" : "FAILED"
   );
   return svg;
 });
 
-// Update CSS variable with SVG data URL when background changes
-watch(
-  backgroundSVG,
-  (svg) => {
-    console.log(
-      "🔄 Watch triggered, svg:",
-      svg ? "EXISTS" : "EMPTY",
-      "length:",
-      svg?.length
-    );
+// Generate overlay SVG background with state colors (success/fail)
+const backgroundSVGOverlay = computed(() => {
+  if (enteredDigits.value.length === 0) return "";
+  if (animationState.value === "initial") return "";
 
+  // Generate colors based on success/fail state
+  const stateColors = enteredDigits.value.map((_, index) =>
+    getDigitColor(index)
+  );
+
+  const svg = generateCompositeSVG(enteredDigits.value, stateColors);
+  console.log(
+    "🎨 Generated OVERLAY SVG, state:",
+    animationState.value,
+    svg ? "OK" : "FAILED"
+  );
+  return svg;
+});
+
+// Update CSS variables with SVG data URLs
+watch(
+  backgroundSVGBase,
+  (svg) => {
     if (!svg) {
       document.documentElement.style.setProperty("--global-keypad-bg", "none");
-      console.log("❌ Cleared --global-keypad-bg");
     } else {
-      // Convert SVG to data URL
       const base64 = btoa(unescape(encodeURIComponent(svg)));
       const dataURL = `data:image/svg+xml;base64,${base64}`;
       document.documentElement.style.setProperty(
         "--global-keypad-bg",
         `url("${dataURL}")`
       );
+      console.log("✅ Set --global-keypad-bg (base)");
+    }
+  },
+  { immediate: true }
+);
 
-      // Check if it was actually set
-      const actualValue = getComputedStyle(
-        document.documentElement
-      ).getPropertyValue("--global-keypad-bg");
-      console.log("✅ Set --global-keypad-bg");
-      console.log("   dataURL length:", dataURL.length);
-      console.log("   actualValue:", actualValue.substring(0, 50) + "...");
+watch(
+  backgroundSVGOverlay,
+  (svg) => {
+    if (!svg) {
+      document.documentElement.style.setProperty(
+        "--global-keypad-bg-overlay",
+        "none"
+      );
+    } else {
+      const base64 = btoa(unescape(encodeURIComponent(svg)));
+      const dataURL = `data:image/svg+xml;base64,${base64}`;
+      document.documentElement.style.setProperty(
+        "--global-keypad-bg-overlay",
+        `url("${dataURL}")`
+      );
+      console.log("✅ Set --global-keypad-bg-overlay (state)");
     }
   },
   { immediate: true }
@@ -404,16 +441,30 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: var(--global-keypad-bg);
   background-position: 50% 50%;
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+.background-numbers-base {
+  z-index: 1;
+  background-image: var(--global-keypad-bg);
+}
+
+.background-numbers-overlay {
+  z-index: 2;
+  background-image: var(--global-keypad-bg-overlay);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.background-numbers-overlay.is-visible {
+  opacity: 1;
 }
 
 @media (min-width: 768px) {
