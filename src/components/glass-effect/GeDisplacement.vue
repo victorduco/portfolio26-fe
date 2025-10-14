@@ -84,7 +84,7 @@ const applyFilterToMaskElement = () => {
 
   if (!maskElement) return;
 
-  maskElement.style.setProperty("--glass-filter", `blur(15px) saturate(100%) brightness(90%) url(#${filterId})`);
+  maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);
   updateMaskRect();
 
   resizeObserver = new ResizeObserver(updateMaskRect);

@@ -118,7 +118,11 @@ async function generateGlyphs(progressBar) {
       const blurredPath = path.join(glyphsBlurredDir, glyphName);
 
       // Skip if already exists and not forced
-      if (!FORCE && (await fileExists(sharpPath)) && (await fileExists(blurredPath))) {
+      if (
+        !FORCE &&
+        (await fileExists(sharpPath)) &&
+        (await fileExists(blurredPath))
+      ) {
         continue;
       }
 
@@ -134,8 +138,8 @@ async function generateGlyphs(progressBar) {
 
         // Generate blurred version
         const blurredBuffer = await sharp(buffer)
-          .blur(5)
-          .modulate({ brightness: 0.9, saturation: 0.9 })
+          .blur(15)
+          .modulate({ brightness: 0.9, saturation: 1.0 })
           .png({ quality: 80, compressionLevel: 9 })
           .toBuffer();
         await fs.writeFile(blurredPath, blurredBuffer);
@@ -152,7 +156,7 @@ async function generateGlyphs(progressBar) {
   const batchSize = 10;
   for (let i = 0; i < tasks.length; i += batchSize) {
     const batch = tasks.slice(i, i + batchSize);
-    await Promise.all(batch.map(task => task()));
+    await Promise.all(batch.map((task) => task()));
   }
 
   progressBar.stop();
@@ -302,7 +306,9 @@ async function composeBackground(code, variant, cache, progressBar) {
   }
 
   // Save
-  const buffer = await baseImage.png({ quality: 80, compressionLevel: 9 }).toBuffer();
+  const buffer = await baseImage
+    .png({ quality: 80, compressionLevel: 9 })
+    .toBuffer();
   await fs.writeFile(filepath, buffer);
 
   // Cache for reuse
@@ -344,7 +350,9 @@ async function main() {
   // Summary
   const duration = ((Date.now() - stats.startTime) / 1000).toFixed(1);
   const avgSize =
-    stats.compositionsGenerated > 0 ? stats.totalSize / stats.compositionsGenerated : 0;
+    stats.compositionsGenerated > 0
+      ? stats.totalSize / stats.compositionsGenerated
+      : 0;
 
   console.log("\n✅ Generation complete!\n");
   console.log("Statistics:");

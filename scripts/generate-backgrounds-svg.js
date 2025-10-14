@@ -15,23 +15,23 @@
  *   npm run generate:backgrounds -- --count=100
  */
 
-import puppeteer from 'puppeteer';
-import sharp from 'sharp';
-import cliProgress from 'cli-progress';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import puppeteer from "puppeteer";
+import sharp from "sharp";
+import cliProgress from "cli-progress";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuration
-const OUTPUT_DIR = path.join(__dirname, '../public/keypad-backgrounds');
-const SVG_DIR = path.join(__dirname, '../public/keypad-digits');
-const COLORS = ['#27A9FF', '#FF83A2', '#00FFBC', '#FFFF78'];
-const FORCE = process.argv.includes('--force');
-const TEST_COUNT = process.argv.find(arg => arg.startsWith('--count'));
-const MAX_COUNT = TEST_COUNT ? parseInt(TEST_COUNT.split('=')[1]) : 10000;
+const OUTPUT_DIR = path.join(__dirname, "../public/keypad-backgrounds");
+const SVG_DIR = path.join(__dirname, "../public/keypad-digits");
+const COLORS = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
+const FORCE = process.argv.includes("--force");
+const TEST_COUNT = process.argv.find((arg) => arg.startsWith("--count"));
+const MAX_COUNT = TEST_COUNT ? parseInt(TEST_COUNT.split("=")[1]) : 10000;
 const IMAGE_WIDTH = 1920;
 const IMAGE_HEIGHT = 1080;
 
@@ -53,9 +53,10 @@ let svgCache = {};
 async function loadSVGFiles() {
   for (let i = 0; i < 10; i++) {
     const svgPath = path.join(SVG_DIR, `${i}.svg`);
-    const svgContent = await fs.readFile(svgPath, 'utf-8');
+    const svgContent = await fs.readFile(svgPath, "utf-8");
     // Convert to base64 for embedding
-    svgCache[i] = 'data:image/svg+xml;base64,' + Buffer.from(svgContent).toString('base64');
+    svgCache[i] =
+      "data:image/svg+xml;base64," + Buffer.from(svgContent).toString("base64");
   }
 }
 
@@ -63,16 +64,18 @@ async function loadSVGFiles() {
  * Generate HTML for composition
  */
 function generateHTML(digits) {
-  const digitElements = digits.map((digit, index) => {
-    const color = COLORS[index % COLORS.length];
-    const svgDataURL = svgCache[digit];
+  const digitElements = digits
+    .map((digit, index) => {
+      const color = COLORS[index % COLORS.length];
+      const svgDataURL = svgCache[digit];
 
-    return `
+      return `
       <div class="background-digit" style="background-color: ${color};">
         <img src="${svgDataURL}" class="digit-svg" />
       </div>
     `;
-  }).join('');
+    })
+    .join("");
 
   return `
 <!DOCTYPE html>
@@ -155,28 +158,28 @@ async function fileExists(filepath) {
  * Format file size
  */
 function formatSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 }
 
 /**
  * Generate single background
  */
 async function generateBackground(browser, combination, progressBar) {
-  const code = combination.toString().padStart(4, '0');
+  const code = combination.toString().padStart(4, "0");
   const filename = `${code}.png`;
   const filepath = path.join(OUTPUT_DIR, filename);
 
   // Skip if exists
-  if (!FORCE && await fileExists(filepath)) {
+  if (!FORCE && (await fileExists(filepath))) {
     stats.skipped++;
     progressBar.increment();
     return;
   }
 
   try {
-    const digits = code.split('').map(Number);
+    const digits = code.split("").map(Number);
     const html = generateHTML(digits);
 
     // Create page
@@ -184,13 +187,13 @@ async function generateBackground(browser, combination, progressBar) {
     await page.setViewport({
       width: IMAGE_WIDTH,
       height: IMAGE_HEIGHT,
-      deviceScaleFactor: 1
+      deviceScaleFactor: 1,
     });
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.setContent(html, { waitUntil: "networkidle0" });
 
     // Screenshot
     const screenshotBuffer = await page.screenshot({
-      type: 'png',
+      type: "png",
       omitBackground: false,
     });
 
@@ -198,10 +201,10 @@ async function generateBackground(browser, combination, progressBar) {
 
     // Apply filters and optimize with sharp
     const finalBuffer = await sharp(screenshotBuffer)
-      .blur(5) // blur(10px) CSS ≈ blur(5) in sharp
+      .blur(15) // blur(15px) в sharp = сильнее, чем blur(15px) в CSS
       .modulate({
         brightness: 0.9,
-        saturation: 0.9,
+        saturation: 1.0,
       })
       .linear(1.0, 0) // contrast
       .png({
@@ -218,7 +221,6 @@ async function generateBackground(browser, combination, progressBar) {
     stats.generated++;
     stats.totalSize += finalBuffer.length;
     progressBar.increment();
-
   } catch (error) {
     stats.failed++;
     console.error(`\nFailed to generate ${code}:`, error.message);
@@ -230,32 +232,33 @@ async function generateBackground(browser, combination, progressBar) {
  * Main
  */
 async function main() {
-  console.log('🎨 SVG-based Keypad Background Generator\n');
+  console.log("🎨 SVG-based Keypad Background Generator\n");
   console.log(`Output: ${OUTPUT_DIR}`);
   console.log(`Size: ${IMAGE_WIDTH}x${IMAGE_HEIGHT}px`);
   console.log(`Total: ${MAX_COUNT} combinations`);
   console.log(`Force: ${FORCE}\n`);
 
   // Load SVG files
-  console.log('📦 Loading SVG files...');
+  console.log("📦 Loading SVG files...");
   await loadSVGFiles();
-  console.log('✅ Loaded 10 SVG digits\n');
+  console.log("✅ Loaded 10 SVG digits\n");
 
   // Create output dir
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
 
   // Launch browser
-  console.log('🚀 Launching browser...');
+  console.log("🚀 Launching browser...");
   const browser = await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: "new",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   // Progress bar
   const progressBar = new cliProgress.SingleBar({
-    format: 'Progress |{bar}| {percentage}% | {value}/{total} | Generated: {generated} | Skipped: {skipped} | Failed: {failed}',
-    barCompleteChar: '\u2588',
-    barIncompleteChar: '\u2591',
+    format:
+      "Progress |{bar}| {percentage}% | {value}/{total} | Generated: {generated} | Skipped: {skipped} | Failed: {failed}",
+    barCompleteChar: "\u2588",
+    barIncompleteChar: "\u2591",
     hideCursor: true,
   });
 
@@ -289,8 +292,8 @@ async function main() {
   const duration = ((Date.now() - stats.startTime) / 1000).toFixed(1);
   const avgSize = stats.generated > 0 ? stats.totalSize / stats.generated : 0;
 
-  console.log('\n✅ Generation complete!\n');
-  console.log('Statistics:');
+  console.log("\n✅ Generation complete!\n");
+  console.log("Statistics:");
   console.log(`  Generated: ${stats.generated}`);
   console.log(`  Skipped: ${stats.skipped}`);
   console.log(`  Failed: ${stats.failed}`);

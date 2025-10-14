@@ -111,7 +111,11 @@ async function generateGlyphs() {
       const sharpPath = path.join(glyphsSharpDir, glyphName);
       const blurredPath = path.join(glyphsBlurredDir, glyphName);
 
-      if (!FORCE && (await fileExists(sharpPath)) && (await fileExists(blurredPath))) {
+      if (
+        !FORCE &&
+        (await fileExists(sharpPath)) &&
+        (await fileExists(blurredPath))
+      ) {
         continue;
       }
 
@@ -142,7 +146,8 @@ async function generateGlyphs() {
 
       const blurredSharp = sharp(buffer)
         .blur(15)
-        .modulate({ brightness: 0.9, saturation: 1.0 });
+        .modulate({ brightness: 0.8, saturation: 1.0 })
+        .noise({ type: "gaussian", mean: 128, sigma: 2 });
 
       // PNG
       const blurredBuffer = await blurredSharp
@@ -218,7 +223,8 @@ async function composeBackground(code, variant, progressBar) {
   const glyphsDir = path.join(GLYPHS_DIR, variant);
 
   // Calculate total width including spacing between digits
-  const totalWidth = DIGIT_WIDTH * digits.length + DIGIT_SPACING * (digits.length - 1);
+  const totalWidth =
+    DIGIT_WIDTH * digits.length + DIGIT_SPACING * (digits.length - 1);
   const xOffset = (IMAGE_WIDTH - totalWidth) / 2;
   const yOffset = (IMAGE_HEIGHT - DIGIT_HEIGHT) / 2;
 
@@ -278,7 +284,11 @@ async function main() {
   console.log(`  Total size: ${formatSize(stats.totalSize)}`);
   console.log(`  Average size: ${formatSize(avgSize)}`);
   console.log(`  Duration: ${duration}s`);
-  console.log(`  Speed: ${((stats.generated * 2) / parseFloat(duration)).toFixed(1)} images/sec`);
+  console.log(
+    `  Speed: ${((stats.generated * 2) / parseFloat(duration)).toFixed(
+      1
+    )} images/sec`
+  );
 }
 
 main().catch(console.error);

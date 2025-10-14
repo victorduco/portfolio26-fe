@@ -18,7 +18,7 @@
   pointer-events: none;
   opacity: 1;
   /* No additional blur needed - PNG is already blurred */
-  filter: var(--glass-filter, saturate(100%) brightness(90%));
+  filter: var(--glass-filter);
   position: absolute;
   overflow: visible;
   z-index: 1;
