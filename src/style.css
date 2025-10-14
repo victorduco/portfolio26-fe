@@ -2,7 +2,7 @@
 @import "./styles/tokens.css";
 @import "./styles/utilities.css";
 
-/* Global box-sizing reset */
+/* Global reset */
 *,
 *::before,
 *::after {

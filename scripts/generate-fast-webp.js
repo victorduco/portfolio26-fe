@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * Fast Optimized Keypad Background Generator
+ * Fast WebP Keypad Background Generator (Test Version)
  *
  * Strategy:
- * 1. Pre-render all digit glyphs once (0-9 in 4 colors) = 40 sharp PNGs
+ * 1. Pre-render all digit glyphs once (0-9 in 4 colors) = 40 WebP images
  * 2. For each combination, simply composite pre-rendered glyphs (fast blit operations)
  * 3. Process in parallel batches for maximum speed
  *
  * Output:
- * - /keypad-backgrounds/sharp/*.png
+ * - /keypad-backgrounds-webp/*.webp
  */
 
 import sharp from "sharp";
@@ -22,8 +22,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuration
-const OUTPUT_DIR = path.join(__dirname, "../public/keypad-backgrounds");
-const SHARP_DIR = path.join(OUTPUT_DIR, "sharp");
+const OUTPUT_DIR = path.join(__dirname, "../public/keypad-backgrounds-webp");
 const GLYPHS_DIR = path.join(OUTPUT_DIR, ".glyphs");
 
 const COLORS = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
@@ -35,7 +34,11 @@ const DIGIT_SPACING = 100; // 2x for retina
 
 const FORCE = process.argv.includes("--force");
 const SINGLE_DIGITS_ONLY = process.argv.includes("--single-digits");
-const BATCH_SIZE = 100;
+const BATCH_SIZE = 200; // Increased for WebP (faster format)
+
+// WebP settings optimized for speed
+const WEBP_QUALITY = 80;
+const WEBP_EFFORT = 4; // 0-6, lower = faster (default is 4)
 
 // Statistics
 const stats = {
@@ -93,25 +96,23 @@ function formatSize(bytes) {
  * Step 1: Generate all digit glyphs
  */
 async function generateGlyphs() {
-  console.log("\n📐 Generating digit glyphs...");
+  console.log("\n📐 Generating digit glyphs (WebP)...");
 
-  const glyphsSharpDir = path.join(GLYPHS_DIR, "sharp");
-
-  await fs.mkdir(glyphsSharpDir, { recursive: true });
+  await fs.mkdir(GLYPHS_DIR, { recursive: true });
 
   const tasks = [];
 
   for (let digit = 0; digit <= 9; digit++) {
     for (let colorIdx = 0; colorIdx < COLORS.length; colorIdx++) {
       const color = COLORS[colorIdx];
-      const glyphName = `${digit}_${colorIdx}.png`;
-      const sharpPath = path.join(glyphsSharpDir, glyphName);
+      const glyphName = `${digit}_${colorIdx}.webp`;
+      const glyphPath = path.join(GLYPHS_DIR, glyphName);
 
-      if (!FORCE && (await fileExists(sharpPath))) {
+      if (!FORCE && (await fileExists(glyphPath))) {
         continue;
       }
 
-      tasks.push({ digit, colorIdx, color, sharpPath });
+      tasks.push({ digit, colorIdx, color, glyphPath });
     }
   }
 
@@ -124,15 +125,14 @@ async function generateGlyphs() {
 
   // Process all in parallel
   await Promise.all(
-    tasks.map(async ({ digit, color, sharpPath }) => {
+    tasks.map(async ({ digit, color, glyphPath }) => {
       const svg = generateDigitSVG(digit, color);
       const buffer = Buffer.from(svg);
 
-      // Sharp version only
-      const sharpBuffer = await sharp(buffer)
-        .png({ quality: 80, compressionLevel: 9 })
-        .toBuffer();
-      await fs.writeFile(sharpPath, sharpBuffer);
+      // Generate WebP
+      await sharp(buffer)
+        .webp({ quality: WEBP_QUALITY, effort: WEBP_EFFORT })
+        .toFile(glyphPath);
 
       stats.glyphsGenerated++;
     })
@@ -145,15 +145,15 @@ async function generateGlyphs() {
  * Step 2: Compose backgrounds
  */
 async function composeBackgrounds() {
-  console.log("\n🎨 Composing backgrounds...");
+  console.log("\n🎨 Composing backgrounds (WebP)...");
 
-  await fs.mkdir(SHARP_DIR, { recursive: true });
+  await fs.mkdir(OUTPUT_DIR, { recursive: true });
 
   // Generate combinations
   const combinations = [];
 
   if (SINGLE_DIGITS_ONLY) {
-    // Only 0-9.png
+    // Only 0-9.webp
     for (let i = 0; i <= 9; i++) combinations.push(String(i));
   } else {
     // All combinations (0-9999)
@@ -195,7 +195,7 @@ async function composeBackgrounds() {
  * Compose single background
  */
 async function composeBackground(code, progressBar) {
-  const filepath = path.join(SHARP_DIR, `${code}.png`);
+  const filepath = path.join(OUTPUT_DIR, `${code}.webp`);
 
   if (!FORCE && (await fileExists(filepath))) {
     stats.skipped++;
@@ -204,7 +204,6 @@ async function composeBackground(code, progressBar) {
   }
 
   const digits = code.split("").map(Number);
-  const glyphsDir = path.join(GLYPHS_DIR, "sharp");
 
   // Calculate total width including spacing between digits
   const totalWidth =
@@ -217,7 +216,7 @@ async function composeBackground(code, progressBar) {
   for (let i = 0; i < digits.length; i++) {
     const digit = digits[i];
     const colorIdx = i % COLORS.length;
-    const glyphPath = path.join(glyphsDir, `${digit}_${colorIdx}.png`);
+    const glyphPath = path.join(GLYPHS_DIR, `${digit}_${colorIdx}.webp`);
 
     composites.push({
       input: glyphPath,
@@ -227,7 +226,7 @@ async function composeBackground(code, progressBar) {
   }
 
   // Create base image
-  const backgroundColor = { r: 0, g: 0, b: 0, alpha: 0 }; // transparent
+  const backgroundColor = { r: 23, g: 23, b: 23, alpha: 1 }; // #171717
 
   const buffer = await sharp({
     create: {
@@ -238,7 +237,7 @@ async function composeBackground(code, progressBar) {
     },
   })
     .composite(composites)
-    .png({ quality: 80, compressionLevel: 9 })
+    .webp({ quality: WEBP_QUALITY, effort: WEBP_EFFORT })
     .toBuffer();
 
   await fs.writeFile(filepath, buffer);
@@ -252,7 +251,7 @@ async function composeBackground(code, progressBar) {
  * Main
  */
 async function main() {
-  console.log("🚀 Fast Optimized Keypad Background Generator\n");
+  console.log("🚀 Fast WebP Keypad Background Generator (TEST)\n");
   console.log(`Output: ${OUTPUT_DIR}`);
   console.log(
     `Mode: ${
@@ -261,7 +260,8 @@ async function main() {
         : "All combinations (0-9999)"
     }`
   );
-  console.log(`Force: ${FORCE}\n`);
+  console.log(`Force: ${FORCE}`);
+  console.log(`WebP quality: ${WEBP_QUALITY}, effort: ${WEBP_EFFORT}\n`);
 
   await generateGlyphs();
   await composeBackgrounds();

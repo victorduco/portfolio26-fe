@@ -92,7 +92,7 @@ const applyFilterToMaskElement = () => {
 
   maskElement.style.setProperty(
     "--glass-filter",
-    `blur(2px) url(#${filterId})`
+    `blur(10px) url(#${filterId})`
   );
   window.__profile?.mark?.("glass-filter-property-set");
 

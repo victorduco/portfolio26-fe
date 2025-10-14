@@ -99,10 +99,6 @@ watch(
     if (digits.length === 0) {
       console.log("⚠️ No digits, setting to none");
       document.documentElement.style.setProperty("--global-keypad-bg", "none");
-      document.documentElement.style.setProperty(
-        "--global-keypad-bg-blurred",
-        "none"
-      );
       window.__profile?.end?.("background-update");
       window.__profile?.mark?.("background-cleared");
       return;
@@ -111,7 +107,7 @@ watch(
     const code = digits.join("");
     console.log("📝 Code:", code);
 
-    // Sharp background for main display
+    // Sharp background for both main display and buttons (CSS blur applied to buttons)
     window.__profile?.start?.("sharp-background-set");
     const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
     document.documentElement.style.setProperty(
@@ -120,16 +116,6 @@ watch(
     );
     console.log("✅ Set --global-keypad-bg:", sharpPath);
     window.__profile?.end?.("sharp-background-set");
-
-    // Blurred background for buttons (mask-element)
-    window.__profile?.start?.("blurred-background-set");
-    const blurredPath = `/keypad-backgrounds/blurred/${code}.png`;
-    document.documentElement.style.setProperty(
-      "--global-keypad-bg-blurred",
-      `url("${blurredPath}")`
-    );
-    console.log("✅ Set --global-keypad-bg-blurred:", blurredPath);
-    window.__profile?.end?.("blurred-background-set");
 
     window.__profile?.end?.("background-update");
     window.__profile?.mark?.(`background-updated-${code}`);
@@ -357,7 +343,6 @@ onBeforeUnmount(() => {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  box-sizing: border-box;
   touch-action: none;
 }
 

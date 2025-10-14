@@ -11,14 +11,14 @@
   width: 100vw;
   height: 100vh;
 
-  /* Use pre-blurred background for buttons */
-  background-image: var(--global-keypad-bg-blurred);
+  /* Use sharp background with CSS blur */
+  background-image: var(--global-keypad-bg);
   background-position: center center;
   background-size: 150%;
   background-repeat: no-repeat;
   pointer-events: none;
   opacity: 1;
-  /* No additional blur needed - PNG is already blurred */
+  /* CSS blur applied */
   filter: var(--glass-filter);
   position: absolute;
   overflow: visible;
