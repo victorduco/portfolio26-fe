@@ -61,22 +61,13 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
-import KeypadDigit from "./KeypadDigit.vue";
 import { useMeta } from "../../composables/useMeta.js";
-import {
-  useIsMobile,
-  useIsLandscapeMobile,
-} from "../../composables/useMediaQuery.js";
 import {
   keypadGridVariants,
   keypadGridTransition,
   backgroundNumbersVariants,
   backgroundNumbersTransition,
 } from "./variants.js";
-import { generateCompositeSVG } from "@/utils/svgBackgroundGenerator.js";
-
-const isMobile = useIsMobile();
-const isLandscapeMobile = useIsLandscapeMobile();
 
 useMeta("keypad");
 
@@ -86,95 +77,47 @@ const emit = defineEmits(["unlock"]);
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const enteredDigits = ref([]);
-const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
 const animationState = ref("initial");
 const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
 
-// TEST MODE: Use static PNG instead of dynamic SVG
-const USE_TEST_PNG = ref(false);
+// No longer using SVG generation - using pre-generated PNG backgrounds
 
-// Generate base SVG background with normal colors
-const backgroundSVGBase = computed(() => {
-  if (USE_TEST_PNG.value) return ""; // Skip SVG generation in test mode
-  if (enteredDigits.value.length === 0) return "";
-
-  // Always use normal colors for base layer
-  const svg = generateCompositeSVG(enteredDigits.value);
-  console.log(
-    "🎨 Generated BASE SVG for digits:",
-    enteredDigits.value,
-    svg ? "OK" : "FAILED"
-  );
-  return svg;
-});
-
-// Generate overlay SVG background with state colors (success/fail)
-const backgroundSVGOverlay = computed(() => {
-  if (USE_TEST_PNG.value) return ""; // Skip SVG generation in test mode
-  if (enteredDigits.value.length === 0) return "";
-  if (animationState.value === "initial") return "";
-
-  // Generate colors based on success/fail state
-  const stateColors = enteredDigits.value.map((_, index) =>
-    getDigitColor(index)
-  );
-
-  const svg = generateCompositeSVG(enteredDigits.value, stateColors);
-  console.log(
-    "🎨 Generated OVERLAY SVG, state:",
-    animationState.value,
-    svg ? "OK" : "FAILED"
-  );
-  return svg;
-});
-
-// Update CSS variables with SVG data URLs
+// Update CSS variables with PNG backgrounds
 watch(
-  backgroundSVGBase,
-  (svg) => {
-    // Skip watch in TEST mode - CSS variable is set in onMounted
-    if (USE_TEST_PNG.value) {
-      console.log("⏭️  Skipping watch in TEST mode");
+  () => enteredDigits.value,
+  (digits) => {
+    console.log("🔄 Watch triggered, digits:", digits, "length:", digits.length);
+
+    if (digits.length === 0) {
+      console.log("⚠️ No digits, setting to none");
+      document.documentElement.style.setProperty("--global-keypad-bg", "none");
+      document.documentElement.style.setProperty("--global-keypad-bg-blurred", "none");
       return;
     }
 
-    if (!svg) {
-      document.documentElement.style.setProperty("--global-keypad-bg", "none");
-    } else {
-      const base64 = btoa(unescape(encodeURIComponent(svg)));
-      const dataURL = `data:image/svg+xml;base64,${base64}`;
-      document.documentElement.style.setProperty(
-        "--global-keypad-bg",
-        `url("${dataURL}")`
-      );
-      console.log("✅ Set --global-keypad-bg (base)");
-    }
-  },
-  { immediate: true }
-);
+    const code = digits.join("");
+    console.log("📝 Code:", code);
 
-watch(
-  backgroundSVGOverlay,
-  (svg) => {
-    if (!svg) {
-      document.documentElement.style.setProperty(
-        "--global-keypad-bg-overlay",
-        "none"
-      );
-    } else {
-      const base64 = btoa(unescape(encodeURIComponent(svg)));
-      const dataURL = `data:image/svg+xml;base64,${base64}`;
-      document.documentElement.style.setProperty(
-        "--global-keypad-bg-overlay",
-        `url("${dataURL}")`
-      );
-      console.log("✅ Set --global-keypad-bg-overlay (state)");
-    }
+    // Sharp background for main display
+    const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
+    document.documentElement.style.setProperty(
+      "--global-keypad-bg",
+      `url("${sharpPath}")`
+    );
+    console.log("✅ Set --global-keypad-bg:", sharpPath);
+
+    // Blurred background for buttons (mask-element)
+    const blurredPath = `/keypad-backgrounds/blurred/${code}.png`;
+    document.documentElement.style.setProperty(
+      "--global-keypad-bg-blurred",
+      `url("${blurredPath}")`
+    );
+    console.log("✅ Set --global-keypad-bg-blurred:", blurredPath);
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 );
 
 // Backend integration
@@ -185,12 +128,6 @@ const remainingTime = ref(0);
 let rateLimitTimer = null;
 
 const showClearButton = computed(() => enteredDigits.value.length > 0);
-
-const getDigitColor = (index) => {
-  if (animationState.value === "success") return "#00FFBC";
-  if (animationState.value === "fail") return "#FF83A2";
-  return colors[index % colors.length];
-};
 
 const getCodeFromDigits = () => {
   return enteredDigits.value
@@ -361,50 +298,9 @@ function handleKeyDown(event) {
   }
 }
 
-// Load background PNG when digits change (desktop only)
-watch(enteredDigits, () => {
-  if (isMobile.value || isLandscapeMobile.value) return;
-
-  if (enteredDigits.value.length === 0) {
-    // Clear background
-    // document.documentElement.style.setProperty("--global-keypad-bg", "none");
-  } else {
-    // Load pregenerated background
-    const code = enteredDigits.value
-      .map((d) => String(d))
-      .join("")
-      .padStart(4, "0");
-    const bgPath = `/keypad-backgrounds/${code}.png`;
-
-    // Preload image then set background
-    const img = new Image();
-    img.onload = () => {
-      // document.documentElement.style.setProperty(
-      //   "--global-keypad-bg",
-      //   `url("${bgPath}")`
-      // );
-    };
-    img.onerror = () => {
-      console.warn(`Failed to load background: ${bgPath}`);
-      // Fallback: no background
-      // document.documentElement.style.setProperty("--global-keypad-bg", "none");
-    };
-    img.src = bgPath;
-  }
-});
-
 onMounted(() => {
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
-
-    // TEST MODE: Set static PNG immediately on mount
-    if (USE_TEST_PNG.value) {
-      document.documentElement.style.setProperty(
-        "--global-keypad-bg",
-        `url("/keypad-backgrounds/5555.png")`
-      );
-      console.log("✅ TEST MODE: Set --global-keypad-bg to 5555.png on mount");
-    }
   }
 });
 
@@ -466,7 +362,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-position: 50% 50%;
+  background-position: center center;
   background-size: contain;
   background-repeat: no-repeat;
 }
