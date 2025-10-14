@@ -31,6 +31,7 @@
       :animate="scrollHintState"
       :transition="scrollHintTransition"
       :initial="'hidden'"
+      @click="scrollToNextSection"
     >
       <span class="intro-scroll-hint-content">
         <img
@@ -285,6 +286,13 @@ watch(isMobileLayout, (isMobile) => {
     forceCloseAll.value = false;
   }
 });
+
+function scrollToNextSection() {
+  const case1Section = document.getElementById("case1");
+  if (case1Section) {
+    case1Section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
 </script>
 
 <style scoped>
@@ -366,9 +374,15 @@ watch(isMobileLayout, (isMobile) => {
   line-height: 1;
   letter-spacing: 0.02em;
   text-align: center;
-  pointer-events: none;
+  pointer-events: auto;
   white-space: nowrap;
   z-index: 2;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.intro-scroll-hint:hover {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .intro-scroll-hint-content {

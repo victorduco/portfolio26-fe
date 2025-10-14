@@ -131,6 +131,7 @@ const createBoxVariants = (sizes) => ({
         "--border-color": "#ffffff10",
         "--border-gradient": "transparent",
         "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
       };
     }
 
@@ -148,6 +149,7 @@ const createBoxVariants = (sizes) => ({
         "--border-color": "#ffffff10",
         "--border-gradient": "transparent",
         "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
       };
     }
 
@@ -165,6 +167,7 @@ const createBoxVariants = (sizes) => ({
       "--border-color": "#ffffff10",
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0),
+      "--border-radius": "26px",
     };
   },
   hover: ({
@@ -190,6 +193,7 @@ const createBoxVariants = (sizes) => ({
         "--border-color": "#ffffff10",
         "--border-gradient": "transparent",
         "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
       };
     }
 
@@ -207,6 +211,7 @@ const createBoxVariants = (sizes) => ({
         "--border-color": getBorderColorWithAlpha(index, 0),
         "--border-gradient": "transparent",
         "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
       };
     }
 
@@ -231,6 +236,7 @@ const createBoxVariants = (sizes) => ({
       "--border-color": getBorderColorWithAlpha(index, 0.1),
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0.2),
+      "--border-radius": "87px",
     };
   },
   active: ({
@@ -254,6 +260,7 @@ const createBoxVariants = (sizes) => ({
         "--border-color": getBorderColorWithAlpha(index, 0),
         "--border-gradient": "transparent",
         "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
       };
     }
 
@@ -271,6 +278,7 @@ const createBoxVariants = (sizes) => ({
         "--border-color": getBorderColorWithAlpha(index, 0),
         "--border-gradient": "transparent",
         "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
       };
     }
 
@@ -295,6 +303,7 @@ const createBoxVariants = (sizes) => ({
       "--border-color": getBorderColorWithAlpha(index, 0),
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0),
+      "--border-radius": "26px",
     };
   },
 });

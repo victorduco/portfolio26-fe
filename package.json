@@ -26,7 +26,20 @@
     "test:filter": "node tests/e2e/run.js filter-area-performance",
     "test:filter:headless": "node tests/e2e/run.js filter-area-performance --headless",
     "test:compare": "node tests/e2e/compare.js",
-    "test:compare:json": "node tests/e2e/compare.js --format=json"
+    "test:compare:json": "node tests/e2e/compare.js --format=json",
+    "screenshots": "npx playwright test tests/visual/screenshots.spec.js",
+    "screenshots:ui": "npx playwright test tests/visual/screenshots.spec.js --ui",
+    "screenshots:mobile-small": "npx playwright test tests/visual/screenshots.spec.js --project=mobile-small",
+    "screenshots:mobile": "npx playwright test tests/visual/screenshots.spec.js --project=mobile",
+    "screenshots:mobile-large": "npx playwright test tests/visual/screenshots.spec.js --project=mobile-large",
+    "screenshots:tablet": "npx playwright test tests/visual/screenshots.spec.js --project=tablet",
+    "screenshots:tablet-large": "npx playwright test tests/visual/screenshots.spec.js --project=tablet-large",
+    "screenshots:desktop": "npx playwright test tests/visual/screenshots.spec.js --project=desktop",
+    "screenshots:desktop-large": "npx playwright test tests/visual/screenshots.spec.js --project=desktop-large",
+    "screenshots:desktop-ultrawide": "npx playwright test tests/visual/screenshots.spec.js --project=desktop-ultrawide",
+    "screenshots:mobile-all": "npx playwright test tests/visual/screenshots.spec.js --project=mobile-small --project=mobile --project=mobile-large",
+    "screenshots:tablet-all": "npx playwright test tests/visual/screenshots.spec.js --project=tablet --project=tablet-large",
+    "screenshots:desktop-all": "npx playwright test tests/visual/screenshots.spec.js --project=desktop --project=desktop-large --project=desktop-ultrawide"
   },
   "dependencies": {
     "@wxperia/liquid-glass-vue": "^1.0.9",

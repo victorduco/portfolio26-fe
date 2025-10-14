@@ -120,7 +120,7 @@ function handleBackdropClick() {
   margin: auto;
   width: 97%;
   height: 97%;
-  border-radius: 28px;
+  border-radius: 26px;
   display: grid;
   place-items: center;
   z-index: 10;
@@ -199,7 +199,7 @@ function handleBackdropClick() {
     max-width: min(520px, 100%);
     width: 100%;
     background: rgba(255, 255, 255, 0.85);
-    border-radius: 24px;
+    border-radius: 26px;
     padding: 32px 24px 56px;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
     color: #000000;
@@ -273,7 +273,7 @@ function handleBackdropClick() {
     margin: auto;
     width: min(90vw, 90vh);
     height: min(90vw, 90vh);
-    border-radius: 28px;
+    border-radius: 26px;
     z-index: 10010;
     display: flex;
     align-items: center;

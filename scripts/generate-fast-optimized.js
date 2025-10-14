@@ -29,9 +29,9 @@ const GLYPHS_DIR = path.join(OUTPUT_DIR, ".glyphs");
 const COLORS = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 const IMAGE_WIDTH = 3840; // 2x for retina
 const IMAGE_HEIGHT = 2160; // 2x for retina
-const DIGIT_WIDTH = 700; // 2x for retina
+const DIGIT_WIDTH = 700; // 2x for retina (reduced by 60px - 30px each side)
 const DIGIT_HEIGHT = 1300; // 2x for retina
-const DIGIT_SPACING = 100; // 2x for retina
+const DIGIT_SPACING = -50; // 2x for retina
 
 const FORCE = process.argv.includes("--force");
 const SINGLE_DIGITS_ONLY = process.argv.includes("--single-digits");

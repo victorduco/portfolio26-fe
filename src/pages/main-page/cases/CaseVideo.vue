@@ -241,6 +241,7 @@ const finalRestartHovered = ref(false);
 const linkHovered = ref(false);
 const wasStateRestored = ref(false); // Track if state was restored
 const shouldSaveState = ref(false); // Track if we should save state on unmount
+const userPaused = ref(false); // Track if user manually paused the video
 
 // Storage key based on video src
 const getStorageKey = () => `video-state-${props.src}`;
@@ -366,11 +367,11 @@ const controlsTransition = {
 
 const buttonVariants = {
   default: {
-    rotate: 0,
+    rotate: 45,
     backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   hover: {
-    rotate: 45,
+    rotate: 0,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
 };
@@ -384,10 +385,10 @@ const buttonTransition = {
 
 const iconVariants = {
   default: {
-    rotate: 0,
+    rotate: -45,
   },
   hover: {
-    rotate: -45,
+    rotate: 0,
   },
 };
 
@@ -479,6 +480,7 @@ function replayVideo() {
   // Clear saved state when replaying
   clearVideoState();
   wasStateRestored.value = false;
+  userPaused.value = false; // Reset user pause state on replay
 
   video
     .play()
@@ -494,7 +496,7 @@ function replayVideo() {
     });
 }
 
-function schedulePlay(delay = 500) {
+function schedulePlay(delay = 0) {
   if (playTimeout) {
     clearTimeout(playTimeout);
   }
@@ -504,15 +506,23 @@ function schedulePlay(delay = 500) {
 }
 
 function handleEnter() {
+  const video = getVideoElement();
+  if (!video) return;
+
   // Don't auto-play if we just restored state
   if (wasStateRestored.value) {
     wasStateRestored.value = false;
     return;
   }
 
-  if (!showFinalOverlay.value && !hasStartedPlayback.value) {
-    videoState.value = "visible";
-    schedulePlay();
+  // Always show video when entering viewport
+  videoState.value = "visible";
+
+  // Auto-play only if user hasn't manually paused and not showing final overlay
+  if (!showFinalOverlay.value && !userPaused.value) {
+    if (video.paused) {
+      schedulePlay();
+    }
   }
 }
 
@@ -523,14 +533,14 @@ function handleLeave() {
     playTimeout = null;
   }
 
+  // Auto-pause when leaving viewport (not user-initiated)
   if (video && typeof video.pause === "function" && !video.paused) {
     video.pause();
     isPlaying.value = false;
+    // Don't set userPaused here - this is automatic pause
   }
 
-  if (!showFinalOverlay.value) {
-    videoState.value = "hidden";
-  }
+  // Don't hide video to prevent black screen on return
 }
 
 function togglePlayPause() {
@@ -538,10 +548,14 @@ function togglePlayPause() {
   if (!video) return;
 
   if (video.paused) {
+    // User is resuming playback
+    userPaused.value = false;
     video.play().then(() => {
       isPlaying.value = true;
     });
   } else {
+    // User is manually pausing
+    userPaused.value = true;
     video.pause();
     isPlaying.value = false;
   }
@@ -564,6 +578,7 @@ function restartVideo() {
   // Clear saved state when restarting
   clearVideoState();
   wasStateRestored.value = false;
+  userPaused.value = false; // Reset user pause state on restart
 
   video.play().then(() => {
     isPlaying.value = true;

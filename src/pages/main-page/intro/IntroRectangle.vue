@@ -129,8 +129,9 @@ const animationState = computed(() => {
   }
   // Обычные интерактивные состояния
   if (isActive.value) return "active";
-  // Не показываем hover пока Intro не появился
-  if (isHovered.value && props.introVisible) return "hover";
+  // Не показываем hover пока Intro не появился И пока этот конкретный прямоугольник не анимировался
+  if (isHovered.value && props.introVisible && props.shouldAnimate)
+    return "hover";
   return "default";
 });
 
@@ -233,6 +234,7 @@ function handleMobileCloseRequest() {
   --border-color: #222;
   --text-glow-color: transparent;
   --text-shadow-offset: 0px;
+  --border-radius: 26px;
 
   position: relative;
   display: grid;
@@ -245,7 +247,7 @@ function handleMobileCloseRequest() {
   cursor: pointer;
   z-index: 5;
   inset: 0;
-  border-radius: 16px;
+  border-radius: var(--border-radius);
   transform-origin: 50% 50%;
   border: 2px solid var(--border-color);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);

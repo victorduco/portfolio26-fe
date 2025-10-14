@@ -82,6 +82,8 @@ const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
 
+let resizeTimer = null;
+
 // No longer using SVG generation - using pre-generated PNG backgrounds
 
 // Update CSS variables with PNG backgrounds
@@ -334,18 +336,49 @@ function handleKeyDown(event) {
   }
 }
 
+function handleResize() {
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
+  }
+
+  resizeTimer = setTimeout(() => {
+    // Force update mask and background on resize
+    if (enteredDigits.value.length > 0) {
+      const code = enteredDigits.value.join("");
+      const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
+
+      // Re-apply CSS variables to ensure proper rendering after resize
+      requestAnimationFrame(() => {
+        document.documentElement.style.setProperty(
+          "--global-keypad-bg",
+          `url("${sharpPath}")`
+        );
+        document.documentElement.style.setProperty(
+          "--global-keypad-mask",
+          `url("${sharpPath}")`
+        );
+      });
+    }
+  }, 150);
+}
+
 onMounted(() => {
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
   }
 });
 
 onBeforeUnmount(() => {
   if (typeof window !== "undefined") {
     window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("resize", handleResize);
   }
   if (rateLimitTimer) {
     clearInterval(rateLimitTimer);
+  }
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
   }
 });
 </script>
