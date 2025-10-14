@@ -1,4 +1,5 @@
 import { delay } from "motion-v";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 
 // Color mappings for different states
 const COLOR_MAP = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
@@ -43,68 +44,115 @@ export const textShadowSpring = {
   delay: 0.1, // 100ms задержка
 };
 
-// Helper to get responsive size multipliers based on viewport
 const getResponsiveSizes = () => {
   const width = typeof window !== "undefined" ? window.innerWidth : 1280;
+  const height = typeof window !== "undefined" ? window.innerHeight : 900;
 
-  // Mobile: base 80px
-  if (width < 600) {
+  // На средних desktop экранах (900-1400px) делаем адаптивный размер
+  if (width >= 900 && width <= 1400) {
+    const activeSize = Math.min(600, Math.max(350, width * 0.4)); // 40% от ширины, но не больше 600px и не меньше 350px
+
+    // Смещения пропорционально высоте экрана
+    const activeTopOffsetEven = Math.min(-50, Math.max(-150, height * -0.1)); // 10% от высоты, от -150px до -50px
+    const activeTopOffsetOdd = Math.min(-300, Math.max(-700, height * -0.5)); // 50% от высоты, от -700px до -300px
+
     return {
-      default: "80px",
-      hover: "280px", // 3.5x
-      active: "400px", // 5x
-      hoverTopOffset: "-100px",
-      activeTopOffsetEven: "-200px",
-      activeTopOffsetOdd: "-400px", // было -400px, уменьшено в 1.5 раза
+      default: "120px",
+      hover: "400px",
+      active: `${activeSize}px`,
+      hoverTopOffset: "-150px",
+      activeTopOffsetEven: `${activeTopOffsetEven}px`,
+      activeTopOffsetOdd: `${activeTopOffsetOdd}px`,
     };
   }
 
-  // Tablet: base 100px
-  if (width < 900) {
-    return {
-      default: "100px",
-      hover: "340px", // 3.4x
-      active: "500px", // 5x
-      hoverTopOffset: "-125px",
-      activeTopOffsetEven: "-250px",
-      activeTopOffsetOdd: "-500px", // было -500px, уменьшено в 1.5 раза
-    };
-  }
+  // Desktop большие экраны (>1400px)
+  const activeTopOffsetEven = Math.min(-50, Math.max(-150, height * -0.1));
+  const activeTopOffsetOdd = Math.min(-300, Math.max(-700, height * -0.6));
 
-  // Desktop: base 120px (original)
   return {
     default: "120px",
     hover: "400px",
     active: "600px",
     hoverTopOffset: "-150px",
-    activeTopOffsetEven: "-100px",
-    activeTopOffsetOdd: "-600px", // было -600px, уменьшено в 1.5 раза
+    activeTopOffsetEven: `${activeTopOffsetEven}px`,
+    activeTopOffsetOdd: `${activeTopOffsetOdd}px`,
   };
 };
 
-// Helper to get grid position based on viewport and index
+// Реактивные размеры с обработкой resize
+export const useResponsiveSizes = () => {
+  const sizes = ref(getResponsiveSizes());
+
+  const updateSizes = () => {
+    sizes.value = getResponsiveSizes();
+  };
+
+  onMounted(() => {
+    window.addEventListener("resize", updateSizes);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("resize", updateSizes);
+  });
+
+  return sizes;
+};
+
 const getGridPosition = (index) => {
-  const width = typeof window !== "undefined" ? window.innerWidth : 1280;
-
-  // Mobile (<900px): 2x2 grid
-  if (width < 900) {
-    const row = Math.floor(index / 2) + 1; // 0,1 -> row 1; 2,3 -> row 2
-    const col = (index % 2) + 1; // 0,2 -> col 1; 1,3 -> col 2
-    return { gridColumn: col, gridRow: row };
-  }
-
-  // Desktop (≥900px): статичные позиции для всех состояний
   const gridCol = index * 2 + 1; // 1, 3, 5, 7
   const gridRow = index % 2 === 0 ? 1 : 2; // четные всегда в row 1, нечетные всегда в row 2
 
   return { gridColumn: gridCol, gridRow };
 };
 
-// main box
-export const boxVariants = {
-  default: ({ index, additionalMargin }) => {
+// Функция для создания boxVariants с актуальными размерами
+const createBoxVariants = (sizes) => ({
+  default: ({
+    index,
+    additionalMargin,
+    isMobileLayout,
+    isSmallestBreakpoints,
+  }) => {
     const baseMargin = 0;
-    const sizes = getResponsiveSizes();
+
+    // На двух наименьших брейкпоинтах (xs + sm)
+    if (isSmallestBreakpoints) {
+      return {
+        "--element-side-size": sizes.default,
+        gridColumn: "auto",
+        gridRow: "auto",
+        marginLeft: `${baseMargin}px`,
+        marginRight: `${baseMargin}px`,
+        y: 0,
+        rotate: 0,
+        scale: 1,
+        zIndex: 5,
+        "--border-color": "#ffffff10",
+        "--border-gradient": "transparent",
+        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
+      };
+    }
+
+    if (isMobileLayout) {
+      return {
+        "--element-side-size": sizes.default,
+        gridColumn: "auto",
+        gridRow: "auto",
+        marginLeft: `${baseMargin}px`,
+        marginRight: `${baseMargin}px`,
+        y: 0,
+        rotate: 0,
+        scale: 1,
+        zIndex: 5,
+        "--border-color": "#ffffff10",
+        "--border-gradient": "transparent",
+        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
+      };
+    }
+
     const position = getGridPosition(index);
 
     return {
@@ -119,11 +167,54 @@ export const boxVariants = {
       "--border-color": "#ffffff10",
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0),
+      "--border-radius": "26px",
     };
   },
-  hover: ({ index, additionalMargin }) => {
+  hover: ({
+    index,
+    additionalMargin,
+    isMobileLayout,
+    isSmallestBreakpoints,
+  }) => {
     const baseMargin = 0;
-    const sizes = getResponsiveSizes();
+
+    // На двух наименьших брейкпоинтах: hover ведет себя как default (без эффекта)
+    if (isSmallestBreakpoints) {
+      return {
+        "--element-side-size": sizes.default,
+        gridColumn: "auto",
+        gridRow: "auto",
+        marginLeft: `${baseMargin}px`,
+        marginRight: `${baseMargin}px`,
+        y: 0,
+        rotate: 0,
+        scale: 1,
+        zIndex: 5,
+        "--border-color": "#ffffff10",
+        "--border-gradient": "transparent",
+        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
+      };
+    }
+
+    if (isMobileLayout) {
+      return {
+        "--element-side-size": sizes.default,
+        gridColumn: "auto",
+        gridRow: "auto",
+        marginLeft: `${baseMargin}px`,
+        marginRight: `${baseMargin}px`,
+        y: 0,
+        rotate: 0,
+        scale: 1,
+        zIndex: 10,
+        "--border-color": getBorderColorWithAlpha(index, 0),
+        "--border-gradient": "transparent",
+        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
+      };
+    }
+
     const position = getGridPosition(index);
 
     // Вычисляем сдвиг вверх как половину от увеличения размера
@@ -145,11 +236,53 @@ export const boxVariants = {
       "--border-color": getBorderColorWithAlpha(index, 0.1),
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0.2),
+      "--border-radius": "87px",
     };
   },
-  active: ({ index, additionalMargin }) => {
+  active: ({
+    index,
+    additionalMargin,
+    isMobileLayout,
+    isSmallestBreakpoints,
+  }) => {
+    // На двух наименьших брейкпоинтах: fullscreen без сдвигов
+    if (isSmallestBreakpoints) {
+      return {
+        "--element-side-size": sizes.default, // Оставляем исходный размер, fullscreen через CSS
+        gridColumn: "auto",
+        gridRow: "auto",
+        marginLeft: "0px",
+        marginRight: "0px",
+        y: 0,
+        rotate: 0,
+        scale: 1,
+        zIndex: 10000,
+        "--border-color": getBorderColorWithAlpha(index, 0),
+        "--border-gradient": "transparent",
+        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
+      };
+    }
+
+    if (isMobileLayout) {
+      return {
+        "--element-side-size": sizes.active,
+        gridColumn: "auto",
+        gridRow: "auto",
+        marginLeft: "0px",
+        marginRight: "0px",
+        y: 0,
+        rotate: 0,
+        scale: 1,
+        zIndex: 10000,
+        "--border-color": getBorderColorWithAlpha(index, 0),
+        "--border-gradient": "transparent",
+        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--border-radius": "26px",
+      };
+    }
+
     const baseMargin = -45;
-    const sizes = getResponsiveSizes();
     const position = getGridPosition(index);
     // Центрируем активные элементы: четные вниз, нечетные вверх
     // Четные (0, 2): смещаются вниз (используем activeTopOffsetEven с инверсией знака)
@@ -170,8 +303,16 @@ export const boxVariants = {
       "--border-color": getBorderColorWithAlpha(index, 0),
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0),
+      "--border-radius": "26px",
     };
   },
+});
+
+// Композабл для получения реактивных вариантов
+export const useBoxVariants = () => {
+  const sizes = useResponsiveSizes();
+  const boxVariants = computed(() => createBoxVariants(sizes.value));
+  return boxVariants;
 };
 
 export const contentWrapVariants = {

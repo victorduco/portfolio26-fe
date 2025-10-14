@@ -53,6 +53,12 @@ export function useMediaQuery(query) {
 export const NAVIGATION_MOBILE = "(max-width: 899px)";
 
 /**
+ * Two smallest breakpoints (xs + sm): 360px to 600px
+ * For intro rectangles fullscreen behavior
+ */
+export const INTRO_MOBILE_FULLSCREEN = "(max-width: 600px)";
+
+/**
  * Detects mobile devices (screens < 768px)
  * Based on standard tablet/mobile breakpoint
  *

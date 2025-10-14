@@ -1,81 +1,169 @@
+<template>
+  <div ref="backgroundNumbers" class="background-numbers"></div>
+</template>
+
 <script setup>
-/**
- * GeBackground Component
- *
- * Converts DOM element to PNG and sets it as CSS variable background.
- *
- * PERFORMANCE WARNING:
- * - Uses `toPng` from html-to-image (slow operation ~50-200ms)
- * - Resize listener is DISABLED to prevent performance degradation
- * - With resize listener: 10.85s total, 467ms avg resize, +468% degradation
- * - Without resize listener: 2.61s total, 74ms avg resize, no degradation
- *
- * Only regenerates on:
- * - Component mount
- * - watchData changes (e.g., entered digits in Keypad)
- *
- * If you need resize support, add debounce (300-500ms minimum)
- */
-import { onMounted, watch, nextTick } from "vue";
-import { toPng } from "html-to-image";
+import { onMounted, watch, nextTick, ref } from "vue";
+import { generateCompositeSVG } from "@/utils/svgBackgroundGenerator.js";
 
 const props = defineProps({
-  sourceSelector: { type: String, required: true },
   watchData: { type: [Array, Object, String, Number], default: null },
-  renderDelay: { type: Number, default: 100 },
-  backgroundStyles: { type: Object },
 });
 
+const backgroundNumbers = ref(null);
 let isGenerating = false;
 
-const sanitizeStyles = (styles) => {
-  if (!styles) return undefined;
-  const entries = Object.entries(styles).filter(([, value]) => value != null);
-  return entries.length ? Object.fromEntries(entries) : undefined;
-};
-
-async function generateBackground() {
+/**
+ * Generate background from SVG composition
+ */
+async function generateBackgroundSVG() {
   if (isGenerating) return;
   isGenerating = true;
 
-  const src = document.getElementById(props.sourceSelector);
-  if (!src) {
+  // 🔍 PROFILING: Background generation started
+  const profile = window.__keypadProfile;
+  if (profile?.clickTime) {
+    profile.bgStartTime = performance.now();
+    profile.mode = "svg-composition";
+  }
+
+  // Validate watchData is an array of digits
+  if (!Array.isArray(props.watchData) || props.watchData.length === 0) {
     isGenerating = false;
     return;
   }
 
-  const bodyBg = getComputedStyle(document.body).backgroundColor || "#000";
-  const sanitizedStyles = sanitizeStyles(props.backgroundStyles);
+  try {
+    // 🔍 PROFILING: Starting SVG generation
+    if (profile?.bgStartTime) {
+      profile.svgGenStartTime = performance.now();
+    }
 
-  await new Promise((resolve) => setTimeout(resolve, props.renderDelay));
-  await document.fonts.ready;
+    // Generate SVG markup
+    const svgMarkup = generateCompositeSVG(props.watchData);
 
-  const img = await toPng(src, {
-    width: src.offsetWidth,
-    height: src.offsetHeight,
-    backgroundColor: bodyBg,
-    pixelRatio: 1,
-    style: sanitizedStyles,
-  });
+    // 🔍 PROFILING: SVG generation complete
+    if (profile?.svgGenStartTime) {
+      profile.svgGenCompleteTime = performance.now();
+    }
 
-  document.documentElement.style.setProperty(
-    "--global-keypad-bg",
-    `url("${img}")`
-  );
+    if (!svgMarkup) {
+      isGenerating = false;
+      return;
+    }
 
-  isGenerating = false;
+    // Render SVG to .background-numbers container
+    if (backgroundNumbers.value) {
+      backgroundNumbers.value.innerHTML = svgMarkup;
+      console.log(
+        "✅ SVG rendered to .background-numbers:",
+        svgMarkup.substring(0, 100)
+      );
+    } else {
+      console.warn("⚠️ backgroundNumbers ref not found");
+    }
+
+    // 🔍 PROFILING: SVG rendered to DOM
+    if (profile?.svgGenCompleteTime) {
+      profile.bgGeneratedTime = performance.now();
+      profile.cssUpdatedTime = performance.now();
+
+      // Wait for next paint to check if backdrop filter applied
+      requestAnimationFrame(() => {
+        profile.raf1Time = performance.now();
+        requestAnimationFrame(() => {
+          profile.raf2Time = performance.now();
+          profile.filterAppliedTime = performance.now();
+
+          // Calculate all timings
+          const clickToBg = profile.bgStartTime - profile.clickTime;
+          const svgGenTime =
+            profile.svgGenCompleteTime - profile.svgGenStartTime;
+          const cssUpdate = profile.cssUpdatedTime - profile.bgGeneratedTime;
+          const raf1 = profile.raf1Time - profile.cssUpdatedTime;
+          const raf2 = profile.raf2Time - profile.raf1Time;
+          const total = profile.filterAppliedTime - profile.clickTime;
+
+          const bgGenTotal = profile.bgGeneratedTime - profile.bgStartTime;
+          const filterTotal =
+            profile.filterAppliedTime - profile.cssUpdatedTime;
+
+          // Build detailed output
+          let output = `⏱️ Keypad [SVG-Composition]: Click→Bg ${clickToBg.toFixed(
+            1
+          )}ms | `;
+
+          // BgGen breakdown
+          output += `BgGen ${bgGenTotal.toFixed(1)}ms (`;
+          output += `svgGen ${svgGenTime.toFixed(1)}) | `;
+
+          output += `CSS ${cssUpdate.toFixed(1)}ms | `;
+
+          // Filter breakdown
+          output += `Filter ${filterTotal.toFixed(1)}ms (`;
+          output += `raf1 ${raf1.toFixed(1)} + `;
+          output += `raf2 ${raf2.toFixed(1)}`;
+
+          // Add mask element timings if available (desktop only)
+          if (profile.maskReadStartTime) {
+            const maskRead =
+              profile.maskReadCompleteTime - profile.maskReadStartTime;
+            const maskWrite =
+              profile.maskWriteCompleteTime - profile.maskWriteStartTime;
+            output += ` + mask-read ${maskRead.toFixed(
+              1
+            )} + mask-write ${maskWrite.toFixed(1)}`;
+          }
+
+          // Add backdrop filter timing if available (mobile only)
+          if (profile.backdropStyleDuration) {
+            output += ` + backdrop ${profile.backdropStyleDuration.toFixed(1)}`;
+          }
+
+          output += `) | `;
+          output += `Total ${total.toFixed(1)}ms`;
+
+          console.log(output);
+
+          // Clean up
+          delete window.__keypadProfile;
+        });
+      });
+    }
+  } catch (error) {
+    console.error("Failed to generate SVG background:", error);
+  } finally {
+    isGenerating = false;
+  }
 }
 
 watch(
-  () => [props.watchData, props.backgroundStyles],
+  () => props.watchData,
   async () => {
     await nextTick();
-    requestAnimationFrame(generateBackground);
+    requestAnimationFrame(generateBackgroundSVG);
   },
   { deep: true }
 );
 
 onMounted(() => {
-  requestAnimationFrame(generateBackground);
+  requestAnimationFrame(generateBackgroundSVG);
 });
 </script>
+
+<style scoped>
+.background-numbers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.background-numbers svg {
+  width: 100%;
+  height: 100%;
+}
+</style>

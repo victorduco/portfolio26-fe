@@ -7,9 +7,20 @@ import { layoutBatcher } from "./layoutBatcher";
 export function syncBackground(el, innerElement) {
   if (!el || !innerElement) return;
 
+  // 🔍 PROFILING: Track mask element sync
+  const profile = window.__keypadProfile;
+  const syncStartTime = profile?.cssUpdatedTime ? performance.now() : null;
+
+  window.__profile?.start?.("sync-background");
+
   layoutBatcher.scheduleTask(
     // READ фаза - читаем layout
     () => {
+      // 🔍 PROFILING: Read phase started
+      if (syncStartTime && profile) {
+        profile.maskReadStartTime = performance.now();
+      }
+
       const rect = el.getBoundingClientRect();
       const style = getComputedStyle(el);
 
@@ -37,17 +48,36 @@ export function syncBackground(el, innerElement) {
         y: pageCenter.y - center.y,
       };
 
+      // 🔍 PROFILING: Read phase complete
+      if (profile?.maskReadStartTime) {
+        profile.maskReadCompleteTime = performance.now();
+      }
+
       return { offset, rotation, scale };
     },
     // WRITE фаза - применяем изменения
     (data) => {
       if (!data) return;
+
+      // 🔍 PROFILING: Write phase started
+      if (profile?.maskReadCompleteTime) {
+        profile.maskWriteStartTime = performance.now();
+      }
+
       const { offset, rotation, scale } = data;
 
       innerElement.style.setProperty("--x-offset", Math.round(offset.x) + "px");
       innerElement.style.setProperty("--y-offset", Math.round(offset.y) + "px");
       innerElement.style.setProperty("--rotation", -rotation + "deg");
       innerElement.style.setProperty("--scale", String(1 / scale));
+
+      // 🔍 PROFILING: Write phase complete
+      if (profile?.maskWriteStartTime) {
+        profile.maskWriteCompleteTime = performance.now();
+      }
+
+      window.__profile?.end?.("sync-background");
+      window.__profile?.mark?.("sync-background-complete");
     }
   );
 }

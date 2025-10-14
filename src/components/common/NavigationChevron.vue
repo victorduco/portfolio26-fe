@@ -155,11 +155,11 @@ function handleButtonClick(event) {
 }
 
 .nav-chevron--forward .nav-chevron__icon {
-  transform: rotate(0deg);
+  transform: rotate(0deg) translateX(-2px);
 }
 
 .nav-chevron--back .nav-chevron__icon {
-  transform: rotate(180deg);
+  transform: rotate(180deg) translateX(2px);
 }
 
 @media (max-width: 768px) {

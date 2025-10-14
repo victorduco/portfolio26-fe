@@ -51,11 +51,12 @@ const updateMaskRect = () => {
     () => maskElement.getBoundingClientRect(),
     (rect) => {
       if (!rect) return;
+      const roundTo4px = (value) => Math.round(value / 4) * 4;
       maskRect.value = {
-        left: Math.round(rect.left + window.scrollX),
-        top: Math.round(rect.top + window.scrollY),
-        width: Math.round(rect.width),
-        height: Math.round(rect.height),
+        left: roundTo4px(rect.left + window.scrollX),
+        top: roundTo4px(rect.top + window.scrollY),
+        width: roundTo4px(rect.width),
+        height: roundTo4px(rect.height),
       };
     }
   );
@@ -73,6 +74,8 @@ const cleanup = () => {
 };
 
 const applyFilterToMaskElement = () => {
+  window.__profile?.start?.("glass-filter-apply");
+
   let el = glassFilterEl.value?.parentElement;
   while (el) {
     if (el.classList?.contains("mask-element")) {
@@ -82,19 +85,35 @@ const applyFilterToMaskElement = () => {
     el = el.parentElement;
   }
 
-  if (!maskElement) return;
+  if (!maskElement) {
+    window.__profile?.end?.("glass-filter-apply");
+    return;
+  }
 
-  maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);
+  maskElement.style.setProperty(
+    "--glass-filter",
+    `blur(10px) url(#${filterId})`
+  );
+  window.__profile?.mark?.("glass-filter-property-set");
+
   updateMaskRect();
 
   resizeObserver = new ResizeObserver(updateMaskRect);
   resizeObserver.observe(maskElement);
   toggleListeners(true);
+
+  window.__profile?.end?.("glass-filter-apply");
+
+  requestAnimationFrame(() => {
+    window.__profile?.mark?.("glass-filter-rendered");
+  });
 };
 
 onMounted(async () => {
+  window.__profile?.start?.("glass-effect-mount");
   await nextTick();
   applyFilterToMaskElement();
+  window.__profile?.end?.("glass-effect-mount");
 });
 
 onBeforeUnmount(cleanup);

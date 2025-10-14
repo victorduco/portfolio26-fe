@@ -75,9 +75,9 @@ const casesData = [
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
-  { id: "case1", label: "Story One", icon: storyNavIcon },
-  { id: "case2", label: "Story Two", icon: storyNavIcon },
-  { id: "case3", label: "Story Three", icon: storyNavIcon },
+  { id: "case1", label: "Story One" },
+  { id: "case2", label: "Story Two" },
+  { id: "case3", label: "Story Three" },
   { id: "ai-play", label: "AI Play" },
   { id: "contacts", label: "Contact" },
 ];

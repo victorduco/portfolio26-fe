@@ -1,6 +1,7 @@
 .mask-element {
   position: relative;
   overflow: hidden;
+  will-change: filter, transform;
 }
 
 .mask-element-inner {
@@ -10,13 +11,15 @@
   width: 100vw;
   height: 100vh;
 
+  /* Use sharp background with CSS blur */
   background-image: var(--global-keypad-bg);
-  background-position: 50% 50%;
-  background-size: 100vw auto;
+  background-position: center center;
+  background-size: 150%;
   background-repeat: no-repeat;
   pointer-events: none;
   opacity: 1;
-  filter: var(--glass-filter, none);
+  /* CSS blur applied */
+  filter: var(--glass-filter);
   position: absolute;
   overflow: visible;
   z-index: 1;

@@ -1,0 +1,15 @@
+{
+  "name": "webkit-performance-tests",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "show-report": "playwright show-report ../../test-results/webkit-performance-html"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.56.0"
+  }
+}

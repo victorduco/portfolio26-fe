@@ -64,8 +64,12 @@ export const backdropFilter = {
  * @param {Object} styles - { blur, saturate, brightness, contrast, etc. }
  */
 function applyBackdropStyles(element, styles) {
-  if (!styles || typeof styles !== 'object') {
-    element.style.backdropFilter = '';
+  // 🔍 PROFILING: Track backdrop filter application
+  const profile = window.__keypadProfile;
+  const startTime = profile?.cssUpdatedTime ? performance.now() : null;
+
+  if (!styles || typeof styles !== "object") {
+    element.style.backdropFilter = "";
     return;
   }
 
@@ -86,8 +90,15 @@ function applyBackdropStyles(element, styles) {
   if (styles.filter) {
     element.style.backdropFilter = styles.filter;
   } else if (filterParts.length > 0) {
-    element.style.backdropFilter = filterParts.join(' ');
+    element.style.backdropFilter = filterParts.join(" ");
   } else {
-    element.style.backdropFilter = '';
+    element.style.backdropFilter = "";
+  }
+
+  // 🔍 PROFILING: Backdrop style set
+  if (startTime && profile) {
+    const setTime = performance.now();
+    profile.backdropStyleSetTime = setTime;
+    profile.backdropStyleDuration = setTime - startTime;
   }
 }

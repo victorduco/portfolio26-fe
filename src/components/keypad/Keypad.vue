@@ -1,33 +1,24 @@
 <template>
   <div class="keypad-container">
-    <!-- GeBackground disabled on mobile and landscape for performance -->
-    <GeBackground
-      v-if="!isMobile && !isLandscapeMobile"
-      source-selector="keypad-bg-export"
-      :watch-data="enteredDigits"
-      :render-delay="0"
-      :background-styles="{
-        filter: 'blur(10px) saturate(90%) brightness(0.9) contrast(1)',
-      }"
-    />
-
+    <!-- Base layer with normal colors -->
     <Motion
       tag="div"
-      class="background-numbers"
+      class="background-numbers background-numbers-base"
       id="keypad-bg-export"
       :variants="backgroundNumbersVariants"
       :animate="bgNumbersState"
       :transition="backgroundNumbersTransition"
     >
-      <div
-        v-for="(digit, index) in enteredDigits"
-        :key="index"
-        class="background-digit"
-        :style="{ color: getDigitColor(index) }"
-      >
-        {{ digit }}
-      </div>
     </Motion>
+
+    <!-- Overlay layer with success/fail colors -->
+    <div
+      :class="[
+        'background-numbers',
+        'background-numbers-overlay',
+        { 'is-visible': animationState !== 'initial' },
+      ]"
+    ></div>
 
     <Motion
       tag="div"
@@ -66,24 +57,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
-import GeBackground from "../glass-effect/GeBackground.vue";
 import { useMeta } from "../../composables/useMeta.js";
-import {
-  useIsMobile,
-  useIsLandscapeMobile,
-} from "../../composables/useMediaQuery.js";
 import {
   keypadGridVariants,
   keypadGridTransition,
   backgroundNumbersVariants,
   backgroundNumbersTransition,
 } from "./variants.js";
-
-const isMobile = useIsMobile();
-const isLandscapeMobile = useIsLandscapeMobile();
 
 useMeta("keypad");
 
@@ -93,12 +76,82 @@ const emit = defineEmits(["unlock"]);
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const enteredDigits = ref([]);
-const colors = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 
 const animationState = ref("initial");
 const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
+
+let resizeTimer = null;
+
+// No longer using SVG generation - using pre-generated PNG backgrounds
+
+// Update CSS variables with PNG backgrounds
+watch(
+  () => enteredDigits.value,
+  (digits) => {
+    window.__profile?.start?.("background-update");
+    console.log(
+      "🔄 Watch triggered, digits:",
+      digits,
+      "length:",
+      digits.length
+    );
+
+    if (digits.length === 0) {
+      console.log("⚠️ No digits, setting to none");
+      document.documentElement.style.setProperty("--global-keypad-bg", "none");
+      document.documentElement.style.setProperty(
+        "--global-keypad-mask",
+        "none"
+      );
+      window.__profile?.end?.("background-update");
+      window.__profile?.mark?.("background-cleared");
+      return;
+    }
+
+    const code = digits.join("");
+    console.log("📝 Code:", code);
+
+    // Sharp background for both main display and buttons (CSS blur applied to buttons)
+    window.__profile?.start?.("sharp-background-set");
+    const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
+    document.documentElement.style.setProperty(
+      "--global-keypad-bg",
+      `url("${sharpPath}")`
+    );
+    document.documentElement.style.setProperty(
+      "--global-keypad-mask",
+      `url("${sharpPath}")`
+    );
+    console.log("✅ Set --global-keypad-bg:", sharpPath);
+    window.__profile?.end?.("sharp-background-set");
+
+    window.__profile?.end?.("background-update");
+    window.__profile?.mark?.(`background-updated-${code}`);
+
+    // Mark when background is actually rendered
+    requestAnimationFrame(() => {
+      window.__profile?.mark?.(`background-rendered-${code}`);
+    });
+  },
+  { immediate: true, deep: true }
+);
+
+// Update overlay color based on animation state
+watch(
+  () => animationState.value,
+  (state) => {
+    const color =
+      state === "success"
+        ? "#00FFBC"
+        : state === "fail"
+        ? "#FF83A2"
+        : "transparent";
+    document.documentElement.style.setProperty("--overlay-color", color);
+  },
+  { immediate: true }
+);
 
 // Backend integration
 const loading = ref(false);
@@ -109,10 +162,11 @@ let rateLimitTimer = null;
 
 const showClearButton = computed(() => enteredDigits.value.length > 0);
 
-const getDigitColor = (index) => {
-  if (animationState.value === "success") return "#00FFBC";
-  if (animationState.value === "fail") return "#FF83A2";
-  return colors[index % colors.length];
+const getCodeFromDigits = () => {
+  return enteredDigits.value
+    .map((d) => String(d))
+    .join("")
+    .padStart(4, "0");
 };
 
 const isEditableTarget = (target) => {
@@ -195,17 +249,25 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
   if (shouldUnlock) {
     emit("unlock");
   } else {
-    enteredDigits.value = [];
+    // Hide overlay first (opacity 1 -> 0)
     animationState.value = "initial";
+    // Wait for overlay transition to complete
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Now clear digits (removes mask when overlay is already hidden)
+    enteredDigits.value = [];
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     isAnimating.value = false;
   }
 };
 
 async function handleButtonClick(value) {
   if (isAnimating.value || enteredDigits.value.length >= 4) return;
+
+  // 🔍 PROFILING: Start timing
+  window.__keypadProfile = { clickTime: performance.now() };
 
   enteredDigits.value.push(value);
 
@@ -274,18 +336,49 @@ function handleKeyDown(event) {
   }
 }
 
+function handleResize() {
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
+  }
+
+  resizeTimer = setTimeout(() => {
+    // Force update mask and background on resize
+    if (enteredDigits.value.length > 0) {
+      const code = enteredDigits.value.join("");
+      const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
+
+      // Re-apply CSS variables to ensure proper rendering after resize
+      requestAnimationFrame(() => {
+        document.documentElement.style.setProperty(
+          "--global-keypad-bg",
+          `url("${sharpPath}")`
+        );
+        document.documentElement.style.setProperty(
+          "--global-keypad-mask",
+          `url("${sharpPath}")`
+        );
+      });
+    }
+  }, 150);
+}
+
 onMounted(() => {
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
   }
 });
 
 onBeforeUnmount(() => {
   if (typeof window !== "undefined") {
     window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("resize", handleResize);
   }
   if (rateLimitTimer) {
     clearInterval(rateLimitTimer);
+  }
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
   }
 });
 </script>
@@ -311,70 +404,90 @@ onBeforeUnmount(() => {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  box-sizing: border-box;
   touch-action: none;
+}
+
+.background-preview-png {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+  border: 2px solid red;
 }
 
 .background-numbers {
   position: absolute;
   inset: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  row-gap: 0px;
-  column-gap: 0px;
   pointer-events: none;
-  z-index: 1;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-position: center center;
+  background-size: 150%;
+  background-repeat: no-repeat;
+}
+
+.background-numbers-base {
+  z-index: 1;
+  background-image: var(--global-keypad-bg);
+}
+
+.background-numbers-overlay {
+  z-index: 2;
+  mask-image: var(--global-keypad-mask);
+  -webkit-mask-image: var(--global-keypad-mask);
+  mask-size: 150%;
+  -webkit-mask-size: 150%;
+  mask-position: center center;
+  -webkit-mask-position: center center;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  background-color: var(--overlay-color, transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease, background-color 0.5s ease;
+}
+
+.background-numbers-overlay.is-visible {
+  opacity: 1;
 }
 
 @media (min-width: 768px) {
   .background-numbers {
-    display: flex;
-    grid-template-columns: unset;
-    grid-template-rows: unset;
-    align-items: center;
-    justify-content: center;
+    height: clamp(350px, 60vw, 950px);
+    width: 100vw;
+    left: 50%;
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
   }
 }
 
 .background-digit {
-  width: 100%;
+  width: auto;
   height: 100%;
-  font-size: clamp(150px, 40vmax, 500px);
-  font-weight: 400;
-  line-height: 0.9;
   opacity: 1;
   user-select: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   transition: color 0.5s ease;
-  display: grid;
-  place-items: center;
 }
 
-/* Первые две цифры (верхняя строка) - place-items: end center */
-.background-digit:nth-child(1),
-.background-digit:nth-child(2) {
-  place-items: end center;
-}
-
-/* Последние две цифры (нижняя строка) - place-items: start center */
-.background-digit:nth-child(3),
-.background-digit:nth-child(4) {
-  place-items: start center;
-}
-
-@media (min-width: 768px) {
-  .background-digit {
-    width: auto;
-    height: auto;
-    font-size: clamp(280px, 50vw, 700px);
-    line-height: 1;
-    margin: 0 clamp(-10px, -2vw, -30px);
-    display: block;
-  }
+.background-digit :deep(.keypad-digit-svg) {
+  height: 100%;
+  width: auto;
 }
 
 .keypad-grid {
