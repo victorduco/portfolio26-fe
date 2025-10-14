@@ -3,7 +3,7 @@ import "./styles/colors.css";
 import "./styles/typography.css";
 import "./style.css";
 import "./styles/glass.css";
-import "./assets/fonts/fontello/fontello-icons.css";
+import "./assets/fonts/intro-icons/intro-icons.css";
 import { RouterView } from "vue-router";
 import directivesPlugin from "./plugins/directives.js";
 import mixpanelPlugin from "./plugins/mixpanel.js";

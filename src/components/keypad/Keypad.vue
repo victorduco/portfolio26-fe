@@ -67,6 +67,11 @@ import {
   backgroundNumbersVariants,
   backgroundNumbersTransition,
 } from "./variants.js";
+import {
+  getBackgroundPath,
+  preloadInitialBackgrounds,
+  prefetchNextDigits,
+} from "../../utils/keypadBackgroundLoader.js";
 
 useMeta("keypad");
 
@@ -110,12 +115,11 @@ watch(
       return;
     }
 
-    const code = digits.join("");
-    console.log("📝 Code:", code);
+    console.log("📝 Digits:", digits);
 
     // Sharp background for both main display and buttons (CSS blur applied to buttons)
     window.__profile?.start?.("sharp-background-set");
-    const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
+    const sharpPath = getBackgroundPath(digits);
     document.documentElement.style.setProperty(
       "--global-keypad-bg",
       `url("${sharpPath}")`
@@ -128,11 +132,11 @@ watch(
     window.__profile?.end?.("sharp-background-set");
 
     window.__profile?.end?.("background-update");
-    window.__profile?.mark?.(`background-updated-${code}`);
+    window.__profile?.mark?.(`background-updated-${digits.join("")}`);
 
     // Mark when background is actually rendered
     requestAnimationFrame(() => {
-      window.__profile?.mark?.(`background-rendered-${code}`);
+      window.__profile?.mark?.(`background-rendered-${digits.join("")}`);
     });
   },
   { immediate: true, deep: true }
@@ -254,8 +258,13 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
     // Wait for overlay transition to complete
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Now clear digits (removes mask when overlay is already hidden)
+    // Clear digits and backgrounds before fade in
     enteredDigits.value = [];
+    document.documentElement.style.setProperty("--global-keypad-bg", "none");
+    document.documentElement.style.setProperty("--global-keypad-mask", "none");
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -270,6 +279,9 @@ async function handleButtonClick(value) {
   window.__keypadProfile = { clickTime: performance.now() };
 
   enteredDigits.value.push(value);
+
+  // Preload next possible backgrounds based on current input
+  prefetchNextDigits(enteredDigits.value);
 
   if (enteredDigits.value.length === 4) {
     isAnimating.value = true;
@@ -367,6 +379,9 @@ onMounted(() => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("resize", handleResize);
   }
+
+  // Preload manifest and initial backgrounds
+  preloadInitialBackgrounds();
 });
 
 onBeforeUnmount(() => {

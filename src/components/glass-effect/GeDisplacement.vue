@@ -38,7 +38,7 @@ const props = defineProps({
 });
 
 const { options: o } = props;
-const filterId = `apple-liquid-glass-${Math.random().toString(36).slice(2)}`;
+const filterId = `glass-effect-${Math.random().toString(36).slice(2)}`;
 const glassFilterEl = ref(null);
 const maskRect = ref({ left: 0, top: 0, width: 0, height: 0 });
 let maskElement = null;

@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg">
-<metadata>Copyright (C) 2025 by original authors @ fontello.com</metadata>
+<metadata>Copyright (C) 2025 by original authors @ intro-icons.com</metadata>
 <defs>
-<font id="fontello" horiz-adv-x="1000" >
-<font-face font-family="fontello" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<font id="intro-icons" horiz-adv-x="1000" >
+<font-face font-family="intro-icons" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
 <missing-glyph horiz-adv-x="1000" />
 <glyph glyph-name="d" unicode="&#xe800;" d="M105 792c0 22 18 40 40 40h12c22 0 40-18 40-40v-898c0-22-18-40-40-40h-12c-22 0-40 18-40 40v898z m703 0c0 22 18 40 40 40h11c22 0 40-18 40-40v-898c0-22-18-40-40-40h-11c-22 0-40 18-40 40v898z m143-52c22 0 40-18 40-40v-11c0-22-18-40-40-40l-897 0c-22 0-40 18-40 40l0 11c0 22 18 40 40 40l897 0z m0-702c22 0 40-18 40-40v-12c0-22-18-40-40-40l-897 0c-22 0-40 18-40 40l0 12c0 22 18 40 40 40l897 0z m-654 511h411v-411h-411v411z" horiz-adv-x="1000" />
 

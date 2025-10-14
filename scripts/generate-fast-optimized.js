@@ -7,9 +7,11 @@
  * 1. Pre-render all digit glyphs once (0-9 in 4 colors) = 40 sharp PNGs
  * 2. For each combination, simply composite pre-rendered glyphs (fast blit operations)
  * 3. Process in parallel batches for maximum speed
+ * 4. Generate content hashes for filenames (for CDN caching)
  *
  * Output:
- * - /keypad-backgrounds/sharp/*.png
+ * - /keypad-backgrounds/sharp/*.png (with content hashes)
+ * - /keypad-backgrounds/manifest.json (code -> filename mapping)
  */
 
 import sharp from "sharp";
@@ -17,6 +19,7 @@ import cliProgress from "cli-progress";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createHash } from "crypto";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,6 +39,9 @@ const DIGIT_SPACING = -50; // 2x for retina
 const FORCE = process.argv.includes("--force");
 const SINGLE_DIGITS_ONLY = process.argv.includes("--single-digits");
 const BATCH_SIZE = 100;
+
+// Manifest for code -> hashed filename mapping
+const manifest = {};
 
 // Statistics
 const stats = {
@@ -192,17 +198,16 @@ async function composeBackgrounds() {
 }
 
 /**
+ * Generate content hash from buffer
+ */
+function generateHash(buffer) {
+  return createHash("sha256").update(buffer).digest("hex").substring(0, 8);
+}
+
+/**
  * Compose single background
  */
 async function composeBackground(code, progressBar) {
-  const filepath = path.join(SHARP_DIR, `${code}.png`);
-
-  if (!FORCE && (await fileExists(filepath))) {
-    stats.skipped++;
-    progressBar.increment();
-    return;
-  }
-
   const digits = code.split("").map(Number);
   const glyphsDir = path.join(GLYPHS_DIR, "sharp");
 
@@ -241,7 +246,23 @@ async function composeBackground(code, progressBar) {
     .png({ quality: 80, compressionLevel: 9 })
     .toBuffer();
 
+  // Generate content hash for filename
+  const hash = generateHash(buffer);
+  const filename = `${code}.${hash}.png`;
+  const filepath = path.join(SHARP_DIR, filename);
+
+  // Check if file with same hash already exists (skip if not forced)
+  if (!FORCE && (await fileExists(filepath))) {
+    stats.skipped++;
+    manifest[code] = filename;
+    progressBar.increment();
+    return;
+  }
+
   await fs.writeFile(filepath, buffer);
+
+  // Update manifest
+  manifest[code] = filename;
 
   stats.generated++;
   stats.totalSize += buffer.length;
@@ -266,6 +287,11 @@ async function main() {
   await generateGlyphs();
   await composeBackgrounds();
 
+  // Save manifest
+  const manifestPath = path.join(OUTPUT_DIR, "manifest.json");
+  await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+  console.log(`\n📋 Manifest saved: ${manifestPath}`);
+
   const duration = ((Date.now() - stats.startTime) / 1000).toFixed(1);
   const avgSize = stats.generated > 0 ? stats.totalSize / stats.generated : 0;
 
@@ -274,6 +300,7 @@ async function main() {
   console.log(`  Glyphs: ${stats.glyphsGenerated}`);
   console.log(`  Generated: ${stats.generated}`);
   console.log(`  Skipped: ${stats.skipped}`);
+  console.log(`  Manifest entries: ${Object.keys(manifest).length}`);
   console.log(`  Total size: ${formatSize(stats.totalSize)}`);
   console.log(`  Average size: ${formatSize(avgSize)}`);
   console.log(`  Duration: ${duration}s`);

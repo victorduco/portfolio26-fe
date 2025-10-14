@@ -2,15 +2,15 @@
 
 ## List of parameters and default values
 
-| Parameter             | Description                      | Default | Range     |
-| --------------------- | -------------------------------- | ------- | --------- |
-| displacementMap       | Path to displacement map file    | ""      | string    |
-| displacementScale     | Liquid glass distortion strength | 65      | 10 - 120  |
-| glassBlur             | Backdrop blur                    | 25      | 8 - 40    |
-| glassSaturation       | Material saturation              | 185     | 0 - 400   |
-| glassBrightness       | Glass brightness                 | 60      | 0 - 500   |
-| glassContrast         | Glass contrast                   | 120     | 0 - 500   |
-| highlightReflection   | Surface reflection intensity     | 0.45    | 0 - 1.0   |
+| Parameter           | Description                   | Default | Range    |
+| ------------------- | ----------------------------- | ------- | -------- |
+| displacementMap     | Path to displacement map file | ""      | string   |
+| displacementScale   | Distortion strength           | 65      | 10 - 120 |
+| glassBlur           | Backdrop blur                 | 25      | 8 - 40   |
+| glassSaturation     | Material saturation           | 185     | 0 - 400  |
+| glassBrightness     | Glass brightness              | 60      | 0 - 500  |
+| glassContrast       | Glass contrast                | 120     | 0 - 500  |
+| highlightReflection | Surface reflection intensity  | 0.45    | 0 - 1.0  |
 
 ## Usage
 

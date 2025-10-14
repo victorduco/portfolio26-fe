@@ -14,6 +14,10 @@
     "generate:backgrounds:old": "node scripts/generate-backgrounds-svg.js",
     "generate:backgrounds:topng": "node scripts/generate-keypad-backgrounds-topng.js",
     "generate:backgrounds:puppeteer": "node scripts/generate-keypad-backgrounds.js",
+    "cdn:setup": "./scripts/setup-aws-cdn.sh",
+    "cdn:sync": "aws s3 sync ./public/keypad-backgrounds s3://portfolio26-keypad-backgrounds/keypad-backgrounds --profile cdn-uploader --delete --content-type image/png --cache-control 'public,max-age=31536000,immutable' --exclude '.glyphs/*' --exclude '.gitkeep'",
+    "cdn:sync:manifest": "aws s3 cp ./public/keypad-backgrounds/manifest.json s3://portfolio26-keypad-backgrounds/keypad-backgrounds/manifest.json --profile cdn-uploader --content-type application/json --cache-control 'public,max-age=3600'",
+    "cdn:check": "node scripts/check-cdn-setup.js",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
@@ -42,8 +46,6 @@
     "screenshots:desktop-all": "npx playwright test tests/visual/screenshots.spec.js --project=desktop --project=desktop-large --project=desktop-ultrawide"
   },
   "dependencies": {
-    "@wxperia/liquid-glass-vue": "^1.0.9",
-    "@zaosoula/liquid-glass-vue": "^1.1.2",
     "html-to-image": "^1.11.13",
     "mixpanel-browser": "^2.71.0",
     "motion-v": "^1.7.1",

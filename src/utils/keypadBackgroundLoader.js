@@ -3,7 +3,31 @@
  *
  * Handles loading and caching of pregenerated keypad background images.
  * Provides optimized loading with memory cache and prefetching capabilities.
+ * Supports CDN URLs with content-hashed filenames.
  */
+
+// Load manifest (code -> hashed filename mapping)
+let manifest = null;
+async function loadManifest() {
+  if (manifest) return manifest;
+
+  try {
+    const response = await fetch("/keypad-backgrounds/manifest.json");
+    if (!response.ok) throw new Error("Manifest not found");
+    manifest = await response.json();
+    return manifest;
+  } catch (error) {
+    console.warn(
+      "Failed to load manifest, using fallback naming:",
+      error.message
+    );
+    return null;
+  }
+}
+
+// CDN base URL from environment
+const CDN_BASE_URL = import.meta.env.VITE_CDN_BASE_URL;
+const USE_CDN = CDN_BASE_URL && import.meta.env.PROD;
 
 // Memory cache for loaded images (data URLs)
 const imageCache = new Map();
@@ -23,22 +47,61 @@ const stats = {
 };
 
 /**
- * Convert digit array to 4-digit code string
+ * Convert digit array to code string
  * @param {number[]} digits - Array of digits (e.g., [1, 2, 3, 4])
- * @returns {string} - Padded code string (e.g., "1234")
+ * @returns {string} - Code string (e.g., "1", "12", "123", "1234")
  */
 function getCodeFromDigits(digits) {
-  return digits.map(d => String(d)).join('').padStart(4, '0');
+  return digits.map((d) => String(d)).join("");
 }
 
 /**
- * Get the path to a background image
+ * Get the path to a background image (sync version, uses cached manifest if available)
  * @param {number[]} digits - Array of digits
- * @returns {string} - Path to the image file
+ * @returns {string} - Path or URL to the image file
  */
 export function getBackgroundPath(digits) {
   const code = getCodeFromDigits(digits);
-  return `/keypad-backgrounds/${code}.png`;
+
+  if (USE_CDN && manifest) {
+    // Use CDN with hashed filename from manifest
+    const filename = manifest[code] || `${code}.png`;
+    return `${CDN_BASE_URL}/sharp/${filename}`;
+  }
+
+  // Fallback to local files (dev mode or no CDN)
+  if (manifest && manifest[code]) {
+    // Use hashed filename from manifest
+    return `/keypad-backgrounds/sharp/${manifest[code]}`;
+  }
+
+  // Legacy fallback (no manifest yet loaded)
+  return `/keypad-backgrounds/sharp/${code}.png`;
+}
+
+/**
+ * Get the path to a background image (with manifest data)
+ * @param {number[]} digits - Array of digits
+ * @param {Object} manifestData - Manifest for hashed filenames
+ * @returns {string} - Path or URL to the image file
+ */
+function getBackgroundPathWithManifest(digits, manifestData) {
+  const code = getCodeFromDigits(digits);
+
+  if (USE_CDN && manifestData) {
+    // Use CDN with hashed filename from manifest
+    const filename = manifestData[code] || `${code}.png`;
+    return `${CDN_BASE_URL}/sharp/${filename}`;
+  }
+
+  // Fallback to local files (dev mode or no CDN)
+  if (manifestData && manifestData[code]) {
+    // Use hashed filename from manifest
+    return `/keypad-backgrounds/sharp/${manifestData[code]}`;
+  }
+
+  // Legacy fallback (no manifest)
+  return `/keypad-backgrounds/sharp/${code}.png`;
 }
 
 /**
@@ -63,7 +126,6 @@ async function blobToDataURL(blob) {
  */
 export async function loadBackground(digits, profile = null) {
   const code = getCodeFromDigits(digits);
-  const path = getBackgroundPath(digits);
 
   // Check cache first - if we've preloaded it, return path immediately
   if (imageCache.has(code)) {
@@ -94,14 +156,18 @@ export async function loadBackground(digits, profile = null) {
   // Create the load promise
   const loadPromise = (async () => {
     try {
+      // Load manifest if using hashed filenames
+      const manifestData = await loadManifest();
+      const path = getBackgroundPathWithManifest(digits, manifestData);
+
       // Preload the image to ensure it's loaded and ready
       const img = new Image();
 
       const imageLoaded = new Promise((resolve, reject) => {
         img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Failed to load image'));
+        img.onerror = () => reject(new Error("Failed to load image"));
         // Set timeout
-        setTimeout(() => reject(new Error('Image load timeout')), 10000);
+        setTimeout(() => reject(new Error("Image load timeout")), 10000);
       });
 
       img.src = path;
@@ -116,7 +182,6 @@ export async function loadBackground(digits, profile = null) {
       stats.networkLoads++;
 
       return path;
-
     } catch (error) {
       stats.failures++;
       failedLoads.add(code);
@@ -138,7 +203,7 @@ export async function loadBackground(digits, profile = null) {
  * @param {number[][]} digitArrays - Array of digit arrays to preload
  */
 export async function preloadBackgrounds(digitArrays) {
-  const promises = digitArrays.map(digits => {
+  const promises = digitArrays.map((digits) => {
     const code = getCodeFromDigits(digits);
 
     // Skip if already cached or failed
@@ -154,7 +219,7 @@ export async function preloadBackgrounds(digitArrays) {
           .catch(() => resolve()); // Ignore errors in prefetch
       };
 
-      if (typeof requestIdleCallback !== 'undefined') {
+      if (typeof requestIdleCallback !== "undefined") {
         requestIdleCallback(doLoad);
       } else {
         setTimeout(doLoad, 0);
@@ -183,10 +248,13 @@ export function prefetchNextDigits(currentDigits) {
 }
 
 /**
- * Preload initial backgrounds on app start
+ * Preload initial backgrounds on app start (also loads manifest)
  */
-export function preloadInitialBackgrounds() {
-  // Preload first 10 combinations (0000-0009)
+export async function preloadInitialBackgrounds() {
+  // Load manifest first
+  await loadManifest();
+
+  // Preload first 10 combinations (0-9)
   const initial = [];
   for (let i = 0; i < 10; i++) {
     initial.push([i]);
@@ -217,9 +285,13 @@ export function getStats() {
     cacheSize: imageCache.size,
     failedLoads: failedLoads.size,
     inflightRequests: inflightRequests.size,
-    hitRate: stats.cacheHits + stats.cacheMisses > 0
-      ? (stats.cacheHits / (stats.cacheHits + stats.cacheMisses) * 100).toFixed(1) + '%'
-      : '0%',
+    hitRate:
+      stats.cacheHits + stats.cacheMisses > 0
+        ? (
+            (stats.cacheHits / (stats.cacheHits + stats.cacheMisses)) *
+            100
+          ).toFixed(1) + "%"
+        : "0%",
   };
 }
 
