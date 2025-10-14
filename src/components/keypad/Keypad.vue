@@ -99,6 +99,10 @@ watch(
     if (digits.length === 0) {
       console.log("⚠️ No digits, setting to none");
       document.documentElement.style.setProperty("--global-keypad-bg", "none");
+      document.documentElement.style.setProperty(
+        "--global-keypad-mask",
+        "none"
+      );
       window.__profile?.end?.("background-update");
       window.__profile?.mark?.("background-cleared");
       return;
@@ -114,6 +118,10 @@ watch(
       "--global-keypad-bg",
       `url("${sharpPath}")`
     );
+    document.documentElement.style.setProperty(
+      "--global-keypad-mask",
+      `url("${sharpPath}")`
+    );
     console.log("✅ Set --global-keypad-bg:", sharpPath);
     window.__profile?.end?.("sharp-background-set");
 
@@ -126,6 +134,21 @@ watch(
     });
   },
   { immediate: true, deep: true }
+);
+
+// Update overlay color based on animation state
+watch(
+  () => animationState.value,
+  (state) => {
+    const color =
+      state === "success"
+        ? "#00FFBC"
+        : state === "fail"
+        ? "#FF83A2"
+        : "transparent";
+    document.documentElement.style.setProperty("--overlay-color", color);
+  },
+  { immediate: true }
 );
 
 // Backend integration
@@ -224,11 +247,16 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
   if (shouldUnlock) {
     emit("unlock");
   } else {
-    enteredDigits.value = [];
+    // Hide overlay first (opacity 1 -> 0)
     animationState.value = "initial";
+    // Wait for overlay transition to complete
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Now clear digits (removes mask when overlay is already hidden)
+    enteredDigits.value = [];
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     isAnimating.value = false;
   }
 };
@@ -381,9 +409,17 @@ onBeforeUnmount(() => {
 
 .background-numbers-overlay {
   z-index: 2;
-  background-image: var(--global-keypad-bg-overlay);
+  mask-image: var(--global-keypad-mask);
+  -webkit-mask-image: var(--global-keypad-mask);
+  mask-size: 150%;
+  -webkit-mask-size: 150%;
+  mask-position: center center;
+  -webkit-mask-position: center center;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  background-color: var(--overlay-color, transparent);
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, background-color 0.5s ease;
 }
 
 .background-numbers-overlay.is-visible {
