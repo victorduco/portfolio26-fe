@@ -139,9 +139,13 @@ async function generateGlyphs() {
       await fs.writeFile(sharpPath, sharpBuffer);
 
       // Blurred version
-      const blurredBuffer = await sharp(buffer)
-        .blur(5)
-        .modulate({ brightness: 0.9, saturation: 0.9 })
+
+      const blurredSharp = sharp(buffer)
+        .blur(15)
+        .modulate({ brightness: 0.9, saturation: 1.0 });
+
+      // PNG
+      const blurredBuffer = await blurredSharp
         .png({ quality: 80, compressionLevel: 9 })
         .toBuffer();
       await fs.writeFile(blurredPath, blurredBuffer);
