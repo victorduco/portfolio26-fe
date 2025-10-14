@@ -3,7 +3,11 @@
     <!-- Base layer with normal colors -->
     <Motion
       tag="div"
-      class="background-numbers background-numbers-base"
+      :class="[
+        'background-numbers',
+        'background-numbers-base',
+        { 'no-background': enteredDigits.length === 0 },
+      ]"
       id="keypad-bg-export"
       :variants="backgroundNumbersVariants"
       :animate="bgNumbersState"
@@ -104,16 +108,34 @@ watch(
     );
 
     if (digits.length === 0) {
-      console.log("⚠️ No digits, setting to none");
-      document.documentElement.style.setProperty("--global-keypad-bg", "none");
-      document.documentElement.style.setProperty(
-        "--global-keypad-mask",
-        "none"
-      );
+      console.log("⚠️ No digits, setting to empty");
+      // Reset glass filter to force Safari to clear cached background
+      document.documentElement.style.setProperty("--glass-filter", "none");
+      void document.documentElement.offsetHeight;
+
+      // Use empty string instead of 'none' for Safari compatibility
+      document.documentElement.style.setProperty("--global-keypad-bg", "");
+      document.documentElement.style.setProperty("--global-keypad-mask", "");
+      // Add class to force hide background on all elements
+      document.documentElement.classList.add("keypad-no-bg");
+
+      // Force Safari to apply changes immediately
+      void document.documentElement.offsetHeight;
+
+      // Restore glass filter after a small delay
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.documentElement.style.removeProperty("--glass-filter");
+        });
+      });
+
       window.__profile?.end?.("background-update");
       window.__profile?.mark?.("background-cleared");
       return;
     }
+
+    // Remove no-background class when we have digits
+    document.documentElement.classList.remove("keypad-no-bg");
 
     console.log("📝 Digits:", digits);
 
@@ -255,15 +277,18 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
   } else {
     // Hide overlay first (opacity 1 -> 0)
     animationState.value = "initial";
-    // Wait for overlay transition to complete
-    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Clear digits and backgrounds before fade in
+    // Clear digits (this will trigger watch to clear backgrounds)
     enteredDigits.value = [];
-    document.documentElement.style.setProperty("--global-keypad-bg", "none");
-    document.documentElement.style.setProperty("--global-keypad-mask", "none");
 
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    // Wait a bit for watch to process and clear backgrounds
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Force Safari to reflow after watch clears backgrounds
+    document.documentElement.offsetHeight;
+
+    // Wait for overlay transition to complete
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
@@ -309,9 +334,28 @@ async function handleButtonClick(value) {
 
 function handleClear() {
   if (isAnimating.value) return;
+
+  // Reset glass filter to force Safari to clear cached background
+  document.documentElement.style.setProperty("--glass-filter", "none");
+  void document.documentElement.offsetHeight;
+
+  // Explicitly clear backgrounds for Safari
+  document.documentElement.style.setProperty("--global-keypad-bg", "");
+  document.documentElement.style.setProperty("--global-keypad-mask", "");
+  document.documentElement.classList.add("keypad-no-bg");
+  void document.documentElement.offsetHeight; // Force Safari reflow
+
+  // Then clear state
   enteredDigits.value = [];
   animationState.value = "initial";
   bgNumbersState.value = "initial";
+
+  // Restore glass filter after a small delay
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.documentElement.style.removeProperty("--glass-filter");
+    });
+  });
 }
 
 function handleBackspace() {
@@ -453,6 +497,11 @@ onBeforeUnmount(() => {
 .background-numbers-base {
   z-index: 1;
   background-image: var(--global-keypad-bg);
+}
+
+.background-numbers-base.no-background,
+.keypad-no-bg .background-numbers-base {
+  background-image: none !important;
 }
 
 .background-numbers-overlay {
