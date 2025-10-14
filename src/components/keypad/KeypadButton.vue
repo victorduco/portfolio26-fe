@@ -151,6 +151,7 @@ function handleClick() {
   overflow: hidden;
   transform: rotate(45deg);
   border: 1px solid #ffffff09;
+  contain: layout style paint;
 }
 
 .keypad-button-glass {

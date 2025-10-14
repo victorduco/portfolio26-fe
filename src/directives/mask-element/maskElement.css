@@ -1,6 +1,7 @@
 .mask-element {
   position: relative;
   overflow: hidden;
+  will-change: filter, transform;
 }
 
 .mask-element-inner {
@@ -13,7 +14,7 @@
   /* Use pre-blurred background for buttons */
   background-image: var(--global-keypad-bg-blurred);
   background-position: center center;
-  background-size: contain;
+  background-size: 150%;
   background-repeat: no-repeat;
   pointer-events: none;
   opacity: 1;

@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "generate:backgrounds": "node scripts/generate-fast-optimized.js",
     "generate:backgrounds:force": "node scripts/generate-fast-optimized.js --force",
+    "generate:backgrounds:single": "node scripts/generate-fast-optimized.js --single-digits --force",
     "generate:backgrounds:legacy": "node scripts/generate-keypad-fast.js",
     "generate:backgrounds:old": "node scripts/generate-backgrounds-svg.js",
     "generate:backgrounds:topng": "node scripts/generate-keypad-backgrounds-topng.js",

@@ -29,13 +29,14 @@ const BLURRED_DIR = path.join(OUTPUT_DIR, "blurred");
 const GLYPHS_DIR = path.join(OUTPUT_DIR, ".glyphs");
 
 const COLORS = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
-const IMAGE_WIDTH = 1920;
-const IMAGE_HEIGHT = 1080;
-const DIGIT_WIDTH = 350; // Width of each digit glyph
-const DIGIT_HEIGHT = 700;
-const DIGIT_SPACING = 50; // Space between digits
+const IMAGE_WIDTH = 3840; // 2x for retina
+const IMAGE_HEIGHT = 2160; // 2x for retina
+const DIGIT_WIDTH = 700; // 2x for retina
+const DIGIT_HEIGHT = 1300; // 2x for retina
+const DIGIT_SPACING = 100; // 2x for retina
 
 const FORCE = process.argv.includes("--force");
+const SINGLE_DIGITS_ONLY = process.argv.includes("--single-digits");
 const BATCH_SIZE = 100;
 
 // Statistics
@@ -53,17 +54,17 @@ const stats = {
 function generateDigitSVG(digit, color) {
   return `
     <svg
-      viewBox="100 -50 500 900"
+      viewBox="0 -100 1000 1800"
       width="${DIGIT_WIDTH}"
       height="${DIGIT_HEIGHT}"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMid meet"
     >
       <text
-        x="350"
-        y="400"
-        font-size="825"
-        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
+        x="510"
+        y="900"
+        font-size="1650"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
         font-weight="400"
         text-anchor="middle"
         dominant-baseline="central"
@@ -143,14 +144,9 @@ async function generateGlyphs() {
       await fs.writeFile(sharpPath, sharpBuffer);
 
       // Blurred version
-
-      const blurredSharp = sharp(buffer)
-        .blur(15)
+      const blurredBuffer = await sharp(buffer)
+        .blur(8)
         .modulate({ brightness: 0.8, saturation: 1.0 })
-        .noise({ type: "gaussian", mean: 128, sigma: 2 });
-
-      // PNG
-      const blurredBuffer = await blurredSharp
         .png({ quality: 80, compressionLevel: 9 })
         .toBuffer();
       await fs.writeFile(blurredPath, blurredBuffer);
@@ -171,13 +167,21 @@ async function composeBackgrounds() {
   await fs.mkdir(SHARP_DIR, { recursive: true });
   await fs.mkdir(BLURRED_DIR, { recursive: true });
 
-  // Generate all combinations
+  // Generate combinations
   const combinations = [];
 
-  for (let i = 0; i <= 9; i++) combinations.push(String(i));
-  for (let i = 0; i <= 99; i++) combinations.push(String(i).padStart(2, "0"));
-  for (let i = 0; i <= 999; i++) combinations.push(String(i).padStart(3, "0"));
-  for (let i = 0; i <= 9999; i++) combinations.push(String(i).padStart(4, "0"));
+  if (SINGLE_DIGITS_ONLY) {
+    // Only 0-9.png
+    for (let i = 0; i <= 9; i++) combinations.push(String(i));
+  } else {
+    // All combinations (0-9999)
+    for (let i = 0; i <= 9; i++) combinations.push(String(i));
+    for (let i = 0; i <= 99; i++) combinations.push(String(i).padStart(2, "0"));
+    for (let i = 0; i <= 999; i++)
+      combinations.push(String(i).padStart(3, "0"));
+    for (let i = 0; i <= 9999; i++)
+      combinations.push(String(i).padStart(4, "0"));
+  }
 
   const progressBar = new cliProgress.SingleBar({
     format: "Progress |{bar}| {percentage}% | {value}/{total}",
@@ -243,12 +247,17 @@ async function composeBackground(code, variant, progressBar) {
   }
 
   // Create base image
+  const backgroundColor =
+    variant === "blurred"
+      ? { r: 23, g: 23, b: 23, alpha: 1 } // Black for blurred
+      : { r: 23, g: 23, b: 23, alpha: 1 }; // #171717 for sharp
+
   const buffer = await sharp({
     create: {
       width: IMAGE_WIDTH,
       height: IMAGE_HEIGHT,
       channels: 4,
-      background: { r: 23, g: 23, b: 23, alpha: 1 },
+      background: backgroundColor,
     },
   })
     .composite(composites)
@@ -268,6 +277,13 @@ async function composeBackground(code, variant, progressBar) {
 async function main() {
   console.log("🚀 Fast Optimized Keypad Background Generator\n");
   console.log(`Output: ${OUTPUT_DIR}`);
+  console.log(
+    `Mode: ${
+      SINGLE_DIGITS_ONLY
+        ? "Single digits only (0-9)"
+        : "All combinations (0-9999)"
+    }`
+  );
   console.log(`Force: ${FORCE}\n`);
 
   await generateGlyphs();

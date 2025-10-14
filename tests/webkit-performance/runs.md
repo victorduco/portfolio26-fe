@@ -97,88 +97,89 @@ Optimize GeFilter performance without changing visual effect
 - **Expected:** Less GPU load, visual almost identical
 - **File:** `src/components/keypad/glassEffectConfig.js` line 3
 - **Change:** `displacementScale: 150` (or 100)
-- **Status:** ⏸️ TODO
+- **Status:** ❌ REJECTED (-7%)
 
 #### 2. Add will-change to mask-element (PRIORITY: HIGH)
 
+- **Status:** ✅ APPLIED (431x improvement!)
 - **What:** Add `will-change: filter, transform` to CSS
 - **Why:** WebKit doesn't know element will animate frequently
 - **Expected:** Better GPU compositing, separate layer
 - **File:** `src/directives/mask-element/maskElement.css`
 - **Change:** Add `will-change: filter, transform;` to `.mask-element`
-- **Status:** ⏸️ TODO
 
 #### 3. Add transform: translateZ(0) for GPU acceleration (PRIORITY: HIGH)
 
+- **Status:** ❌ REJECTED (-34%)
 - **What:** Force GPU layer with transform
 - **Why:** Ensure hardware acceleration active
 - **Expected:** Dedicated compositing layer
 - **File:** `src/components/glass-effect/GeDisplacement.vue` CSS
 - **Change:** Add `transform: translateZ(0);` to `.glass-filter`
-- **Status:** ⏸️ TODO
+- **Status:** ❌ REJECTED (-34%)
 
 #### 4. Add CSS contain property (PRIORITY: HIGH)
 
+- **Status:** ✅ APPLIED (+7%)
 - **What:** Add `contain: layout style paint` to button wrapper
 - **Why:** Isolate layout calculations to button only
 - **Expected:** Limit repaint scope, faster layout
 - **File:** `src/components/keypad/KeypadButton.vue` CSS
 - **Change:** Add `contain: layout style paint;` to `.keypad-button-wrapper`
-- **Status:** ⏸️ TODO
 
 #### 5. Debounce updateMaskRect calls (PRIORITY: MEDIUM)
 
+- **Status:** ❌ REJECTED (-50%)
 - **What:** Throttle updateMaskRect to max 1 call per 16ms
 - **Why:** Too many rect updates on scroll/resize
 - **Expected:** 50-80% fewer rect calculations
 - **File:** `src/components/glass-effect/GeDisplacement.vue` line 47
 - **Change:** Wrap updateMaskRect in throttle/debounce
-- **Status:** ⏸️ TODO
 
 #### 6. Disconnect ResizeObserver when not hovering (PRIORITY: MEDIUM)
 
+- **Status:** ⏸️ SKIPPED (complex, low ROI)
 - **What:** Enable observer only during hover state
 - **Why:** Wasted work when button inactive
 - **Expected:** 80% less observer overhead
 - **File:** `src/components/glass-effect/GeDisplacement.vue`
 - **Change:** Connect/disconnect observer based on hover state
-- **Status:** ⏸️ TODO
 
 #### 7. Cache filterId CSS value (PRIORITY: LOW)
 
+- **Status:** ⏸️ SKIPPED (already cached)
 - **What:** Set filter URL once, don't recalculate
 - **Why:** Avoid style recalculations
 - **Expected:** Minor improvement in style updates
 - **File:** `src/components/glass-effect/GeDisplacement.vue` line 92
 - **Change:** Set once in applyFilterToMaskElement, don't update
-- **Status:** ⏸️ TODO
 
 #### 8. Round rect coordinates to 4px grid (PRIORITY: LOW)
 
+- **Status:** ✅ APPLIED (+5%)
 - **What:** Round to nearest 4px instead of 1px
 - **Why:** Reduce sub-pixel invalidations
 - **Expected:** Fewer repaints on micro-movements
 - **File:** `src/components/glass-effect/GeDisplacement.vue` line 54-59
 - **Change:** `Math.round(value / 4) * 4`
-- **Status:** ⏸️ TODO
 
 #### 9. Optimize layoutBatcher batching strategy (PRIORITY: MEDIUM)
 
+- **Status:** ⏸️ SKIPPED (low ROI)
 - **What:** Group multiple scheduleTask before RAF
 - **Why:** Currently each call creates RAF, could batch better
 - **Expected:** Fewer RAF cycles, consolidated reads/writes
 - **File:** `src/directives/mask-element/layoutBatcher.js`
 - **Change:** Add small delay before scheduleBatch RAF
-- **Status:** ⏸️ TODO
 
 #### 10. Replace ResizeObserver with IntersectionObserver (PRIORITY: LOW)
 
+- **Status:** ⏸️ SKIPPED (low ROI)
 - **What:** Use IntersectionObserver with threshold
 - **Why:** Only trigger on meaningful visibility changes
 - **Expected:** 30-50% fewer callbacks
 - **File:** `src/components/glass-effect/GeDisplacement.vue` line 97
 - **Change:** Replace with IntersectionObserver
-- **Status:** ⏸️ TODO
 
 ### Recommended Test Order
 
@@ -195,19 +196,29 @@ Optimize GeFilter performance without changing visual effect
 
 ### Results Tracking - Stage 2
 
-| Hypothesis               | Frame Drops | Stall Time | Worst Gap | Improvement | Notes               |
-| ------------------------ | ----------- | ---------- | --------- | ----------- | ------------------- |
-| Baseline (Stage 1)       | 56.5%       | 17380.9ms  | 459ms     | -           | Current performance |
-| #1 Scale 150             | ?           | ?          | ?         | ?           | -                   |
-| #2 will-change           | ?           | ?          | ?         | ?           | -                   |
-| #3 translateZ            | ?           | ?          | ?         | ?           | -                   |
-| #4 contain               | ?           | ?          | ?         | ?           | -                   |
-| #5 debounce              | ?           | ?          | ?         | ?           | -                   |
-| #6 conditional observer  | ?           | ?          | ?         | ?           | -                   |
-| #7 cache filterId        | ?           | ?          | ?         | ?           | -                   |
-| #8 coarse rounding       | ?           | ?          | ?         | ?           | -                   |
-| #9 optimize batcher      | ?           | ?          | ?         | ?           | -                   |
-| #10 IntersectionObserver | ?           | ?          | ?         | ?           | -                   |
+| Hypothesis               | Frame Drops | Stall Time | Worst Gap | Improvement | Notes                           |
+| ------------------------ | ----------- | ---------- | --------- | ----------- | ------------------------------- |
+| Baseline (Stage 1)       | 56.5%       | 17380.9ms  | 459ms     | -           | Current performance             |
+| #1 Scale 150             | 55.7%       | 18714.1ms  | 446ms     | ❌ -7%      | Rejected                        |
+| #2 will-change           | 55.7%       | **40.3ms** | **57ms**  | 🔥 431x     | ✅ KEPT                         |
+| #3 translateZ            | 59.2%       | 23204.3ms  | 497ms     | ❌ -34%     | Rejected                        |
+| #4 contain               | 55.0%       | **37.3ms** | **54ms**  | ✅ +7%      | ✅ KEPT                         |
+| #5 debounce              | 54.9%       | 74.6ms     | 54ms      | ❌ -50%     | Rejected                        |
+| #6 conditional observer  | -           | -          | -         | SKIPPED     | Complex, requires state passing |
+| #7 cache filterId        | -           | -          | -         | SKIPPED     | Already set once                |
+| #8 coarse rounding       | 55.1%       | **35.3ms** | **52ms**  | ✅ +5%      | ✅ KEPT - Final config!         |
+| #9 optimize batcher      | -           | -          | -         | SKIPPED     | Low ROI                         |
+| #10 IntersectionObserver | -           | -          | -         | SKIPPED     | Low ROI                         |
+
+### 🎉 Stage 2 Complete!
+
+**Final Configuration Applied:**
+
+- ✅ will-change: filter, transform
+- ✅ contain: layout style paint
+- ✅ 4px coordinate rounding
+
+**Final Result:** 35.3ms stall time (**492x improvement!**)
 
 ### Commands
 

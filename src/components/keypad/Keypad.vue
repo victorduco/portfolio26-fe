@@ -385,7 +385,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   background-position: center center;
-  background-size: contain;
+  background-size: 150%;
   background-repeat: no-repeat;
 }
 
