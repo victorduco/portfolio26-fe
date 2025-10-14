@@ -67,6 +67,10 @@ import {
   backgroundNumbersVariants,
   backgroundNumbersTransition,
 } from "./variants.js";
+import {
+  getBackgroundPath,
+  preloadInitialBackgrounds,
+} from "../../utils/keypadBackgroundLoader.js";
 
 useMeta("keypad");
 
@@ -110,12 +114,11 @@ watch(
       return;
     }
 
-    const code = digits.join("");
-    console.log("📝 Code:", code);
+    console.log("📝 Digits:", digits);
 
     // Sharp background for both main display and buttons (CSS blur applied to buttons)
     window.__profile?.start?.("sharp-background-set");
-    const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
+    const sharpPath = getBackgroundPath(digits);
     document.documentElement.style.setProperty(
       "--global-keypad-bg",
       `url("${sharpPath}")`
@@ -128,11 +131,11 @@ watch(
     window.__profile?.end?.("sharp-background-set");
 
     window.__profile?.end?.("background-update");
-    window.__profile?.mark?.(`background-updated-${code}`);
+    window.__profile?.mark?.(`background-updated-${digits.join("")}`);
 
     // Mark when background is actually rendered
     requestAnimationFrame(() => {
-      window.__profile?.mark?.(`background-rendered-${code}`);
+      window.__profile?.mark?.(`background-rendered-${digits.join("")}`);
     });
   },
   { immediate: true, deep: true }
@@ -367,6 +370,9 @@ onMounted(() => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("resize", handleResize);
   }
+
+  // Preload manifest and initial backgrounds
+  preloadInitialBackgrounds();
 });
 
 onBeforeUnmount(() => {

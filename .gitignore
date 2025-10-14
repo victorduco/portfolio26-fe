@@ -18,8 +18,10 @@ dist
 dist-ssr
 *.local
 
-# Generated keypad backgrounds (too large for git, regenerate with npm run generate:backgrounds)
-public/keypad-backgrounds/
+# Generated keypad backgrounds (too large for git, served from CDN in production)
+public/keypad-backgrounds/*
+!public/keypad-backgrounds/.gitkeep
+!public/keypad-backgrounds/manifest.json
 
 # Test screenshots and reports
 test-screenshots/
