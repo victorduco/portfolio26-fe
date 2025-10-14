@@ -1,7 +1,5 @@
 <template>
   <div class="keypad-container">
-    <!-- Background now loaded directly from pregenerated PNG -->
-
     <Motion
       tag="div"
       class="background-numbers"
@@ -10,13 +8,6 @@
       :animate="bgNumbersState"
       :transition="backgroundNumbersTransition"
     >
-      <div
-        v-for="(digit, index) in enteredDigits"
-        :key="index"
-        class="background-digit"
-      >
-        <KeypadDigit :digit="digit" :color="getDigitColor(index)" />
-      </div>
     </Motion>
 
     <Motion
@@ -71,6 +62,7 @@ import {
   backgroundNumbersVariants,
   backgroundNumbersTransition,
 } from "./variants.js";
+import { generateCompositeSVG } from "@/utils/svgBackgroundGenerator.js";
 
 const isMobile = useIsMobile();
 const isLandscapeMobile = useIsLandscapeMobile();
@@ -90,6 +82,53 @@ const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
 
+// Generate SVG background from entered digits
+const backgroundSVG = computed(() => {
+  if (enteredDigits.value.length === 0) return "";
+  const svg = generateCompositeSVG(enteredDigits.value);
+  console.log(
+    "🎨 Generated SVG for digits:",
+    enteredDigits.value,
+    svg ? "OK" : "FAILED"
+  );
+  return svg;
+});
+
+// Update CSS variable with SVG data URL when background changes
+watch(
+  backgroundSVG,
+  (svg) => {
+    console.log(
+      "🔄 Watch triggered, svg:",
+      svg ? "EXISTS" : "EMPTY",
+      "length:",
+      svg?.length
+    );
+
+    if (!svg) {
+      document.documentElement.style.setProperty("--global-keypad-bg", "none");
+      console.log("❌ Cleared --global-keypad-bg");
+    } else {
+      // Convert SVG to data URL
+      const base64 = btoa(unescape(encodeURIComponent(svg)));
+      const dataURL = `data:image/svg+xml;base64,${base64}`;
+      document.documentElement.style.setProperty(
+        "--global-keypad-bg",
+        `url("${dataURL}")`
+      );
+
+      // Check if it was actually set
+      const actualValue = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--global-keypad-bg");
+      console.log("✅ Set --global-keypad-bg");
+      console.log("   dataURL length:", dataURL.length);
+      console.log("   actualValue:", actualValue.substring(0, 50) + "...");
+    }
+  },
+  { immediate: true }
+);
+
 // Backend integration
 const loading = ref(false);
 const errorMessage = ref("");
@@ -103,6 +142,13 @@ const getDigitColor = (index) => {
   if (animationState.value === "success") return "#00FFBC";
   if (animationState.value === "fail") return "#FF83A2";
   return colors[index % colors.length];
+};
+
+const getCodeFromDigits = () => {
+  return enteredDigits.value
+    .map((d) => String(d))
+    .join("")
+    .padStart(4, "0");
 };
 
 const isEditableTarget = (target) => {
@@ -273,7 +319,7 @@ watch(enteredDigits, () => {
 
   if (enteredDigits.value.length === 0) {
     // Clear background
-    document.documentElement.style.setProperty("--global-keypad-bg", "none");
+    // document.documentElement.style.setProperty("--global-keypad-bg", "none");
   } else {
     // Load pregenerated background
     const code = enteredDigits.value
@@ -285,15 +331,15 @@ watch(enteredDigits, () => {
     // Preload image then set background
     const img = new Image();
     img.onload = () => {
-      document.documentElement.style.setProperty(
-        "--global-keypad-bg",
-        `url("${bgPath}")`
-      );
+      // document.documentElement.style.setProperty(
+      //   "--global-keypad-bg",
+      //   `url("${bgPath}")`
+      // );
     };
     img.onerror = () => {
       console.warn(`Failed to load background: ${bgPath}`);
       // Fallback: no background
-      document.documentElement.style.setProperty("--global-keypad-bg", "none");
+      // document.documentElement.style.setProperty("--global-keypad-bg", "none");
     };
     img.src = bgPath;
   }
@@ -340,29 +386,40 @@ onBeforeUnmount(() => {
   touch-action: none;
 }
 
+.background-preview-png {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+  border: 2px solid red;
+}
+
 .background-numbers {
   position: absolute;
   inset: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  row-gap: 0px;
-  column-gap: 0px;
   pointer-events: none;
   z-index: 1;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: var(--global-keypad-bg);
+  background-position: 50% 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 @media (min-width: 768px) {
   .background-numbers {
-    display: flex;
-    grid-template-columns: unset;
-    grid-template-rows: unset;
-    align-items: center;
-    justify-content: center;
     height: clamp(350px, 60vw, 950px);
-    width: auto;
+    width: 100vw;
     left: 50%;
     right: auto;
     top: 50%;

@@ -14,10 +14,10 @@
       class="keypad-button-wrapper"
       v-mask-element="'#171717'"
     >
-      <GlassEffect
+      <!-- <GlassEffect
         class="keypad-button-glass"
         :user-options="glassEffectConfig"
-      />
+      /> -->
 
       <motion.div
         class="keypad-number"
@@ -55,7 +55,10 @@ import { motion } from "motion-v";
 import GlassEffect from "../glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
 import { glassEffectConfig } from "./glassEffectConfig.js";
-import { useIsMobile, useIsLandscapeMobile } from "../../composables/useMediaQuery.js";
+import {
+  useIsMobile,
+  useIsLandscapeMobile,
+} from "../../composables/useMediaQuery.js";
 
 defineProps({
   value: {
