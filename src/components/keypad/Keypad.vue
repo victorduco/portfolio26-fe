@@ -271,28 +271,35 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
 
   bgNumbersState.value = "fadeOut";
   await new Promise((resolve) => setTimeout(resolve, 500));
-  
+
   if (shouldUnlock) {
     emit("unlock");
   } else {
-    // Hide overlay first (opacity 1 -> 0) while keeping mask
-    animationState.value = "initial";
-    
-    // Wait for overlay to become fully transparent
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    // Now safe to clear digits and mask since overlay is invisible
+    // First, explicitly clear overlay color to prevent any flash
+    document.documentElement.style.setProperty(
+      "--overlay-color",
+      "transparent"
+    );
+    void document.documentElement.offsetHeight;
+
+    // Wait a bit for color to be transparent
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Now safe to clear digits and mask - overlay has no color
     enteredDigits.value = [];
-    
+
     // Wait for watch to process and clear backgrounds
     await new Promise((resolve) => setTimeout(resolve, 50));
-    
+
     // Force Safari to reflow after watch clears backgrounds
-    document.documentElement.offsetHeight;
-    
-    // Small delay before showing buttons
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    
+    void document.documentElement.offsetHeight;
+
+    // Now hide overlay (already transparent, just changing opacity state)
+    animationState.value = "initial";
+
+    // Wait for overlay opacity transition
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
     await new Promise((resolve) => setTimeout(resolve, 100));
