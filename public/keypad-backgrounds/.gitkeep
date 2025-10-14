@@ -1,0 +1,4 @@
+This file ensures the directory exists in git.
+The manifest.json file will be updated by the generation script.
+PNG files are generated locally and served from CDN in production.
+
