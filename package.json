@@ -46,8 +46,6 @@
     "screenshots:desktop-all": "npx playwright test tests/visual/screenshots.spec.js --project=desktop --project=desktop-large --project=desktop-ultrawide"
   },
   "dependencies": {
-    "@wxperia/liquid-glass-vue": "^1.0.9",
-    "@zaosoula/liquid-glass-vue": "^1.1.2",
     "html-to-image": "^1.11.13",
     "mixpanel-browser": "^2.71.0",
     "motion-v": "^1.7.1",

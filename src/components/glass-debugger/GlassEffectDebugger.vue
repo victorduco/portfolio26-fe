@@ -4,16 +4,31 @@
       <header class="glass-panel__header">
         <h3 class="glass-panel__title">Glass Effect Debugger</h3>
         <div class="glass-debugger__actions">
-          <button class="glass-debugger__icon-btn" @click="downloadSettings" title="Download settings">💾</button>
-          <button class="glass-debugger__icon-btn glass-debugger__icon-btn--close" @click="isVisible = false">✕</button>
+          <button
+            class="glass-debugger__icon-btn"
+            @click="downloadSettings"
+            title="Download settings"
+          >
+            💾
+          </button>
+          <button
+            class="glass-debugger__icon-btn glass-debugger__icon-btn--close"
+            @click="isVisible = false"
+          >
+            ✕
+          </button>
         </div>
       </header>
 
       <div class="glass-panel__content">
-        <section class="glass-panel__section glass-debugger__section glass-debugger__section--accent">
+        <section
+          class="glass-panel__section glass-debugger__section glass-debugger__section--accent"
+        >
           <h4 class="glass-panel__section-title">Global Controls</h4>
           <label class="glass-panel__field">
-            <span class="glass-panel__label">Effect Intensity ({{ intensityDisplay }})</span>
+            <span class="glass-panel__label"
+              >Effect Intensity ({{ intensityDisplay }})</span
+            >
             <input
               type="range"
               class="glass-panel__slider"
@@ -33,26 +48,52 @@
           </label>
         </section>
 
-        <section v-for="section in controlSections" :key="section.title" class="glass-panel__section glass-debugger__section">
+        <section
+          v-for="section in controlSections"
+          :key="section.title"
+          class="glass-panel__section glass-debugger__section"
+        >
           <h4 class="glass-panel__section-title">{{ section.title }}</h4>
-          <GlassEffectField v-for="field in section.fields" :key="field.key" :field="field" :model="globalOptions" />
+          <GlassEffectField
+            v-for="field in section.fields"
+            :key="field.key"
+            :field="field"
+            :model="globalOptions"
+          />
         </section>
 
-        <section class="glass-panel__section glass-debugger__section glass-debugger__section--warm">
+        <section
+          class="glass-panel__section glass-debugger__section glass-debugger__section--warm"
+        >
           <h4 class="glass-panel__section-title">Displacement Map</h4>
 
           <label class="glass-panel__field">
             <span class="glass-panel__label">Select Static Map</span>
             <div class="glass-debugger__select-wrapper">
-              <select v-model="globalOptions.displacementMap" class="glass-debugger__select">
-                <option v-for="map in availableDistmaps" :key="map.value" :value="map.value">{{ map.label }}</option>
+              <select
+                v-model="globalOptions.displacementMap"
+                class="glass-debugger__select"
+              >
+                <option
+                  v-for="map in availableDistmaps"
+                  :key="map.value"
+                  :value="map.value"
+                >
+                  {{ map.label }}
+                </option>
               </select>
-              <button class="glass-debugger__icon-btn" @click="refreshDistmaps" title="Refresh distmaps list">🔄</button>
+              <button
+                class="glass-debugger__icon-btn"
+                @click="refreshDistmaps"
+                title="Refresh distmaps list"
+              >
+                🔄
+              </button>
             </div>
           </label>
 
           <div class="glass-debugger__hint">
-            💡 Select a displacement map from the library. Maps are located in /src/assets/distmaps/
+            💡 Production displacement map: 100-1-d.png
           </div>
 
           <div class="glass-debugger__preview">
@@ -65,30 +106,33 @@
               @click="openMapInNewWindow"
               title="Click to open in new window"
             />
-            <div v-else class="glass-debugger__preview-placeholder">No map selected</div>
+            <div v-else class="glass-debugger__preview-placeholder">
+              No map selected
+            </div>
           </div>
         </section>
       </div>
     </div>
 
-    <button class="glass-debugger-toggle" @click="isVisible = !isVisible" :class="{ active: isVisible }">
-      {{ isVisible ? '✕' : '⚙' }}
+    <button
+      class="glass-debugger-toggle"
+      @click="isVisible = !isVisible"
+      :class="{ active: isVisible }"
+    >
+      {{ isVisible ? "✕" : "⚙" }}
     </button>
   </Teleport>
 </template>
 
 <script setup>
-import { computed, inject, ref } from 'vue';
-import { createControlSections } from './controlFields.js';
-import GlassEffectField from './GlassEffectField.vue';
-import './glassPanel.css';
+import { computed, inject, ref } from "vue";
+import { createControlSections } from "./controlFields.js";
+import GlassEffectField from "./GlassEffectField.vue";
+import "./glassPanel.css";
 
-const loadDistmaps = () =>
-  Object.entries(
-    import.meta.glob('/src/assets/distmaps/*.png', { eager: true, query: '?url', import: 'default' })
-  ).map(
-    ([path, url]) => ({ value: url, label: path.split('/').pop().replace('.png', '') })
-  );
+const loadDistmaps = () => [
+  { value: "/distmaps/100-1-d.png", label: "100-1-d (Production)" },
+];
 
 const availableDistmaps = ref(loadDistmaps());
 const controlSections = createControlSections();
@@ -107,11 +151,13 @@ const props = defineProps({
 const isVisible = ref(true);
 const globalOptions = props.options;
 
-const debuggerIntensity = inject('glassDebuggerIntensity', null);
+const debuggerIntensity = inject("glassDebuggerIntensity", null);
 const globalIntensity = debuggerIntensity || ref(props.intensity);
 
 const intensityDisplay = computed(() =>
-  Number.isFinite(+globalIntensity.value) ? (+globalIntensity.value).toFixed(2) : '1.00'
+  Number.isFinite(+globalIntensity.value)
+    ? (+globalIntensity.value).toFixed(2)
+    : "1.00"
 );
 const selectedMap = computed(() => globalOptions.displacementMap);
 
@@ -120,16 +166,22 @@ const refreshDistmaps = () => {
 };
 
 const openMapInNewWindow = () => {
-  if (selectedMap.value) window.open(selectedMap.value, '_blank');
+  if (selectedMap.value) window.open(selectedMap.value, "_blank");
 };
 
 const downloadSettings = () => {
   const blob = new Blob(
-    [JSON.stringify({ intensity: globalIntensity.value, options: globalOptions }, null, 2)],
-    { type: 'application/json' }
+    [
+      JSON.stringify(
+        { intensity: globalIntensity.value, options: globalOptions },
+        null,
+        2
+      ),
+    ],
+    { type: "application/json" }
   );
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = `glass-effect-settings-${Date.now()}.json`;
   link.click();
