@@ -47,15 +47,15 @@ export const textShadowSpring = {
 const getResponsiveSizes = () => {
   const width = typeof window !== "undefined" ? window.innerWidth : 1280;
   const height = typeof window !== "undefined" ? window.innerHeight : 900;
-  
+
   // На средних desktop экранах (900-1400px) делаем адаптивный размер
   if (width >= 900 && width <= 1400) {
     const activeSize = Math.min(600, Math.max(350, width * 0.4)); // 40% от ширины, но не больше 600px и не меньше 350px
-    
+
     // Смещения пропорционально высоте экрана
     const activeTopOffsetEven = Math.min(-50, Math.max(-150, height * -0.1)); // 10% от высоты, от -150px до -50px
     const activeTopOffsetOdd = Math.min(-300, Math.max(-700, height * -0.5)); // 50% от высоты, от -700px до -300px
-    
+
     return {
       default: "120px",
       hover: "400px",
@@ -65,11 +65,11 @@ const getResponsiveSizes = () => {
       activeTopOffsetOdd: `${activeTopOffsetOdd}px`,
     };
   }
-  
+
   // Desktop большие экраны (>1400px)
   const activeTopOffsetEven = Math.min(-50, Math.max(-150, height * -0.1));
   const activeTopOffsetOdd = Math.min(-300, Math.max(-700, height * -0.6));
-  
+
   return {
     default: "120px",
     hover: "400px",
@@ -83,19 +83,19 @@ const getResponsiveSizes = () => {
 // Реактивные размеры с обработкой resize
 export const useResponsiveSizes = () => {
   const sizes = ref(getResponsiveSizes());
-  
+
   const updateSizes = () => {
     sizes.value = getResponsiveSizes();
   };
-  
+
   onMounted(() => {
-    window.addEventListener('resize', updateSizes);
+    window.addEventListener("resize", updateSizes);
   });
-  
+
   onUnmounted(() => {
-    window.removeEventListener('resize', updateSizes);
+    window.removeEventListener("resize", updateSizes);
   });
-  
+
   return sizes;
 };
 
@@ -108,7 +108,12 @@ const getGridPosition = (index) => {
 
 // Функция для создания boxVariants с актуальными размерами
 const createBoxVariants = (sizes) => ({
-  default: ({ index, additionalMargin, isMobileLayout, isSmallestBreakpoints }) => {
+  default: ({
+    index,
+    additionalMargin,
+    isMobileLayout,
+    isSmallestBreakpoints,
+  }) => {
     const baseMargin = 0;
 
     // На двух наименьших брейкпоинтах (xs + sm)
@@ -162,7 +167,12 @@ const createBoxVariants = (sizes) => ({
       "--glow-color": getBorderColorWithAlpha(index, 0),
     };
   },
-  hover: ({ index, additionalMargin, isMobileLayout, isSmallestBreakpoints }) => {
+  hover: ({
+    index,
+    additionalMargin,
+    isMobileLayout,
+    isSmallestBreakpoints,
+  }) => {
     const baseMargin = 0;
 
     // На двух наименьших брейкпоинтах: hover ведет себя как default (без эффекта)
@@ -223,7 +233,12 @@ const createBoxVariants = (sizes) => ({
       "--glow-color": getBorderColorWithAlpha(index, 0.2),
     };
   },
-  active: ({ index, additionalMargin, isMobileLayout, isSmallestBreakpoints }) => {
+  active: ({
+    index,
+    additionalMargin,
+    isMobileLayout,
+    isSmallestBreakpoints,
+  }) => {
     // На двух наименьших брейкпоинтах: fullscreen без сдвигов
     if (isSmallestBreakpoints) {
       return {

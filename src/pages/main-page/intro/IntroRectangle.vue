@@ -173,7 +173,12 @@ function toggleState() {
 watch(
   () => props.forceClose,
   (newVal) => {
-    if (!props.isMobileLayout && !props.isSmallestBreakpoints && newVal && isActive.value) {
+    if (
+      !props.isMobileLayout &&
+      !props.isSmallestBreakpoints &&
+      newVal &&
+      isActive.value
+    ) {
       localActive.value = false;
       emit("activeChange", false);
     }
@@ -183,7 +188,9 @@ watch(
 // Computed additional margin для сдвига влево при активации
 // На маленьких брейкпоинтах не сдвигаем
 const additionalMargin = computed(() =>
-  (props.isMobileLayout || props.isSmallestBreakpoints) ? 0 : props.activeCount * -40
+  props.isMobileLayout || props.isSmallestBreakpoints
+    ? 0
+    : props.activeCount * -40
 );
 
 // Получаем класс иконки в зависимости от индекса
@@ -305,7 +312,7 @@ function handleMobileCloseRequest() {
   .intro-square--smallest.is-intro-visible:hover {
     z-index: 5;
   }
-  
+
   /* Активный квадрат не сдвигает другие */
   .intro-square--smallest-active {
     position: relative;

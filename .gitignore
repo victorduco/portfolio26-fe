@@ -18,6 +18,9 @@ dist
 dist-ssr
 *.local
 
+# Generated keypad backgrounds (too large for git, regenerate with npm run generate:backgrounds)
+public/keypad-backgrounds/
+
 # Backend specific
 backend/dist
 backend/logs/*.log

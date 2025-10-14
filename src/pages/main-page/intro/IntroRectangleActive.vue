@@ -3,7 +3,8 @@
     class="intro-active-diamond"
     :class="{
       'intro-active-diamond--mobile': isMobileLayout || isSmallestBreakpoints,
-      'intro-active-diamond--mobile-active': (isMobileLayout || isSmallestBreakpoints) && isActive,
+      'intro-active-diamond--mobile-active':
+        (isMobileLayout || isSmallestBreakpoints) && isActive,
       'intro-active-diamond--smallest': isSmallestBreakpoints,
     }"
     :variants="activeDiamondVariants"
@@ -14,7 +15,7 @@
   >
     <motion.div
       class="intro-active-content"
-      :class="{ 
+      :class="{
         'intro-active-content--mobile': isMobileLayout || isSmallestBreakpoints,
         'intro-active-content--smallest': isSmallestBreakpoints,
       }"
@@ -285,7 +286,7 @@ function handleBackdropClick() {
     max-width: 100%;
     width: 100%;
   }
-  
+
   .intro-active-close {
     /* Кнопка закрытия внизу экрана */
     position: fixed;

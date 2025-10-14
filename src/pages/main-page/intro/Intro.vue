@@ -94,8 +94,8 @@ function handleClickOutside(event) {
   if (activeCount.value === 0) return;
 
   // Проверяем, был ли клик по элементу .intro-square или его потомкам
-  const clickedSquare = event.target.closest('.intro-square');
-  
+  const clickedSquare = event.target.closest(".intro-square");
+
   // На двух наименьших брейкпоинтах используем fullscreen модальный режим
   if (isSmallestBreakpoints.value) {
     if (!clickedSquare && activeMobileIndex.value !== -1) {
@@ -103,7 +103,7 @@ function handleClickOutside(event) {
     }
     return;
   }
-  
+
   // На мобильных (но не на самых маленьких) также используем mobile логику
   if (isMobileLayout.value) {
     if (!clickedSquare && activeMobileIndex.value !== -1) {
@@ -260,13 +260,13 @@ onMounted(() => {
   }
 
   // Добавляем обработчик клика вне блоков
-  document.addEventListener('click', handleClickOutside);
+  document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
   observer?.disconnect();
   // Удаляем обработчик клика при размонтировании
-  document.removeEventListener('click', handleClickOutside);
+  document.removeEventListener("click", handleClickOutside);
 });
 
 function handleMobileOpen(index) {
@@ -390,7 +390,7 @@ watch(isMobileLayout, (isMobile) => {
   .intro-list {
     display: none;
   }
-  
+
   /* Центрируем текст по вертикали, добавляем горизонтальные отступы */
   .intro-hero__title {
     margin-bottom: 0;

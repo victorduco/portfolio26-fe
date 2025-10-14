@@ -1,15 +1,6 @@
 <template>
   <div class="keypad-container">
-    <!-- GeBackground disabled on mobile and landscape for performance -->
-    <GeBackground
-      v-if="!isMobile && !isLandscapeMobile"
-      source-selector="keypad-bg-export"
-      :watch-data="enteredDigits"
-      :render-delay="0"
-      :background-styles="{
-        filter: 'blur(10px) saturate(90%) brightness(0.9) contrast(1)',
-      }"
-    />
+    <!-- Background now loaded directly from pregenerated PNG -->
 
     <Motion
       tag="div"
@@ -23,9 +14,8 @@
         v-for="(digit, index) in enteredDigits"
         :key="index"
         class="background-digit"
-        :style="{ color: getDigitColor(index) }"
       >
-        {{ digit }}
+        <KeypadDigit :digit="digit" :color="getDigitColor(index)" />
       </div>
     </Motion>
 
@@ -66,10 +56,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
-import GeBackground from "../glass-effect/GeBackground.vue";
+import KeypadDigit from "./KeypadDigit.vue";
 import { useMeta } from "../../composables/useMeta.js";
 import {
   useIsMobile,
@@ -277,6 +267,38 @@ function handleKeyDown(event) {
   }
 }
 
+// Load background PNG when digits change (desktop only)
+watch(enteredDigits, () => {
+  if (isMobile.value || isLandscapeMobile.value) return;
+
+  if (enteredDigits.value.length === 0) {
+    // Clear background
+    document.documentElement.style.setProperty("--global-keypad-bg", "none");
+  } else {
+    // Load pregenerated background
+    const code = enteredDigits.value
+      .map((d) => String(d))
+      .join("")
+      .padStart(4, "0");
+    const bgPath = `/keypad-backgrounds/${code}.png`;
+
+    // Preload image then set background
+    const img = new Image();
+    img.onload = () => {
+      document.documentElement.style.setProperty(
+        "--global-keypad-bg",
+        `url("${bgPath}")`
+      );
+    };
+    img.onerror = () => {
+      console.warn(`Failed to load background: ${bgPath}`);
+      // Fallback: no background
+      document.documentElement.style.setProperty("--global-keypad-bg", "none");
+    };
+    img.src = bgPath;
+  }
+});
+
 onMounted(() => {
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
@@ -339,45 +361,33 @@ onBeforeUnmount(() => {
     grid-template-rows: unset;
     align-items: center;
     justify-content: center;
+    height: clamp(350px, 60vw, 950px);
+    width: auto;
+    left: 50%;
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
   }
 }
 
 .background-digit {
-  width: 100%;
+  width: auto;
   height: 100%;
-  font-size: clamp(150px, 40vmax, 500px);
-  font-weight: 400;
-  line-height: 0.9;
   opacity: 1;
   user-select: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   transition: color 0.5s ease;
-  display: grid;
-  place-items: center;
 }
 
-/* Первые две цифры (верхняя строка) - place-items: end center */
-.background-digit:nth-child(1),
-.background-digit:nth-child(2) {
-  place-items: end center;
-}
-
-/* Последние две цифры (нижняя строка) - place-items: start center */
-.background-digit:nth-child(3),
-.background-digit:nth-child(4) {
-  place-items: start center;
-}
-
-@media (min-width: 768px) {
-  .background-digit {
-    width: auto;
-    height: auto;
-    font-size: clamp(280px, 50vw, 700px);
-    line-height: 1;
-    margin: 0 clamp(-10px, -2vw, -30px);
-    display: block;
-  }
+.background-digit :deep(.keypad-digit-svg) {
+  height: 100%;
+  width: auto;
 }
 
 .keypad-grid {

@@ -2,13 +2,17 @@
 /**
  * GeBackground Component
  *
- * Converts DOM element to PNG and sets it as CSS variable background.
+ * Loads pregenerated keypad backgrounds or falls back to dynamic generation.
  *
- * PERFORMANCE WARNING:
- * - Uses `toPng` from html-to-image (slow operation ~50-200ms)
+ * MODES:
+ * - Pregenerated (production): Loads pre-rendered PNG images (~20-50ms network, <1ms cached)
+ * - Dynamic (dev/fallback): Uses `toPng` from html-to-image (~50-200ms)
+ *
+ * PERFORMANCE:
+ * - Pregenerated first load: ~20-50ms
+ * - Pregenerated cached: <1ms
+ * - Dynamic fallback: ~50-200ms
  * - Resize listener is DISABLED to prevent performance degradation
- * - With resize listener: 10.85s total, 467ms avg resize, +468% degradation
- * - Without resize listener: 2.61s total, 74ms avg resize, no degradation
  *
  * Only regenerates on:
  * - Component mount
@@ -18,15 +22,27 @@
  */
 import { onMounted, watch, nextTick } from "vue";
 import { toPng } from "html-to-image";
+import {
+  loadBackground,
+  prefetchNextDigits,
+  preloadInitialBackgrounds,
+} from "@/utils/keypadBackgroundLoader.js";
 
 const props = defineProps({
   sourceSelector: { type: String, required: true },
   watchData: { type: [Array, Object, String, Number], default: null },
   renderDelay: { type: Number, default: 100 },
   backgroundStyles: { type: Object },
+  usePregenerated: {
+    type: Boolean,
+    default: import.meta.env.VITE_USE_PREGENERATED_BACKGROUNDS === 'true',
+  },
 });
 
 let isGenerating = false;
+
+// Determine if we should use pregenerated backgrounds
+const shouldUsePregenerated = props.usePregenerated;
 
 const sanitizeStyles = (styles) => {
   if (!styles) return undefined;
@@ -34,13 +50,151 @@ const sanitizeStyles = (styles) => {
   return entries.length ? Object.fromEntries(entries) : undefined;
 };
 
-async function generateBackground() {
+/**
+ * Generate background using pregenerated images
+ */
+async function generateBackgroundPregenerated() {
   if (isGenerating) return;
   isGenerating = true;
 
   // 🔍 PROFILING: Background generation started
   const profile = window.__keypadProfile;
   if (profile?.clickTime) {
+    profile.bgStartTime = performance.now();
+    profile.mode = 'pregenerated';
+  }
+
+  // Validate watchData is an array of digits
+  if (!Array.isArray(props.watchData) || props.watchData.length === 0) {
+    isGenerating = false;
+    return;
+  }
+
+  try {
+    // 🔍 PROFILING: Starting image load
+    if (profile?.bgStartTime) {
+      profile.imgLoadStartTime = performance.now();
+    }
+
+    // Load the pregenerated image (returns path, not data URL)
+    const imagePath = await loadBackground(props.watchData, profile);
+
+    // 🔍 PROFILING: Image load complete
+    if (profile?.imgLoadStartTime) {
+      profile.imgLoadCompleteTime = performance.now();
+    }
+
+    // Set CSS variable with the image path
+    document.documentElement.style.setProperty(
+      "--global-keypad-bg",
+      `url("${imagePath}")`
+    );
+
+    // 🔍 PROFILING: CSS variable updated
+    if (profile?.imgLoadCompleteTime) {
+      profile.bgGeneratedTime = performance.now();
+      profile.cssUpdatedTime = performance.now();
+
+      // Wait for next paint to check if backdrop filter applied
+      requestAnimationFrame(() => {
+        profile.raf1Time = performance.now();
+        requestAnimationFrame(() => {
+          profile.raf2Time = performance.now();
+          profile.filterAppliedTime = performance.now();
+
+          // Calculate all timings
+          const clickToBg = profile.bgStartTime - profile.clickTime;
+          const imgLoadTotal = profile.imgLoadCompleteTime - profile.imgLoadStartTime;
+
+          // Breakdown of image loading
+          let imgLoadBreakdown = '';
+          if (profile.cacheHit) {
+            imgLoadBreakdown = 'cached';
+          } else if (profile.fetchStartTime) {
+            const fetchTime = (profile.fetchCompleteTime || profile.imgLoadCompleteTime) - profile.fetchStartTime;
+            const blobTime = profile.blobCompleteTime ? profile.blobCompleteTime - profile.fetchCompleteTime : 0;
+            const dataURLTime = profile.dataURLCompleteTime ? profile.dataURLCompleteTime - profile.blobCompleteTime : 0;
+            imgLoadBreakdown = `fetch ${fetchTime.toFixed(1)}`;
+            if (blobTime > 0) imgLoadBreakdown += ` + blob ${blobTime.toFixed(1)}`;
+            if (dataURLTime > 0) imgLoadBreakdown += ` + dataURL ${dataURLTime.toFixed(1)}`;
+          } else {
+            imgLoadBreakdown = 'network';
+          }
+
+          const cssUpdate = profile.cssUpdatedTime - profile.bgGeneratedTime;
+          const raf1 = profile.raf1Time - profile.cssUpdatedTime;
+          const raf2 = profile.raf2Time - profile.raf1Time;
+          const total = profile.filterAppliedTime - profile.clickTime;
+
+          const bgGenTotal = profile.bgGeneratedTime - profile.bgStartTime;
+          const filterTotal = profile.filterAppliedTime - profile.cssUpdatedTime;
+
+          // Build detailed output
+          let output = `⏱️ Keypad [Pregenerated]: Click→Bg ${clickToBg.toFixed(1)}ms | `;
+
+          // BgGen breakdown
+          output += `BgGen ${bgGenTotal.toFixed(1)}ms (`;
+          output += `imgLoad ${imgLoadTotal.toFixed(1)} [${imgLoadBreakdown}]) | `;
+
+          output += `CSS ${cssUpdate.toFixed(1)}ms | `;
+
+          // Filter breakdown
+          output += `Filter ${filterTotal.toFixed(1)}ms (`;
+          output += `raf1 ${raf1.toFixed(1)} + `;
+          output += `raf2 ${raf2.toFixed(1)}`;
+
+          // Add mask element timings if available (desktop only)
+          if (profile.maskReadStartTime) {
+            const maskRead =
+              profile.maskReadCompleteTime - profile.maskReadStartTime;
+            const maskWrite =
+              profile.maskWriteCompleteTime - profile.maskWriteStartTime;
+            output += ` + mask-read ${maskRead.toFixed(
+              1
+            )} + mask-write ${maskWrite.toFixed(1)}`;
+          }
+
+          // Add backdrop filter timing if available (mobile only)
+          if (profile.backdropStyleDuration) {
+            output += ` + backdrop ${profile.backdropStyleDuration.toFixed(1)}`;
+          }
+
+          output += `) | `;
+          output += `Total ${total.toFixed(1)}ms`;
+
+          console.log(output);
+
+          // Clean up
+          delete window.__keypadProfile;
+        });
+      });
+    }
+
+    // Prefetch next possible combinations
+    if (props.watchData.length < 4) {
+      prefetchNextDigits(props.watchData);
+    }
+
+  } catch (error) {
+    console.error('Failed to load pregenerated background, falling back to toPng:', error);
+    // Fall back to dynamic generation
+    await generateBackgroundDynamic();
+  } finally {
+    isGenerating = false;
+  }
+}
+
+/**
+ * Generate background dynamically using toPng (fallback/dev mode)
+ */
+async function generateBackgroundDynamic() {
+  if (isGenerating) return;
+  isGenerating = true;
+
+  // 🔍 PROFILING: Background generation started
+  const profile = window.__keypadProfile;
+  if (profile?.clickTime) {
+    profile.mode = 'dynamic';
     profile.bgStartTime = performance.now();
   }
 
@@ -123,7 +277,7 @@ async function generateBackground() {
         const filterTotal = profile.filterAppliedTime - profile.cssUpdatedTime;
 
         // Build detailed output
-        let output = `⏱️ Keypad: Click→Bg ${clickToBg.toFixed(1)}ms | `;
+        let output = `⏱️ Keypad [Dynamic]: Click→Bg ${clickToBg.toFixed(1)}ms | `;
 
         // BgGen breakdown
         output += `BgGen ${bgGenTotal.toFixed(1)}ms (`;
@@ -170,6 +324,17 @@ async function generateBackground() {
   isGenerating = false;
 }
 
+/**
+ * Main entry point - routes to pregenerated or dynamic based on mode
+ */
+async function generateBackground() {
+  if (shouldUsePregenerated) {
+    await generateBackgroundPregenerated();
+  } else {
+    await generateBackgroundDynamic();
+  }
+}
+
 watch(
   () => [props.watchData, props.backgroundStyles],
   async () => {
@@ -180,6 +345,11 @@ watch(
 );
 
 onMounted(() => {
+  // Preload initial backgrounds if using pregenerated mode
+  if (shouldUsePregenerated) {
+    preloadInitialBackgrounds();
+  }
+
   requestAnimationFrame(generateBackground);
 });
 </script>
