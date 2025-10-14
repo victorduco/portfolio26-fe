@@ -24,3 +24,8 @@
   overflow: visible;
   z-index: 1;
 }
+
+.mask-element-inner.no-background,
+.keypad-no-bg .mask-element-inner {
+  background-image: none !important;
+}
