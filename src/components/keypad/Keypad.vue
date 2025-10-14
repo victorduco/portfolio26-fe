@@ -93,8 +93,12 @@ const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
 
+// TEST MODE: Use static PNG instead of dynamic SVG
+const USE_TEST_PNG = ref(false);
+
 // Generate base SVG background with normal colors
 const backgroundSVGBase = computed(() => {
+  if (USE_TEST_PNG.value) return ""; // Skip SVG generation in test mode
   if (enteredDigits.value.length === 0) return "";
 
   // Always use normal colors for base layer
@@ -109,6 +113,7 @@ const backgroundSVGBase = computed(() => {
 
 // Generate overlay SVG background with state colors (success/fail)
 const backgroundSVGOverlay = computed(() => {
+  if (USE_TEST_PNG.value) return ""; // Skip SVG generation in test mode
   if (enteredDigits.value.length === 0) return "";
   if (animationState.value === "initial") return "";
 
@@ -130,6 +135,12 @@ const backgroundSVGOverlay = computed(() => {
 watch(
   backgroundSVGBase,
   (svg) => {
+    // Skip watch in TEST mode - CSS variable is set in onMounted
+    if (USE_TEST_PNG.value) {
+      console.log("⏭️  Skipping watch in TEST mode");
+      return;
+    }
+
     if (!svg) {
       document.documentElement.style.setProperty("--global-keypad-bg", "none");
     } else {
@@ -385,6 +396,15 @@ watch(enteredDigits, () => {
 onMounted(() => {
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
+
+    // TEST MODE: Set static PNG immediately on mount
+    if (USE_TEST_PNG.value) {
+      document.documentElement.style.setProperty(
+        "--global-keypad-bg",
+        `url("/keypad-backgrounds/5555.png")`
+      );
+      console.log("✅ TEST MODE: Set --global-keypad-bg to 5555.png on mount");
+    }
   }
 });
 
