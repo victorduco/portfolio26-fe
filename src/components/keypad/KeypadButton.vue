@@ -2,11 +2,11 @@
   <div
     v-hover-distortion="!isMobile && !isLandscapeMobile ? 4 : null"
     class="keypad-button-hover-wrapper"
-    @mousedown="currentState = 'pressed'"
-    @mouseup="currentState = isHovered ? 'hover' : 'default'"
+    @mousedown="handleMouseDown"
+    @mouseup="handleMouseUp"
     @mouseleave="handleMouseLeave"
     @mouseenter="handleMouseEnter"
-    @click="emit('click', value)"
+    @click="handleClick"
   >
     <!-- Desktop portrait: mask-element + GlassEffect -->
     <div
@@ -60,7 +60,7 @@ import {
   useIsLandscapeMobile,
 } from "../../composables/useMediaQuery.js";
 
-defineProps({
+const props = defineProps({
   value: {
     type: [Number, String],
     required: true,
@@ -86,17 +86,53 @@ const isMounted = ref(false);
 onMounted(() => {
   requestAnimationFrame(() => {
     isMounted.value = true;
+    if (typeof window !== "undefined" && window.__profile) {
+      window.__profile.mark("keypad-button-mounted");
+    }
   });
 });
 
+function handleMouseDown() {
+  if (typeof window !== "undefined" && window.__profile) {
+    window.__profile.mark("button-mousedown");
+  }
+  currentState.value = "pressed";
+}
+
+function handleMouseUp() {
+  if (typeof window !== "undefined" && window.__profile) {
+    window.__profile.mark("button-mouseup");
+  }
+  currentState.value = isHovered.value ? "hover" : "default";
+}
+
 function handleMouseEnter() {
+  if (typeof window !== "undefined" && window.__profile) {
+    window.__profile.start("button-hover-animation");
+  }
   isHovered.value = true;
   if (currentState.value !== "pressed") currentState.value = "hover";
+  requestAnimationFrame(() => {
+    if (typeof window !== "undefined" && window.__profile) {
+      window.__profile.end("button-hover-animation");
+      window.__profile.mark("button-hover-complete");
+    }
+  });
 }
 
 function handleMouseLeave() {
   isHovered.value = false;
   currentState.value = "default";
+  if (typeof window !== "undefined" && window.__profile) {
+    window.__profile.mark("button-hover-end");
+  }
+}
+
+function handleClick() {
+  if (typeof window !== "undefined" && window.__profile) {
+    window.__profile.mark(`button-${props.value}-clicked`);
+  }
+  emit("click", props.value);
 }
 </script>
 

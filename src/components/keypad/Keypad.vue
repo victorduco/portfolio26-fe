@@ -16,10 +16,9 @@
       :class="[
         'background-numbers',
         'background-numbers-overlay',
-        { 'is-visible': animationState !== 'initial' }
+        { 'is-visible': animationState !== 'initial' },
       ]"
-    >
-    </div>
+    ></div>
 
     <Motion
       tag="div"
@@ -89,12 +88,23 @@ const isAnimating = ref(false);
 watch(
   () => enteredDigits.value,
   (digits) => {
-    console.log("🔄 Watch triggered, digits:", digits, "length:", digits.length);
+    window.__profile?.start?.("background-update");
+    console.log(
+      "🔄 Watch triggered, digits:",
+      digits,
+      "length:",
+      digits.length
+    );
 
     if (digits.length === 0) {
       console.log("⚠️ No digits, setting to none");
       document.documentElement.style.setProperty("--global-keypad-bg", "none");
-      document.documentElement.style.setProperty("--global-keypad-bg-blurred", "none");
+      document.documentElement.style.setProperty(
+        "--global-keypad-bg-blurred",
+        "none"
+      );
+      window.__profile?.end?.("background-update");
+      window.__profile?.mark?.("background-cleared");
       return;
     }
 
@@ -102,20 +112,32 @@ watch(
     console.log("📝 Code:", code);
 
     // Sharp background for main display
+    window.__profile?.start?.("sharp-background-set");
     const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
     document.documentElement.style.setProperty(
       "--global-keypad-bg",
       `url("${sharpPath}")`
     );
     console.log("✅ Set --global-keypad-bg:", sharpPath);
+    window.__profile?.end?.("sharp-background-set");
 
     // Blurred background for buttons (mask-element)
+    window.__profile?.start?.("blurred-background-set");
     const blurredPath = `/keypad-backgrounds/blurred/${code}.png`;
     document.documentElement.style.setProperty(
       "--global-keypad-bg-blurred",
       `url("${blurredPath}")`
     );
     console.log("✅ Set --global-keypad-bg-blurred:", blurredPath);
+    window.__profile?.end?.("blurred-background-set");
+
+    window.__profile?.end?.("background-update");
+    window.__profile?.mark?.(`background-updated-${code}`);
+
+    // Mark when background is actually rendered
+    requestAnimationFrame(() => {
+      window.__profile?.mark?.(`background-rendered-${code}`);
+    });
   },
   { immediate: true, deep: true }
 );

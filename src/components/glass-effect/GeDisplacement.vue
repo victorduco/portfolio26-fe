@@ -73,6 +73,8 @@ const cleanup = () => {
 };
 
 const applyFilterToMaskElement = () => {
+  window.__profile?.start?.("glass-filter-apply");
+
   let el = glassFilterEl.value?.parentElement;
   while (el) {
     if (el.classList?.contains("mask-element")) {
@@ -82,19 +84,32 @@ const applyFilterToMaskElement = () => {
     el = el.parentElement;
   }
 
-  if (!maskElement) return;
+  if (!maskElement) {
+    window.__profile?.end?.("glass-filter-apply");
+    return;
+  }
 
   maskElement.style.setProperty("--glass-filter", `url(#${filterId})`);
+  window.__profile?.mark?.("glass-filter-property-set");
+
   updateMaskRect();
 
   resizeObserver = new ResizeObserver(updateMaskRect);
   resizeObserver.observe(maskElement);
   toggleListeners(true);
+
+  window.__profile?.end?.("glass-filter-apply");
+
+  requestAnimationFrame(() => {
+    window.__profile?.mark?.("glass-filter-rendered");
+  });
 };
 
 onMounted(async () => {
+  window.__profile?.start?.("glass-effect-mount");
   await nextTick();
   applyFilterToMaskElement();
+  window.__profile?.end?.("glass-effect-mount");
 });
 
 onBeforeUnmount(cleanup);

@@ -11,6 +11,8 @@ export function syncBackground(el, innerElement) {
   const profile = window.__keypadProfile;
   const syncStartTime = profile?.cssUpdatedTime ? performance.now() : null;
 
+  window.__profile?.start?.("sync-background");
+
   layoutBatcher.scheduleTask(
     // READ фаза - читаем layout
     () => {
@@ -73,6 +75,9 @@ export function syncBackground(el, innerElement) {
       if (profile?.maskWriteStartTime) {
         profile.maskWriteCompleteTime = performance.now();
       }
+
+      window.__profile?.end?.("sync-background");
+      window.__profile?.mark?.("sync-background-complete");
     }
   );
 }
