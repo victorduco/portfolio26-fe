@@ -145,7 +145,7 @@ function handleClick() {
   position: relative;
   width: clamp(72px, 18vw, 110px);
   height: clamp(72px, 18vw, 110px);
-  border-radius: clamp(18px, 4.5vw, 28px);
+  border-radius: clamp(18px, 4.5vw, 23px);
   display: grid;
   place-items: center;
   overflow: hidden;
