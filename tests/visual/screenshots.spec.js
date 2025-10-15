@@ -148,11 +148,39 @@ test.describe("Visual Screenshots", () => {
     test("Intro initial state", async ({ page, browserName }) => {
       await authenticate(page);
       await page.goto("/");
+
+      // Wait for navigation animation to complete and intro to become visible
+      await page.waitForFunction(
+        () => {
+          const introSection = document.getElementById("intro");
+          return (
+            introSection && introSection.classList.contains("intro-visible")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for intro squares to be visible and animated
+      await page.waitForFunction(
+        () => {
+          const squares = document.querySelectorAll(".intro-square");
+          return (
+            squares.length === 4 &&
+            Array.from(squares).every((square) => {
+              const computedStyle = window.getComputedStyle(square);
+              return (
+                computedStyle.opacity === "1" &&
+                computedStyle.visibility !== "hidden"
+              );
+            })
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Additional wait for animation to settle
       await wait(1000);
-      await page.waitForSelector(".intro-square", {
-        state: "visible",
-        timeout: 10000,
-      });
+
       await page.screenshot({
         path: path.join(
           SCREENSHOTS_DIR,
@@ -168,11 +196,39 @@ test.describe("Visual Screenshots", () => {
     test("Intro with 1 block opened (first)", async ({ page, browserName }) => {
       await authenticate(page);
       await page.goto("/");
+
+      // Wait for navigation animation to complete and intro to become visible
+      await page.waitForFunction(
+        () => {
+          const introSection = document.getElementById("intro");
+          return (
+            introSection && introSection.classList.contains("intro-visible")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for intro squares to be visible and animated
+      await page.waitForFunction(
+        () => {
+          const squares = document.querySelectorAll(".intro-square");
+          return (
+            squares.length === 4 &&
+            Array.from(squares).every((square) => {
+              const computedStyle = window.getComputedStyle(square);
+              return (
+                computedStyle.opacity === "1" &&
+                computedStyle.visibility !== "hidden"
+              );
+            })
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Additional wait for animation to settle
       await wait(1000);
-      await page.waitForSelector(".intro-square", {
-        state: "visible",
-        timeout: 10000,
-      });
+
       const firstBlock = page.locator(".intro-square").first();
       if (await firstBlock.isVisible()) {
         await firstBlock.click();
@@ -196,11 +252,38 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
+
+      // Wait for navigation animation to complete and intro to become visible
+      await page.waitForFunction(
+        () => {
+          const introSection = document.getElementById("intro");
+          return (
+            introSection && introSection.classList.contains("intro-visible")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for intro squares to be visible and animated
+      await page.waitForFunction(
+        () => {
+          const squares = document.querySelectorAll(".intro-square");
+          return (
+            squares.length === 4 &&
+            Array.from(squares).every((square) => {
+              const computedStyle = window.getComputedStyle(square);
+              return (
+                computedStyle.opacity === "1" &&
+                computedStyle.visibility !== "hidden"
+              );
+            })
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Additional wait for animation to settle
       await wait(1000);
-      await page.waitForSelector(".intro-square", {
-        state: "visible",
-        timeout: 10000,
-      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -226,11 +309,38 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
+
+      // Wait for navigation animation to complete and intro to become visible
+      await page.waitForFunction(
+        () => {
+          const introSection = document.getElementById("intro");
+          return (
+            introSection && introSection.classList.contains("intro-visible")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for intro squares to be visible and animated
+      await page.waitForFunction(
+        () => {
+          const squares = document.querySelectorAll(".intro-square");
+          return (
+            squares.length === 4 &&
+            Array.from(squares).every((square) => {
+              const computedStyle = window.getComputedStyle(square);
+              return (
+                computedStyle.opacity === "1" &&
+                computedStyle.visibility !== "hidden"
+              );
+            })
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Additional wait for animation to settle
       await wait(1000);
-      await page.waitForSelector(".intro-square", {
-        state: "visible",
-        timeout: 10000,
-      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -256,11 +366,38 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
+
+      // Wait for navigation animation to complete and intro to become visible
+      await page.waitForFunction(
+        () => {
+          const introSection = document.getElementById("intro");
+          return (
+            introSection && introSection.classList.contains("intro-visible")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for intro squares to be visible and animated
+      await page.waitForFunction(
+        () => {
+          const squares = document.querySelectorAll(".intro-square");
+          return (
+            squares.length === 4 &&
+            Array.from(squares).every((square) => {
+              const computedStyle = window.getComputedStyle(square);
+              return (
+                computedStyle.opacity === "1" &&
+                computedStyle.visibility !== "hidden"
+              );
+            })
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Additional wait for animation to settle
       await wait(1000);
-      await page.waitForSelector(".intro-square", {
-        state: "visible",
-        timeout: 10000,
-      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -288,11 +425,38 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
+
+      // Wait for navigation animation to complete and intro to become visible
+      await page.waitForFunction(
+        () => {
+          const introSection = document.getElementById("intro");
+          return (
+            introSection && introSection.classList.contains("intro-visible")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for intro squares to be visible and animated
+      await page.waitForFunction(
+        () => {
+          const squares = document.querySelectorAll(".intro-square");
+          return (
+            squares.length === 4 &&
+            Array.from(squares).every((square) => {
+              const computedStyle = window.getComputedStyle(square);
+              return (
+                computedStyle.opacity === "1" &&
+                computedStyle.visibility !== "hidden"
+              );
+            })
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Additional wait for animation to settle
       await wait(1000);
-      await page.waitForSelector(".intro-square", {
-        state: "visible",
-        timeout: 10000,
-      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -317,11 +481,38 @@ test.describe("Visual Screenshots", () => {
     test("Intro with 4 blocks opened (all)", async ({ page, browserName }) => {
       await authenticate(page);
       await page.goto("/");
+
+      // Wait for navigation animation to complete and intro to become visible
+      await page.waitForFunction(
+        () => {
+          const introSection = document.getElementById("intro");
+          return (
+            introSection && introSection.classList.contains("intro-visible")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for intro squares to be visible and animated
+      await page.waitForFunction(
+        () => {
+          const squares = document.querySelectorAll(".intro-square");
+          return (
+            squares.length === 4 &&
+            Array.from(squares).every((square) => {
+              const computedStyle = window.getComputedStyle(square);
+              return (
+                computedStyle.opacity === "1" &&
+                computedStyle.visibility !== "hidden"
+              );
+            })
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Additional wait for animation to settle
       await wait(1000);
-      await page.waitForSelector(".intro-square", {
-        state: "visible",
-        timeout: 10000,
-      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
