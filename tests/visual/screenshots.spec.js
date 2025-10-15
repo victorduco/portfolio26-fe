@@ -4,10 +4,53 @@ import fs from "fs";
 
 const SCREENSHOTS_DIR = path.join(process.cwd(), "test-screenshots");
 
+// Mock backend auth endpoints to make tests deterministic
+const setupAuthStubs = async (page) => {
+  // whoami always authenticated
+  await page.route("**/api/whoami", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true }),
+    });
+  });
+
+  // check-code: success only for 1234
+  await page.route("**/api/check-code", async (route, request) => {
+    try {
+      const postData = request.postDataJSON?.();
+      const isOk = postData && postData.code === "1234";
+      if (isOk) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: true }),
+        });
+      } else {
+        await route.fulfill({
+          status: 401,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: false, error: "Invalid code" }),
+        });
+      }
+    } catch {
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: false, error: "stub error" }),
+      });
+    }
+  });
+};
+
 test.beforeAll(async () => {
   if (!fs.existsSync(SCREENSHOTS_DIR)) {
     fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
   }
+});
+
+test.beforeEach(async ({ page }) => {
+  await setupAuthStubs(page);
 });
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
