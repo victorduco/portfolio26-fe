@@ -25,14 +25,59 @@
     <motion.div
       v-if="hasStartedPlayback && !showFinalOverlay"
       class="case-video-controls"
-      :animate="isHovering ? 'visible' : 'hidden'"
+      :class="{ 'mobile-controls': isSmallScreen }"
+      :animate="isHovering || isSmallScreen ? 'visible' : 'hidden'"
       :variants="controlsVariants"
       :transition="controlsTransition"
       :initial="false"
     >
-      <!-- Mute/Unmute button (first) - hidden on small screens -->
+      <!-- Fullscreen button (mobile only) -->
       <motion.button
-        v-if="!shouldBeMutedByDefault"
+        v-if="isSmallScreen"
+        class="control-button"
+        type="button"
+        @click="toggleFullscreen"
+        @mouseenter="fullscreenHovered = true"
+        @mouseleave="fullscreenHovered = false"
+        :animate="fullscreenHovered ? 'hover' : 'default'"
+        :variants="buttonVariants"
+        :transition="buttonTransition"
+        :aria-label="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+      >
+        <motion.svg
+          v-if="!isFullscreen"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="control-icon"
+          :animate="fullscreenHovered ? 'hover' : 'default'"
+          :variants="iconVariants"
+          :transition="iconTransition"
+        >
+          <path
+            d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+          />
+        </motion.svg>
+        <motion.svg
+          v-else
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="control-icon"
+          :animate="fullscreenHovered ? 'hover' : 'default'"
+          :variants="iconVariants"
+          :transition="iconTransition"
+        >
+          <path
+            d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
+          />
+        </motion.svg>
+      </motion.button>
+
+      <!-- Mute/Unmute button - always visible on mobile -->
+      <motion.button
         class="control-button"
         type="button"
         @click="toggleMute"
@@ -242,12 +287,14 @@ const muteHovered = ref(false);
 const playHovered = ref(false);
 const restartHovered = ref(false);
 const finalRestartHovered = ref(false);
+const fullscreenHovered = ref(false);
 const linkHovered = ref(false);
 const wasStateRestored = ref(false); // Track if state was restored
 const shouldSaveState = ref(false); // Track if we should save state on unmount
 const userPaused = ref(false); // Track if user manually paused the video
+const isFullscreen = ref(false);
 
-// Computed: video should always be muted on small screens
+// Video starts muted on small screens by default
 const shouldBeMutedByDefault = computed(() => isSmallScreen.value);
 
 // Storage key based on video src
@@ -572,11 +619,49 @@ function toggleMute() {
   const video = getVideoElement();
   if (!video) return;
 
-  // On small screens, mute is always on (can't be toggled)
-  if (shouldBeMutedByDefault.value) return;
-
   isMuted.value = !isMuted.value;
   video.muted = isMuted.value;
+}
+
+function toggleFullscreen() {
+  const video = getVideoElement();
+  if (!video) return;
+
+  if (!document.fullscreenElement) {
+    // Enter fullscreen
+    const container = video.parentElement?.parentElement;
+    if (container && container.requestFullscreen) {
+      container
+        .requestFullscreen()
+        .then(() => {
+          isFullscreen.value = true;
+        })
+        .catch((err) => {
+          console.error("Failed to enter fullscreen:", err);
+        });
+    } else if (video.webkitRequestFullscreen) {
+      // Safari fallback
+      video
+        .webkitRequestFullscreen()
+        .then(() => {
+          isFullscreen.value = true;
+        })
+        .catch((err) => {
+          console.error("Failed to enter fullscreen:", err);
+        });
+    }
+  } else {
+    // Exit fullscreen
+    if (document.exitFullscreen) {
+      document.exitFullscreen().then(() => {
+        isFullscreen.value = false;
+      });
+    } else if (document.webkitExitFullscreen) {
+      // Safari fallback
+      document.webkitExitFullscreen();
+      isFullscreen.value = false;
+    }
+  }
 }
 
 function restartVideo() {
@@ -602,6 +687,10 @@ function handleStoryLinkClick() {
   }
 }
 
+function handleFullscreenChange() {
+  isFullscreen.value = !!document.fullscreenElement;
+}
+
 onMounted(() => {
   // Try to restore state only if coming from story page
   const video = getVideoElement();
@@ -620,6 +709,10 @@ onMounted(() => {
       restoreVideoState();
     }
   }
+
+  // Listen for fullscreen changes
+  document.addEventListener("fullscreenchange", handleFullscreenChange);
+  document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 });
 
 onUnmounted(() => {
@@ -633,6 +726,13 @@ onUnmounted(() => {
   }
   clearInitialTimers();
   clearFinalTimers();
+
+  // Remove fullscreen listeners
+  document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  document.removeEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
 });
 
 defineExpose({
@@ -807,6 +907,12 @@ defineExpose({
   outline: none !important;
 }
 
+/* Mobile controls always visible */
+.case-video-controls.mobile-controls {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 @media (max-width: 899px) {
   .case-video-container {
     border-radius: 0;
@@ -818,6 +924,24 @@ defineExpose({
 
   .case-video-controls {
     padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .control-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .control-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Mobile landscape: adjust button sizes */
+@media (max-width: 767px) and (orientation: landscape) {
+  .case-video-controls {
+    padding: 8px 12px;
     gap: 8px;
   }
 

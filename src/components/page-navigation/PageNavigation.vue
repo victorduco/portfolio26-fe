@@ -307,6 +307,15 @@ onUnmounted(() => {
   gap: 16px;
 }
 
+/* Mobile landscape: reduce spacing to fit all items */
+@media (max-width: 767px) and (orientation: landscape) {
+  .menu-content {
+    gap: 8px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
 /* Transitions */
 .menu-fade-enter-active,
 .menu-fade-leave-active {

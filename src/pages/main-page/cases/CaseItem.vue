@@ -226,27 +226,28 @@ onUnmounted(() => {
   }
 
   .case-item {
-    padding: 0;
+    padding: clamp(24px, 6vh, 48px) 0;
   }
 
   .case-content {
     padding: 0;
     max-width: 100%;
-    gap: clamp(20px, 5vh, 32px);
+    gap: clamp(32px, 7vh, 56px);
     justify-content: center;
   }
 
   .case-heading {
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    padding: 0 24px;
+    gap: 16px;
+    padding: 0 clamp(24px, 6vw, 48px);
   }
 
   .case-heading-text {
     align-items: center;
     text-align: center;
     width: 100%;
+    gap: 12px;
   }
 
   .case-title {
@@ -255,6 +256,7 @@ onUnmounted(() => {
 
   .case-subtitle {
     text-align: center;
+    font-size: 18px;
   }
 
   .video-wrapper {
@@ -278,7 +280,7 @@ onUnmounted(() => {
     font-size: 16px;
     line-height: 1;
     letter-spacing: 0.02em;
-    padding: 8px 12px;
+    padding: 12px 16px;
     background: transparent;
     border: none;
     cursor: pointer;

@@ -453,6 +453,16 @@ onBeforeUnmount(() => {
   touch-action: none;
 }
 
+/* Mobile: change layout to column with digits on top */
+@media (max-width: 767px) {
+  .keypad-container {
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+}
+
 .background-preview-png {
   position: absolute;
   inset: 0;
@@ -479,6 +489,25 @@ onBeforeUnmount(() => {
   background-position: center center;
   background-size: 150%;
   background-repeat: no-repeat;
+}
+
+/* Mobile: position digits above keypad */
+@media (max-width: 767px) {
+  .background-numbers {
+    position: static;
+    height: auto;
+    flex: 0 0 auto;
+    margin-bottom: clamp(32px, 8vh, 80px);
+    padding-top: max(40px, env(safe-area-inset-top));
+  }
+}
+
+/* Mobile landscape: adjust spacing */
+@media (max-width: 767px) and (orientation: landscape) {
+  .background-numbers {
+    margin-bottom: clamp(16px, 3vh, 40px);
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
 }
 
 .background-numbers-base {
@@ -553,12 +582,22 @@ onBeforeUnmount(() => {
   max-height: 100%;
 }
 
-/* Landscape mode: reduce spacing to fit all buttons */
-@media (orientation: landscape) and (max-height: 700px) {
+/* Mobile portrait: adjust for column layout */
+@media (max-width: 767px) and (orientation: portrait) {
   .keypad-grid {
-    gap: clamp(8px, 2vh, 20px);
-    padding: clamp(12px, 2vh, 24px);
-    max-height: 90dvh;
+    gap: clamp(24px, 6vw, 60px);
+    padding: clamp(16px, 3vw, 32px);
+    flex: 0 0 auto;
+  }
+}
+
+/* Mobile landscape: optimize spacing and scale buttons properly */
+@media (max-width: 767px) and (orientation: landscape) {
+  .keypad-grid {
+    gap: clamp(16px, 4vw, 40px);
+    padding: clamp(12px, 2vw, 24px);
+    flex: 0 0 auto;
+    max-height: none;
   }
 }
 

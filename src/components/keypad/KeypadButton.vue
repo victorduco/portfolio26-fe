@@ -176,16 +176,29 @@ function handleClick() {
   z-index: 1;
 }
 
-/* Landscape mode: smaller buttons and text */
-@media (orientation: landscape) and (max-height: 700px) {
+/* Mobile portrait: optimize button size */
+@media (max-width: 767px) and (orientation: portrait) {
   .keypad-button-wrapper {
-    width: clamp(50px, 11vh, 90px);
-    height: clamp(50px, 11vh, 90px);
-    border-radius: clamp(12px, 2.75vh, 22px);
+    width: clamp(70px, 20vw, 100px);
+    height: clamp(70px, 20vw, 100px);
+    border-radius: clamp(18px, 5vw, 25px);
   }
 
   .keypad-number {
-    font-size: clamp(18px, 4.5vh, 26px);
+    font-size: clamp(22px, 6.5vw, 28px);
+  }
+}
+
+/* Mobile landscape: scale buttons based on width */
+@media (max-width: 767px) and (orientation: landscape) {
+  .keypad-button-wrapper {
+    width: clamp(60px, 14vw, 95px);
+    height: clamp(60px, 14vw, 95px);
+    border-radius: clamp(15px, 3.5vw, 24px);
+  }
+
+  .keypad-number {
+    font-size: clamp(20px, 5vw, 26px);
   }
 }
 </style>
