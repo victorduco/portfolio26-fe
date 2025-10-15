@@ -102,15 +102,8 @@ watch(
   () => enteredDigits.value,
   (digits) => {
     window.__profile?.start?.("background-update");
-    console.log(
-      "🔄 Watch triggered, digits:",
-      digits,
-      "length:",
-      digits.length
-    );
 
     if (digits.length === 0) {
-      console.log("⚠️ No digits, setting to empty");
       // Reset glass filter to force Safari to clear cached background
       document.documentElement.style.setProperty("--glass-filter", "none");
       void document.documentElement.offsetHeight;
@@ -139,8 +132,6 @@ watch(
     // Remove no-background class when we have digits
     document.documentElement.classList.remove("keypad-no-bg");
 
-    console.log("📝 Digits:", digits);
-
     // Sharp background for both main display and buttons (CSS blur applied to buttons)
     window.__profile?.start?.("sharp-background-set");
     const sharpPath = getBackgroundPath(digits);
@@ -152,7 +143,6 @@ watch(
       "--global-keypad-mask",
       `url("${sharpPath}")`
     );
-    console.log("✅ Set --global-keypad-bg:", sharpPath);
     window.__profile?.end?.("sharp-background-set");
 
     window.__profile?.end?.("background-update");
