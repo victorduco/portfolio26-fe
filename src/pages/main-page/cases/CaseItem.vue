@@ -7,7 +7,7 @@
           <p class="case-subtitle">{{ subtitle }}</p>
         </div>
         <NavigationChevron
-          class="case-heading-action"
+          class="case-heading-action desktop-only"
           type="route"
           :to="routeTo"
           direction="forward"
@@ -23,12 +23,36 @@
           :diamond-color="props.primaryColor"
         />
       </div>
+      <RouterLink
+        :to="routeTo"
+        class="case-action mobile-only"
+        @click="handleNavigationClick"
+      >
+        <span class="case-action-text">View Case Study</span>
+        <svg
+          class="case-action-arrow"
+          width="8"
+          height="12"
+          viewBox="0 0 8 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 1L6.5 6L1 11"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </RouterLink>
     </div>
   </div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
+import { RouterLink } from "vue-router";
 import CaseVideo from "./CaseVideo.vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 
@@ -184,19 +208,125 @@ onUnmounted(() => {
   max-height: 100%;
 }
 
-@media (max-width: 768px) {
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+
+  .case-item {
+    padding: 0;
+  }
+
   .case-content {
-    padding: 0 5vw;
+    padding: 0;
+    max-width: 100%;
+    gap: clamp(20px, 5vh, 32px);
+    justify-content: center;
   }
 
   .case-heading {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
   }
 
-  .case-heading-action {
-    align-self: flex-start;
+  .case-heading-text {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .case-title {
+    text-align: center;
+  }
+
+  .case-subtitle {
+    text-align: center;
+  }
+
+  .video-wrapper {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    max-width: 100%;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .case-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .case-action:hover {
+    color: #ffffff;
+  }
+
+  .case-action:active {
+    color: #ffffff;
+  }
+
+  .case-action-text {
+    flex-shrink: 0;
+  }
+
+  .case-action-arrow {
+    width: 8px;
+    height: 12px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .case-action:hover .case-action-arrow {
+    transform: translateX(2px);
+  }
+}
+
+@media (max-width: 600px) {
+  .case-content {
+    gap: clamp(16px, 4vh, 24px);
+  }
+
+  .case-heading {
+    padding: 0 16px;
+  }
+
+  .case-action {
+    font-size: 14px;
+  }
+
+  .case-action-arrow {
+    width: 6px;
+    height: 10px;
   }
 }
 </style>

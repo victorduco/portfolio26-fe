@@ -58,9 +58,9 @@
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect width="18" height="2" rx="1" fill="white"/>
-        <rect y="6" width="18" height="2" rx="1" fill="white"/>
-        <rect y="12" width="18" height="2" rx="1" fill="white"/>
+        <rect width="18" height="2" rx="1" fill="white" />
+        <rect y="6" width="18" height="2" rx="1" fill="white" />
+        <rect y="12" width="18" height="2" rx="1" fill="white" />
       </svg>
       <!-- Close icon -->
       <svg
@@ -72,8 +72,18 @@
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M1.5 1.5L14.5 14.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        <path d="M14.5 1.5L1.5 14.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <path
+          d="M1.5 1.5L14.5 14.5"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <path
+          d="M14.5 1.5L1.5 14.5"
+          stroke="white"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
       </svg>
     </div>
   </button>
@@ -204,11 +214,11 @@ function handleButtonClick(event) {
 
 .nav-chevron__icon--menu,
 .nav-chevron__icon--close {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 899px) {
   .nav-chevron {
     width: 40px;
     height: 40px;
@@ -227,8 +237,8 @@ function handleButtonClick(event) {
 
   .nav-chevron__icon--menu,
   .nav-chevron__icon--close {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
   }
 }
 </style>

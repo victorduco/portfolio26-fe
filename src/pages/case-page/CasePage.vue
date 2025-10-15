@@ -81,7 +81,7 @@ const navigationSections = computed(() => [
   z-index: 1001;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 899px) {
   .case-page-back {
     top: 24px;
     left: 24px;

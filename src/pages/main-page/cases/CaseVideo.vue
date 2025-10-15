@@ -15,7 +15,7 @@
         ref="videoElement"
         class="case-video-element"
         :src="props.src"
-        muted
+        :muted="shouldBeMutedByDefault || isMuted"
         playsinline
         @ended="handleVideoEnded"
       ></video>
@@ -30,8 +30,9 @@
       :transition="controlsTransition"
       :initial="false"
     >
-      <!-- Mute/Unmute button (first) -->
+      <!-- Mute/Unmute button (first) - hidden on small screens -->
       <motion.button
+        v-if="!shouldBeMutedByDefault"
         class="control-button"
         type="button"
         @click="toggleMute"
@@ -204,9 +205,10 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
 import { motion } from "motion-v";
 import { RouterLink, useRoute, useRouter } from "vue-router";
+import { useMediaQuery } from "@/composables/useMediaQuery.js";
 
 const props = defineProps({
   src: {
@@ -226,6 +228,8 @@ const props = defineProps({
 const router = useRouter();
 const route = useRoute();
 
+const isSmallScreen = useMediaQuery("(max-width: 600px)");
+
 const videoElement = ref(null);
 const showFinalOverlay = ref(false);
 const finalOverlayState = ref("hidden");
@@ -242,6 +246,9 @@ const linkHovered = ref(false);
 const wasStateRestored = ref(false); // Track if state was restored
 const shouldSaveState = ref(false); // Track if we should save state on unmount
 const userPaused = ref(false); // Track if user manually paused the video
+
+// Computed: video should always be muted on small screens
+const shouldBeMutedByDefault = computed(() => isSmallScreen.value);
 
 // Storage key based on video src
 const getStorageKey = () => `video-state-${props.src}`;
@@ -439,7 +446,7 @@ function attemptPlay() {
   const video = getVideoElement();
   if (!video || showFinalOverlay.value) return;
 
-  video.muted = isMuted.value;
+  video.muted = shouldBeMutedByDefault.value || isMuted.value;
   video.playsInline = true;
 
   video
@@ -564,6 +571,9 @@ function togglePlayPause() {
 function toggleMute() {
   const video = getVideoElement();
   if (!video) return;
+
+  // On small screens, mute is always on (can't be toggled)
+  if (shouldBeMutedByDefault.value) return;
 
   isMuted.value = !isMuted.value;
   video.muted = isMuted.value;
@@ -797,7 +807,15 @@ defineExpose({
   outline: none !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 899px) {
+  .case-video-container {
+    border-radius: 0;
+  }
+
+  .case-video-element {
+    border-radius: 0;
+  }
+
   .case-video-controls {
     padding: 12px 16px;
     gap: 8px;

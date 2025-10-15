@@ -47,7 +47,7 @@
           aria-label="Close menu"
           @click="toggleMenu"
         />
-        
+
         <!-- Menu items -->
         <nav class="menu-content">
           <NavigationItem
@@ -348,7 +348,7 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 899px) {
   .page-navigation {
     right: 24px;
   }
