@@ -22,25 +22,34 @@
 
   <!-- Mobile версия -->
   <div v-else class="page-navigation-mobile">
-    <!-- Кнопка-иконка -->
-    <button
-      class="menu-toggle"
+    <!-- Menu button -->
+    <NavigationChevron
+      v-if="!isMenuOpen"
+      type="button"
+      direction="menu"
+      aria-label="Open menu"
       @click="toggleMenu"
-      aria-label="Navigation menu"
-      :aria-expanded="isMenuOpen"
-    >
-      <img src="@/assets/icons/menu.svg" alt="" />
-    </button>
+    />
 
-    <!-- Dropdown overlay -->
-    <Transition name="dropdown">
+    <!-- Fullscreen overlay -->
+    <Transition name="menu-fade">
       <div
         v-if="isMenuOpen"
         class="menu-overlay"
         @click.self="toggleMenu"
         @keydown.escape="toggleMenu"
       >
-        <nav class="menu-dropdown">
+        <!-- Close button -->
+        <NavigationChevron
+          class="menu-close-button"
+          type="button"
+          direction="close"
+          aria-label="Close menu"
+          @click="toggleMenu"
+        />
+
+        <!-- Menu items -->
+        <nav class="menu-content">
           <NavigationItem
             v-for="(section, index) in sections"
             :key="section.id"
@@ -60,6 +69,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import NavigationItem from "./NavigationItem.vue";
+import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import {
   useMediaQuery,
   NAVIGATION_MOBILE,
@@ -264,106 +274,81 @@ onUnmounted(() => {
 /* Mobile версия */
 .page-navigation-mobile {
   position: fixed;
-  top: var(--space-lg, 24px);
-  right: var(--space-lg, 24px);
-  z-index: 100;
-}
-
-.menu-toggle {
-  width: var(--tap-min, 44px);
-  height: var(--tap-min, 44px);
-  border-radius: 8px;
-  background: rgba(20, 20, 20, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.menu-toggle:hover {
-  background: rgba(20, 20, 20, 1);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.menu-toggle:focus-visible {
-  outline: 2px solid rgba(39, 169, 255, 0.8);
-  outline-offset: 4px;
-}
-
-.menu-toggle img {
-  width: 24px;
-  height: 24px;
-  filter: brightness(0) invert(1);
+  top: 24px;
+  right: 24px;
+  z-index: 1001;
 }
 
 .menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
+  background: rgba(23, 23, 23, 0.98);
+  z-index: 10000;
   display: flex;
-  justify-content: flex-end;
-  padding: 80px var(--space-lg, 24px) var(--space-lg, 24px);
-  padding-bottom: max(var(--space-lg, 24px), env(safe-area-inset-bottom));
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
-.menu-dropdown {
-  background: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: var(--space-sm, 8px) 0;
-  max-width: 280px;
+.menu-close-button {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 10001;
+}
+
+.menu-content {
   width: 100%;
-  max-height: 100dvh;
-  max-height: calc(100dvh - 120px);
-  overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 /* Transitions */
-.dropdown-enter-active,
-.dropdown-leave-active {
-  transition: opacity 0.2s ease;
+.menu-fade-enter-active,
+.menu-fade-leave-active {
+  transition: opacity 0.25s ease;
 }
 
-.dropdown-enter-from,
-.dropdown-leave-to {
+.menu-fade-enter-from,
+.menu-fade-leave-to {
   opacity: 0;
 }
 
-.dropdown-enter-active .menu-dropdown,
-.dropdown-leave-active .menu-dropdown {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+.menu-fade-enter-active .menu-content,
+.menu-fade-leave-active .menu-content {
+  transition: transform 0.3s ease, opacity 0.25s ease;
 }
 
-.dropdown-enter-from .menu-dropdown {
-  transform: translateY(-16px);
+.menu-fade-enter-from .menu-content {
+  transform: scale(0.95);
   opacity: 0;
 }
 
-.dropdown-leave-to .menu-dropdown {
-  transform: translateY(-16px);
+.menu-fade-leave-to .menu-content {
+  transform: scale(0.95);
   opacity: 0;
 }
 
 /* Поддержка prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .dropdown-enter-active,
-  .dropdown-leave-active,
-  .dropdown-enter-active .menu-dropdown,
-  .dropdown-leave-active .menu-dropdown {
+  .menu-fade-enter-active,
+  .menu-fade-leave-active,
+  .menu-fade-enter-active .menu-content,
+  .menu-fade-leave-active .menu-content {
     transition-duration: 0.01ms;
   }
 
-  .dropdown-enter-from .menu-dropdown,
-  .dropdown-leave-to .menu-dropdown {
+  .menu-fade-enter-from .menu-content,
+  .menu-fade-leave-to .menu-content {
     transform: none;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 899px) {
   .page-navigation {
     right: 24px;
   }

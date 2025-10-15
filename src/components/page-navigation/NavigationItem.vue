@@ -227,20 +227,28 @@ function handleClick(event) {
 /* Mobile версия */
 .nav-item-wrapper.mobile {
   width: 100%;
-  justify-content: flex-start;
-  padding: var(--space-md, 16px) var(--space-lg, 24px);
-  min-height: var(--tap-min, 44px);
-  gap: var(--space-sm, 8px);
+  justify-content: center;
+  padding: 20px 32px;
+  min-height: 56px;
+  gap: 12px;
+  border-radius: 12px;
+  transition: background-color 0.2s ease;
 }
 
 .mobile .nav-item-label {
-  opacity: 1 !important; /* переопределяем motion-v варианты */
+  opacity: 1 !important;
   position: static;
-  font-size: 16px;
+  font-size: 24px;
+  font-weight: 500;
+  text-align: center;
 }
 
 .mobile.nav-item-wrapper:active {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mobile .nav-item-label-text {
+  line-height: 1.2;
 }
 
 .nav-item {
