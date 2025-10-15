@@ -4,6 +4,13 @@ const ENABLE_MIXPANEL_IN_DEV = false;
 
 const shouldInitialize = import.meta.env.PROD || ENABLE_MIXPANEL_IN_DEV;
 
+// Stub for dev when disabled
+const stub = {
+  track: () => {},
+  identify: () => {},
+  people: { set: () => {} },
+};
+
 if (shouldInitialize) {
   mixpanel.init("92b17c4d676f977a493c89b740ddf7ec", {
     autocapture: true,
@@ -14,23 +21,15 @@ if (shouldInitialize) {
   });
 }
 
+// Export the right instance
+const mixpanelInstance = shouldInitialize ? mixpanel : stub;
+
 // Vue plugin
 export default {
   install(app) {
-    if (shouldInitialize) {
-      app.config.globalProperties.$mixpanel = mixpanel;
-      app.provide("mixpanel", mixpanel);
-    } else {
-      // Provide stub in dev when disabled
-      const stub = {
-        track: () => {},
-        identify: () => {},
-        people: { set: () => {} },
-      };
-      app.config.globalProperties.$mixpanel = stub;
-      app.provide("mixpanel", stub);
-    }
+    app.config.globalProperties.$mixpanel = mixpanelInstance;
+    app.provide("mixpanel", mixpanelInstance);
   },
 };
 
-export { mixpanel };
+export { mixpanelInstance as mixpanel };

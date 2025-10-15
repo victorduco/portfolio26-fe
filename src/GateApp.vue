@@ -5,11 +5,12 @@
 <script setup>
 import { useRouter, useRoute } from "vue-router";
 import { resetAuthCache } from "./router/index.js";
-import { mixpanel } from "./plugins/mixpanel.js";
+import { useMixpanel } from "./composables/useMixpanel.js";
 import Keypad from "./components/keypad/Keypad.vue";
 
 const router = useRouter();
 const route = useRoute();
+const mixpanel = useMixpanel();
 
 const handleUnlock = () => {
   // Track successful unlock event
