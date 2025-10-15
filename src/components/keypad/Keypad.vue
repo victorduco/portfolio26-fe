@@ -1,5 +1,5 @@
 <template>
-  <div class="keypad-container">
+  <div :class="['keypad-container', { 'is-resizing': isResizing }]">
     <!-- Base layer with normal colors -->
     <Motion
       tag="div"
@@ -92,8 +92,12 @@ const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
 const isResetting = ref(false);
+const isResizing = ref(false);
 
 let resizeTimer = null;
+let resizeStartTimer = null;
+let lastResizeTime = 0;
+const RESIZE_THROTTLE_MS = 16; // ~60fps
 
 // No longer using SVG generation - using pre-generated PNG backgrounds
 
@@ -288,7 +292,8 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
 };
 
 async function handleButtonClick(value) {
-  if (isAnimating.value || enteredDigits.value.length >= 4) return;
+  if (isAnimating.value || isResizing.value || enteredDigits.value.length >= 4)
+    return;
 
   enteredDigits.value.push(value);
 
@@ -320,7 +325,7 @@ async function handleButtonClick(value) {
 }
 
 function handleClear() {
-  if (isAnimating.value) return;
+  if (isAnimating.value || isResizing.value) return;
 
   // Reset glass filter to force Safari to clear cached background
   document.documentElement.style.setProperty("--glass-filter", "none");
@@ -346,7 +351,8 @@ function handleClear() {
 }
 
 function handleBackspace() {
-  if (isAnimating.value || enteredDigits.value.length === 0) return;
+  if (isAnimating.value || isResizing.value || enteredDigits.value.length === 0)
+    return;
   enteredDigits.value = enteredDigits.value.slice(0, -1);
   animationState.value = "initial";
   bgNumbersState.value = "initial";
@@ -379,19 +385,61 @@ function handleKeyDown(event) {
   }
 }
 
+function handleResizeThrottled() {
+  const now = Date.now();
+
+  // Throttle the actual resize handling
+  if (now - lastResizeTime < RESIZE_THROTTLE_MS) {
+    return;
+  }
+
+  lastResizeTime = now;
+  handleResize();
+}
+
 function handleResize() {
+  // Clear existing timers
   if (resizeTimer) {
     clearTimeout(resizeTimer);
   }
+  if (resizeStartTimer) {
+    clearTimeout(resizeStartTimer);
+  }
 
+  // Mark as resizing immediately (prevents interactions)
+  if (!isResizing.value && enteredDigits.value.length > 0) {
+    isResizing.value = true;
+
+    // Hide backgrounds immediately during resize to prevent artifacts
+    document.documentElement.style.setProperty("--global-keypad-bg", "none");
+    document.documentElement.style.setProperty("--global-keypad-mask", "none");
+
+    // Force immediate reflow
+    void document.documentElement.offsetHeight;
+  }
+
+  // Debounce: wait for resize to stop
   resizeTimer = setTimeout(() => {
-    // Force update mask and background on resize
-    if (enteredDigits.value.length > 0) {
-      const code = enteredDigits.value.join("");
-      const sharpPath = `/keypad-backgrounds/sharp/${code}.png`;
+    if (enteredDigits.value.length === 0) {
+      isResizing.value = false;
+      return;
+    }
 
-      // Re-apply CSS variables to ensure proper rendering after resize
+    // Force Safari to clear any cached backgrounds
+    document.documentElement.style.setProperty("--glass-filter", "none");
+    void document.documentElement.offsetHeight;
+
+    const sharpPath = getBackgroundPath(enteredDigits.value);
+
+    // Clear CSS variables completely
+    document.documentElement.style.setProperty("--global-keypad-bg", "");
+    document.documentElement.style.setProperty("--global-keypad-mask", "");
+    void document.documentElement.offsetHeight;
+
+    // Use double rAF for reliable re-render
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
+        // Re-apply backgrounds
         document.documentElement.style.setProperty(
           "--global-keypad-bg",
           `url("${sharpPath}")`
@@ -400,15 +448,25 @@ function handleResize() {
           "--global-keypad-mask",
           `url("${sharpPath}")`
         );
+
+        // Force reflow
+        void document.documentElement.offsetHeight;
+
+        // Restore glass filter and unlock interactions
+        requestAnimationFrame(() => {
+          document.documentElement.style.removeProperty("--glass-filter");
+          isResizing.value = false;
+        });
       });
-    }
-  }, 150);
+    });
+  }, 250);
 }
 
 onMounted(() => {
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("resize", handleResize);
+    // Use throttled version and passive listener for better performance
+    window.addEventListener("resize", handleResizeThrottled, { passive: true });
   }
 
   // Preload manifest and initial backgrounds
@@ -418,13 +476,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (typeof window !== "undefined") {
     window.removeEventListener("keydown", handleKeyDown);
-    window.removeEventListener("resize", handleResize);
+    window.removeEventListener("resize", handleResizeThrottled);
   }
   if (rateLimitTimer) {
     clearInterval(rateLimitTimer);
   }
   if (resizeTimer) {
     clearTimeout(resizeTimer);
+  }
+  if (resizeStartTimer) {
+    clearTimeout(resizeStartTimer);
   }
 });
 </script>
@@ -453,14 +514,8 @@ onBeforeUnmount(() => {
   touch-action: none;
 }
 
-/* Mobile: change layout to column with digits on top */
-@media (max-width: 767px) {
-  .keypad-container {
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    padding-bottom: max(24px, env(safe-area-inset-bottom));
-  }
+.keypad-container.is-resizing .keypad-grid {
+  pointer-events: none;
 }
 
 .background-preview-png {
@@ -491,24 +546,6 @@ onBeforeUnmount(() => {
   background-repeat: no-repeat;
 }
 
-/* Mobile: position digits above keypad */
-@media (max-width: 767px) {
-  .background-numbers {
-    position: static;
-    height: auto;
-    flex: 0 0 auto;
-    margin-bottom: clamp(32px, 8vh, 80px);
-    padding-top: max(40px, env(safe-area-inset-top));
-  }
-}
-
-/* Mobile landscape: adjust spacing */
-@media (max-width: 767px) and (orientation: landscape) {
-  .background-numbers {
-    margin-bottom: clamp(16px, 3vh, 40px);
-    padding-top: max(16px, env(safe-area-inset-top));
-  }
-}
 
 .background-numbers-base {
   z-index: 1;
@@ -539,6 +576,26 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 
+/* Mobile: digits above keyboard */
+@media (max-width: 767px) {
+  .background-numbers {
+    background-size: 50%;
+    position: absolute;
+    left: 50%;
+    top: 15%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/1;
+  }
+
+  .background-numbers-overlay {
+    mask-size: 50%;
+    -webkit-mask-size: 50%;
+  }
+}
+
+/* Desktop: centered background */
 @media (min-width: 768px) {
   .background-numbers {
     height: clamp(350px, 60vw, 950px);
@@ -582,24 +639,19 @@ onBeforeUnmount(() => {
   max-height: 100%;
 }
 
-/* Mobile portrait: adjust for column layout */
-@media (max-width: 767px) and (orientation: portrait) {
+/* Mobile: position keyboard with top/bottom margins */
+@media (max-width: 767px) {
   .keypad-grid {
-    gap: clamp(24px, 6vw, 60px);
-    padding: clamp(16px, 3vw, 32px);
-    flex: 0 0 auto;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    margin-bottom: max(150px, calc(env(safe-area-inset-bottom) + 130px));
+    padding: clamp(16px, 4vw, 24px);
   }
 }
 
-/* Mobile landscape: optimize spacing and scale buttons properly */
-@media (max-width: 767px) and (orientation: landscape) {
-  .keypad-grid {
-    gap: clamp(16px, 4vw, 40px);
-    padding: clamp(12px, 2vw, 24px);
-    flex: 0 0 auto;
-    max-height: none;
-  }
-}
 
 .keypad-zero {
   grid-column: 2 / 3;
@@ -625,5 +677,12 @@ onBeforeUnmount(() => {
 
 .keypad-clear-button:hover {
   color: #ffffff;
+}
+
+/* Mobile: adjust Clear button positioning */
+@media (max-width: 767px) {
+  .keypad-clear-button {
+    bottom: max(60px, calc(env(safe-area-inset-bottom) + 48px));
+  }
 }
 </style>

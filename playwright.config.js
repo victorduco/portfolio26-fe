@@ -2,14 +2,14 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/visual",
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  workers: 1,
-  reporter: "html",
+  workers: 4,
+  reporter: "list",
 
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL: "http://localhost:5174",
     screenshot: "only-on-failure",
     video: "off",
   },
@@ -75,8 +75,8 @@ export default defineConfig({
 
   webServer: {
     command: "npm run dev",
-    url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    url: "http://localhost:5174",
+    reuseExistingServer: true,
+    timeout: 30000,
   },
 });
