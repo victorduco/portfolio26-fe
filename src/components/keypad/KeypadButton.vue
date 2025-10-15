@@ -30,11 +30,12 @@
       </motion.div>
     </div>
 
-    <!-- Mobile or landscape: simple wrapper without backdrop-filter -->
+    <!-- Mobile/Tablet: simple wrapper, backdrop-filter via CSS -->
     <div
       v-else
       class="keypad-button-wrapper"
     >
+      <div class="keypad-button-backdrop"></div>
       <motion.div
         class="keypad-number"
         :variants="numberVariants"
@@ -152,6 +153,24 @@ function handleClick() {
   width: 100%;
   height: 100%;
   border-radius: inherit;
+}
+
+.keypad-button-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Tablet landscape: enable backdrop-filter */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .keypad-button-backdrop {
+    backdrop-filter: blur(15px) saturate(100%) brightness(100%);
+    -webkit-backdrop-filter: blur(15px) saturate(100%) brightness(100%);
+  }
 }
 
 .keypad-number {

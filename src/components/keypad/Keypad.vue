@@ -666,6 +666,22 @@ onBeforeUnmount(() => {
     gap: clamp(16px, 4vw, 32px);
     padding: clamp(16px, 2vw, 24px);
   }
+
+  /* Scale down buttons to fit screen height */
+  .keypad-grid :deep(.keypad-button-hover-wrapper) {
+    width: clamp(55px, 12vw, 85px) !important;
+    height: clamp(55px, 12vw, 85px) !important;
+  }
+
+  .keypad-grid :deep(.keypad-button-wrapper) {
+    width: clamp(55px, 12vw, 85px) !important;
+    height: clamp(55px, 12vw, 85px) !important;
+    border-radius: clamp(14px, 3vw, 21px) !important;
+  }
+
+  .keypad-grid :deep(.keypad-number) {
+    font-size: clamp(18px, 4.5vw, 24px) !important;
+  }
 }
 
 .keypad-zero {
