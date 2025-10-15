@@ -656,6 +656,15 @@ onBeforeUnmount(() => {
   .keypad-grid {
     max-height: 100vh;
     max-height: 100dvh;
+    box-sizing: border-box;
+  }
+}
+
+/* Tablet landscape: reduce spacing to fit on screen */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .keypad-grid {
+    gap: clamp(16px, 4vw, 32px);
+    padding: clamp(16px, 2vw, 24px);
   }
 }
 

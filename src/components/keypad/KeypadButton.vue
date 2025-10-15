@@ -30,11 +30,10 @@
       </motion.div>
     </div>
 
-    <!-- Mobile or landscape: backdrop-filter only -->
+    <!-- Mobile or landscape: simple wrapper without backdrop-filter -->
     <div
       v-else
       class="keypad-button-wrapper"
-      v-backdrop-filter="backdropFilterOptions"
     >
       <motion.div
         class="keypad-number"
@@ -71,13 +70,6 @@ const emit = defineEmits(["click"]);
 
 const isMobile = useIsMobile();
 const isLandscapeMobile = useIsLandscapeMobile();
-
-// Backdrop filter options for mobile (same as IntroRectangle)
-const backdropFilterOptions = {
-  blur: "15px",
-  saturate: "100%",
-  brightness: "100%",
-};
 
 const currentState = ref("default");
 const isHovered = ref(false);
