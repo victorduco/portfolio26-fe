@@ -178,10 +178,18 @@ function handleClick() {
 
 /* Mobile portrait: optimize button size */
 @media (max-width: 767px) and (orientation: portrait) {
+  .keypad-button-hover-wrapper {
+    width: clamp(70px, 20vw, 100px);
+    height: clamp(70px, 20vw, 100px);
+  }
+
   .keypad-button-wrapper {
     width: clamp(70px, 20vw, 100px);
     height: clamp(70px, 20vw, 100px);
     border-radius: clamp(18px, 5vw, 25px);
+    border: 1px solid #222222;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .keypad-number {
@@ -191,10 +199,18 @@ function handleClick() {
 
 /* Mobile landscape: scale buttons based on width */
 @media (max-width: 767px) and (orientation: landscape) {
+  .keypad-button-hover-wrapper {
+    width: clamp(60px, 14vw, 95px);
+    height: clamp(60px, 14vw, 95px);
+  }
+
   .keypad-button-wrapper {
     width: clamp(60px, 14vw, 95px);
     height: clamp(60px, 14vw, 95px);
     border-radius: clamp(15px, 3.5vw, 24px);
+    border: 1px solid #444444;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .keypad-number {

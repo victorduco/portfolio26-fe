@@ -576,6 +576,26 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 
+/* Mobile: digits above keyboard */
+@media (max-width: 767px) {
+  .background-numbers {
+    background-size: 50%;
+    position: absolute;
+    left: 50%;
+    top: 15%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/1;
+  }
+
+  .background-numbers-overlay {
+    mask-size: 50%;
+    -webkit-mask-size: 50%;
+  }
+}
+
+/* Desktop: centered background */
 @media (min-width: 768px) {
   .background-numbers {
     height: clamp(350px, 60vw, 950px);
@@ -619,6 +639,19 @@ onBeforeUnmount(() => {
   max-height: 100%;
 }
 
+/* Mobile: position keyboard with top/bottom margins */
+@media (max-width: 767px) {
+  .keypad-grid {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    margin-bottom: max(150px, calc(env(safe-area-inset-bottom) + 130px));
+    padding: clamp(16px, 4vw, 24px);
+  }
+}
+
 
 .keypad-zero {
   grid-column: 2 / 3;
@@ -644,5 +677,12 @@ onBeforeUnmount(() => {
 
 .keypad-clear-button:hover {
   color: #ffffff;
+}
+
+/* Mobile: adjust Clear button positioning */
+@media (max-width: 767px) {
+  .keypad-clear-button {
+    bottom: max(60px, calc(env(safe-area-inset-bottom) + 48px));
+  }
 }
 </style>

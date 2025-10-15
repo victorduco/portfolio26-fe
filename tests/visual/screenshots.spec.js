@@ -114,7 +114,7 @@ test.describe("Visual Screenshots", () => {
       });
     });
 
-    test("Intro with 1 block opened", async ({ page, browserName }) => {
+    test("Intro with 1 block opened (first)", async ({ page, browserName }) => {
       await authenticate(page);
       await page.goto("/");
       await wait(5000);
@@ -127,7 +127,142 @@ test.describe("Visual Screenshots", () => {
         path: path.join(
           SCREENSHOTS_DIR,
           "main-intro",
-          `1block-open-${browserName}-${page.viewportSize().width}x${
+          `1block-first-${browserName}-${page.viewportSize().width}x${
+            page.viewportSize().height
+          }.png`
+        ),
+        fullPage: false,
+      });
+    });
+
+    test("Intro with 2 blocks opened (first two)", async ({
+      page,
+      browserName,
+    }) => {
+      await authenticate(page);
+      await page.goto("/");
+      await wait(5000);
+      const blocks = page.locator(".intro-square");
+      if (await blocks.nth(0).isVisible()) {
+        await blocks.nth(0).click();
+        await wait(500);
+        await blocks.nth(1).click();
+        await wait(1000);
+      }
+      await page.screenshot({
+        path: path.join(
+          SCREENSHOTS_DIR,
+          "main-intro",
+          `2blocks-first-two-${browserName}-${page.viewportSize().width}x${
+            page.viewportSize().height
+          }.png`
+        ),
+        fullPage: false,
+      });
+    });
+
+    test("Intro with 2 blocks opened (diagonal)", async ({
+      page,
+      browserName,
+    }) => {
+      await authenticate(page);
+      await page.goto("/");
+      await wait(5000);
+      const blocks = page.locator(".intro-square");
+      if (await blocks.nth(0).isVisible()) {
+        await blocks.nth(0).click();
+        await wait(500);
+        await blocks.nth(2).click();
+        await wait(1000);
+      }
+      await page.screenshot({
+        path: path.join(
+          SCREENSHOTS_DIR,
+          "main-intro",
+          `2blocks-diagonal-${browserName}-${page.viewportSize().width}x${
+            page.viewportSize().height
+          }.png`
+        ),
+        fullPage: false,
+      });
+    });
+
+    test("Intro with 3 blocks opened (first three)", async ({
+      page,
+      browserName,
+    }) => {
+      await authenticate(page);
+      await page.goto("/");
+      await wait(5000);
+      const blocks = page.locator(".intro-square");
+      if (await blocks.nth(0).isVisible()) {
+        await blocks.nth(0).click();
+        await wait(500);
+        await blocks.nth(1).click();
+        await wait(500);
+        await blocks.nth(2).click();
+        await wait(1000);
+      }
+      await page.screenshot({
+        path: path.join(
+          SCREENSHOTS_DIR,
+          "main-intro",
+          `3blocks-first-three-${browserName}-${page.viewportSize().width}x${
+            page.viewportSize().height
+          }.png`
+        ),
+        fullPage: false,
+      });
+    });
+
+    test("Intro with 3 blocks opened (corners)", async ({
+      page,
+      browserName,
+    }) => {
+      await authenticate(page);
+      await page.goto("/");
+      await wait(5000);
+      const blocks = page.locator(".intro-square");
+      if (await blocks.nth(0).isVisible()) {
+        await blocks.nth(0).click();
+        await wait(500);
+        await blocks.nth(1).click();
+        await wait(500);
+        await blocks.nth(3).click();
+        await wait(1000);
+      }
+      await page.screenshot({
+        path: path.join(
+          SCREENSHOTS_DIR,
+          "main-intro",
+          `3blocks-corners-${browserName}-${page.viewportSize().width}x${
+            page.viewportSize().height
+          }.png`
+        ),
+        fullPage: false,
+      });
+    });
+
+    test("Intro with 4 blocks opened (all)", async ({ page, browserName }) => {
+      await authenticate(page);
+      await page.goto("/");
+      await wait(5000);
+      const blocks = page.locator(".intro-square");
+      if (await blocks.nth(0).isVisible()) {
+        await blocks.nth(0).click();
+        await wait(500);
+        await blocks.nth(1).click();
+        await wait(500);
+        await blocks.nth(2).click();
+        await wait(500);
+        await blocks.nth(3).click();
+        await wait(1000);
+      }
+      await page.screenshot({
+        path: path.join(
+          SCREENSHOTS_DIR,
+          "main-intro",
+          `4blocks-all-${browserName}-${page.viewportSize().width}x${
             page.viewportSize().height
           }.png`
         ),
