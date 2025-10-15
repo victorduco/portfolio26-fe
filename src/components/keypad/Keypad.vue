@@ -651,6 +651,13 @@ onBeforeUnmount(() => {
   }
 }
 
+/* Tablet/Desktop: limit keyboard height to screen size */
+@media (min-width: 768px) {
+  .keypad-grid {
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+}
 
 .keypad-zero {
   grid-column: 2 / 3;
@@ -682,6 +689,15 @@ onBeforeUnmount(() => {
 @media (max-width: 767px) {
   .keypad-clear-button {
     bottom: max(60px, calc(env(safe-area-inset-bottom) + 48px));
+  }
+}
+
+/* Tablet/Desktop: position Clear button in bottom-right corner */
+@media (min-width: 768px) {
+  .keypad-clear-button {
+    left: auto;
+    right: max(32px, calc(env(safe-area-inset-right) + 16px));
+    transform: none;
   }
 }
 </style>
