@@ -25,6 +25,7 @@
     ></div>
 
     <Motion
+      v-if="!isResetting"
       tag="div"
       class="keypad-grid"
       :variants="keypadGridVariants"
@@ -90,6 +91,7 @@ const animationState = ref("initial");
 const keypadGridState = ref("initial");
 const bgNumbersState = ref("initial");
 const isAnimating = ref(false);
+const isResetting = ref(false);
 
 let resizeTimer = null;
 
@@ -99,16 +101,7 @@ let resizeTimer = null;
 watch(
   () => enteredDigits.value,
   (digits) => {
-    window.__profile?.start?.("background-update");
-    console.log(
-      "🔄 Watch triggered, digits:",
-      digits,
-      "length:",
-      digits.length
-    );
-
     if (digits.length === 0) {
-      console.log("⚠️ No digits, setting to empty");
       // Reset glass filter to force Safari to clear cached background
       document.documentElement.style.setProperty("--glass-filter", "none");
       void document.documentElement.offsetHeight;
@@ -129,18 +122,13 @@ watch(
         });
       });
 
-      window.__profile?.end?.("background-update");
-      window.__profile?.mark?.("background-cleared");
       return;
     }
 
     // Remove no-background class when we have digits
     document.documentElement.classList.remove("keypad-no-bg");
 
-    console.log("📝 Digits:", digits);
-
     // Sharp background for both main display and buttons (CSS blur applied to buttons)
-    window.__profile?.start?.("sharp-background-set");
     const sharpPath = getBackgroundPath(digits);
     document.documentElement.style.setProperty(
       "--global-keypad-bg",
@@ -150,16 +138,6 @@ watch(
       "--global-keypad-mask",
       `url("${sharpPath}")`
     );
-    console.log("✅ Set --global-keypad-bg:", sharpPath);
-    window.__profile?.end?.("sharp-background-set");
-
-    window.__profile?.end?.("background-update");
-    window.__profile?.mark?.(`background-updated-${digits.join("")}`);
-
-    // Mark when background is actually rendered
-    requestAnimationFrame(() => {
-      window.__profile?.mark?.(`background-rendered-${digits.join("")}`);
-    });
   },
   { immediate: true, deep: true }
 );
@@ -275,33 +253,42 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
   if (shouldUnlock) {
     emit("unlock");
   } else {
-    // Hide overlay first (opacity 1 -> 0)
+    // Hide overlay - watch will set color to transparent
     animationState.value = "initial";
 
-    // Clear digits (this will trigger watch to clear backgrounds)
+    // Wait for overlay to fully fade
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Unmount keypad buttons to clear all cached state
+    isResetting.value = true;
+
+    // Now clear digits and backgrounds
     enteredDigits.value = [];
 
-    // Wait a bit for watch to process and clear backgrounds
+    // Wait for watch to clear backgrounds
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // Force Safari to reflow after watch clears backgrounds
-    document.documentElement.offsetHeight;
+    // Force Safari to reflow
+    void document.documentElement.offsetHeight;
 
-    // Wait for overlay transition to complete
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    // Extra delay to ensure everything is cleared
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
+    // Reset states
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
-    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Remount keypad buttons - everything is clean
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    isResetting.value = false;
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
     isAnimating.value = false;
   }
 };
 
 async function handleButtonClick(value) {
   if (isAnimating.value || enteredDigits.value.length >= 4) return;
-
-  // 🔍 PROFILING: Start timing
-  window.__keypadProfile = { clickTime: performance.now() };
 
   enteredDigits.value.push(value);
 
