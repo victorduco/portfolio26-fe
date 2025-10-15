@@ -28,7 +28,7 @@
         />
       </section>
       <section id="ai-play" class="item">
-        <div class="ai-play-placeholder">AI Play - Coming Soon</div>
+        <AiPlay />
       </section>
       <section id="contacts" class="item">
         <Contacts />
@@ -42,6 +42,7 @@ import { computed, nextTick, onMounted, ref, watch } from "vue";
 import VueScrollSnap from "vue-scroll-snap";
 import Intro from "./intro/Intro.vue";
 import CaseItem from "./cases/CaseItem.vue";
+import AiPlay from "./ai-play/AiPlay.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import storyNavIcon from "@/assets/icons/headphones.svg";
@@ -157,15 +158,5 @@ onMounted(() => {
   justify-content: center;
   min-height: 100dvh;
   height: 100dvh;
-}
-
-.ai-play-placeholder {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-  color: rgba(255, 255, 255, 0.3);
 }
 </style>

@@ -29,10 +29,25 @@ const updateCSSProperties = (el, props) => {
   });
 };
 
+// Check if device is touch-enabled
+const isTouchDevice = () => {
+  if (typeof window === "undefined") return false;
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
+  );
+};
+
 export const hoverDistortion = {
   mounted(el, binding) {
     // Don't mount if value is null or false
     if (binding.value === null || binding.value === false) {
+      return;
+    }
+
+    // Don't mount on touch devices
+    if (isTouchDevice()) {
       return;
     }
 
@@ -132,12 +147,16 @@ export const hoverDistortion = {
         const baseY = ((rect.top + rect.height / 2) / winH) * 100;
 
         const parallaxX = clamp(
-          baseX + CONFIG.parallaxOffsetX - mouseOffset.x * parallaxIntensity.value,
+          baseX +
+            CONFIG.parallaxOffsetX -
+            mouseOffset.x * parallaxIntensity.value,
           0,
           100
         );
         const parallaxY = clamp(
-          baseY + CONFIG.parallaxOffsetY - mouseOffset.y * parallaxIntensity.value,
+          baseY +
+            CONFIG.parallaxOffsetY -
+            mouseOffset.y * parallaxIntensity.value,
           0,
           100
         );
@@ -146,7 +165,9 @@ export const hoverDistortion = {
           "--distortion-light-x": `${lightX}%`,
           "--distortion-light-y": `${lightY}%`,
           "--distortion-outline-rotation": `${rotation}deg`,
-          "--distortion-background-position": `${parallaxX.toFixed(2)}% ${parallaxY.toFixed(2)}%`,
+          "--distortion-background-position": `${parallaxX.toFixed(
+            2
+          )}% ${parallaxY.toFixed(2)}%`,
         });
       };
 
@@ -159,7 +180,8 @@ export const hoverDistortion = {
       const updateOptions = (value) => {
         const next = resolveDirectiveOptions(value);
         if (next.curvature != null) surfaceCurvature.value = next.curvature;
-        if (next.parallaxIntensity != null) parallaxIntensity.value = next.parallaxIntensity;
+        if (next.parallaxIntensity != null)
+          parallaxIntensity.value = next.parallaxIntensity;
       };
 
       let mouseMoveThrottled = false;
@@ -235,6 +257,11 @@ export const hoverDistortion = {
   },
 
   updated(el, binding) {
+    // Don't update on touch devices
+    if (isTouchDevice()) {
+      return;
+    }
+
     // If value becomes null/false, unmount
     if (binding.value === null || binding.value === false) {
       if (el._hoverDistortion) {
@@ -244,7 +271,10 @@ export const hoverDistortion = {
     }
 
     // If it was null before and now has value, mount
-    if (!el._hoverDistortion && (binding.oldValue === null || binding.oldValue === false)) {
+    if (
+      !el._hoverDistortion &&
+      (binding.oldValue === null || binding.oldValue === false)
+    ) {
       hoverDistortion.mounted(el, binding);
       return;
     }

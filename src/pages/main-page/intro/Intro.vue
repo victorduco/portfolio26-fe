@@ -381,6 +381,13 @@ function scrollToNextSection() {
   transition: color 0.2s ease;
 }
 
+/* Mobile: increase safe-area to avoid browser toolbar overlap */
+@media (max-width: 767px) {
+  .intro-scroll-hint {
+    bottom: max(48px, calc(env(safe-area-inset-bottom) + 32px));
+  }
+}
+
 .intro-scroll-hint:hover {
   color: rgba(255, 255, 255, 0.9);
 }
@@ -413,6 +420,33 @@ function scrollToNextSection() {
     transform: translateY(-50%);
     padding-left: clamp(16px, 4vw, 32px);
     padding-right: clamp(16px, 4vw, 32px);
+  }
+}
+
+/* Mobile landscape: adjust layout to prevent content shifting */
+@media (max-width: 767px) and (orientation: landscape) {
+  .intro-hero {
+    padding-block: clamp(24px, 5vh, 48px);
+    padding-inline-start: clamp(24px, 6vw, 64px);
+    padding-inline-end: clamp(16px, 3vw, 32px);
+  }
+
+  .intro-hero__title {
+    position: relative;
+    top: auto;
+    transform: none;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .intro-scroll-hint {
+    bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+    font-size: 12px;
+  }
+
+  .intro-scroll-hint-icon {
+    width: 12px;
+    height: 12px;
   }
 }
 </style>

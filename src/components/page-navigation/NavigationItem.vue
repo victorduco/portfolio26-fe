@@ -251,6 +251,18 @@ function handleClick(event) {
   line-height: 1.2;
 }
 
+/* Mobile landscape: reduce font size and padding to fit all items */
+@media (max-width: 767px) and (orientation: landscape) {
+  .nav-item-wrapper.mobile {
+    padding: 12px 24px;
+    min-height: 44px;
+  }
+
+  .mobile .nav-item-label {
+    font-size: 18px;
+  }
+}
+
 .nav-item {
   position: relative;
   pointer-events: none;
