@@ -651,8 +651,8 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Tablet/Desktop: limit keyboard height to screen size */
-@media (min-width: 768px) {
+/* Tablet only: limit keyboard height to screen size */
+@media (min-width: 768px) and (max-width: 1024px) {
   .keypad-grid {
     max-height: 100vh;
     max-height: 100dvh;
@@ -701,8 +701,8 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Tablet/Desktop: position Clear button in bottom-right corner */
-@media (min-width: 768px) {
+/* Tablet only: position Clear button in bottom-right corner */
+@media (min-width: 768px) and (max-width: 1024px) {
   .keypad-clear-button {
     left: auto;
     right: max(32px, calc(env(safe-area-inset-right) + 16px));
