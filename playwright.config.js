@@ -30,6 +30,14 @@ export default defineConfig({
       },
     },
     {
+      name: "mobile-landscape",
+      use: {
+        ...devices["iPhone 12"],
+        viewport: { width: 812, height: 375 },
+        isMobile: true,
+      },
+    },
+    {
       name: "mobile-large",
       use: {
         ...devices["iPhone 12 Pro Max"],
@@ -69,6 +77,15 @@ export default defineConfig({
       use: {
         viewport: { width: 3440, height: 1440 },
         deviceScaleFactor: 1,
+      },
+    },
+    {
+      name: "fold-square",
+      use: {
+        viewport: { width: 1080, height: 1080 },
+        deviceScaleFactor: 2,
+        hasTouch: true,
+        isMobile: true,
       },
     },
   ],
