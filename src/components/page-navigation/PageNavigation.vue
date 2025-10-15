@@ -308,42 +308,42 @@ onUnmounted(() => {
 }
 
 /* Transitions */
-.dropdown-enter-active,
-.dropdown-leave-active {
-  transition: opacity 0.2s ease;
+.menu-fade-enter-active,
+.menu-fade-leave-active {
+  transition: opacity 0.25s ease;
 }
 
-.dropdown-enter-from,
-.dropdown-leave-to {
+.menu-fade-enter-from,
+.menu-fade-leave-to {
   opacity: 0;
 }
 
-.dropdown-enter-active .menu-dropdown,
-.dropdown-leave-active .menu-dropdown {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+.menu-fade-enter-active .menu-content,
+.menu-fade-leave-active .menu-content {
+  transition: transform 0.3s ease, opacity 0.25s ease;
 }
 
-.dropdown-enter-from .menu-dropdown {
-  transform: translateY(-16px);
+.menu-fade-enter-from .menu-content {
+  transform: scale(0.95);
   opacity: 0;
 }
 
-.dropdown-leave-to .menu-dropdown {
-  transform: translateY(-16px);
+.menu-fade-leave-to .menu-content {
+  transform: scale(0.95);
   opacity: 0;
 }
 
 /* Поддержка prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .dropdown-enter-active,
-  .dropdown-leave-active,
-  .dropdown-enter-active .menu-dropdown,
-  .dropdown-leave-active .menu-dropdown {
+  .menu-fade-enter-active,
+  .menu-fade-leave-active,
+  .menu-fade-enter-active .menu-content,
+  .menu-fade-leave-active .menu-content {
     transition-duration: 0.01ms;
   }
 
-  .dropdown-enter-from .menu-dropdown,
-  .dropdown-leave-to .menu-dropdown {
+  .menu-fade-enter-from .menu-content,
+  .menu-fade-leave-to .menu-content {
     transform: none;
   }
 }
