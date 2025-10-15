@@ -643,11 +643,10 @@ onBeforeUnmount(() => {
 @media (max-width: 767px) {
   .keypad-grid {
     position: absolute;
-    bottom: 0;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, calc(-50% + 30px));
     width: fit-content;
-    margin-bottom: max(60px, calc(env(safe-area-inset-bottom) + 48px));
     padding: clamp(16px, 4vw, 24px);
   }
 }
