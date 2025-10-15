@@ -101,8 +101,6 @@ let resizeTimer = null;
 watch(
   () => enteredDigits.value,
   (digits) => {
-    window.__profile?.start?.("background-update");
-
     if (digits.length === 0) {
       // Reset glass filter to force Safari to clear cached background
       document.documentElement.style.setProperty("--glass-filter", "none");
@@ -124,8 +122,6 @@ watch(
         });
       });
 
-      window.__profile?.end?.("background-update");
-      window.__profile?.mark?.("background-cleared");
       return;
     }
 
@@ -133,7 +129,6 @@ watch(
     document.documentElement.classList.remove("keypad-no-bg");
 
     // Sharp background for both main display and buttons (CSS blur applied to buttons)
-    window.__profile?.start?.("sharp-background-set");
     const sharpPath = getBackgroundPath(digits);
     document.documentElement.style.setProperty(
       "--global-keypad-bg",
@@ -143,15 +138,6 @@ watch(
       "--global-keypad-mask",
       `url("${sharpPath}")`
     );
-    window.__profile?.end?.("sharp-background-set");
-
-    window.__profile?.end?.("background-update");
-    window.__profile?.mark?.(`background-updated-${digits.join("")}`);
-
-    // Mark when background is actually rendered
-    requestAnimationFrame(() => {
-      window.__profile?.mark?.(`background-rendered-${digits.join("")}`);
-    });
   },
   { immediate: true, deep: true }
 );
@@ -303,9 +289,6 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
 
 async function handleButtonClick(value) {
   if (isAnimating.value || enteredDigits.value.length >= 4) return;
-
-  // 🔍 PROFILING: Start timing
-  window.__keypadProfile = { clickTime: performance.now() };
 
   enteredDigits.value.push(value);
 
