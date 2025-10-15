@@ -22,7 +22,11 @@ const authenticate = async (page) => {
   await page.keyboard.press("3");
   await wait(300);
   await page.keyboard.press("4");
-  await wait(3000);
+  // Wait for navigation to main page after successful auth
+  await page.waitForURL((url) => url.pathname === "/", {
+    timeout: 10000,
+  });
+  await wait(1000);
 };
 
 const scrollToSection = async (page, sectionId) => {
