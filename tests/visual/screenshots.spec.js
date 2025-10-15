@@ -105,7 +105,11 @@ test.describe("Visual Screenshots", () => {
     test("Intro initial state", async ({ page, browserName }) => {
       await authenticate(page);
       await page.goto("/");
-      await wait(5000);
+      await wait(1000);
+      await page.waitForSelector(".intro-square", {
+        state: "visible",
+        timeout: 10000,
+      });
       await page.screenshot({
         path: path.join(
           SCREENSHOTS_DIR,
@@ -121,7 +125,11 @@ test.describe("Visual Screenshots", () => {
     test("Intro with 1 block opened (first)", async ({ page, browserName }) => {
       await authenticate(page);
       await page.goto("/");
-      await wait(5000);
+      await wait(1000);
+      await page.waitForSelector(".intro-square", {
+        state: "visible",
+        timeout: 10000,
+      });
       const firstBlock = page.locator(".intro-square").first();
       if (await firstBlock.isVisible()) {
         await firstBlock.click();
@@ -145,7 +153,11 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
-      await wait(5000);
+      await wait(1000);
+      await page.waitForSelector(".intro-square", {
+        state: "visible",
+        timeout: 10000,
+      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -171,7 +183,11 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
-      await wait(5000);
+      await wait(1000);
+      await page.waitForSelector(".intro-square", {
+        state: "visible",
+        timeout: 10000,
+      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -197,7 +213,11 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
-      await wait(5000);
+      await wait(1000);
+      await page.waitForSelector(".intro-square", {
+        state: "visible",
+        timeout: 10000,
+      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -225,7 +245,11 @@ test.describe("Visual Screenshots", () => {
     }) => {
       await authenticate(page);
       await page.goto("/");
-      await wait(5000);
+      await wait(1000);
+      await page.waitForSelector(".intro-square", {
+        state: "visible",
+        timeout: 10000,
+      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();
@@ -250,7 +274,11 @@ test.describe("Visual Screenshots", () => {
     test("Intro with 4 blocks opened (all)", async ({ page, browserName }) => {
       await authenticate(page);
       await page.goto("/");
-      await wait(5000);
+      await wait(1000);
+      await page.waitForSelector(".intro-square", {
+        state: "visible",
+        timeout: 10000,
+      });
       const blocks = page.locator(".intro-square");
       if (await blocks.nth(0).isVisible()) {
         await blocks.nth(0).click();

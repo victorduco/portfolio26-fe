@@ -647,7 +647,7 @@ onBeforeUnmount(() => {
     left: 50%;
     transform: translateX(-50%);
     width: fit-content;
-    margin-bottom: max(150px, calc(env(safe-area-inset-bottom) + 130px));
+    margin-bottom: max(60px, calc(env(safe-area-inset-bottom) + 48px));
     padding: clamp(16px, 4vw, 24px);
   }
 }
