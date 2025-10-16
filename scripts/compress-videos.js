@@ -4,70 +4,11 @@ import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import crypto from "crypto";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, "..");
 const videosDir = path.join(projectRoot, "src/assets/case-videos");
-const compressionLogPath = path.join(projectRoot, ".video-compression-log.json");
-
-// Load compression log
-function loadCompressionLog() {
-  try {
-    if (fs.existsSync(compressionLogPath)) {
-      return JSON.parse(fs.readFileSync(compressionLogPath, "utf8"));
-    }
-  } catch (error) {
-    console.warn("⚠️  Could not load compression log, starting fresh");
-  }
-  return {};
-}
-
-// Save compression log
-function saveCompressionLog(log) {
-  try {
-    fs.writeFileSync(compressionLogPath, JSON.stringify(log, null, 2));
-  } catch (error) {
-    console.error("❌ Could not save compression log:", error.message);
-  }
-}
-
-// Get file hash for tracking changes
-function getFileHash(filePath) {
-  try {
-    const content = fs.readFileSync(filePath);
-    return crypto.createHash("md5").update(content).digest("hex");
-  } catch (error) {
-    return null;
-  }
-}
-
-// Check if file was already compressed
-function isAlreadyCompressed(filePath, log) {
-  const fileName = path.basename(filePath);
-  const fileHash = getFileHash(filePath);
-  
-  if (!fileHash) return false;
-  
-  const logEntry = log[fileName];
-  if (!logEntry) return false;
-  
-  // Check if file hash matches (file hasn't changed)
-  return logEntry.hash === fileHash && logEntry.compressed === true;
-}
-
-// Mark file as compressed
-function markAsCompressed(filePath, log) {
-  const fileName = path.basename(filePath);
-  const fileHash = getFileHash(filePath);
-  
-  log[fileName] = {
-    hash: fileHash,
-    compressed: true,
-    timestamp: new Date().toISOString(),
-  };
-}
 
 // Check if ffmpeg is available
 function checkFFmpeg() {
@@ -83,6 +24,44 @@ function checkFFmpeg() {
   }
 }
 
+// Check if video is already compressed by looking at metadata
+function isAlreadyCompressed(videoPath) {
+  try {
+    const command = [
+      "ffprobe",
+      "-v",
+      "quiet",
+      "-print_format",
+      "json",
+      "-show_format",
+      "-show_streams",
+      videoPath,
+    ].join(" ");
+
+    const output = execSync(command, { stdio: "pipe" });
+    const metadata = JSON.parse(output.toString());
+
+    // Check if video has "compressed" in comment metadata
+    if (metadata.format.tags && metadata.format.tags.comment === "compressed") {
+      return true;
+    }
+
+    // Check if video has "compressed" tag in stream metadata
+    if (metadata.streams) {
+      for (const stream of metadata.streams) {
+        if (stream.tags && stream.tags.comment === "compressed") {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  } catch (error) {
+    // If we can't read metadata, assume it needs compression
+    return false;
+  }
+}
+
 // Compress a single video file
 function compressVideo(inputPath, outputPath) {
   const tempPath = outputPath.replace(".mp4", "_temp.mp4");
@@ -94,7 +73,7 @@ function compressVideo(inputPath, outputPath) {
     const originalStats = fs.statSync(inputPath);
     const originalSizeMB = (originalStats.size / (1024 * 1024)).toFixed(1);
 
-    // Compress video with optimized settings
+    // Compress video with optimized settings and add metadata tag
     const command = [
       "ffmpeg",
       "-i",
@@ -111,6 +90,8 @@ function compressVideo(inputPath, outputPath) {
       "128k",
       "-movflags",
       "+faststart",
+      "-metadata",
+      "comment=compressed",
       "-y", // Overwrite output file
       tempPath,
     ].join(" ");
@@ -160,9 +141,6 @@ function compressAllVideos() {
     return;
   }
 
-  // Load compression log
-  const compressionLog = loadCompressionLog();
-
   const videoFiles = fs
     .readdirSync(videosDir)
     .filter((file) => file.endsWith(".mp4") && !file.includes("_original"))
@@ -182,8 +160,8 @@ function compressAllVideos() {
   // Check which files need compression
   for (const videoPath of videoFiles) {
     const fileName = path.basename(videoPath);
-    
-    if (isAlreadyCompressed(videoPath, compressionLog)) {
+
+    if (isAlreadyCompressed(videoPath)) {
       alreadyCompressed.push(fileName);
       console.log(`⏭️  Skipping ${fileName} (already compressed)`);
     } else {
@@ -194,22 +172,23 @@ function compressAllVideos() {
   if (newFilesToCompress.length === 0) {
     console.log("✅ All videos are already compressed!");
     if (alreadyCompressed.length > 0) {
-      console.log(`📋 Skipped ${alreadyCompressed.length} already compressed file(s)`);
+      console.log(
+        `📋 Skipped ${alreadyCompressed.length} already compressed file(s)`
+      );
     }
     return;
   }
 
-  console.log(`\n🎬 Compressing ${newFilesToCompress.length} new/updated file(s):\n`);
+  console.log(
+    `\n🎬 Compressing ${newFilesToCompress.length} new/updated file(s):\n`
+  );
 
   // Compress new/updated files
   for (const videoPath of newFilesToCompress) {
     try {
       // Compress video directly (no backup)
       const result = compressVideo(videoPath, videoPath);
-      
-      // Mark as compressed in log
-      markAsCompressed(videoPath, compressionLog);
-      
+
       results.push({
         file: path.basename(videoPath),
         ...result,
@@ -221,9 +200,6 @@ function compressAllVideos() {
       );
     }
   }
-
-  // Save updated compression log
-  saveCompressionLog(compressionLog);
 
   // Summary
   if (results.length > 0) {

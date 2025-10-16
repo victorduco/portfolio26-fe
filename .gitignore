@@ -28,9 +28,6 @@ test-screenshots/
 playwright-report/
 test-results/
 
-# Video compression log
-.video-compression-log.json
-
 # Backend specific
 backend/dist
 backend/logs/*.log
