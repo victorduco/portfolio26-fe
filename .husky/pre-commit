@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🎥 Checking for new/updated videos to compress..."
+
+# Check if there are any MP4 files in the videos directory
+if [ -d "src/assets/case-videos" ]; then
+  # Check if there are any .mp4 files staged for commit
+  if git diff --cached --name-only | grep -q "src/assets/case-videos/.*\.mp4$"; then
+    echo "📹 Found MP4 files staged for commit"
+    echo "🎬 Running video compression..."
+    npm run compress:videos
+    
+    # Add compressed videos back to staging area
+    git add src/assets/case-videos/*.mp4
+    
+    # Add compression log to staging area
+    if [ -f ".video-compression-log.json" ]; then
+      git add .video-compression-log.json
+    fi
+    
+    echo "✅ Video compression completed and files staged"
+  else
+    echo "⏭️  No MP4 files found in staged changes"
+  fi
+else
+  echo "⏭️  No videos directory found"
+fi

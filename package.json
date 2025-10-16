@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "compress:videos": "node scripts/compress-videos.js",
     "generate:backgrounds": "node scripts/generate-fast-optimized.js",
     "generate:backgrounds:force": "node scripts/generate-fast-optimized.js --force",
     "generate:backgrounds:single": "node scripts/generate-fast-optimized.js --single-digits --force",
@@ -21,7 +22,8 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "screenshots": "npx playwright test tests/visual/screenshots.spec.js"
+    "screenshots": "npx playwright test tests/visual/screenshots.spec.js",
+    "prepare": "husky"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
@@ -37,6 +39,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/devtools": "^8.0.2",
     "cli-progress": "^3.12.0",
+    "husky": "^9.1.7",
     "puppeteer": "^24.24.1",
     "sharp": "^0.34.4",
     "typescript": "^5.9.2",
