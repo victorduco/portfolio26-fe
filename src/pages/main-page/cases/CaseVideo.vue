@@ -22,34 +22,28 @@
       ></video>
     </motion.div>
 
-    <!-- Large Play Button (center) -->
+    <!-- Pause Overlay with Blur -->
     <motion.div
       v-if="!isPlaying && !showFinalOverlay && hasStartedPlayback"
-      class="case-video-play-overlay"
-      @click="togglePlayPause"
-      :initial="{ opacity: 0, scale: 0.8 }"
-      :animate="{ opacity: 1, scale: 1 }"
-      :exit="{ opacity: 0, scale: 0.8 }"
+      class="case-video-pause-overlay"
+      :initial="{ opacity: 0 }"
+      :animate="{ opacity: 1 }"
+      :exit="{ opacity: 0 }"
       :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
     >
-      <motion.button
-        class="large-play-button"
-        type="button"
-        @mouseenter="largePlayHovered = true"
-        @mouseleave="largePlayHovered = false"
-        :animate="largePlayHovered ? 'hover' : 'default'"
-        :variants="largePlayButtonVariants"
-        :transition="buttonTransition"
+      <!-- Blurred background with white tint -->
+      <div class="pause-overlay-blur" @click="togglePlayPause"></div>
+
+      <!-- Large black play icon -->
+      <svg
+        viewBox="0 0 100 100"
+        fill="currentColor"
+        class="pause-play-icon"
+        @click="togglePlayPause"
         aria-label="Play video"
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="large-play-icon"
-        >
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </motion.button>
+        <path d="M30 20 L30 80 L75 50 Z" stroke-linejoin="round" stroke-linecap="round" />
+      </svg>
     </motion.div>
 
     <!-- Video Controls Bar -->
@@ -490,6 +484,17 @@ const largePlayButtonVariants = {
   hover: {
     scale: 1.1,
     backgroundColor: "rgba(0, 0, 0, 0.8)",
+  },
+};
+
+const diamondPlayVariants = {
+  default: {
+    rotate: 45,
+    scale: 1,
+  },
+  hover: {
+    rotate: 0,
+    scale: 1.05,
   },
 };
 
@@ -1152,65 +1157,47 @@ defineExpose({
   }
 }
 
-/* Large Play Button (center overlay) */
-.case-video-play-overlay {
+/* Pause Overlay with Blur */
+.case-video-pause-overlay {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2; /* Below controls (z-index: 3) */
-  pointer-events: none; /* Don't block controls */
+  pointer-events: auto;
+}
+
+.pause-overlay-blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.2); /* 20% white tint */
   cursor: pointer;
 }
 
-.large-play-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  color: #ffffff;
+.pause-play-icon {
+  position: relative;
+  z-index: 1;
+  width: 140px;
+  height: 140px;
+  color: #000000;
   cursor: pointer;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  pointer-events: auto; /* Only button is clickable */
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1));
+  transition: opacity 0.2s ease;
+  stroke: #000000;
+  stroke-width: 2;
 }
 
-.large-play-button:focus {
-  outline: none !important;
-}
-
-.large-play-button:focus-visible {
-  outline: none !important;
-}
-
-.large-play-button:active {
-  background: rgba(0, 0, 0, 0.9) !important;
-  outline: none !important;
-}
-
-.large-play-icon {
-  width: 36px;
-  height: 36px;
-  margin-left: 4px; /* Optical alignment for play icon */
+.pause-play-icon:hover {
+  opacity: 0.8;
 }
 
 @media (max-width: 899px) {
-  .large-play-button {
-    width: 64px;
-    height: 64px;
-  }
-
-  .large-play-icon {
-    width: 28px;
-    height: 28px;
+  .pause-play-icon {
+    width: 100px;
+    height: 100px;
   }
 }
 </style>
