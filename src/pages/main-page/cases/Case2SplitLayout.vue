@@ -5,29 +5,6 @@
       <div class="case2-content-inner">
         <h2 class="case2-title">{{ title }}</h2>
         <p class="case2-description">{{ description }}</p>
-        <RouterLink
-          :to="routeTo"
-          class="case2-button"
-          @click="handleNavigationClick"
-        >
-          <span class="case2-button-text">View Case Study</span>
-          <svg
-            class="case2-button-arrow"
-            width="8"
-            height="12"
-            viewBox="0 0 8 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 1L6.5 6L1 11"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </RouterLink>
       </div>
     </div>
 
@@ -190,49 +167,6 @@ defineExpose({
   text-align: left;
 }
 
-.case2-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background: #000000;
-  color: #ffffff;
-  text-decoration: none;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1;
-  border-radius: 8px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
-  border: none;
-}
-
-.case2-button:hover {
-  background: #333333;
-  transform: translateY(-2px);
-}
-
-.case2-button:active {
-  transform: translateY(0);
-}
-
-.case2-button-text {
-  flex-shrink: 0;
-}
-
-.case2-button-arrow {
-  width: 8px;
-  height: 12px;
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-
-.case2-button:hover .case2-button-arrow {
-  transform: translateX(2px);
-}
-
 /* Right Side: Image with Parallax */
 .case2-image-container {
   flex: 1;
@@ -295,10 +229,6 @@ defineExpose({
     font-size: clamp(14px, 3.5vw, 16px);
   }
 
-  .case2-button {
-    align-self: center;
-  }
-
   .case2-image-container {
     flex: 1;
     min-height: 50vh;
@@ -323,11 +253,6 @@ defineExpose({
   }
 
   .case2-description {
-    font-size: 14px;
-  }
-
-  .case2-button {
-    padding: 10px 20px;
     font-size: 14px;
   }
 }

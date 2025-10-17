@@ -24,7 +24,7 @@
       ></video>
     </motion.div>
 
-    <!-- Pause Overlay with Blur -->
+    <!-- Pause Overlay (outside of video shell to avoid blur) -->
     <motion.div
       v-if="!isPlaying && !showFinalOverlay && hasStartedPlayback"
       class="case-video-pause-overlay"
@@ -33,10 +33,10 @@
       :exit="{ opacity: 0 }"
       :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
     >
-      <!-- Blurred background with white tint -->
-      <div class="pause-overlay-blur" @click="togglePlayPause"></div>
+      <!-- Transparent clickable overlay -->
+      <div class="pause-overlay-clickable" @click="togglePlayPause"></div>
 
-      <!-- Large black play icon -->
+      <!-- Large black play icon with smooth rounded corners -->
       <svg
         viewBox="0 0 100 100"
         fill="currentColor"
@@ -44,13 +44,7 @@
         @click="togglePlayPause"
         aria-label="Play video"
       >
-        <defs>
-          <filter id="round">
-            <feMorphology operator="dilate" radius="1" />
-            <feGaussianBlur stdDeviation="1" />
-          </filter>
-        </defs>
-        <path d="M30 25 Q30 20 35 20 L70 47 Q75 50 70 53 L35 80 Q30 80 30 75 Z" filter="url(#round)" />
+        <path d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z" />
       </svg>
     </motion.div>
 
@@ -1189,36 +1183,36 @@ defineExpose({
   }
 }
 
-/* Pause Overlay with Blur */
+/* Pause Overlay */
 .case-video-pause-overlay {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2; /* Below controls (z-index: 3) */
+  z-index: 10; /* High z-index to be above all video elements */
   pointer-events: auto;
+  isolation: isolate; /* Create new stacking context to prevent blur inheritance */
 }
 
-.pause-overlay-blur {
+.pause-overlay-clickable {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.15); /* Light overlay for contrast */
+  background: rgba(255, 255, 255, 0.1); /* Very light overlay for contrast */
   cursor: pointer;
 }
 
 .pause-play-icon {
   position: relative;
-  z-index: 1;
+  z-index: 11; /* Above overlay */
   width: 140px;
   height: 140px;
   color: #000000;
   cursor: pointer;
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1));
   transition: opacity 0.2s ease;
-  stroke: #000000;
-  stroke-linejoin: round;
-  stroke-linecap: round;
+  will-change: transform; /* Force hardware acceleration */
+  transform: translateZ(0); /* Force new layer */
 }
 
 .pause-play-icon:hover {

@@ -50,6 +50,15 @@
         <Contacts :dark-mode="isDarkMode" />
       </section>
     </VueScrollSnap>
+
+    <!-- Open Story Button for Cases 1-3 -->
+    <OpenStoryButton
+      :visible="storyButtonVisible"
+      :case-number="currentCaseNumber"
+      :fade-opacity="storyButtonOpacity"
+      :route-to="currentCaseRoute"
+      @click="handleStoryButtonClick"
+    />
   </div>
 </template>
 
@@ -61,8 +70,9 @@ import CaseItem from "./cases/CaseItem.vue";
 import AiPlay from "./ai-play/AiPlay.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
+import OpenStoryButton from "@/components/OpenStoryButton.vue";
 import storyNavIcon from "@/assets/icons/headphones.svg";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useMeta } from "../../composables/useMeta.js";
 
 const casesData = [
@@ -109,8 +119,15 @@ const navigationSections = [
 useMeta("home");
 
 const route = useRoute();
+const router = useRouter();
 const introVisible = ref(false);
 const scrollContainerRef = ref(null);
+
+// Story button state
+const storyButtonVisible = ref(false);
+const storyButtonOpacity = ref(0);
+const currentCaseNumber = ref(1);
+const currentCaseRoute = ref("/story/one");
 
 // Color transition system
 const currentBackgroundColor = ref("#171717"); // Default background
@@ -182,6 +199,56 @@ function handleActiveSectionChange(sectionId) {
       getContrastTextColor(color)
     );
   }
+
+  // Update story button visibility and style based on section
+  updateStoryButton(sectionId);
+}
+
+function updateStoryButton(sectionId) {
+  const caseMap = {
+    case1: { number: 1, route: "/story/one" },
+    case2: { number: 2, route: "/story/two" },
+    case3: { number: 3, route: "/story/three" },
+  };
+
+  if (caseMap[sectionId]) {
+    const caseInfo = caseMap[sectionId];
+    storyButtonVisible.value = true;
+    currentCaseNumber.value = caseInfo.number;
+    currentCaseRoute.value = caseInfo.route;
+    storyButtonOpacity.value = 1;
+  } else if (sectionId === "intro") {
+    // Before case1 - button not visible yet
+    storyButtonVisible.value = false;
+    storyButtonOpacity.value = 0;
+  } else {
+    // After case3 - fade out
+    storyButtonOpacity.value = 0;
+    // Delay hiding to allow fade out animation
+    setTimeout(() => {
+      if (storyButtonOpacity.value === 0) {
+        storyButtonVisible.value = false;
+      }
+    }, 500);
+  }
+}
+
+function handleStoryButtonClick() {
+  // Save scroll position before navigation
+  if (!scrollContainerRef.value) {
+    scrollContainerRef.value = document.querySelector(
+      ".scroll-snap-container.fullscreen"
+    );
+  }
+
+  const container = scrollContainerRef.value;
+  const scrollTop = container ? container.scrollTop : window.scrollY;
+
+  // Navigate to story page
+  router.push({
+    path: currentCaseRoute.value,
+    state: { fromMainPage: true, scrollTop },
+  });
 }
 
 // Function to determine text color based on background brightness

@@ -33,15 +33,6 @@
           <h3 class="case-title">{{ title }}</h3>
           <p class="case-subtitle">{{ subtitle }}</p>
         </div>
-        <NavigationChevron
-          class="case-heading-action desktop-only"
-          type="route"
-          :to="routeTo"
-          direction="forward"
-          :aria-label="`Open ${subtitle}`"
-          :dark-mode="darkMode"
-          @click="handleNavigationClick"
-        />
       </div>
       <div class="video-wrapper" :class="{ 'image-wrapper': imageSrc }">
         <CaseVideo
@@ -95,7 +86,6 @@ import CaseVideo from "./CaseVideo.vue";
 import CaseImage from "./CaseImage.vue";
 import Case2SplitLayout from "./Case2SplitLayout.vue";
 import Case3UniqueLayout from "./Case3UniqueLayout.vue";
-import NavigationChevron from "@/components/common/NavigationChevron.vue";
 
 const props = defineProps({
   title: {
@@ -209,7 +199,7 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(16px, 4vh, 40px);
+  gap: clamp(12px, 2.5vh, 24px); /* Reduced gap from 16-40px to 12-24px */
   max-height: 100vh;
   width: 100%;
   max-width: min(80vw, calc(100vh * 1662 / 1080));
@@ -220,7 +210,7 @@ onUnmounted(() => {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: clamp(16px, 4vw, 40px);
   flex-wrap: nowrap;
   flex-shrink: 0;
@@ -229,16 +219,17 @@ onUnmounted(() => {
 .case-heading-text {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 6px; /* Reduced from 8px */
   flex: 1;
   min-width: 0;
 }
 
 .case-title {
   margin: 0;
-  text-align: left;
+  text-align: center;
   max-width: 100%;
+  font-size: clamp(20px, 2.5vw, 28px); /* Reduced from default h3 size */
 }
 
 /* Dark mode - white text for dark backgrounds */
@@ -258,7 +249,7 @@ onUnmounted(() => {
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  text-align: left;
+  text-align: center;
   opacity: 0.6;
   max-width: 100%;
 }
