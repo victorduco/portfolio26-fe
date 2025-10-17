@@ -200,10 +200,10 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: clamp(12px, 2.5vh, 24px); /* Reduced gap from 16-40px to 12-24px */
-  max-height: 100vh;
+  height: 100%;
   width: 100%;
-  max-width: min(80vw, calc(100vh * 1662 / 1080));
-  padding: 0 10vw;
+  max-width: 90vw; /* Increased width for better video proportions */
+  padding: 11vh 5vw; /* 5% + 3% = 8% vertical padding */
 }
 
 .case-heading {

@@ -104,7 +104,9 @@ const isHovered = ref(false);
 const isPressed = ref(false);
 
 const themeClass = computed(() => {
-  return props.darkMode ? "dark-mode" : "light-mode";
+  const mode = props.darkMode ? "dark-mode" : "light-mode";
+  console.log('[NavigationItem]', props.label, 'darkMode:', props.darkMode, 'class:', mode);
+  return mode;
 });
 
 const isIntroAnimation = computed(() => {
@@ -114,6 +116,7 @@ const isIntroAnimation = computed(() => {
 // Theme-aware variants for labels
 const computedLabelVariants = computed(() => {
   const textColor = props.darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)";
+  console.log('[NavigationItem] computedLabelVariants', props.label, 'darkMode:', props.darkMode, 'textColor:', textColor);
 
   return {
     default: {
@@ -152,6 +155,7 @@ const computedNavItemVariants = computed(() => {
   const bgDefault = props.darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
   const bgHover = props.darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)";
   const bgActive = props.darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)";
+  console.log('[NavigationItem] computedNavItemVariants', props.label, 'darkMode:', props.darkMode, 'bgDefault:', bgDefault, 'bgActive:', bgActive);
 
   return {
     default: {
@@ -289,6 +293,22 @@ function getLabelTransition() {
     duration: 0.25,
     ease: "easeInOut",
   };
+}
+
+function getSquareBackgroundColor() {
+  // For intro animations
+  if (props.introGreen) return "#00FFBC";
+
+  // Calculate based on current state
+  const state = getSquareAnimationState();
+
+  if (state === 'active') {
+    return props.darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)";
+  } else if (state === 'hover' || state === 'pressed') {
+    return props.darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)";
+  } else {
+    return props.darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+  }
 }
 
 function handleClick(event) {

@@ -71,7 +71,7 @@ function triggerFadeIn() {
 
 function updateParallax() {
   // Update parallax for entire image container
-  if (imageContainer.value) {
+  if (imageContainer.value && imageElement.value) {
     const rect = imageContainer.value.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
 
@@ -80,6 +80,25 @@ function updateParallax() {
     const parallaxOffset = Math.max(-50, Math.min(50, scrollProgress * 100 - 50));
 
     imageContainer.value.style.transform = `translateY(${parallaxOffset}px)`;
+
+    // Calculate opacity based on scroll position
+    // Fade in when entering viewport (from top)
+    // Fade out when leaving viewport (from bottom)
+    const rectTop = rect.top;
+    const rectBottom = rect.bottom;
+
+    let opacity = 1;
+
+    // Fade in when entering from top (when scrolling down to this section)
+    if (rectTop > viewportHeight * 0.5) {
+      opacity = Math.max(0, 1 - (rectTop - viewportHeight * 0.5) / (viewportHeight * 0.3));
+    }
+    // Fade out when leaving from bottom (when scrolling down past this section)
+    else if (rectBottom < viewportHeight * 0.5) {
+      opacity = Math.max(0, rectBottom / (viewportHeight * 0.5));
+    }
+
+    imageElement.value.style.opacity = opacity;
   }
 }
 
@@ -162,6 +181,7 @@ defineExpose({
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  padding-bottom: 0;
 }
 
 /* Text Section: 60% height */
@@ -217,11 +237,12 @@ defineExpose({
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   flex-shrink: 0;
   will-change: transform;
   transition: transform 0.1s ease-out;
+  margin-bottom: 0;
 }
 
 .case3-image {

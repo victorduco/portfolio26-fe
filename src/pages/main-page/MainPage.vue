@@ -188,9 +188,16 @@ function handleActiveSectionChange(sectionId) {
     textColor.value = getContrastTextColor(color);
 
     // Update navigation mode based on background color
-    // Dark mode = true when background is dark (text should be white)
-    // Light mode = false when background is light (text should be black)
-    isDarkMode.value = getContrastTextColor(color) === "#ffffff";
+    // Dark mode = true means white menu elements
+    // Light mode = false means black menu elements
+    // Special case: case2 should have white menu
+    if (sectionId === 'case2') {
+      isDarkMode.value = true; // White menu for case2
+    } else {
+      isDarkMode.value = getContrastTextColor(color) === "#ffffff";
+    }
+
+    console.log('[MainPage] Section changed:', sectionId, 'isDarkMode:', isDarkMode.value);
 
     // Also update CSS custom properties for global styling
     document.documentElement.style.setProperty("--page-background", color);

@@ -73,16 +73,16 @@ function handleClick() {
   transform: translateY(0);
 }
 
-/* Case 1 - White background with blue accent */
+/* Case 1 - Apple Blue background with white text */
 .case-1 .story-button {
-  background: #f5f5f7; /* Brighter than white background */
-  color: #319BF8;
-  box-shadow: 0 4px 12px rgba(49, 155, 248, 0.15);
+  background: #319BF8; /* Apple Blue */
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(49, 155, 248, 0.3);
 }
 
 .case-1 .story-button:hover {
-  background: #ffffff;
-  box-shadow: 0 8px 20px rgba(49, 155, 248, 0.25);
+  background: #2a8ae6; /* Slightly darker blue on hover */
+  box-shadow: 0 8px 20px rgba(49, 155, 248, 0.4);
 }
 
 /* Case 2 - Brighter pink/rose tone */

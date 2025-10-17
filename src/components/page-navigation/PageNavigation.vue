@@ -3,6 +3,7 @@
   <nav
     v-if="!isMobile"
     class="page-navigation"
+    :class="{ 'page-navigation--light': !props.darkMode, 'page-navigation--dark': props.darkMode }"
     aria-label="Page sections navigation"
   >
     <NavigationItem
