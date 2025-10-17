@@ -1,7 +1,7 @@
 <template>
   <button
     class="nav-item-wrapper"
-    :class="{ mobile: mobileMode }"
+    :class="{ mobile: mobileMode, [themeClass]: true }"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
     @click="handleClick"
@@ -11,7 +11,7 @@
   >
     <motion.div
       class="nav-item-label"
-      :variants="labelVariants"
+      :variants="computedLabelVariants"
       :animate="getAnimationState()"
       :transition="getLabelTransition()"
       :initial="'default'"
@@ -30,7 +30,8 @@
     <motion.div
       v-if="!mobileMode"
       class="nav-item"
-      :variants="navItemVariants"
+      :class="{ 'is-intro': isIntroAnimation }"
+      :variants="computedNavItemVariants"
       :animate="getSquareAnimationState()"
       :transition="{
         rotate: smoothTransition,
@@ -91,12 +92,103 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  darkMode: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(["navigate"]);
 
 const isHovered = ref(false);
 const isPressed = ref(false);
+
+const themeClass = computed(() => {
+  return props.darkMode ? "dark-mode" : "light-mode";
+});
+
+const isIntroAnimation = computed(() => {
+  return props.introGreen || props.introHighlight;
+});
+
+// Theme-aware variants for labels
+const computedLabelVariants = computed(() => {
+  const textColor = props.darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)";
+
+  return {
+    default: {
+      opacity: 0,
+      color: textColor,
+    },
+    hover: {
+      opacity: 1,
+      color: textColor,
+    },
+    active: {
+      opacity: 1,
+      color: textColor,
+    },
+    pressed: {
+      opacity: 1,
+      color: textColor,
+    },
+    introGreen: {
+      opacity: 1,
+      color: "#00FFBC",
+    },
+    introFadeOut: {
+      opacity: 0,
+      color: "#00FFBC",
+    },
+    introHighlight: {
+      opacity: 1,
+      color: textColor,
+    },
+  };
+});
+
+// Theme-aware variants for navigation squares
+const computedNavItemVariants = computed(() => {
+  const bgDefault = props.darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+  const bgHover = props.darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)";
+  const bgActive = props.darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)";
+
+  return {
+    default: {
+      rotate: 0,
+      backgroundColor: bgDefault,
+      opacity: 1,
+    },
+    hover: {
+      rotate: 45,
+      backgroundColor: bgHover,
+      opacity: 1,
+    },
+    pressed: {
+      rotate: 45,
+      backgroundColor: bgHover,
+      opacity: 1,
+    },
+    active: {
+      rotate: 45,
+      backgroundColor: bgActive,
+      opacity: 1,
+    },
+    introGreen: {
+      rotate: 0,
+      backgroundColor: "#00FFBC",
+      opacity: 1,
+    },
+    introHighlight: {
+      rotate: 0,
+      backgroundColor: bgDefault,
+      opacity: 1,
+    },
+    hidden: {
+      opacity: 0,
+    },
+  };
+});
 
 function getAnimationState() {
   // Упрощенная логика для mobile
@@ -281,10 +373,7 @@ function handleClick(event) {
   border-radius: 3px;
 }
 
-/* Light mode - invert colors for navigation squares */
-.nav-item-wrapper.light-mode .nav-item {
-  filter: invert(1);
-}
+/* Removed filter: invert(1) - colors are now handled by variants.js */
 
 .nav-item-label {
   font-size: 14px;
@@ -294,15 +383,7 @@ function handleClick(event) {
   user-select: none;
 }
 
-/* Dark mode - white text for dark backgrounds */
-.nav-item-wrapper.dark-mode .nav-item-label {
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-/* Light mode - dark text for light backgrounds */
-.nav-item-wrapper.light-mode .nav-item-label {
-  color: rgba(0, 0, 0, 0.9) !important;
-}
+/* Theme colors are now handled by computed variants in JavaScript */
 
 .nav-item-label-content {
   display: inline-flex;

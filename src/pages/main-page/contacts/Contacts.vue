@@ -1,43 +1,29 @@
 <template>
-  <section class="contacts">
+  <section
+    class="contacts"
+    :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
+  >
     <div class="contacts__content">
       <div class="contacts__container">
-        <h2 class="contacts__title">Let's Connect</h2>
-        <nav class="contacts__links" aria-label="Contact links">
-          <a
-            href="https://www.linkedin.com/in/victordiukov/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="contacts__link"
-          >
-            <span class="contacts__link-icon">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-                  fill="currentColor"
-                />
-              </svg>
-            </span>
-            <span class="contacts__link-text">LinkedIn</span>
-            <span class="contacts__link-arrow" aria-hidden="true">→</span>
+        <!-- Email as main contact link -->
+        <div class="contacts__email-section">
+          <a href="mailto:diukov@me.com" class="contacts__email-link">
+            <span class="contacts__email-text">diukov@me.com</span>
           </a>
+        </div>
 
+        <!-- Social links -->
+        <nav class="contacts__social-links" aria-label="Social links">
           <a
             href="https://github.com/viktordiukov"
             target="_blank"
             rel="noopener noreferrer"
-            class="contacts__link"
+            class="contacts__social-link"
           >
-            <span class="contacts__link-icon">
+            <span class="contacts__social-link-icon">
               <svg
-                width="24"
-                height="24"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -48,39 +34,42 @@
                 />
               </svg>
             </span>
-            <span class="contacts__link-text">GitHub</span>
-            <span class="contacts__link-arrow" aria-hidden="true">→</span>
+            <span class="contacts__social-link-text">GitHub</span>
           </a>
 
-          <a href="mailto:diukov@me.com" class="contacts__link">
-            <span class="contacts__link-icon">
+          <a
+            href="https://www.linkedin.com/in/victordiukov/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contacts__social-link"
+          >
+            <span class="contacts__social-link-icon">
               <svg
-                width="24"
-                height="24"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
                   fill="currentColor"
                 />
               </svg>
             </span>
-            <span class="contacts__link-text">diukov@me.com</span>
-            <span class="contacts__link-arrow" aria-hidden="true">→</span>
+            <span class="contacts__social-link-text">LinkedIn</span>
           </a>
 
           <a
             href="/resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            class="contacts__link"
+            class="contacts__social-link"
           >
-            <span class="contacts__link-icon">
+            <span class="contacts__social-link-icon">
               <svg
-                width="24"
-                height="24"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -91,8 +80,7 @@
                 />
               </svg>
             </span>
-            <span class="contacts__link-text">Resume</span>
-            <span class="contacts__link-arrow" aria-hidden="true">→</span>
+            <span class="contacts__social-link-text">Resume</span>
           </a>
         </nav>
       </div>
@@ -101,7 +89,12 @@
 </template>
 
 <script setup>
-// Contacts section
+defineProps({
+  darkMode: {
+    type: Boolean,
+    default: true,
+  },
+});
 </script>
 
 <style scoped>
@@ -130,102 +123,141 @@
   gap: clamp(40px, 6vh, 80px);
 }
 
-.contacts__title {
-  font-size: clamp(48px, 8vw, 96px);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  color: rgba(255, 255, 255, 0.95);
-  margin: 0;
+/* Email section */
+.contacts__email-section {
+  margin: clamp(20px, 4vh, 40px) 0;
 }
 
-.contacts__links {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(12px, 2vh, 20px);
-}
-
-.contacts__link {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: clamp(20px, 3vh, 32px) clamp(24px, 4vw, 40px);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  color: rgba(255, 255, 255, 0.9);
+.contacts__email-link {
+  display: inline-block;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
-  overflow: hidden;
 }
 
-.contacts__link::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Email link styles */
+/* Dark mode email link */
+.contacts.dark-mode .contacts__email-link {
+  color: rgba(255, 255, 255, 1);
 }
 
-.contacts__link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
-  transform: translateX(8px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* Light mode email link */
+.contacts.light-mode .contacts__email-link {
+  color: rgba(255, 255, 255, 1);
 }
 
-.contacts__link:hover::before {
-  opacity: 1;
+/* Dark mode email hover */
+.contacts.dark-mode .contacts__email-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
-.contacts__link:active {
-  transform: translateX(4px) scale(0.98);
+/* Light mode email hover */
+.contacts.light-mode .contacts__email-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
-.contacts__link-icon {
+.contacts__email-link:active {
+  transform: scale(0.98);
+}
+
+/* Email text styles */
+.contacts__email-text {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* Social links section */
+.contacts__social-links {
+  display: flex;
+  flex-direction: row;
+  gap: clamp(16px, 3vw, 24px);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: clamp(20px, 4vh, 40px);
+}
+
+.contacts__social-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(8px, 1.5vh, 12px) clamp(12px, 2vw, 16px);
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+}
+
+/* Social link styles */
+/* Dark mode social links */
+.contacts.dark-mode .contacts__social-link {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Light mode social links */
+.contacts.light-mode .contacts__social-link {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Dark mode social hover */
+.contacts.dark-mode .contacts__social-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Light mode social hover */
+.contacts.light-mode .contacts__social-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.contacts__social-link:active {
+  transform: scale(0.98);
+}
+
+/* Social link icon */
+.contacts__social-link-icon {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  color: rgba(255, 255, 255, 0.7);
+  width: 18px;
+  height: 18px;
   transition: color 0.3s ease;
 }
 
-.contacts__link:hover .contacts__link-icon {
-  color: rgba(255, 255, 255, 0.95);
+/* Dark mode social icon */
+.contacts.dark-mode .contacts__social-link-icon {
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.contacts__link-text {
-  flex: 1;
-  font-size: clamp(20px, 3vw, 28px);
+.contacts.dark-mode .contacts__social-link:hover .contacts__social-link-icon {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Light mode social icon */
+.contacts.light-mode .contacts__social-link-icon {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.contacts.light-mode .contacts__social-link:hover .contacts__social-link-icon {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Social link text */
+.contacts__social-link-text {
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.01em;
-}
-
-.contacts__link-arrow {
-  flex-shrink: 0;
-  font-size: clamp(24px, 3vw, 32px);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.5);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.contacts__link:hover .contacts__link-arrow {
-  color: rgba(255, 255, 255, 0.9);
-  transform: translateX(4px);
 }
 
 /* Tablet */
@@ -238,17 +270,21 @@
     gap: clamp(32px, 5vh, 60px);
   }
 
-  .contacts__title {
-    font-size: clamp(40px, 10vw, 72px);
+  .contacts__email-text {
+    font-size: clamp(36px, 10vw, 64px);
   }
 
-  .contacts__link {
-    gap: 16px;
-    padding: clamp(18px, 2.5vh, 28px) clamp(20px, 3.5vw, 32px);
+  .contacts__social-links {
+    gap: clamp(12px, 2vw, 20px);
   }
 
-  .contacts__link-text {
-    font-size: clamp(18px, 3.5vw, 24px);
+  .contacts__social-link {
+    gap: 10px;
+    padding: clamp(6px, 1vh, 10px) clamp(10px, 2vw, 14px);
+  }
+
+  .contacts__social-link-text {
+    font-size: clamp(13px, 2.5vw, 15px);
   }
 }
 
@@ -263,55 +299,45 @@
     gap: 32px;
   }
 
-  .contacts__title {
-    font-size: clamp(36px, 12vw, 56px);
-    letter-spacing: -0.02em;
+  .contacts__email-text {
+    font-size: clamp(32px, 12vw, 48px);
   }
 
-  .contacts__links {
+  .contacts__social-links {
     gap: 12px;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .contacts__link {
-    gap: 16px;
-    padding: 20px;
-    border-radius: 12px;
+  .contacts__social-link {
+    gap: 12px;
+    padding: 12px 16px;
+    min-width: 120px;
+    justify-content: center;
   }
 
-  .contacts__link:hover {
-    transform: translateX(4px);
+  .contacts__social-link-icon {
+    width: 16px;
+    height: 16px;
   }
 
-  .contacts__link-icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .contacts__link-text {
-    font-size: 18px;
-  }
-
-  .contacts__link-arrow {
-    font-size: 24px;
+  .contacts__social-link-text {
+    font-size: 14px;
   }
 }
 
 /* Small mobile */
 @media (max-width: 400px) {
-  .contacts__title {
-    font-size: 32px;
+  .contacts__email-text {
+    font-size: 24px;
   }
 
-  .contacts__link {
-    padding: 18px;
+  .contacts__social-link {
+    padding: 10px 14px;
   }
 
-  .contacts__link-text {
-    font-size: 16px;
-  }
-
-  .contacts__link-arrow {
-    font-size: 20px;
+  .contacts__social-link-text {
+    font-size: 13px;
   }
 }
 
@@ -326,20 +352,22 @@
     gap: 24px;
   }
 
-  .contacts__title {
-    font-size: clamp(32px, 8vh, 48px);
+  .contacts__email-text {
+    font-size: clamp(24px, 6vh, 40px);
   }
 
-  .contacts__links {
+  .contacts__social-links {
     gap: 8px;
+    flex-direction: row;
+    justify-content: center;
   }
 
-  .contacts__link {
-    padding: 16px 20px;
+  .contacts__social-link {
+    padding: 8px 12px;
   }
 
-  .contacts__link-text {
-    font-size: clamp(16px, 2.5vh, 20px);
+  .contacts__social-link-text {
+    font-size: clamp(12px, 2vh, 14px);
   }
 }
 </style>

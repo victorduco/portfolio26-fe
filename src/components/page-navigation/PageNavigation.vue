@@ -29,6 +29,7 @@
       type="button"
       direction="menu"
       aria-label="Open menu"
+      :dark-mode="props.darkMode"
       @click="toggleMenu"
     />
 
@@ -37,6 +38,7 @@
       <div
         v-if="isMenuOpen"
         class="menu-overlay"
+        :class="{ 'menu-overlay--dark': props.darkMode, 'menu-overlay--light': !props.darkMode }"
         @click.self="toggleMenu"
         @keydown.escape="toggleMenu"
       >
@@ -46,6 +48,7 @@
           type="button"
           direction="close"
           aria-label="Close menu"
+          :dark-mode="props.darkMode"
           @click="toggleMenu"
         />
 
@@ -106,7 +109,7 @@ const props = defineProps({
   },
   darkMode: {
     type: Boolean,
-    default: false,
+    default: true, // Default to dark mode (safer for most sections)
   },
 });
 
@@ -289,13 +292,22 @@ onUnmounted(() => {
 .menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(23, 23, 23, 0.98);
   z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+/* Dark mode overlay - dark background */
+.menu-overlay--dark {
+  background: rgba(23, 23, 23, 0.98);
+}
+
+/* Light mode overlay - light background */
+.menu-overlay--light {
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .menu-close-button {

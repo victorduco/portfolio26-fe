@@ -382,6 +382,7 @@ let playTimeout = null;
 let initialHoldTimeout = null;
 let initialCleanupTimeout = null;
 let finalCleanupTimeout = null;
+let userHasInteracted = false; // Track if user has interacted with the page
 
 function getVideoElement() {
   const target = videoElement.value;
@@ -493,7 +494,12 @@ function attemptPlay() {
   const video = getVideoElement();
   if (!video || showFinalOverlay.value) return;
 
-  video.muted = shouldBeMutedByDefault.value || isMuted.value;
+  // Don't try to play if already playing
+  if (!video.paused && hasStartedPlayback.value) return;
+
+  // If user hasn't interacted yet, try muted playback first
+  const shouldTryMuted = !userHasInteracted && !shouldBeMutedByDefault.value;
+  video.muted = shouldTryMuted ? true : (shouldBeMutedByDefault.value || isMuted.value);
   video.playsInline = true;
 
   video
@@ -502,9 +508,14 @@ function attemptPlay() {
       hasStartedPlayback.value = true;
       isPlaying.value = true;
       videoState.value = "visible";
+
+      // If we started muted due to no interaction, try to unmute after user interacts
+      if (shouldTryMuted) {
+        isMuted.value = true; // Update state to show muted
+      }
     })
     .catch(() => {
-      /* Ignore autoplay rejections */
+      /* Handle autoplay rejections */
       if (!hasStartedPlayback.value && !showFinalOverlay.value) {
         schedulePlay(300);
       }
@@ -574,9 +585,8 @@ function handleEnter() {
 
   // Auto-play only if user hasn't manually paused and not showing final overlay
   if (!showFinalOverlay.value && !userPaused.value) {
-    if (video.paused) {
-      schedulePlay();
-    }
+    // Always attempt play when entering viewport (whether paused or not started)
+    schedulePlay();
   }
 }
 
@@ -691,6 +701,20 @@ function handleFullscreenChange() {
   isFullscreen.value = !!document.fullscreenElement;
 }
 
+// Handle user interaction to unlock autoplay with sound
+function handleUserInteraction() {
+  if (userHasInteracted) return; // Already handled
+
+  userHasInteracted = true;
+
+  // If video is playing but muted due to autoplay restrictions, try to unmute
+  const video = getVideoElement();
+  if (video && !video.paused && hasStartedPlayback.value && isMuted.value && !shouldBeMutedByDefault.value) {
+    video.muted = false;
+    isMuted.value = false;
+  }
+}
+
 onMounted(() => {
   // Try to restore state only if coming from story page
   const video = getVideoElement();
@@ -713,6 +737,12 @@ onMounted(() => {
   // Listen for fullscreen changes
   document.addEventListener("fullscreenchange", handleFullscreenChange);
   document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+
+  // Listen for user interactions to unlock autoplay
+  window.addEventListener("scroll", handleUserInteraction, { once: true, passive: true });
+  document.addEventListener("click", handleUserInteraction, { once: true });
+  document.addEventListener("touchstart", handleUserInteraction, { once: true, passive: true });
+  document.addEventListener("keydown", handleUserInteraction, { once: true });
 });
 
 onUnmounted(() => {
@@ -733,6 +763,12 @@ onUnmounted(() => {
     "webkitfullscreenchange",
     handleFullscreenChange
   );
+
+  // Remove user interaction listeners (in case they weren't triggered)
+  window.removeEventListener("scroll", handleUserInteraction);
+  document.removeEventListener("click", handleUserInteraction);
+  document.removeEventListener("touchstart", handleUserInteraction);
+  document.removeEventListener("keydown", handleUserInteraction);
 });
 
 defineExpose({

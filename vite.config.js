@@ -39,10 +39,12 @@ export default defineConfig({
       external: [],
     },
   },
-  // Configure dev server to serve images with proper headers
+  // Configure dev server to disable caching completely
   server: {
     headers: {
-      "Cache-Control": "public, max-age=31536000", // 1 year for static assets
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
     },
   },
 });

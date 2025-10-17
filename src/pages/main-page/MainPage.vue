@@ -42,7 +42,7 @@
         <AiPlay :dark-mode="isDarkMode" />
       </section>
       <section id="contacts" class="item">
-        <Contacts />
+        <Contacts :dark-mode="isDarkMode" />
       </section>
     </VueScrollSnap>
   </div>
@@ -190,6 +190,9 @@ function getContrastTextColor(backgroundColor) {
 }
 
 onMounted(() => {
+  // Initialize theme for intro section immediately
+  handleActiveSectionChange("intro");
+
   const cameFromStory = route.meta?.skipNavIntro;
   if (!cameFromStory) {
     casesData.forEach((caseData) => {
