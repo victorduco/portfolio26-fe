@@ -20,13 +20,22 @@
           @click="handleNavigationClick"
         />
       </div>
-      <div class="video-wrapper">
+      <div class="video-wrapper" :class="{ 'image-wrapper': imageSrc }">
         <CaseVideo
-          ref="caseVideo"
+          v-if="videoSrc && !imageSrc"
+          ref="caseMedia"
           :src="videoSrc"
           :final-link="routeTo"
           :diamond-color="props.primaryColor"
           :final-overlay-time="props.finalOverlayTime"
+        />
+        <CaseImage
+          v-else-if="imageSrc"
+          ref="caseMedia"
+          :src="imageSrc"
+          :alt="subtitle"
+          :final-link="routeTo"
+          :diamond-color="props.primaryColor"
         />
       </div>
       <RouterLink
@@ -60,6 +69,7 @@
 import { onMounted, onUnmounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import CaseVideo from "./CaseVideo.vue";
+import CaseImage from "./CaseImage.vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 
 const props = defineProps({
@@ -73,7 +83,11 @@ const props = defineProps({
   },
   videoSrc: {
     type: String,
-    required: true,
+    default: "",
+  },
+  imageSrc: {
+    type: String,
+    default: "",
   },
   routeTo: {
     type: String,
@@ -98,12 +112,12 @@ const props = defineProps({
 });
 
 const caseElement = ref(null);
-const caseVideo = ref(null);
+const caseMedia = ref(null);
 let observer = null;
 
 function handleNavigationClick() {
-  // Save video state before navigating
-  caseVideo.value?.handleStoryLinkClick();
+  // Save media state before navigating
+  caseMedia.value?.handleStoryLinkClick();
 }
 
 onMounted(() => {
@@ -111,9 +125,9 @@ onMounted(() => {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          caseVideo.value?.handleEnter();
+          caseMedia.value?.handleEnter();
         } else {
-          caseVideo.value?.handleLeave();
+          caseMedia.value?.handleLeave();
         }
       });
     },
@@ -245,13 +259,18 @@ onUnmounted(() => {
 }
 
 /* Dark mode - subtle white border */
-.case-item.dark-mode .video-wrapper {
+.case-item.dark-mode .video-wrapper:not(.image-wrapper) {
   border: 2px solid #ffffff10;
 }
 
 /* Light mode - subtle dark border */
-.case-item.light-mode .video-wrapper {
+.case-item.light-mode .video-wrapper:not(.image-wrapper) {
   border: 2px solid #00000010;
+}
+
+/* No border for image wrapper */
+.video-wrapper.image-wrapper {
+  border: none;
 }
 
 .desktop-only {

@@ -32,6 +32,7 @@
           :title="caseData.title"
           :subtitle="caseData.subtitle"
           :video-src="caseData.videoSrc"
+          :image-src="caseData.imageSrc"
           :route-to="caseData.routeTo"
           :primary-color="caseData.primaryColor"
           :background-color="caseData.backgroundColor"
@@ -74,11 +75,11 @@ const casesData = [
   },
   {
     id: "case2",
-    title: "Story Two Title",
-    subtitle: "Client Two",
-    videoSrc: new URL("@/assets/case-videos/case2.mp4", import.meta.url).href,
+    title: "Redesigning the Internal Communications App",
+    subtitle: "Smarp",
+    imageSrc: new URL("@/assets/images/smarp-main.png", import.meta.url).href,
     routeTo: "/story/two",
-    backgroundColor: "#f2668b", // Pink from design system
+    backgroundColor: "#E9D3D2",
   },
   {
     id: "case3",
@@ -114,7 +115,7 @@ const isDarkMode = ref(true); // Navigation mode based on background
 const sectionColors = {
   intro: "#171717", // Default dark
   case1: "#ffffff", // White
-  case2: "#f2668b", // Pink
+  case2: "#E9D3D2", // Smarp background
   case3: "#171717", // Default dark
   "ai-play": "#171717", // Default dark
   contacts: "#171717", // Default dark
