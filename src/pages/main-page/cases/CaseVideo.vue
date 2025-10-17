@@ -15,10 +15,12 @@
       <video
         ref="videoElement"
         class="case-video-element"
+        :class="{ 'video-paused-blur': !isPlaying && hasStartedPlayback }"
         :src="props.src"
         :muted="shouldBeMutedByDefault || isMuted"
         playsinline
         @ended="handleVideoEnded"
+        @timeupdate="handleTimeUpdate"
       ></video>
     </motion.div>
 
@@ -42,7 +44,7 @@
         @click="togglePlayPause"
         aria-label="Play video"
       >
-        <path d="M30 20 L30 80 L75 50 Z" stroke-linejoin="round" stroke-linecap="round" />
+        <path d="M30 20 L30 80 L75 50 Z" stroke-linejoin="round" stroke-linecap="round" stroke-width="10" />
       </svg>
     </motion.div>
 
@@ -292,6 +294,10 @@ const props = defineProps({
   diamondColor: {
     type: String,
     default: "#319BF8",
+  },
+  finalOverlayTime: {
+    type: Number,
+    default: null, // If null, show on video end; otherwise show at this time in seconds
   },
 });
 
@@ -628,11 +634,26 @@ function attemptPlay() {
     });
 }
 
+function handleTimeUpdate(event) {
+  // If finalOverlayTime is set, show overlay at that time
+  if (props.finalOverlayTime !== null && !showFinalOverlay.value) {
+    const video = event.target;
+    if (video.currentTime >= props.finalOverlayTime) {
+      showFinalOverlay.value = true;
+      finalOverlayState.value = "visible";
+      // Don't hide video, don't pause - let it keep playing with audio
+    }
+  }
+}
+
 function handleVideoEnded() {
-  showFinalOverlay.value = true;
-  finalOverlayState.value = "visible";
-  videoState.value = "hidden";
-  isPlaying.value = false;
+  // Only trigger on video end if finalOverlayTime is not set
+  if (props.finalOverlayTime === null) {
+    showFinalOverlay.value = true;
+    finalOverlayState.value = "visible";
+    videoState.value = "hidden";
+    isPlaying.value = false;
+  }
 }
 
 function replayVideo() {
@@ -957,6 +978,11 @@ defineExpose({
   height: 100%;
   object-fit: cover;
   border-radius: clamp(12px, 1.6vw, 16px);
+  transition: filter 0.3s ease;
+}
+
+.case-video-element.video-paused-blur {
+  filter: blur(10px) brightness(1.1);
 }
 
 .case-video-shell {
@@ -1171,9 +1197,7 @@ defineExpose({
 .pause-overlay-blur {
   position: absolute;
   inset: 0;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.2); /* 20% white tint */
+  background: rgba(255, 255, 255, 0.15); /* Light overlay for contrast */
   cursor: pointer;
 }
 
@@ -1187,7 +1211,8 @@ defineExpose({
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1));
   transition: opacity 0.2s ease;
   stroke: #000000;
-  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
 }
 
 .pause-play-icon:hover {

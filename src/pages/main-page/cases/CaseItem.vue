@@ -26,6 +26,7 @@
           :src="videoSrc"
           :final-link="routeTo"
           :diamond-color="props.primaryColor"
+          :final-overlay-time="props.finalOverlayTime"
         />
       </div>
       <RouterLink
@@ -89,6 +90,10 @@ const props = defineProps({
   darkMode: {
     type: Boolean,
     default: true,
+  },
+  finalOverlayTime: {
+    type: Number,
+    default: null,
   },
 });
 

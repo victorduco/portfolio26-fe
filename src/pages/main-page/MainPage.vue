@@ -36,6 +36,7 @@
           :primary-color="caseData.primaryColor"
           :background-color="caseData.backgroundColor"
           :dark-mode="isDarkMode"
+          :final-overlay-time="caseData.finalOverlayTime"
         />
       </section>
       <section id="ai-play" class="item">
@@ -69,6 +70,7 @@ const casesData = [
     routeTo: "/story/one",
     primaryColor: "#319BF8",
     backgroundColor: "#ffffff", // White for case 1
+    finalOverlayTime: 39.5, // Show final overlay at 39.5 seconds
   },
   {
     id: "case2",
