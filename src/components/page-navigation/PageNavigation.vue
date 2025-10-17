@@ -16,6 +16,7 @@
       :intro-fade-out="introFadeOutIndex === index"
       :intro-complete="introFinished"
       :icon="section.icon"
+      :dark-mode="props.darkMode"
       @navigate="handleNavigate"
     />
   </nav>
@@ -58,6 +59,7 @@
             :is-active="activeSection === section.id"
             :icon="section.icon"
             :mobile-mode="true"
+            :dark-mode="props.darkMode"
             @navigate="handleMobileNavigate"
           />
         </nav>
@@ -102,6 +104,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  darkMode: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const activeSection = ref(""); // Не активируем ничего до завершения intro анимации
@@ -141,6 +147,7 @@ function setupIntersectionObserver() {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         activeSection.value = entry.target.id;
+        emit("activeSectionChange", entry.target.id);
       }
     });
   }, options);
@@ -153,7 +160,7 @@ function setupIntersectionObserver() {
   });
 }
 
-const emit = defineEmits(["animationComplete"]);
+const emit = defineEmits(["animationComplete", "activeSectionChange"]);
 
 function startIntroAnimation() {
   const totalSections = props.sections.length;

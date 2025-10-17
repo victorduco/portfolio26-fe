@@ -247,6 +247,16 @@ function handleClick(event) {
   background: rgba(255, 255, 255, 0.08);
 }
 
+/* Mobile dark mode */
+.nav-item-wrapper.mobile.dark-mode .nav-item-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Mobile light mode */
+.nav-item-wrapper.mobile.light-mode .nav-item-label {
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
 .mobile .nav-item-label-text {
   line-height: 1.2;
 }
@@ -271,13 +281,27 @@ function handleClick(event) {
   border-radius: 3px;
 }
 
+/* Light mode - invert colors for navigation squares */
+.nav-item-wrapper.light-mode .nav-item {
+  filter: invert(1);
+}
+
 .nav-item-label {
   font-size: 14px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
+}
+
+/* Dark mode - white text for dark backgrounds */
+.nav-item-wrapper.dark-mode .nav-item-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Light mode - dark text for light backgrounds */
+.nav-item-wrapper.light-mode .nav-item-label {
+  color: rgba(0, 0, 0, 0.9) !important;
 }
 
 .nav-item-label-content {

@@ -1,5 +1,12 @@
 <template>
-  <div :class="`case${caseId}-page`">
+  <div
+    :class="`case${caseId}-page`"
+    :style="{
+      backgroundColor: currentBackgroundColor,
+      color: currentTextColor,
+      transition: 'background-color 0.5s ease, color 0.5s ease',
+    }"
+  >
     <NavigationChevron
       class="case-page-back"
       type="route"
@@ -10,6 +17,7 @@
     <PageNavigation
       :sections="navigationSections"
       :enable-intro-animation="false"
+      :dark-mode="isDarkMode"
     />
     <section :id="`case${caseId}-summary`">
       <component :is="SummaryComponent" />
@@ -28,7 +36,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, ref } from "vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import AppFooter from "@/components/app-footer/AppFooter.vue";
@@ -43,6 +51,34 @@ const props = defineProps({
 });
 
 useMeta(`case${props.caseId}`);
+
+// Define colors for each case
+const caseColors = {
+  1: "#ffffff", // White for case 1
+  2: "#f2668b", // Pink for case 2
+  3: "#171717", // Dark for case 3
+};
+
+// Function to determine text color based on background brightness
+function getContrastTextColor(backgroundColor) {
+  const hex = backgroundColor.replace("#", "");
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Calculate relative luminance
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Return dark text for light backgrounds, light text for dark backgrounds
+  return luminance > 0.5 ? "#000000" : "#ffffff";
+}
+
+// Set colors based on case ID
+const currentBackgroundColor = ref(caseColors[props.caseId]);
+const currentTextColor = ref(getContrastTextColor(caseColors[props.caseId]));
+const isDarkMode = ref(
+  getContrastTextColor(caseColors[props.caseId]) === "#ffffff"
+);
 
 const SummaryComponent = defineAsyncComponent(() =>
   import(`../case${props.caseId}-page/case${props.caseId}/Summary.vue`)

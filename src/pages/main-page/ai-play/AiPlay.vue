@@ -1,5 +1,8 @@
 <template>
-  <section class="ai-play">
+  <section
+    class="ai-play"
+    :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
+  >
     <div class="ai-play__container">
       <div class="ai-play__content">
         <h2 class="ai-play__title">AI Playground</h2>
@@ -58,7 +61,12 @@
 </template>
 
 <script setup>
-// AI Play section
+defineProps({
+  darkMode: {
+    type: Boolean,
+    default: true,
+  },
+});
 </script>
 
 <style scoped>
@@ -69,7 +77,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #319bf8;
+  /* background removed - using dynamic page background */
   padding: clamp(48px, 10vh, 120px) 0;
 }
 
@@ -91,8 +99,17 @@
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.03em;
-  color: #000000;
   margin: 0;
+}
+
+/* Dark mode - white text for dark backgrounds */
+.ai-play.dark-mode .ai-play__title {
+  color: #ffffff;
+}
+
+/* Light mode - dark text for light backgrounds */
+.ai-play.light-mode .ai-play__title {
+  color: #000000;
 }
 
 .ai-play__text {
@@ -100,9 +117,18 @@
   font-weight: 400;
   line-height: 1.6;
   letter-spacing: -0.01em;
-  color: rgba(0, 0, 0, 0.85);
   margin: 0;
   max-width: 700px;
+}
+
+/* Dark mode - white text for dark backgrounds */
+.ai-play.dark-mode .ai-play__text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Light mode - dark text for light backgrounds */
+.ai-play.light-mode .ai-play__text {
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .ai-play__button {
@@ -111,8 +137,7 @@
   gap: 12px;
   align-self: flex-start;
   padding: 16px 32px;
-  background: #000000;
-  color: #ffffff;
+  /* background removed - using dynamic page background */
   font-size: 16px;
   font-weight: 600;
   line-height: 1;
@@ -121,6 +146,16 @@
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+}
+
+/* Dark mode - white text for dark backgrounds */
+.ai-play.dark-mode .ai-play__button {
+  color: #ffffff;
+}
+
+/* Light mode - dark text for light backgrounds */
+.ai-play.light-mode .ai-play__button {
+  color: #000000;
 }
 
 .ai-play__button:hover {

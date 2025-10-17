@@ -111,7 +111,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #171717;
+  /* background removed - using dynamic page background */
 }
 
 .contacts__content {

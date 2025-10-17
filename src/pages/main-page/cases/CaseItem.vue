@@ -1,5 +1,9 @@
 <template>
-  <div class="case-item" ref="caseElement">
+  <div
+    class="case-item"
+    ref="caseElement"
+    :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
+  >
     <div class="case-content">
       <div class="case-heading">
         <div class="case-heading-text">
@@ -12,6 +16,7 @@
           :to="routeTo"
           direction="forward"
           :aria-label="`Open ${subtitle}`"
+          :dark-mode="darkMode"
           @click="handleNavigationClick"
         />
       </div>
@@ -77,6 +82,14 @@ const props = defineProps({
     type: String,
     default: "#979797",
   },
+  backgroundColor: {
+    type: String,
+    default: "#171717",
+  },
+  darkMode: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const caseElement = ref(null);
@@ -122,7 +135,7 @@ onUnmounted(() => {
 
 <style scoped>
 .case-item {
-  background: #171717;
+  /* background removed - using dynamic page background */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -172,6 +185,16 @@ onUnmounted(() => {
   max-width: 100%;
 }
 
+/* Dark mode - white text for dark backgrounds */
+.case-item.dark-mode .case-title {
+  color: #ffffff;
+}
+
+/* Light mode - dark text for light backgrounds */
+.case-item.light-mode .case-title {
+  color: #000000;
+}
+
 .case-subtitle {
   margin: 0;
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
@@ -180,9 +203,18 @@ onUnmounted(() => {
   font-size: 16px;
   line-height: 19px;
   text-align: left;
-  color: #ffffff;
   opacity: 0.6;
   max-width: 100%;
+}
+
+/* Dark mode - white text for dark backgrounds */
+.case-item.dark-mode .case-subtitle {
+  color: #ffffff;
+}
+
+/* Light mode - dark text for light backgrounds */
+.case-item.light-mode .case-subtitle {
+  color: #000000;
 }
 
 .case-heading-action {
@@ -198,7 +230,6 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: 2px solid #ffffff10;
   box-shadow: none;
   flex: 1 1 auto;
   overflow: hidden;
@@ -206,6 +237,16 @@ onUnmounted(() => {
   transform-origin: center;
   aspect-ratio: 1662 / 1080;
   max-height: 100%;
+}
+
+/* Dark mode - subtle white border */
+.case-item.dark-mode .video-wrapper {
+  border: 2px solid #ffffff10;
+}
+
+/* Light mode - subtle dark border */
+.case-item.light-mode .video-wrapper {
+  border: 2px solid #00000010;
 }
 
 .desktop-only {
@@ -274,7 +315,6 @@ onUnmounted(() => {
     justify-content: center;
     gap: 8px;
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.7);
     font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
     font-weight: 500;
     font-size: 16px;
@@ -289,12 +329,24 @@ onUnmounted(() => {
     align-self: center;
   }
 
-  .case-action:hover {
+  /* Dark mode - white text for dark backgrounds */
+  .case-item.dark-mode .case-action {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .case-item.dark-mode .case-action:hover,
+  .case-item.dark-mode .case-action:active {
     color: #ffffff;
   }
 
-  .case-action:active {
-    color: #ffffff;
+  /* Light mode - dark text for light backgrounds */
+  .case-item.light-mode .case-action {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .case-item.light-mode .case-action:hover,
+  .case-item.light-mode .case-action:active {
+    color: #000000;
   }
 
   .case-action-text {

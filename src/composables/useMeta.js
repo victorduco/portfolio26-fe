@@ -24,6 +24,12 @@ export function useMeta(pageKey) {
   };
 
   const updateMeta = () => {
+    // Проверяем, что route доступен
+    if (!route?.path) {
+      console.warn("Route not available for meta update");
+      return;
+    }
+
     // Получаем данные для страницы
     const title = META_CONFIG.getTitle(pageKey);
     const description = META_CONFIG.getDescription(pageKey);
@@ -87,7 +93,7 @@ export function useMeta(pageKey) {
   });
 
   // Обновляем мета при изменении роута (если компонент переиспользуется)
-  watch(() => route.path, updateMeta);
+  watch(() => route?.path, updateMeta);
 
   return {
     updateMeta,
