@@ -31,6 +31,7 @@
         <CaseItem
           :title="caseData.title"
           :subtitle="caseData.subtitle"
+          :description="caseData.description"
           :video-src="caseData.videoSrc"
           :image-src="caseData.imageSrc"
           :route-to="caseData.routeTo"
@@ -38,6 +39,7 @@
           :background-color="caseData.backgroundColor"
           :dark-mode="isDarkMode"
           :final-overlay-time="caseData.finalOverlayTime"
+          :use-split-layout="caseData.useSplitLayout"
         />
       </section>
       <section id="ai-play" class="item">
@@ -77,9 +79,11 @@ const casesData = [
     id: "case2",
     title: "Redesigning the Internal Communications App",
     subtitle: "Smarp",
-    imageSrc: new URL("@/assets/images/smarp-main.png", import.meta.url).href,
+    description: "Communication platform for teams",
+    imageSrc: new URL("@/assets/images/p2-3@2x.png", import.meta.url).href,
     routeTo: "/story/two",
     backgroundColor: "#E9D3D2",
+    useSplitLayout: true,
   },
   {
     id: "case3",

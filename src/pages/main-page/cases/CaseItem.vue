@@ -1,5 +1,18 @@
 <template>
+  <!-- Use Case2SplitLayout for case2 -->
+  <Case2SplitLayout
+    v-if="useSplitLayout"
+    ref="caseMedia"
+    :title="title"
+    :description="description"
+    :image-src="imageSrc"
+    :route-to="routeTo"
+    @navigation-click="handleNavigationClick"
+  />
+
+  <!-- Default layout for other cases -->
   <div
+    v-else
     class="case-item"
     ref="caseElement"
     :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
@@ -70,6 +83,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import CaseVideo from "./CaseVideo.vue";
 import CaseImage from "./CaseImage.vue";
+import Case2SplitLayout from "./Case2SplitLayout.vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 
 const props = defineProps({
@@ -80,6 +94,10 @@ const props = defineProps({
   subtitle: {
     type: String,
     required: true,
+  },
+  description: {
+    type: String,
+    default: "",
   },
   videoSrc: {
     type: String,
@@ -108,6 +126,10 @@ const props = defineProps({
   finalOverlayTime: {
     type: Number,
     default: null,
+  },
+  useSplitLayout: {
+    type: Boolean,
+    default: false,
   },
 });
 
