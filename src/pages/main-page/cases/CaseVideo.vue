@@ -10,6 +10,7 @@
       :animate="videoState"
       :variants="videoVariants"
       :transition="videoTransition"
+      @click="handleVideoClick"
     >
       <video
         ref="videoElement"
@@ -19,6 +20,36 @@
         playsinline
         @ended="handleVideoEnded"
       ></video>
+    </motion.div>
+
+    <!-- Large Play Button (center) -->
+    <motion.div
+      v-if="!isPlaying && !showFinalOverlay && hasStartedPlayback"
+      class="case-video-play-overlay"
+      @click="togglePlayPause"
+      :initial="{ opacity: 0, scale: 0.8 }"
+      :animate="{ opacity: 1, scale: 1 }"
+      :exit="{ opacity: 0, scale: 0.8 }"
+      :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
+    >
+      <motion.button
+        class="large-play-button"
+        type="button"
+        @mouseenter="largePlayHovered = true"
+        @mouseleave="largePlayHovered = false"
+        :animate="largePlayHovered ? 'hover' : 'default'"
+        :variants="largePlayButtonVariants"
+        :transition="buttonTransition"
+        aria-label="Play video"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="large-play-icon"
+        >
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </motion.button>
     </motion.div>
 
     <!-- Video Controls Bar -->
@@ -289,6 +320,7 @@ const restartHovered = ref(false);
 const finalRestartHovered = ref(false);
 const fullscreenHovered = ref(false);
 const linkHovered = ref(false);
+const largePlayHovered = ref(false);
 const wasStateRestored = ref(false); // Track if state was restored
 const shouldSaveState = ref(false); // Track if we should save state on unmount
 const userPaused = ref(false); // Track if user manually paused the video
@@ -296,6 +328,9 @@ const isFullscreen = ref(false);
 
 // Video starts muted on small screens by default
 const shouldBeMutedByDefault = computed(() => isSmallScreen.value);
+
+// Check if user has interacted (for template)
+const userHasInteracted = computed(() => getUserHasInteracted());
 
 // Storage key based on video src
 const getStorageKey = () => `video-state-${props.src}`;
@@ -382,7 +417,16 @@ let playTimeout = null;
 let initialHoldTimeout = null;
 let initialCleanupTimeout = null;
 let finalCleanupTimeout = null;
-let userHasInteracted = false; // Track if user has interacted with the page
+let playAttempts = 0; // Track number of play attempts to prevent infinite loop
+
+// Global flag shared across all video instances via sessionStorage
+function getUserHasInteracted() {
+  return sessionStorage.getItem('user-has-interacted') === 'true';
+}
+
+function setUserHasInteracted() {
+  sessionStorage.setItem('user-has-interacted', 'true');
+}
 
 function getVideoElement() {
   const target = videoElement.value;
@@ -436,6 +480,17 @@ const buttonTransition = {
   stiffness: 320,
   damping: 11,
   mass: 1.2,
+};
+
+const largePlayButtonVariants = {
+  default: {
+    scale: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+  hover: {
+    scale: 1.1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+  },
 };
 
 const iconVariants = {
@@ -492,31 +547,77 @@ function clearFinalTimers() {
 
 function attemptPlay() {
   const video = getVideoElement();
+  const userHasInteracted = getUserHasInteracted();
+
+  console.log('[CaseVideo] attemptPlay', {
+    hasVideo: !!video,
+    showFinalOverlay: showFinalOverlay.value,
+    paused: video?.paused,
+    hasStartedPlayback: hasStartedPlayback.value,
+    userHasInteracted,
+    playAttempts,
+  });
+
   if (!video || showFinalOverlay.value) return;
 
   // Don't try to play if already playing
-  if (!video.paused && hasStartedPlayback.value) return;
+  if (!video.paused && hasStartedPlayback.value) {
+    console.log('[CaseVideo] Already playing, skipping');
+    return;
+  }
+
+  // Limit retry attempts to prevent infinite loop
+  playAttempts++;
+  if (playAttempts > 3) {
+    console.warn('[CaseVideo] Max play attempts reached, falling back to muted');
+    // Fall back to muted playback
+    video.muted = true;
+    isMuted.value = true;
+  }
 
   // If user hasn't interacted yet, try muted playback first
   const shouldTryMuted = !userHasInteracted && !shouldBeMutedByDefault.value;
   video.muted = shouldTryMuted ? true : (shouldBeMutedByDefault.value || isMuted.value);
   video.playsInline = true;
 
+  console.log('[CaseVideo] Calling video.play()', {
+    muted: video.muted,
+    shouldTryMuted,
+    userHasInteracted,
+  });
+
   video
     .play()
     .then(() => {
+      console.log('[CaseVideo] Play succeeded');
+      playAttempts = 0; // Reset on success
       hasStartedPlayback.value = true;
       isPlaying.value = true;
       videoState.value = "visible";
 
-      // If we started muted due to no interaction, try to unmute after user interacts
+      // If we started muted due to no interaction, update state
       if (shouldTryMuted) {
-        isMuted.value = true; // Update state to show muted
+        isMuted.value = true;
+
+        // Try to unmute immediately if user has already interacted
+        if (getUserHasInteracted()) {
+          console.log('[CaseVideo] Unmuting after play (user already interacted)');
+          video.muted = false;
+          isMuted.value = false;
+        }
       }
     })
-    .catch(() => {
+    .catch((error) => {
       /* Handle autoplay rejections */
-      if (!hasStartedPlayback.value && !showFinalOverlay.value) {
+      console.error('[CaseVideo] Play failed:', error.message);
+
+      // If autoplay failed with sound, just show play button instead of retrying
+      if (userHasInteracted && !video.muted) {
+        console.log('[CaseVideo] Autoplay with sound blocked - showing play button');
+        hasStartedPlayback.value = true; // Show play button
+        playAttempts = 0; // Reset
+      } else if (!hasStartedPlayback.value && !showFinalOverlay.value && playAttempts <= 3) {
+        console.log('[CaseVideo] Retrying...');
         schedulePlay(300);
       }
     });
@@ -572,10 +673,22 @@ function schedulePlay(delay = 0) {
 
 function handleEnter() {
   const video = getVideoElement();
+  const userHasInteracted = getUserHasInteracted();
+
+  console.log('[CaseVideo] handleEnter', {
+    hasVideo: !!video,
+    wasStateRestored: wasStateRestored.value,
+    showFinalOverlay: showFinalOverlay.value,
+    userPaused: userPaused.value,
+    userHasInteracted,
+    hasStartedPlayback: hasStartedPlayback.value,
+  });
+
   if (!video) return;
 
   // Don't auto-play if we just restored state
   if (wasStateRestored.value) {
+    console.log('[CaseVideo] Skipping - state was restored');
     wasStateRestored.value = false;
     return;
   }
@@ -583,10 +696,14 @@ function handleEnter() {
   // Always show video when entering viewport
   videoState.value = "visible";
 
-  // Auto-play only if user hasn't manually paused and not showing final overlay
-  if (!showFinalOverlay.value && !userPaused.value) {
-    // Always attempt play when entering viewport (whether paused or not started)
+  // If user has interacted before, try autoplay with sound
+  if (!showFinalOverlay.value && !userPaused.value && userHasInteracted) {
+    console.log('[CaseVideo] User has interacted - attempting autoplay with sound');
     schedulePlay();
+  } else if (!hasStartedPlayback.value) {
+    // Show first frame and play button
+    console.log('[CaseVideo] No interaction yet - showing play button');
+    hasStartedPlayback.value = true;
   }
 }
 
@@ -596,6 +713,9 @@ function handleLeave() {
     clearTimeout(playTimeout);
     playTimeout = null;
   }
+
+  // Reset play attempts counter
+  playAttempts = 0;
 
   // Auto-pause when leaving viewport (not user-initiated)
   if (video && typeof video.pause === "function" && !video.paused) {
@@ -607,18 +727,50 @@ function handleLeave() {
   // Don't hide video to prevent black screen on return
 }
 
+function handleVideoClick(event) {
+  // Don't toggle if clicking on control buttons
+  if (event.target.closest('.case-video-controls')) {
+    return;
+  }
+  togglePlayPause();
+}
+
 function togglePlayPause() {
   const video = getVideoElement();
+  console.log('[CaseVideo] togglePlayPause', {
+    hasVideo: !!video,
+    paused: video?.paused,
+    userHasInteracted: getUserHasInteracted(),
+  });
+
   if (!video) return;
 
   if (video.paused) {
-    // User is resuming playback
+    // User is resuming playback - this is user interaction, unmute if needed
+    console.log('[CaseVideo] Resuming playback - marking as interacted');
     userPaused.value = false;
+    setUserHasInteracted();
+
+    // Always unmute on user click (desktop only)
+    if (!shouldBeMutedByDefault.value) {
+      console.log('[CaseVideo] Unmuting on user click');
+      video.muted = false;
+      isMuted.value = false;
+    } else {
+      // On mobile, keep muted
+      video.muted = true;
+      isMuted.value = true;
+    }
+
     video.play().then(() => {
+      console.log('[CaseVideo] Play succeeded after user click');
       isPlaying.value = true;
+      hasStartedPlayback.value = true;
+      videoState.value = "visible";
     });
   } else {
     // User is manually pausing
+    console.log('[CaseVideo] User manually pausing');
     userPaused.value = true;
     video.pause();
     isPlaying.value = false;
@@ -703,9 +855,10 @@ function handleFullscreenChange() {
 
 // Handle user interaction to unlock autoplay with sound
 function handleUserInteraction() {
-  if (userHasInteracted) return; // Already handled
+  if (getUserHasInteracted()) return; // Already handled
 
-  userHasInteracted = true;
+  // Mark as interacted
+  setUserHasInteracted();
 
   // If video is playing but muted due to autoplay restrictions, try to unmute
   const video = getVideoElement();
@@ -713,6 +866,15 @@ function handleUserInteraction() {
     video.muted = false;
     isMuted.value = false;
   }
+
+  // Remove listeners after first interaction
+  removeInteractionListeners();
+}
+
+function removeInteractionListeners() {
+  document.removeEventListener("click", handleUserInteraction);
+  document.removeEventListener("touchstart", handleUserInteraction);
+  document.removeEventListener("keydown", handleUserInteraction);
 }
 
 onMounted(() => {
@@ -738,11 +900,11 @@ onMounted(() => {
   document.addEventListener("fullscreenchange", handleFullscreenChange);
   document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 
-  // Listen for user interactions to unlock autoplay
-  window.addEventListener("scroll", handleUserInteraction, { once: true, passive: true });
-  document.addEventListener("click", handleUserInteraction, { once: true });
-  document.addEventListener("touchstart", handleUserInteraction, { once: true, passive: true });
-  document.addEventListener("keydown", handleUserInteraction, { once: true });
+  // Listen for REAL user interactions to unlock autoplay (not scroll!)
+  // Scroll is NOT a valid user gesture for media autoplay policy
+  document.addEventListener("click", handleUserInteraction);
+  document.addEventListener("touchstart", handleUserInteraction, { passive: true });
+  document.addEventListener("keydown", handleUserInteraction);
 });
 
 onUnmounted(() => {
@@ -764,11 +926,8 @@ onUnmounted(() => {
     handleFullscreenChange
   );
 
-  // Remove user interaction listeners (in case they weren't triggered)
-  window.removeEventListener("scroll", handleUserInteraction);
-  document.removeEventListener("click", handleUserInteraction);
-  document.removeEventListener("touchstart", handleUserInteraction);
-  document.removeEventListener("keydown", handleUserInteraction);
+  // Remove user interaction listeners
+  removeInteractionListeners();
 });
 
 defineExpose({
@@ -799,6 +958,7 @@ defineExpose({
   position: absolute;
   inset: 0;
   z-index: 1;
+  cursor: pointer;
 }
 
 .case-video-final {
@@ -989,6 +1149,68 @@ defineExpose({
   .control-icon {
     width: 18px;
     height: 18px;
+  }
+}
+
+/* Large Play Button (center overlay) */
+.case-video-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2; /* Below controls (z-index: 3) */
+  pointer-events: none; /* Don't block controls */
+  cursor: pointer;
+}
+
+.large-play-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  pointer-events: auto; /* Only button is clickable */
+}
+
+.large-play-button:focus {
+  outline: none !important;
+}
+
+.large-play-button:focus-visible {
+  outline: none !important;
+}
+
+.large-play-button:active {
+  background: rgba(0, 0, 0, 0.9) !important;
+  outline: none !important;
+}
+
+.large-play-icon {
+  width: 36px;
+  height: 36px;
+  margin-left: 4px; /* Optical alignment for play icon */
+}
+
+@media (max-width: 899px) {
+  .large-play-button {
+    width: 64px;
+    height: 64px;
+  }
+
+  .large-play-icon {
+    width: 28px;
+    height: 28px;
   }
 }
 </style>
