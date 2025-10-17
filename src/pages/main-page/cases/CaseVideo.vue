@@ -44,7 +44,13 @@
         @click="togglePlayPause"
         aria-label="Play video"
       >
-        <path d="M30 20 L30 80 L75 50 Z" stroke-linejoin="round" stroke-linecap="round" stroke-width="10" />
+        <defs>
+          <filter id="round">
+            <feMorphology operator="dilate" radius="1" />
+            <feGaussianBlur stdDeviation="1" />
+          </filter>
+        </defs>
+        <path d="M30 25 Q30 20 35 20 L70 47 Q75 50 70 53 L35 80 Q30 80 30 75 Z" filter="url(#round)" />
       </svg>
     </motion.div>
 
