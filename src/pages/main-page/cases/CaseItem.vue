@@ -10,6 +10,16 @@
     @navigation-click="handleNavigationClick"
   />
 
+  <!-- Use Case3UniqueLayout for case3 -->
+  <Case3UniqueLayout
+    v-else-if="useUniqueLayout"
+    ref="caseMedia"
+    :title="title"
+    :company="subtitle"
+    :image-src="imageSrc"
+    :background-color="backgroundColor"
+  />
+
   <!-- Default layout for other cases -->
   <div
     v-else
@@ -84,6 +94,7 @@ import { RouterLink } from "vue-router";
 import CaseVideo from "./CaseVideo.vue";
 import CaseImage from "./CaseImage.vue";
 import Case2SplitLayout from "./Case2SplitLayout.vue";
+import Case3UniqueLayout from "./Case3UniqueLayout.vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 
 const props = defineProps({
@@ -128,6 +139,10 @@ const props = defineProps({
     default: null,
   },
   useSplitLayout: {
+    type: Boolean,
+    default: false,
+  },
+  useUniqueLayout: {
     type: Boolean,
     default: false,
   },

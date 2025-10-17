@@ -40,6 +40,7 @@
           :dark-mode="isDarkMode"
           :final-overlay-time="caseData.finalOverlayTime"
           :use-split-layout="caseData.useSplitLayout"
+          :use-unique-layout="caseData.useUniqueLayout"
         />
       </section>
       <section id="ai-play" class="item">
@@ -87,11 +88,12 @@ const casesData = [
   },
   {
     id: "case3",
-    title: "Story Three Title",
-    subtitle: "Client Three",
-    videoSrc: new URL("@/assets/case-videos/case3.mp4", import.meta.url).href,
+    title: "From Chaos to Clarity: Terminal Shift Redesign",
+    subtitle: "Mirai",
+    imageSrc: new URL("@/assets/images/cs3-ipad.png", import.meta.url).href,
     routeTo: "/story/three",
-    backgroundColor: "#171717", // Default dark background
+    backgroundColor: "#EAF5FF",
+    useUniqueLayout: true,
   },
 ];
 
@@ -120,7 +122,7 @@ const sectionColors = {
   intro: "#171717", // Default dark
   case1: "#ffffff", // White
   case2: "#E9D3D2", // Smarp background
-  case3: "#171717", // Default dark
+  case3: "#EAF5FF", // Mirai background
   "ai-play": "#171717", // Default dark
   contacts: "#171717", // Default dark
 };
