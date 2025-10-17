@@ -1,13 +1,29 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted } from "vue";
 import { RouterView } from "vue-router";
 import Keypad from "./components/keypad/Keypad.vue";
+import { useAuth } from "./composables/useAuth.js";
+import { useMixpanel } from "./composables/useMixpanel.js";
 
-const isUnlocked = ref(false);
+const { isAuthenticated, checkAuth, setAuthenticated } = useAuth();
+const mixpanel = useMixpanel();
+
+onMounted(async () => {
+  await checkAuth();
+});
+
+const handleUnlock = async () => {
+  // Track successful unlock event
+  mixpanel.track("Gate Unlocked");
+
+  // Mark as authenticated and check with backend
+  setAuthenticated(true);
+  await checkAuth();
+};
 </script>
 
 <template>
-  <Keypad v-if="!isUnlocked" @unlock="isUnlocked = true" />
+  <Keypad v-if="!isAuthenticated" @unlock="handleUnlock" />
 
   <div v-else class="app-shell">
     <main class="app-main">

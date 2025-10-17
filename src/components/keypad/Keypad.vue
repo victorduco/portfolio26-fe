@@ -65,7 +65,6 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
-import { useMeta } from "../../composables/useMeta.js";
 import {
   keypadGridVariants,
   keypadGridTransition,
@@ -77,8 +76,6 @@ import {
   preloadInitialBackgrounds,
   prefetchNextDigits,
 } from "../../utils/keypadBackgroundLoader.js";
-
-useMeta("keypad");
 
 const emit = defineEmits(["unlock"]);
 

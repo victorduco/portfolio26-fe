@@ -4,12 +4,12 @@ import "./styles/typography.css";
 import "./style.css";
 import "./styles/glass.css";
 import "./assets/fonts/intro-icons/intro-icons.css";
-import { RouterView } from "vue-router";
+import App from "./App.vue";
 import directivesPlugin from "./plugins/directives.js";
 import mixpanelPlugin from "./plugins/mixpanel.js";
 import router from "./router/index.js";
 
-const app = createApp(RouterView);
+const app = createApp(App);
 app.use(directivesPlugin);
 app.use(mixpanelPlugin);
 app.use(router);
