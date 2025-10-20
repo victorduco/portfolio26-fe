@@ -106,9 +106,6 @@ const casesData = [
       "@/assets/case-videos/case3-reversed-flipped.mp4",
       import.meta.url
     ).href,
-    videoPositionX: "30%",
-    videoPositionY: "30%",
-    videoScale: 0.5,
     routeTo: "/story/three",
     backgroundColor: "#EAF5FF",
     useUniqueLayout: true,

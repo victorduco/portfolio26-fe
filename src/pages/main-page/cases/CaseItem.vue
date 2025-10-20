@@ -17,6 +17,7 @@
     :title="title"
     :company="subtitle"
     :image-src="imageSrc"
+    :video-src="videoSrc"
     :background-color="backgroundColor"
   />
 

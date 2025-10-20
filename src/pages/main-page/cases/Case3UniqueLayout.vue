@@ -10,19 +10,39 @@
 
       <!-- Image Section: 70% height -->
       <div class="case3-image-section" ref="imageContainer">
-        <img
-          :src="imageSrc"
-          :alt="title"
-          class="case3-image"
-          ref="imageElement"
-        />
+        <!-- Media container with background image and video overlay -->
+        <motion.div
+          class="case3-media-container"
+          :style="{ backgroundImage: `url(${imageSrc})` }"
+          ref="mediaContainer"
+          :variants="mediaVariants"
+          :initial="'initial'"
+          :animate="animationState"
+          :transition="smoothTransition"
+        >
+          <!-- Video overlay positioned absolutely -->
+          <video
+            v-if="videoSrc"
+            :src="videoSrc"
+            class="case3-video"
+            :style="{
+              left: videoPositionX,
+              top: videoPositionY,
+              width: `${videoScale * 100}%`,
+            }"
+            muted
+            playsinline
+            ref="videoElement"
+          ></video>
+        </motion.div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import { cubicBezier, motion } from "motion-v";
 
 const props = defineProps({
   title: {
@@ -37,6 +57,22 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  videoSrc: {
+    type: String,
+    default: "",
+  },
+  videoPositionX: {
+    type: String,
+    default: "57.44%",
+  },
+  videoPositionY: {
+    type: String,
+    default: "23%",
+  },
+  videoScale: {
+    type: Number,
+    default: 0.1835,
+  },
   backgroundColor: {
     type: String,
     default: "#EAF5FF",
@@ -50,67 +86,117 @@ const textSection = ref(null);
 const titleElement = ref(null);
 const companyElement = ref(null);
 const imageContainer = ref(null);
-const imageElement = ref(null);
+const mediaContainer = ref(null);
+const videoElement = ref(null);
 let scrollListener = null;
-let hasAnimated = ref(false);
+let intersectionObserver = null;
+let hasVideoPlayed = ref(false);
+
+// Animation state for Motion
+const animationState = ref("initial");
+
+// Motion variants for zoom-out animation
+const mediaVariants = {
+  initial: {
+    scale: 9,
+    x: "-150%",
+    y: "90%",
+  },
+  animate: {
+    scale: 1,
+    x: "0%",
+    y: "0%",
+  },
+};
+
+// Smooth transition with delay
+const smoothTransition = {
+  duration: 1,
+  ease: cubicBezier(0.5, 0, 0.25, 1),
+  delay: 2.5,
+};
 
 function triggerFadeIn() {
-  if (!hasAnimated.value) {
-    hasAnimated.value = true;
-    if (titleElement.value) {
-      titleElement.value.style.animation = 'fadeIn 0.8s ease-out forwards';
+  console.log("[Case3UniqueLayout] Triggering fade-in and zoom animation");
+
+  // Play zoom and video only once
+  if (!hasVideoPlayed.value) {
+    console.log(
+      "[Case3UniqueLayout] Triggering zoom animation and playing video for the first time"
+    );
+    // Trigger zoom-out animation
+    animationState.value = "animate";
+
+    // Play video
+    if (videoElement.value) {
+      videoElement.value.play().catch((err) => {
+        console.error("[Case3UniqueLayout] Video play error:", err);
+      });
     }
-    if (companyElement.value) {
-      companyElement.value.style.animation = 'fadeIn 0.8s ease-out 0.2s forwards';
-    }
-    if (imageElement.value) {
-      imageElement.value.style.animation = 'fadeIn 1s ease-out 0.4s forwards';
-    }
+
+    hasVideoPlayed.value = true;
+  } else {
+    console.log("[Case3UniqueLayout] Animation already played, skipping");
   }
 }
 
 function updateParallax() {
   // Update parallax for entire image container
-  if (imageContainer.value && imageElement.value) {
+  if (imageContainer.value) {
     const rect = imageContainer.value.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
 
     // Calculate parallax offset based on scroll position
     const scrollProgress = 1 - (rect.top + rect.height / 2) / viewportHeight;
-    const parallaxOffset = Math.max(-50, Math.min(50, scrollProgress * 100 - 50));
+    const parallaxOffset = Math.max(
+      -50,
+      Math.min(50, scrollProgress * 100 - 50)
+    );
 
     imageContainer.value.style.transform = `translateY(${parallaxOffset}px)`;
-
-    // Calculate opacity based on scroll position
-    // Fade in when entering viewport (from top)
-    // Fade out when leaving viewport (from bottom)
-    const rectTop = rect.top;
-    const rectBottom = rect.bottom;
-
-    let opacity = 1;
-
-    // Fade in when entering from top (when scrolling down to this section)
-    if (rectTop > viewportHeight * 0.5) {
-      opacity = Math.max(0, 1 - (rectTop - viewportHeight * 0.5) / (viewportHeight * 0.3));
-    }
-    // Fade out when leaving from bottom (when scrolling down past this section)
-    else if (rectBottom < viewportHeight * 0.5) {
-      opacity = Math.max(0, rectBottom / (viewportHeight * 0.5));
-    }
-
-    imageElement.value.style.opacity = opacity;
   }
 }
 
+// Watch animation state changes
+watch(animationState, (newState, oldState) => {
+  console.log("[Case3UniqueLayout] Animation state changed:", {
+    oldState,
+    newState,
+  });
+});
+
 onMounted(() => {
-  console.log('[Case3UniqueLayout] Mounted', {
+  console.log("[Case3UniqueLayout] Mounted", {
     title: props.title,
     company: props.company,
     imageSrc: props.imageSrc,
+    videoSrc: props.videoSrc,
     titleElement: !!titleElement.value,
     companyElement: !!companyElement.value,
-    imageElement: !!imageElement.value,
+    mediaContainer: !!mediaContainer.value,
+    videoElement: !!videoElement.value,
+    animationState: animationState.value,
   });
+
+  // Setup IntersectionObserver to trigger animation when scrolling into view
+  intersectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          console.log("[Case3UniqueLayout] Element entered viewport");
+          triggerFadeIn();
+        }
+        // Don't reset animation when leaving viewport - play only once
+      });
+    },
+    {
+      threshold: 0.3, // Trigger when 30% of element is visible
+    }
+  );
+
+  if (layoutElement.value) {
+    intersectionObserver.observe(layoutElement.value);
+  }
 
   scrollListener = () => {
     requestAnimationFrame(updateParallax);
@@ -126,8 +212,7 @@ onMounted(() => {
     });
   }
 
-  // Trigger initial animations and parallax
-  triggerFadeIn();
+  // Don't trigger animations immediately - wait for scroll
   updateParallax();
 });
 
@@ -138,6 +223,12 @@ onUnmounted(() => {
     if (scrollContainer) {
       scrollContainer.removeEventListener("scroll", scrollListener);
     }
+  }
+
+  if (intersectionObserver && layoutElement.value) {
+    intersectionObserver.unobserve(layoutElement.value);
+    intersectionObserver.disconnect();
+    intersectionObserver = null;
   }
 });
 
@@ -245,13 +336,27 @@ defineExpose({
   margin-bottom: 0;
 }
 
-.case3-image {
-  display: block;
+/* Media container - holds both image and video */
+.case3-media-container {
+  position: relative;
   width: 100%;
-  height: auto;
-  object-fit: cover;
-  object-position: top center;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: top center;
   opacity: 1;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Video overlay */
+.case3-video {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 1;
+  aspect-ratio: 1974 / 1080;
+  border-radius: 10px;
 }
 
 /* Fade-in animation */
