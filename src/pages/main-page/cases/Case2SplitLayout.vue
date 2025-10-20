@@ -119,31 +119,37 @@ defineExpose({
 
 <style scoped>
 .case2-split-layout {
-  display: flex;
+  position: relative;
   width: 100%;
   height: 100dvh;
   overflow: hidden;
 }
 
-/* Left Side: Content */
+/* Left Side: Content - positioned over the image */
 .case2-content {
-  flex: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  z-index: 2;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: clamp(60px, 10vh, 120px) 20px 20px 20px;
   box-sizing: border-box;
+  pointer-events: none;
 }
 
 .case2-content-inner {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   gap: clamp(16px, 2vh, 24px);
-  padding: 0 20px;
-  max-width: 600px;
+  padding: 0 clamp(40px, 2.5vw, 60px);
+  max-width: 900px;
   width: 100%;
+  pointer-events: auto;
 }
 
 .case2-title {
@@ -167,10 +173,11 @@ defineExpose({
   text-align: left;
 }
 
-/* Right Side: Image with Parallax */
+/* Right Side: Image with Parallax - now full screen */
 .case2-image-container {
-  flex: 1;
-  position: relative;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   overflow: hidden;
   display: flex;
   align-items: center;
