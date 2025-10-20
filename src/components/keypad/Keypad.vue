@@ -314,6 +314,9 @@ async function handleButtonClick(value) {
   if (isAnimating.value || isResizing.value || enteredDigits.value.length >= 4)
     return;
 
+  // Mark user interaction for video autoplay
+  sessionStorage.setItem('user-has-interacted', 'true');
+
   enteredDigits.value.push(value);
 
   // Preload next possible backgrounds based on current input
@@ -358,6 +361,9 @@ async function handleButtonClick(value) {
 
 function handleClear() {
   if (isAnimating.value || isResizing.value) return;
+
+  // Mark user interaction for video autoplay
+  sessionStorage.setItem('user-has-interacted', 'true');
 
   // Reset glass filter to force Safari to clear cached background
   document.documentElement.style.setProperty("--glass-filter", "none");

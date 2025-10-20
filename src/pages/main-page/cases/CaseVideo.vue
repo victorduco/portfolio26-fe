@@ -1019,12 +1019,13 @@ defineExpose({
 
 .case-video-final-title {
   margin: 0;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-weight: 600;
-  font-size: clamp(32px, 4vw, 48px);
-  line-height: 1.2;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-tight);
   letter-spacing: -0.01em;
   color: #333333;
+  text-align: center;
 }
 
 .case-video-final-link {
