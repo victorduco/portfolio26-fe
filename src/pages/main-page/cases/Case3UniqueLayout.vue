@@ -4,8 +4,26 @@
     <div class="case3-container">
       <!-- Text Section: 30% height -->
       <div class="case3-text-section" ref="textSection">
-        <h2 class="case3-title" ref="titleElement">{{ title }}</h2>
-        <p class="case3-company" ref="companyElement">{{ company }}</p>
+        <motion.h2
+          class="case3-title"
+          ref="titleElement"
+          :variants="textVariants"
+          :animate="titleState"
+          :transition="textTransition"
+          initial="hidden"
+        >
+          {{ title }}
+        </motion.h2>
+        <motion.p
+          class="case3-company"
+          ref="companyElement"
+          :variants="textVariants"
+          :animate="companyState"
+          :transition="textTransition"
+          initial="hidden"
+        >
+          {{ company }}
+        </motion.p>
       </div>
 
       <!-- Image Section: 70% height -->
@@ -28,7 +46,7 @@
             :style="{
               left: videoPositionX,
               top: videoPositionY,
-              width: `${videoScale * 100}%`,
+              '--video-scale': videoScale,
             }"
             muted
             playsinline
@@ -42,7 +60,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from "vue";
-import { cubicBezier, motion } from "motion-v";
+import { motion } from "motion-v";
 
 const props = defineProps({
   title: {
@@ -63,7 +81,7 @@ const props = defineProps({
   },
   videoPositionX: {
     type: String,
-    default: "57.44%",
+    default: "62.5%",
   },
   videoPositionY: {
     type: String,
@@ -71,7 +89,7 @@ const props = defineProps({
   },
   videoScale: {
     type: Number,
-    default: 0.1835,
+    default: 0.33,
   },
   backgroundColor: {
     type: String,
@@ -92,15 +110,17 @@ let scrollListener = null;
 let intersectionObserver = null;
 let hasVideoPlayed = ref(false);
 
-// Animation state for Motion
+// Animation states
 const animationState = ref("initial");
+const titleState = ref("hidden");
+const companyState = ref("hidden");
 
 // Motion variants for zoom-out animation
 const mediaVariants = {
   initial: {
-    scale: 9,
-    x: "-150%",
-    y: "90%",
+    scale: 5.5,
+    x: "-160%",
+    y: "30%",
   },
   animate: {
     scale: 1,
@@ -112,9 +132,34 @@ const mediaVariants = {
 // Smooth transition with delay
 const smoothTransition = {
   duration: 1,
-  ease: cubicBezier(0.5, 0, 0.25, 1),
-  delay: 2.5,
+  ease: "easeInOut",
+  delay: 0.5,
 };
+
+// Text animation variants
+const textVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+// Text transition config
+const textTransition = {
+  type: "tween",
+  ease: [0.4, 0, 0.2, 1],
+  duration: 0.8,
+};
+
+function triggerTextAnimation() {
+  // After zoom completes (0.5s delay + 1s duration = 1.5s), show title
+  setTimeout(() => {
+    titleState.value = "visible";
+
+    // Show company 0.25s after title
+    setTimeout(() => {
+      companyState.value = "visible";
+    }, 250);
+  }, 1500); // After zoom animation completes
+}
 
 function triggerFadeIn() {
   console.log("[Case3UniqueLayout] Triggering fade-in and zoom animation");
@@ -127,8 +172,32 @@ function triggerFadeIn() {
     // Trigger zoom-out animation
     animationState.value = "animate";
 
-    // Play video
+    // Trigger text animation after zoom completes
+    triggerTextAnimation();
+
+    // Play video from 2.2 seconds with ease-out effect
     if (videoElement.value) {
+      videoElement.value.currentTime = 3.5;
+
+      // Add timeupdate listener for ease-out effect
+      const handleTimeUpdate = () => {
+        if (!videoElement.value) return;
+
+        const video = videoElement.value;
+        const duration = video.duration - 2.2; // Duration from start point
+        const currentTime = video.currentTime - 2.2; // Time from start point
+        const progress = currentTime / duration; // 0 to 1
+
+        // Ease-out formula: playbackRate goes from 1.5 to 0.45 as progress approaches 1
+        // Using quadratic ease-out: 1 - (1-progress)^2
+        const easeOutProgress = 1 - Math.pow(1 - progress, 2);
+        const minRate = 1; // 0.3 * 1.5
+        const maxRate = 2;
+        video.playbackRate = maxRate - easeOutProgress * (maxRate - minRate);
+      };
+
+      videoElement.value.addEventListener("timeupdate", handleTimeUpdate);
+
       videoElement.value.play().catch((err) => {
         console.error("[Case3UniqueLayout] Video play error:", err);
       });
@@ -235,7 +304,7 @@ onUnmounted(() => {
 function handleEnter() {
   // Called when section enters viewport
   emit("background-change", props.backgroundColor);
-  triggerFadeIn();
+  // Don't call triggerFadeIn here - it's handled by IntersectionObserver
   updateParallax();
 }
 
@@ -301,8 +370,6 @@ defineExpose({
   width: 100%;
   max-width: 100%;
   padding: 0 20px;
-  opacity: 1;
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
 /* Company/Subtitle Styling from Figma */
@@ -317,8 +384,6 @@ defineExpose({
   color: #235e98;
   width: 100%;
   max-width: 100%;
-  opacity: 1;
-  transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
 }
 
 /* Image Section: 40% height */
@@ -340,10 +405,10 @@ defineExpose({
 .case3-media-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 2550 / 1912; /* Match image dimensions */
   background-size: contain;
   background-repeat: no-repeat;
-  background-position: top center;
+  background-position: center center;
   opacity: 1;
   transform-origin: center center;
   will-change: transform;
@@ -357,6 +422,11 @@ defineExpose({
   z-index: 1;
   aspect-ratio: 1974 / 1080;
   border-radius: 10px;
+  /* Use percentage of parent container */
+  /* Since parent has fixed aspect-ratio matching the image, */
+  /* the video will scale proportionally with the image */
+  width: calc(var(--video-scale, 0.25) * 100%);
+  height: auto;
 }
 
 /* Fade-in animation */

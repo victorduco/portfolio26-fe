@@ -6,6 +6,7 @@
     :title="title"
     :description="description"
     :image-src="imageSrc"
+    :video-src="videoSrc"
     :route-to="routeTo"
     @navigation-click="handleNavigationClick"
   />
@@ -31,8 +32,24 @@
     <div class="case-content">
       <div class="case-heading">
         <div class="case-heading-text">
-          <h3 class="case-title">{{ title }}</h3>
-          <p class="case-subtitle">{{ subtitle }}</p>
+          <motion.h3
+            class="case-title"
+            :variants="textVariants"
+            :animate="titleState"
+            :transition="textTransition"
+            initial="hidden"
+          >
+            {{ title }}
+          </motion.h3>
+          <motion.p
+            class="case-subtitle"
+            :variants="textVariants"
+            :animate="subtitleState"
+            :transition="textTransition"
+            initial="hidden"
+          >
+            {{ subtitle }}
+          </motion.p>
         </div>
       </div>
       <div class="video-wrapper" :class="{ 'image-wrapper': imageSrc }">
@@ -83,6 +100,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import { RouterLink } from "vue-router";
+import { motion } from "motion-v";
 import CaseVideo from "./CaseVideo.vue";
 import CaseImage from "./CaseImage.vue";
 import Case2SplitLayout from "./Case2SplitLayout.vue";
@@ -143,6 +161,40 @@ const caseElement = ref(null);
 const caseMedia = ref(null);
 let observer = null;
 
+// Animation states for text
+const titleState = ref("hidden");
+const subtitleState = ref("hidden");
+
+// Text animation variants
+const textVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+// Text transition config
+const textTransition = {
+  type: "tween",
+  ease: [0.4, 0, 0.2, 1],
+  duration: 0.8,
+};
+
+function triggerTextAnimation() {
+  // Show title after 0.25s
+  setTimeout(() => {
+    titleState.value = "visible";
+
+    // Show subtitle 0.25s after title
+    setTimeout(() => {
+      subtitleState.value = "visible";
+    }, 250);
+  }, 250);
+}
+
+function hideText() {
+  titleState.value = "hidden";
+  subtitleState.value = "hidden";
+}
+
 function handleNavigationClick() {
   // Save media state before navigating
   caseMedia.value?.handleStoryLinkClick();
@@ -154,8 +206,10 @@ onMounted(() => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           caseMedia.value?.handleEnter();
+          triggerTextAnimation();
         } else {
           caseMedia.value?.handleLeave();
+          hideText();
         }
       });
     },
