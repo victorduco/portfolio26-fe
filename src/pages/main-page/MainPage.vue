@@ -90,7 +90,8 @@ const casesData = [
     id: "case2",
     title: "Redesigning the Internal Communications App",
     subtitle: "Smarp",
-    description: "Communication platform for teams",
+    description: "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.",
+    videoSrc: new URL("@/assets/case-videos/case2-reversed.mp4", import.meta.url).href,
     imageSrc: new URL("@/assets/images/p2-3@2x.png", import.meta.url).href,
     routeTo: "/story/two",
     backgroundColor: "#E9D3D2",
@@ -101,6 +102,13 @@ const casesData = [
     title: "From Chaos to Clarity: Terminal Shift Redesign",
     subtitle: "Mirai",
     imageSrc: new URL("@/assets/images/cs3-ipad.png", import.meta.url).href,
+    videoSrc: new URL(
+      "@/assets/case-videos/case3-reversed-flipped.mp4",
+      import.meta.url
+    ).href,
+    videoPositionX: "30%",
+    videoPositionY: "30%",
+    videoScale: 0.5,
     routeTo: "/story/three",
     backgroundColor: "#EAF5FF",
     useUniqueLayout: true,

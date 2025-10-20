@@ -328,7 +328,7 @@ export const squareContentVariants = {
       opacity: 1,
       scale: 1,
       rotate: 0,
-      color: "#7c7c7c",
+      color: "#DDDDDD",
       "--text-glow-color": "rgba(255,255,255,0)",
       "--text-shadow-offset": "0px",
     }),

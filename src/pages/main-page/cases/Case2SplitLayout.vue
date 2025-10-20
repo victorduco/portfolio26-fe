@@ -3,28 +3,62 @@
     <!-- Left Side: Content -->
     <div class="case2-content">
       <div class="case2-content-inner">
-        <h2 class="case2-title">{{ title }}</h2>
-        <p class="case2-description">{{ description }}</p>
+        <motion.h2
+          class="case2-title"
+          :variants="textVariants"
+          :animate="titleState"
+          :transition="textTransition"
+          initial="hidden"
+        >
+          {{ title }}
+        </motion.h2>
+        <motion.p
+          class="case2-description"
+          :variants="textVariants"
+          :animate="descriptionState"
+          :transition="textTransition"
+          initial="hidden"
+        >
+          {{ description }}
+        </motion.p>
       </div>
     </div>
 
     <!-- Right Side: Image with Parallax -->
     <div class="case2-image-container" ref="imageContainer">
       <div class="case2-image-wrapper" ref="imageWrapper">
+        <!-- Static Image (always visible on background) -->
         <img
           :src="imageSrc"
           :alt="title"
-          class="case2-image"
+          class="case2-image case2-background"
           ref="imageElement"
         />
+
+        <!-- Video Animation (scroll-controlled, on top of image) -->
+        <motion.video
+          v-if="showVideo"
+          ref="videoElement"
+          class="case2-video"
+          :src="videoSrc"
+          :animate="videoState"
+          :variants="videoVariants"
+          :transition="videoTransition"
+          :initial="'visible'"
+          muted
+          playsinline
+          preload="auto"
+        >
+          <source :src="videoSrc" type="video/mp4" />
+        </motion.video>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { RouterLink } from "vue-router";
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import { motion } from "motion-v";
 
 const props = defineProps({
   title: {
@@ -43,6 +77,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  videoSrc: {
+    type: String,
+    default: null,
+  },
 });
 
 const emit = defineEmits(["navigation-click"]);
@@ -50,14 +88,148 @@ const emit = defineEmits(["navigation-click"]);
 const imageContainer = ref(null);
 const imageWrapper = ref(null);
 const imageElement = ref(null);
+const videoElement = ref(null);
 let scrollListener = null;
+let wasInViewport = ref(false);
 
-function handleNavigationClick() {
-  emit("navigation-click");
+// Animation states
+const titleState = ref("hidden");
+const descriptionState = ref("hidden");
+const videoState = ref("visible");
+const videoProgress = ref(0); // 0 to 1, represents scroll progress
+
+// Always show video when videoSrc is provided (it will reset each time)
+const showVideo = computed(() => !!props.videoSrc);
+
+// Text animation variants
+const textVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+// Video animation variants
+const videoVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+
+// Text transition config
+const textTransition = {
+  type: "tween",
+  ease: [0.4, 0, 0.2, 1],
+  duration: 0.8,
+};
+
+// Video transition config
+const videoTransition = {
+  type: "tween",
+  ease: [0.4, 0, 0.2, 1],
+  duration: 0.5,
+};
+
+
+function getVideoElement() {
+  if (!videoElement.value) return null;
+  // motion.video returns a Vue component, get the actual DOM element
+  return videoElement.value.$el || videoElement.value;
+}
+
+function getImageElement() {
+  // Now it's a regular img element
+  return imageElement.value;
+}
+
+function updateVideoProgress() {
+  if (!imageContainer.value) return;
+
+  const rect = imageContainer.value.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+
+  // Calculate progress based on how much of the section is visible
+  // When section starts entering from bottom: progress = 0
+  // When section is fully visible/centered: progress = 1
+  const sectionTop = rect.top;
+  const sectionHeight = rect.height;
+
+  // Progress calculation:
+  // Start: when bottom of section enters viewport (top = viewportHeight)
+  // End: when section is at center or above (top = 0)
+  let progress = 0;
+
+  if (sectionTop <= viewportHeight && sectionTop + sectionHeight >= 0) {
+    // Section is visible
+    if (sectionTop <= 0) {
+      // Section is at top or scrolled past - full progress
+      progress = 1;
+    } else {
+      // Section is entering - calculate progress
+      progress = 1 - (sectionTop / viewportHeight);
+    }
+  }
+
+  // Clamp progress between 0 and 1
+  progress = Math.max(0, Math.min(1, progress));
+  videoProgress.value = progress;
+
+  // Update video currentTime based on progress
+  const video = getVideoElement();
+  if (video && video.duration && !isNaN(video.duration)) {
+    const targetTime = progress * video.duration;
+    // Only update if difference is significant to avoid jitter
+    if (Math.abs(video.currentTime - targetTime) > 0.05) {
+      video.currentTime = targetTime;
+    }
+
+    // When video reaches the end (99% progress), hide it to show the static image
+    if (progress >= 0.99) {
+      videoState.value = "hidden";
+    } else {
+      videoState.value = "visible";
+    }
+  }
+}
+
+function triggerTextAnimation() {
+  // Show title after 0.25s
+  setTimeout(() => {
+    titleState.value = "visible";
+
+    // Show description 0.25s after title
+    setTimeout(() => {
+      descriptionState.value = "visible";
+    }, 250);
+  }, 250);
+}
+
+function hideText() {
+  // Animate text back to hidden when leaving viewport
+  titleState.value = "hidden";
+  descriptionState.value = "hidden";
+}
+
+function checkIfInView() {
+  if (!imageContainer.value) return;
+
+  const rect = imageContainer.value.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+
+  const inViewport = rect.top < viewportHeight * 0.5 && rect.bottom > 0;
+
+  // When entering viewport - trigger text animation
+  if (inViewport && !wasInViewport.value) {
+    wasInViewport.value = true;
+    triggerTextAnimation();
+  }
+  // When leaving viewport - hide text
+  else if (!inViewport && wasInViewport.value) {
+    wasInViewport.value = false;
+    hideText();
+  }
 }
 
 function updateParallax() {
-  if (!imageContainer.value || !imageElement.value) return;
+  if (!imageContainer.value) return;
 
   const rect = imageContainer.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
@@ -68,12 +240,27 @@ function updateParallax() {
   const scrollProgress = 1 - (rect.top + rect.height / 2) / viewportHeight;
   const parallaxOffset = Math.max(-50, Math.min(50, scrollProgress * 100 - 50));
 
-  imageElement.value.style.transform = `translateY(${parallaxOffset}px)`;
+  // Apply parallax to video if it's showing, otherwise to image
+  if (showVideo.value) {
+    const video = getVideoElement();
+    if (video && video.style) {
+      video.style.transform = `translateY(${parallaxOffset}px)`;
+    }
+  } else {
+    const image = getImageElement();
+    if (image && image.style) {
+      image.style.transform = `translateY(${parallaxOffset}px)`;
+    }
+  }
 }
 
 onMounted(() => {
   scrollListener = () => {
-    requestAnimationFrame(updateParallax);
+    requestAnimationFrame(() => {
+      updateParallax();
+      checkIfInView();
+      updateVideoProgress(); // Update video progress on scroll
+    });
   };
 
   window.addEventListener("scroll", scrollListener, { passive: true });
@@ -85,6 +272,8 @@ onMounted(() => {
   }
 
   updateParallax();
+  checkIfInView();
+  updateVideoProgress(); // Initial video progress update
 });
 
 onUnmounted(() => {
@@ -171,6 +360,7 @@ defineExpose({
   line-height: 1.5;
   color: rgba(0, 0, 0, 0.7);
   text-align: left;
+  max-width: 600px;
 }
 
 /* Right Side: Image with Parallax - now full screen */
@@ -195,7 +385,8 @@ defineExpose({
   overflow: hidden;
 }
 
-.case2-image {
+.case2-image,
+.case2-video {
   display: block;
   width: 100%;
   height: 100%;
@@ -203,6 +394,19 @@ defineExpose({
   object-position: center;
   will-change: transform;
   transition: transform 0.1s ease-out;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Background image stays behind video */
+.case2-background {
+  z-index: 1;
+}
+
+/* Video is on top of image */
+.case2-video {
+  z-index: 2;
 }
 
 /* Mobile Responsive */
@@ -241,7 +445,8 @@ defineExpose({
     min-height: 50vh;
   }
 
-  .case2-image {
+  .case2-image,
+  .case2-video {
     object-fit: contain;
   }
 }
