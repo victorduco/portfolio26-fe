@@ -976,7 +976,7 @@ defineExpose({
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: clamp(12px, 1.6vw, 16px);
   transition: filter 0.3s ease;
 }

@@ -283,7 +283,8 @@ onUnmounted(() => {
   transform-style: preserve-3d;
   transform-origin: center;
   aspect-ratio: 1662 / 1080;
-  max-height: 100%;
+  max-width: 1662px;
+  max-height: 1080px;
 }
 
 /* Dark mode - subtle white border */
