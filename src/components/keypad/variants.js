@@ -50,6 +50,6 @@ export const backgroundNumbersTransition = prefersReducedMotion
   ? { duration: 0 }
   : {
       type: "tween",
-      duration: 0.5,
+      duration: 0.25,
       ease: "easeOut",
     };

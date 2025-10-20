@@ -323,6 +323,13 @@ function scrollToNextSection() {
   place-items: start start;
 }
 
+/* Large desktops: increased spacing */
+@media (min-width: 1920px) {
+  .intro-hero__title {
+    gap: 48px;
+  }
+}
+
 .intro-list {
   position: absolute;
   /* Fallback for browsers without anchor support */

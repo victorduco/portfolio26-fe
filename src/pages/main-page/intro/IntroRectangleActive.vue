@@ -125,6 +125,10 @@ function handleBackdropClick() {
   place-items: center;
   z-index: 10;
   pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .intro-active-content {
@@ -136,6 +140,10 @@ function handleBackdropClick() {
   text-align: center;
   padding: 32px;
   max-width: 400px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .intro-active-number {

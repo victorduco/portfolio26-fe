@@ -251,6 +251,10 @@ function handleMobileCloseRequest() {
   transform-origin: 50% 50%;
   border: 2px solid var(--border-color);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .intro-square::after {
@@ -306,6 +310,13 @@ function handleMobileCloseRequest() {
 .intro-content-icon::before {
   margin: 0;
   width: auto;
+}
+
+/* Large desktops: larger icon size */
+@media (min-width: 1920px) {
+  .intro-content-icon {
+    font-size: 28px;
+  }
 }
 
 /* Стили для двух наименьших брейкпоинтов (xs + sm: 360-600px) */

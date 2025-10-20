@@ -1,19 +1,16 @@
 <template>
   <div :class="['keypad-container', { 'is-resizing': isResizing }]">
     <!-- Base layer with normal colors -->
-    <Motion
-      tag="div"
+    <div
       :class="[
         'background-numbers',
         'background-numbers-base',
         { 'no-background': enteredDigits.length === 0 },
+        { 'is-fading-out': bgNumbersState === 'fadeOut' },
       ]"
       id="keypad-bg-export"
-      :variants="backgroundNumbersVariants"
-      :animate="bgNumbersState"
-      :transition="backgroundNumbersTransition"
     >
-    </Motion>
+    </div>
 
     <!-- Overlay layer with success/fail colors -->
     <div
@@ -21,6 +18,7 @@
         'background-numbers',
         'background-numbers-overlay',
         { 'is-visible': animationState !== 'initial' },
+        { 'is-fading-out': bgNumbersState === 'fadeOut' },
       ]"
     ></div>
 
@@ -68,8 +66,6 @@ import KeypadButton from "./KeypadButton.vue";
 import {
   keypadGridVariants,
   keypadGridTransition,
-  backgroundNumbersVariants,
-  backgroundNumbersTransition,
 } from "./variants.js";
 import {
   getBackgroundPath,
@@ -81,6 +77,20 @@ const emit = defineEmits(["unlock"]);
 
 // API URL from environment
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+// Animation timing logger (only in development)
+let animationStartTime = 0;
+const logTiming = (message) => {
+  if (!import.meta.env.DEV) return;
+
+  if (animationStartTime === 0) {
+    animationStartTime = performance.now();
+    console.log(`[Keypad 0.000s] ${message}`);
+  } else {
+    const elapsed = (performance.now() - animationStartTime) / 1000;
+    console.log(`[Keypad ${elapsed.toFixed(3)}s] ${message}`);
+  }
+};
 
 const enteredDigits = ref([]);
 
@@ -238,31 +248,40 @@ const checkCodeWithBackend = async (code) => {
 };
 
 const animateFadeSequence = async (colorState, shouldUnlock) => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  logTiming(`🎨 Overlay animation START - color: ${colorState === 'success' ? 'GREEN 🟢' : 'RED 🔴'} (500ms)`);
 
-  keypadGridState.value = "fadeOut";
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
+  // Show success/fail color overlay on digits
   animationState.value = colorState;
-  await new Promise((resolve) =>
-    setTimeout(resolve, colorState === "success" ? 500 : 1000)
-  );
-
-  bgNumbersState.value = "fadeOut";
   await new Promise((resolve) => setTimeout(resolve, 500));
+  logTiming('🎨 Overlay animation COMPLETE');
+
+  logTiming('🔢 Digits fade-out START (250ms animation, waiting 250ms)');
+  // Fade out background numbers (digits) with 0.25s animation
+  bgNumbersState.value = "fadeOut";
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  logTiming('🔢 Digits fade-out COMPLETE');
 
   if (shouldUnlock) {
+    logTiming('✅ SUCCESS path - small buffer (50ms)');
+    // Small buffer before emitting unlock
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    logTiming('📤 Emitting unlock event to parent');
     emit("unlock");
+    logTiming('🏁 Emit complete - waiting for component unmount...');
   } else {
+    logTiming('❌ FAIL path - hiding overlay');
     // Hide overlay - watch will set color to transparent
     animationState.value = "initial";
 
+    logTiming('⏳ Waiting for overlay fade (500ms)');
     // Wait for overlay to fully fade
     await new Promise((resolve) => setTimeout(resolve, 500));
 
+    logTiming('🔄 Unmounting keypad buttons');
     // Unmount keypad buttons to clear all cached state
     isResetting.value = true;
 
+    logTiming('🗑️  Clearing digits and backgrounds');
     // Now clear digits and backgrounds
     enteredDigits.value = [];
 
@@ -275,16 +294,19 @@ const animateFadeSequence = async (colorState, shouldUnlock) => {
     // Extra delay to ensure everything is cleared
     await new Promise((resolve) => setTimeout(resolve, 50));
 
+    logTiming('🔄 Resetting states');
     // Reset states
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
 
+    logTiming('🔄 Remounting keypad buttons');
     // Remount keypad buttons - everything is clean
     await new Promise((resolve) => setTimeout(resolve, 50));
     isResetting.value = false;
 
     await new Promise((resolve) => setTimeout(resolve, 50));
     isAnimating.value = false;
+    logTiming('🔄 Reset complete - ready for new input');
   }
 };
 
@@ -301,11 +323,24 @@ async function handleButtonClick(value) {
     isAnimating.value = true;
     const code = enteredDigits.value.join("");
 
+    // Reset timing for new animation sequence
+    animationStartTime = 0;
+    logTiming('✨ 4th digit entered - starting animation sequence');
+
+    logTiming('⌨️  Keypad fade-out START (500ms)');
+    // Fade out keypad grid immediately after entering 4th digit
+    keypadGridState.value = "fadeOut";
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    logTiming('⌨️  Keypad fade-out COMPLETE');
+
+    logTiming('🔍 Backend code check START');
     // Check code with backend
     const result = await checkCodeWithBackend(code);
+    logTiming(`🔍 Backend code check COMPLETE - result: ${result.success ? 'SUCCESS ✅' : 'FAIL ❌'}`);
 
     if (result.rateLimited) {
       // Rate limited - reset immediately
+      logTiming('⏱️  Rate limited - resetting immediately');
       enteredDigits.value = [];
       animationState.value = "initial";
       bgNumbersState.value = "initial";
@@ -471,6 +506,8 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  logTiming('💀 Component onBeforeUnmount - starting cleanup');
+
   if (typeof window !== "undefined") {
     window.removeEventListener("keydown", handleKeyDown);
     window.removeEventListener("resize", handleResizeThrottled);
@@ -484,6 +521,8 @@ onBeforeUnmount(() => {
   if (resizeStartTimer) {
     clearTimeout(resizeStartTimer);
   }
+
+  logTiming('💀 Component cleanup COMPLETE - about to unmount from DOM');
 });
 </script>
 
@@ -547,6 +586,12 @@ onBeforeUnmount(() => {
 .background-numbers-base {
   z-index: 1;
   background-image: var(--global-keypad-bg);
+  opacity: 1;
+  transition: opacity 0.25s ease-out;
+}
+
+.background-numbers-base.is-fading-out {
+  opacity: 0;
 }
 
 .background-numbers-base.no-background,
@@ -571,6 +616,12 @@ onBeforeUnmount(() => {
 
 .background-numbers-overlay.is-visible {
   opacity: 1;
+}
+
+/* Fade-out animation for overlay - override transition to be faster */
+.background-numbers-overlay.is-fading-out {
+  opacity: 0 !important;
+  transition: opacity 0.25s ease-out !important;
 }
 
 /* Mobile: digits above keyboard */
