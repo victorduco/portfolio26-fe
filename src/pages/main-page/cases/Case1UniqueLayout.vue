@@ -56,7 +56,7 @@
       v-if="hasStartedPlayback && !showFinalOverlay"
       class="case-video-controls"
       :class="{ 'mobile-controls': isSmallScreen }"
-      :animate="isHovering || isSmallScreen ? 'visible' : 'hidden'"
+      :animate="'visible'"
       :variants="controlsVariants"
       :transition="controlsTransition"
       :initial="false"
@@ -584,14 +584,17 @@ function attemptPlay() {
     .catch((error) => {
       console.error('[Case1] Play failed:', error.message);
 
-      // If autoplay failed with sound, just show play button instead of retrying
-      if (userHasInteracted && !video.muted) {
-        console.log('[Case1] Autoplay with sound blocked - showing play button');
-        hasStartedPlayback.value = true;
-        playAttempts = 0;
-      } else if (!hasStartedPlayback.value && !showFinalOverlay.value && playAttempts <= 3) {
-        console.log('[Case1] Retrying...');
-        schedulePlay(300);
+      // If autoplay failed, show play button and controls
+      if (!hasStartedPlayback.value && !showFinalOverlay.value) {
+        if (playAttempts <= 3) {
+          console.log('[Case1] Retrying...');
+          schedulePlay(300);
+        } else {
+          // After max attempts, show controls so user can manually play
+          console.log('[Case1] Max attempts reached - showing controls for manual play');
+          hasStartedPlayback.value = true;
+          playAttempts = 0;
+        }
       }
     });
 }
@@ -683,14 +686,17 @@ function handleEnter() {
   // Always show video when entering viewport
   videoState.value = "visible";
 
-  // If user has interacted before, try autoplay with sound
-  if (!showFinalOverlay.value && !userPaused.value && userHasInteracted) {
-    console.log('[Case1] User has interacted - attempting autoplay with sound');
+  console.log('[Case1] handleEnter - current state:', {
+    hasStartedPlayback: hasStartedPlayback.value,
+    showFinalOverlay: showFinalOverlay.value,
+    userPaused: userPaused.value,
+    isPlaying: isPlaying.value,
+  });
+
+  // Try to autoplay video when entering viewport
+  if (!showFinalOverlay.value && !userPaused.value) {
+    console.log('[Case1] Entering viewport - attempting autoplay');
     schedulePlay();
-  } else if (!hasStartedPlayback.value) {
-    // Show first frame and play button
-    console.log('[Case1] No interaction yet - showing play button');
-    hasStartedPlayback.value = true;
   }
 }
 
