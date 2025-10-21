@@ -41,6 +41,7 @@
           :final-overlay-time="caseData.finalOverlayTime"
           :use-split-layout="caseData.useSplitLayout"
           :use-unique-layout="caseData.useUniqueLayout"
+          :use-case1-layout="caseData.useCase1Layout"
         />
       </section>
       <section id="ai-play" class="item">
@@ -80,11 +81,13 @@ const casesData = [
     id: "case1",
     title: "Cross-Domain AI Solution for Account Reconcilers",
     subtitle: "Apple",
+    imageSrc: new URL("@/assets/images/case1-frame.png", import.meta.url).href,
     videoSrc: new URL("@/assets/case-videos/case1.mp4", import.meta.url).href,
     routeTo: "/story/one",
     primaryColor: "#319BF8",
     backgroundColor: "#ffffff", // White for case 1
     finalOverlayTime: 39.5, // Show final overlay at 39.5 seconds
+    useCase1Layout: true,
   },
   {
     id: "case2",

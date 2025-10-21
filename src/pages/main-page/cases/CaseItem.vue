@@ -1,7 +1,18 @@
 <template>
+  <!-- Use Case1UniqueLayout for case1 -->
+  <Case1UniqueLayout
+    v-if="useCase1Layout"
+    ref="caseMedia"
+    :title="title"
+    :company="subtitle"
+    :image-src="imageSrc"
+    :video-src="videoSrc"
+    :background-color="backgroundColor"
+  />
+
   <!-- Use Case2SplitLayout for case2 -->
   <Case2SplitLayout
-    v-if="useSplitLayout"
+    v-else-if="useSplitLayout"
     ref="caseMedia"
     :title="title"
     :description="description"
@@ -103,6 +114,7 @@ import { RouterLink } from "vue-router";
 import { motion } from "motion-v";
 import CaseVideo from "./CaseVideo.vue";
 import CaseImage from "./CaseImage.vue";
+import Case1UniqueLayout from "./Case1UniqueLayout.vue";
 import Case2SplitLayout from "./Case2SplitLayout.vue";
 import Case3UniqueLayout from "./Case3UniqueLayout.vue";
 
@@ -146,6 +158,10 @@ const props = defineProps({
   finalOverlayTime: {
     type: Number,
     default: null,
+  },
+  useCase1Layout: {
+    type: Boolean,
+    default: false,
   },
   useSplitLayout: {
     type: Boolean,
