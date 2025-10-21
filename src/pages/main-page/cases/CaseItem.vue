@@ -1,18 +1,7 @@
 <template>
-  <!-- Use Case1UniqueLayout for case1 -->
-  <Case1UniqueLayout
-    v-if="useCase1Layout"
-    ref="caseMedia"
-    :title="title"
-    :company="subtitle"
-    :image-src="imageSrc"
-    :video-src="videoSrc"
-    :background-color="backgroundColor"
-  />
-
   <!-- Use Case2SplitLayout for case2 -->
   <Case2SplitLayout
-    v-else-if="useSplitLayout"
+    v-if="useSplitLayout"
     ref="caseMedia"
     :title="title"
     :description="description"
@@ -41,6 +30,24 @@
     :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
   >
     <div class="case-content">
+      <div class="video-wrapper" :class="{ 'image-wrapper': imageSrc }">
+        <CaseVideo
+          v-if="videoSrc && !imageSrc"
+          ref="caseMedia"
+          :src="videoSrc"
+          :final-link="routeTo"
+          :diamond-color="props.primaryColor"
+          :final-overlay-time="props.finalOverlayTime"
+        />
+        <CaseImage
+          v-else-if="imageSrc"
+          ref="caseMedia"
+          :src="imageSrc"
+          :alt="subtitle"
+          :final-link="routeTo"
+          :diamond-color="props.primaryColor"
+        />
+      </div>
       <div class="case-heading">
         <div class="case-heading-text">
           <motion.h3
@@ -62,24 +69,13 @@
             {{ subtitle }}
           </motion.p>
         </div>
-      </div>
-      <div class="video-wrapper" :class="{ 'image-wrapper': imageSrc }">
-        <CaseVideo
-          v-if="videoSrc && !imageSrc"
-          ref="caseMedia"
-          :src="videoSrc"
-          :final-link="routeTo"
-          :diamond-color="props.primaryColor"
-          :final-overlay-time="props.finalOverlayTime"
-        />
-        <CaseImage
-          v-else-if="imageSrc"
-          ref="caseMedia"
-          :src="imageSrc"
-          :alt="subtitle"
-          :final-link="routeTo"
-          :diamond-color="props.primaryColor"
-        />
+        <RouterLink
+          :to="routeTo"
+          class="case-open-story desktop-only"
+          @click="handleNavigationClick"
+        >
+          Open Story
+        </RouterLink>
       </div>
       <RouterLink
         :to="routeTo"
@@ -114,7 +110,6 @@ import { RouterLink } from "vue-router";
 import { motion } from "motion-v";
 import CaseVideo from "./CaseVideo.vue";
 import CaseImage from "./CaseImage.vue";
-import Case1UniqueLayout from "./Case1UniqueLayout.vue";
 import Case2SplitLayout from "./Case2SplitLayout.vue";
 import Case3UniqueLayout from "./Case3UniqueLayout.vue";
 
@@ -158,10 +153,6 @@ const props = defineProps({
   finalOverlayTime: {
     type: Number,
     default: null,
-  },
-  useCase1Layout: {
-    type: Boolean,
-    default: false,
   },
   useSplitLayout: {
     type: Boolean,
@@ -279,9 +270,10 @@ onUnmounted(() => {
 
 .case-heading {
   width: 100%;
+  max-width: 1662px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: clamp(16px, 4vw, 40px);
   flex-wrap: nowrap;
   flex-shrink: 0;
@@ -290,7 +282,7 @@ onUnmounted(() => {
 .case-heading-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px; /* Reduced from 8px */
   flex: 1;
   min-width: 0;
@@ -298,9 +290,9 @@ onUnmounted(() => {
 
 .case-title {
   margin: 0;
-  text-align: center;
+  text-align: left;
   max-width: 100%;
-  font-size: clamp(20px, 2.5vw, 28px); /* Reduced from default h3 size */
+  font-size: 21px;
 }
 
 /* Dark mode - white text for dark backgrounds */
@@ -320,7 +312,7 @@ onUnmounted(() => {
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
-  text-align: center;
+  text-align: left;
   opacity: 0.6;
   max-width: 100%;
 }
@@ -340,9 +332,37 @@ onUnmounted(() => {
   align-self: center;
 }
 
+.case-open-story {
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 21px;
+  line-height: var(--line-height-snug);
+  text-align: left;
+  text-decoration: none;
+  flex-shrink: 0;
+  align-self: flex-start;
+  transition: opacity 0.2s ease;
+}
+
+/* Dark mode */
+.case-item.dark-mode .case-open-story {
+  color: #ffffff;
+}
+
+/* Light mode */
+.case-item.light-mode .case-open-story {
+  color: #000000;
+}
+
+.case-open-story:hover {
+  opacity: 0.7;
+}
+
 .video-wrapper {
   padding: clamp(8px, 1.4vw, 12px);
-  border-radius: 20px;
+  border-radius: 0;
+  border: 10px solid #000000;
   width: 100%;
   display: flex;
   align-items: center;
@@ -356,16 +376,6 @@ onUnmounted(() => {
   aspect-ratio: 1662 / 1080;
   max-width: 1662px;
   max-height: 1080px;
-}
-
-/* Dark mode - subtle white border */
-.case-item.dark-mode .video-wrapper:not(.image-wrapper) {
-  border: 2px solid #ffffff10;
-}
-
-/* Light mode - subtle dark border */
-.case-item.light-mode .video-wrapper:not(.image-wrapper) {
-  border: 2px solid #00000010;
 }
 
 /* No border for image wrapper */
