@@ -13,8 +13,8 @@
         :animate="getAnimationState(index)"
         initial="default"
         :transition="spring"
-        @mouseenter="() => { console.log('[AiPlay] mouseenter event on item', index); handleHover(index, true); }"
-        @mouseleave="() => { console.log('[AiPlay] mouseleave event on item', index); handleHover(index, false); }"
+        @mouseenter="() => handleHover(index, true)"
+        @mouseleave="() => handleHover(index, false)"
         @click="handleClick(index)"
       >
         <div class="diamond-shape">
@@ -145,12 +145,6 @@ const animationStates = computed(() => {
         ? 'groupHover'
         : 'default';
 
-    console.log(`[AiPlay] computed animationStates[${index}]:`, {
-      activeIndex: activeIndex.value,
-      anyHovered: anyHovered.value,
-      resultState: state
-    });
-
     return state;
   });
 });
@@ -170,25 +164,15 @@ function getIconColor(state) {
 }
 
 function handleHover(index, isHovering) {
-  console.log('[AiPlay] handleHover called:', {
-    index,
-    isHovering,
-    currentActiveIndex: activeIndex.value,
-    currentAnyHovered: anyHovered.value
-  });
-
   // Don't show hover if item is active
   if (activeIndex.value === index) {
-    console.log('[AiPlay] Ignoring hover - item is active');
     return;
   }
 
   anyHovered.value = isHovering;
-  console.log('[AiPlay] State updated - anyHovered:', anyHovered.value);
 }
 
 function handleClick(index) {
-  console.log('[AiPlay] Click:', index);
   // Clear any existing timer
   if (autoCloseTimer) {
     clearTimeout(autoCloseTimer);
@@ -210,15 +194,6 @@ function handleClick(index) {
     autoCloseTimer = null;
   }, 3000);
 }
-
-// Watchers for debugging
-watch(anyHovered, (newVal, oldVal) => {
-  console.log('[AiPlay] anyHovered changed:', oldVal, '->', newVal);
-});
-
-watch(activeIndex, (newVal, oldVal) => {
-  console.log('[AiPlay] activeIndex changed:', oldVal, '->', newVal);
-});
 
 onUnmounted(() => {
   if (autoCloseTimer) {

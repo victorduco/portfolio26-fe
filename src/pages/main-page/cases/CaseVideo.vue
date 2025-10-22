@@ -560,20 +560,10 @@ function attemptPlay() {
   const video = getVideoElement();
   const userHasInteracted = getUserHasInteracted();
 
-  console.log('[CaseVideo] attemptPlay', {
-    hasVideo: !!video,
-    showFinalOverlay: showFinalOverlay.value,
-    paused: video?.paused,
-    hasStartedPlayback: hasStartedPlayback.value,
-    userHasInteracted,
-    playAttempts,
-  });
-
   if (!video || showFinalOverlay.value) return;
 
   // Don't try to play if already playing
   if (!video.paused && hasStartedPlayback.value) {
-    console.log('[CaseVideo] Already playing, skipping');
     return;
   }
 
@@ -591,16 +581,9 @@ function attemptPlay() {
   video.muted = shouldTryMuted ? true : (shouldBeMutedByDefault.value || isMuted.value);
   video.playsInline = true;
 
-  console.log('[CaseVideo] Calling video.play()', {
-    muted: video.muted,
-    shouldTryMuted,
-    userHasInteracted,
-  });
-
   video
     .play()
     .then(() => {
-      console.log('[CaseVideo] Play succeeded');
       playAttempts = 0; // Reset on success
       hasStartedPlayback.value = true;
       isPlaying.value = true;
@@ -612,7 +595,6 @@ function attemptPlay() {
 
         // Try to unmute immediately if user has already interacted
         if (getUserHasInteracted()) {
-          console.log('[CaseVideo] Unmuting after play (user already interacted)');
           video.muted = false;
           isMuted.value = false;
         }
@@ -624,11 +606,9 @@ function attemptPlay() {
 
       // If autoplay failed with sound, just show play button instead of retrying
       if (userHasInteracted && !video.muted) {
-        console.log('[CaseVideo] Autoplay with sound blocked - showing play button');
         hasStartedPlayback.value = true; // Show play button
         playAttempts = 0; // Reset
       } else if (!hasStartedPlayback.value && !showFinalOverlay.value && playAttempts <= 3) {
-        console.log('[CaseVideo] Retrying...');
         schedulePlay(300);
       }
     });
@@ -701,20 +681,10 @@ function handleEnter() {
   const video = getVideoElement();
   const userHasInteracted = getUserHasInteracted();
 
-  console.log('[CaseVideo] handleEnter', {
-    hasVideo: !!video,
-    wasStateRestored: wasStateRestored.value,
-    showFinalOverlay: showFinalOverlay.value,
-    userPaused: userPaused.value,
-    userHasInteracted,
-    hasStartedPlayback: hasStartedPlayback.value,
-  });
-
   if (!video) return;
 
   // Don't auto-play if we just restored state
   if (wasStateRestored.value) {
-    console.log('[CaseVideo] Skipping - state was restored');
     wasStateRestored.value = false;
     return;
   }
@@ -724,11 +694,9 @@ function handleEnter() {
 
   // If user has interacted before, try autoplay with sound
   if (!showFinalOverlay.value && !userPaused.value && userHasInteracted) {
-    console.log('[CaseVideo] User has interacted - attempting autoplay with sound');
     schedulePlay();
   } else if (!hasStartedPlayback.value) {
     // Show first frame and play button
-    console.log('[CaseVideo] No interaction yet - showing play button');
     hasStartedPlayback.value = true;
   }
 }
@@ -763,23 +731,16 @@ function handleVideoClick(event) {
 
 function togglePlayPause() {
   const video = getVideoElement();
-  console.log('[CaseVideo] togglePlayPause', {
-    hasVideo: !!video,
-    paused: video?.paused,
-    userHasInteracted: getUserHasInteracted(),
-  });
 
   if (!video) return;
 
   if (video.paused) {
     // User is resuming playback - this is user interaction, unmute if needed
-    console.log('[CaseVideo] Resuming playback - marking as interacted');
     userPaused.value = false;
     setUserHasInteracted();
 
     // Always unmute on user click (desktop only)
     if (!shouldBeMutedByDefault.value) {
-      console.log('[CaseVideo] Unmuting on user click');
       video.muted = false;
       isMuted.value = false;
     } else {
@@ -789,14 +750,12 @@ function togglePlayPause() {
     }
 
     video.play().then(() => {
-      console.log('[CaseVideo] Play succeeded after user click');
       isPlaying.value = true;
       hasStartedPlayback.value = true;
       videoState.value = "visible";
     });
   } else {
     // User is manually pausing
-    console.log('[CaseVideo] User manually pausing');
     userPaused.value = true;
     video.pause();
     isPlaying.value = false;

@@ -162,13 +162,8 @@ function triggerTextAnimation() {
 }
 
 function triggerFadeIn() {
-  console.log("[Case3UniqueLayout] Triggering fade-in and zoom animation");
-
   // Play zoom and video only once
   if (!hasVideoPlayed.value) {
-    console.log(
-      "[Case3UniqueLayout] Triggering zoom animation and playing video for the first time"
-    );
     // Trigger zoom-out animation
     animationState.value = "animate";
 
@@ -204,8 +199,6 @@ function triggerFadeIn() {
     }
 
     hasVideoPlayed.value = true;
-  } else {
-    console.log("[Case3UniqueLayout] Animation already played, skipping");
   }
 }
 
@@ -226,33 +219,12 @@ function updateParallax() {
   }
 }
 
-// Watch animation state changes
-watch(animationState, (newState, oldState) => {
-  console.log("[Case3UniqueLayout] Animation state changed:", {
-    oldState,
-    newState,
-  });
-});
-
 onMounted(() => {
-  console.log("[Case3UniqueLayout] Mounted", {
-    title: props.title,
-    company: props.company,
-    imageSrc: props.imageSrc,
-    videoSrc: props.videoSrc,
-    titleElement: !!titleElement.value,
-    companyElement: !!companyElement.value,
-    mediaContainer: !!mediaContainer.value,
-    videoElement: !!videoElement.value,
-    animationState: animationState.value,
-  });
-
   // Setup IntersectionObserver to trigger animation when scrolling into view
   intersectionObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          console.log("[Case3UniqueLayout] Element entered viewport");
           triggerFadeIn();
         }
         // Don't reset animation when leaving viewport - play only once

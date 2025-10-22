@@ -1,7 +1,18 @@
 <template>
+  <!-- Use Case1ScrollLayout for case1 -->
+  <Case1ScrollLayout
+    v-if="useScrollLayout"
+    ref="caseMedia"
+    :title="title"
+    :company="subtitle"
+    :video-src="videoSrc"
+    :route-to="routeTo"
+    :background-color="backgroundColor"
+  />
+
   <!-- Use Case2SplitLayout for case2 -->
   <Case2SplitLayout
-    v-if="useSplitLayout"
+    v-else-if="useSplitLayout"
     ref="caseMedia"
     :title="title"
     :description="description"
@@ -110,6 +121,7 @@ import { RouterLink } from "vue-router";
 import { motion } from "motion-v";
 import CaseVideo from "./CaseVideo.vue";
 import CaseImage from "./CaseImage.vue";
+import Case1ScrollLayout from "./Case1ScrollLayout.vue";
 import Case2SplitLayout from "./Case2SplitLayout.vue";
 import Case3UniqueLayout from "./Case3UniqueLayout.vue";
 
@@ -153,6 +165,10 @@ const props = defineProps({
   finalOverlayTime: {
     type: Number,
     default: null,
+  },
+  useScrollLayout: {
+    type: Boolean,
+    default: false,
   },
   useSplitLayout: {
     type: Boolean,

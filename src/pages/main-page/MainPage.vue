@@ -39,6 +39,7 @@
           :background-color="caseData.backgroundColor"
           :dark-mode="isDarkMode"
           :final-overlay-time="caseData.finalOverlayTime"
+          :use-scroll-layout="caseData.useScrollLayout"
           :use-split-layout="caseData.useSplitLayout"
           :use-unique-layout="caseData.useUniqueLayout"
         />
@@ -74,6 +75,7 @@ const casesData = [
     primaryColor: "#319BF8",
     backgroundColor: "#ffffff", // White for case 1
     finalOverlayTime: 39.5, // Show final overlay at 39.5 seconds
+    useScrollLayout: true,
   },
   {
     id: "case2",
@@ -185,8 +187,6 @@ function handleActiveSectionChange(sectionId) {
       isDarkMode.value = getContrastTextColor(color) === "#ffffff";
     }
 
-    console.log('[MainPage] Section changed:', sectionId, 'isDarkMode:', isDarkMode.value);
-
     // Also update CSS custom properties for global styling
     document.documentElement.style.setProperty("--page-background", color);
     document.documentElement.style.setProperty(
@@ -246,5 +246,13 @@ onMounted(() => {
   justify-content: center;
   min-height: 100dvh;
   height: 100dvh;
+}
+
+/* Case1 needs extra height for scroll animation */
+#case1.case-section.item {
+  height: 250vh;
+  min-height: 250vh;
+  max-height: 250vh;
+  /* overflow: hidden убран - мешает sticky */
 }
 </style>

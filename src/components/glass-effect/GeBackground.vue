@@ -55,12 +55,6 @@ async function generateBackgroundSVG() {
     // Render SVG to .background-numbers container
     if (backgroundNumbers.value) {
       backgroundNumbers.value.innerHTML = svgMarkup;
-      console.log(
-        "✅ SVG rendered to .background-numbers:",
-        svgMarkup.substring(0, 100)
-      );
-    } else {
-      console.warn("⚠️ backgroundNumbers ref not found");
     }
 
     // 🔍 PROFILING: SVG rendered to DOM
@@ -122,8 +116,6 @@ async function generateBackgroundSVG() {
 
           output += `) | `;
           output += `Total ${total.toFixed(1)}ms`;
-
-          console.log(output);
 
           // Clean up
           delete window.__keypadProfile;
