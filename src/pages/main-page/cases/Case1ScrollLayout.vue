@@ -75,6 +75,14 @@
                 @timeupdate="handleTimeUpdate"
                 @click="handleVideoClick"
               ></video>
+              <!-- Clickable overlay for video interactions -->
+              <button
+                v-if="videoExpanded && !showFinalOverlay"
+                class="video-clickable-overlay"
+                type="button"
+                @click="handleVideoClick"
+                aria-label="Toggle video playback"
+              ></button>
               <!-- Pause Overlay (inside video wrapper) -->
               <motion.div
                 v-if="
@@ -117,7 +125,163 @@
                 :transition="controlsTransition"
                 :initial="false"
               >
-                <!-- ...existing code... -->
+                <!-- Mute/Unmute button -->
+                <motion.button
+                  class="control-button"
+                  type="button"
+                  @click="toggleMute"
+                  @mouseenter="muteHovered = true"
+                  @mouseleave="muteHovered = false"
+                  :initial="'default'"
+                  :animate="muteHovered ? 'hover' : 'default'"
+                  :variants="buttonVariants"
+                  :transition="buttonTransition"
+                  :aria-label="isMuted ? 'Unmute' : 'Mute'"
+                >
+                  <motion.svg
+                    v-if="isMuted"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="control-icon"
+                    :animate="muteHovered ? 'hover' : 'default'"
+                    :variants="iconVariants"
+                    :transition="iconTransition"
+                  >
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <line x1="23" y1="9" x2="17" y2="15" />
+                    <line x1="17" y1="9" x2="23" y2="15" />
+                  </motion.svg>
+                  <motion.svg
+                    v-else
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="control-icon"
+                    :animate="muteHovered ? 'hover' : 'default'"
+                    :variants="iconVariants"
+                    :transition="iconTransition"
+                  >
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  </motion.svg>
+                </motion.button>
+
+                <!-- Play/Pause button -->
+                <motion.button
+                  class="control-button"
+                  type="button"
+                  @click="togglePlayPause"
+                  @mouseenter="playHovered = true"
+                  @mouseleave="playHovered = false"
+                  :initial="'default'"
+                  :animate="playHovered ? 'hover' : 'default'"
+                  :variants="buttonVariants"
+                  :transition="buttonTransition"
+                  :aria-label="isPlaying ? 'Pause' : 'Play'"
+                >
+                  <motion.svg
+                    v-if="isPlaying"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="control-icon"
+                    :animate="playHovered ? 'hover' : 'default'"
+                    :variants="iconVariants"
+                    :transition="iconTransition"
+                  >
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </motion.svg>
+                  <motion.svg
+                    v-else
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="control-icon"
+                    :animate="playHovered ? 'hover' : 'default'"
+                    :variants="iconVariants"
+                    :transition="iconTransition"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </motion.svg>
+                </motion.button>
+
+                <!-- Restart button -->
+                <motion.button
+                  class="control-button"
+                  type="button"
+                  @click="restartVideo"
+                  @mouseenter="restartHovered = true"
+                  @mouseleave="restartHovered = false"
+                  :initial="'default'"
+                  :animate="restartHovered ? 'hover' : 'default'"
+                  :variants="buttonVariants"
+                  :transition="buttonTransition"
+                  aria-label="Restart video"
+                >
+                  <motion.svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="control-icon"
+                    :animate="restartHovered ? 'hover' : 'default'"
+                    :variants="iconVariants"
+                    :transition="iconTransition"
+                  >
+                    <path
+                      d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+                    />
+                  </motion.svg>
+                </motion.button>
+
+                <!-- Fullscreen button (mobile only) -->
+                <motion.button
+                  v-if="isSmallScreen"
+                  class="control-button"
+                  type="button"
+                  @click="toggleFullscreen"
+                  @mouseenter="fullscreenHovered = true"
+                  @mouseleave="fullscreenHovered = false"
+                  :initial="'default'"
+                  :animate="fullscreenHovered ? 'hover' : 'default'"
+                  :variants="buttonVariants"
+                  :transition="buttonTransition"
+                  :aria-label="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+                >
+                  <motion.svg
+                    v-if="!isFullscreen"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="control-icon"
+                    :animate="fullscreenHovered ? 'hover' : 'default'"
+                    :variants="iconVariants"
+                    :transition="iconTransition"
+                  >
+                    <path
+                      d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                    />
+                  </motion.svg>
+                  <motion.svg
+                    v-else
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="control-icon"
+                    :animate="fullscreenHovered ? 'hover' : 'default'"
+                    :variants="iconVariants"
+                    :transition="iconTransition"
+                  >
+                    <path
+                      d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
+                    />
+                  </motion.svg>
+                </motion.button>
               </motion.div>
             </div>
           </motion.div>
@@ -248,7 +412,6 @@ const isFullscreen = ref(false);
 
 // Playback attempt tracking
 let playAttempts = 0;
-let playTimeout = null;
 let finalCleanupTimeout = null;
 
 // Detect mobile for muted by default
@@ -355,19 +518,6 @@ function getVideoElement() {
 }
 
 // ============================================================
-// Schedule play with timeout
-// ============================================================
-
-function schedulePlay(delay = 300) {
-  if (playTimeout) {
-    clearTimeout(playTimeout);
-  }
-  playTimeout = setTimeout(() => {
-    attemptPlay();
-  }, delay);
-}
-
-// ============================================================
 // Main autoplay function with retry logic
 // ============================================================
 
@@ -382,18 +532,16 @@ function attemptPlay() {
     return;
   }
 
-  // Limit attempts to 3 times
-  playAttempts++;
-  if (playAttempts > 3) {
-    video.muted = true;
-    isMuted.value = true;
+  // If user has NOT interacted OR on mobile - show play button (pause state)
+  if (!userHasInteracted || shouldBeMutedByDefault.value) {
+    hasStartedPlayback.value = true;
+    isPlaying.value = false;
+    return;
   }
 
-  // If user has NOT interacted - try muted autoplay
-  const shouldTryMuted = !userHasInteracted && !shouldBeMutedByDefault.value;
-  video.muted = shouldTryMuted
-    ? true
-    : shouldBeMutedByDefault.value || isMuted.value;
+  // User has interacted - try to play with sound
+  video.muted = false;
+  isMuted.value = false;
   video.playsInline = true;
 
   video
@@ -402,28 +550,13 @@ function attemptPlay() {
       playAttempts = 0; // Reset on success
       hasStartedPlayback.value = true;
       isPlaying.value = true;
-
-      // If started muted due to no interaction
-      if (shouldTryMuted) {
-        isMuted.value = true;
-
-        // Try to unmute if user has NOW interacted
-        if (getUserHasInteracted()) {
-          video.muted = false;
-          isMuted.value = false;
-        }
-      }
     })
     .catch((error) => {
       console.warn("[Case1ScrollLayout] Autoplay error:", error);
-
-      // If autoplay with sound blocked - show play button
-      if (userHasInteracted && !video.muted) {
-        hasStartedPlayback.value = true;
-        playAttempts = 0;
-      } else if (!hasStartedPlayback.value && playAttempts <= 3) {
-        schedulePlay(300); // Retry after 300ms
-      }
+      // If autoplay fails - show play button (pause state)
+      hasStartedPlayback.value = true;
+      isPlaying.value = false;
+      playAttempts = 0;
     });
 }
 
@@ -749,7 +882,7 @@ onMounted(() => {
   scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
     const shouldExpand = progress >= 0.35;
     // Unpin after video finishes (later in the scroll)
-    const shouldUnpin = progress >= 0.55;
+    const shouldUnpin = progress >= 0.80;
 
     // Update unpin state and calculate offset to prevent jump
     if (shouldUnpin !== unpinned.value) {
@@ -780,9 +913,7 @@ onMounted(() => {
       if (video) {
         if (shouldExpand) {
           // Video is expanding - attempt autoplay
-          setTimeout(() => {
-            attemptPlay();
-          }, 300); // 300ms delay for smooth transition
+          attemptPlay();
         } else {
           // Video is shrinking - auto-pause (not user-initiated)
           if (!video.paused) {
@@ -855,11 +986,6 @@ function handleEnter() {
 function handleLeave() {
   // Called when section leaves viewport
   const video = getVideoElement();
-
-  if (playTimeout) {
-    clearTimeout(playTimeout);
-    playTimeout = null;
-  }
 
   // Reset attempt counter
   playAttempts = 0;
@@ -961,12 +1087,6 @@ onUnmounted(() => {
 
   // Clean up interaction listeners
   removeInteractionListeners();
-
-  // Clean up play timeout
-  if (playTimeout) {
-    clearTimeout(playTimeout);
-    playTimeout = null;
-  }
 
   // Clean up final timers
   clearFinalTimers();
@@ -1101,7 +1221,7 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible; /* Changed from hidden to visible for controls */
+  overflow: hidden; /* Clip blur edges to prevent bleeding onto border */
   box-sizing: border-box;
   background: #ffffff;
   border: 40px solid #000000;
@@ -1109,6 +1229,7 @@ defineExpose({
   border-radius: 120px;
   /* Use padding instead of border for proper inner radius */
   padding: 0;
+  isolation: isolate; /* Create stacking context to contain blur */
   transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -1145,7 +1266,6 @@ defineExpose({
   border-radius: 80px; /* Inner radius matches container inner (120px - 40px = 80px) */
   transition: opacity 0.4s ease-in,
     border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
-  transition-delay: 0.2s;
   z-index: 1;
   cursor: pointer;
 }
@@ -1178,6 +1298,37 @@ defineExpose({
 
 .case-open-story:hover {
   opacity: 0.7;
+}
+
+/* ============================================================ */
+/* Clickable Overlay */
+/* ============================================================ */
+
+.video-clickable-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 75;
+  cursor: pointer;
+  pointer-events: auto;
+  /* Reset button styles */
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.video-clickable-overlay:focus {
+  outline: none;
+}
+
+.video-clickable-overlay:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: -2px;
 }
 
 /* ============================================================ */
@@ -1239,7 +1390,7 @@ defineExpose({
   gap: 15px;
   padding: 16px 20px;
   background: transparent;
-  z-index: 50;
+  z-index: 150;
   pointer-events: none;
 }
 
@@ -1259,9 +1410,7 @@ defineExpose({
   pointer-events: auto;
   outline: none !important;
   -webkit-tap-highlight-color: transparent;
-  /* Default diamond state */
-  transform: rotate(45deg);
-  background-color: rgba(0, 0, 0, 0.25);
+  /* Transform and background controlled by motion variants */
 }
 
 .control-button:focus {
