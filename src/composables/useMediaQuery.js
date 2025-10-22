@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 /**
  * Reactive media query composable
@@ -12,17 +12,20 @@ import { ref, onMounted, onUnmounted } from "vue";
  */
 export function useMediaQuery(query) {
   const matches = ref(false);
+  let mediaQuery = null;
+  let handler = null;
 
+  // Setup and cleanup in onMounted
   onMounted(() => {
     if (typeof window === "undefined") return;
 
-    const mediaQuery = window.matchMedia(query);
+    mediaQuery = window.matchMedia(query);
 
     // Set initial value
     matches.value = mediaQuery.matches;
 
     // Update on change
-    const handler = (event) => {
+    handler = (event) => {
       matches.value = event.matches;
     };
 
@@ -33,15 +36,19 @@ export function useMediaQuery(query) {
       // Fallback for older browsers
       mediaQuery.addListener(handler);
     }
+  });
 
-    // Cleanup
-    onUnmounted(() => {
+  // Cleanup before unmount
+  onBeforeUnmount(() => {
+    if (mediaQuery && handler) {
       if (mediaQuery.removeEventListener) {
         mediaQuery.removeEventListener("change", handler);
       } else {
         mediaQuery.removeListener(handler);
       }
-    });
+      mediaQuery = null;
+      handler = null;
+    }
   });
 
   return matches;

@@ -79,10 +79,10 @@ const casesData = [
   },
   {
     id: "case2",
-    title: "Redesigning the Internal Communications App",
+    title: "Redesigning the Communications App",
     subtitle: "Smarp",
     description: "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.",
-    videoSrc: new URL("@/assets/case-videos/case2-reversed.mp4", import.meta.url).href,
+    videoSrc: new URL("@/assets/case-videos/case2-2.mp4", import.meta.url).href,
     imageSrc: new URL("@/assets/images/p2-3@2x.png", import.meta.url).href,
     routeTo: "/story/two",
     backgroundColor: "#E9D3D2",
@@ -254,5 +254,12 @@ onMounted(() => {
   min-height: 250vh;
   max-height: 250vh;
   /* overflow: hidden убран - мешает sticky */
+}
+
+/* Case2 needs extra height for scroll animation */
+#case2.case-section.item {
+  height: 200vh;
+  min-height: 200vh;
+  max-height: 200vh;
 }
 </style>

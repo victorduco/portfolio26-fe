@@ -8,11 +8,11 @@
     <!-- Spacer для начального скролла -->
     <div class="initial-spacer"></div>
 
-    <!-- Text frame - фиксируется в центре viewport, но после определенного скролла становится обычным блоком -->
+    <!-- Text frame - фиксируется в центре viewport, потом становится частью потока -->
     <div
-      :class="['text-frame-sticky', { 'unpinned': unpinned }]"
+      :class="['text-frame-wrapper', { unpinned: unpinned }]"
+      :style="unpinned ? { marginTop: unpinOffset } : {}"
       v-show="showText && !showFinalOverlay"
-      :style="unpinned ? { position: 'static', top: 'auto', left: 'auto', transform: 'none' } : {}"
     >
       <div class="text-content">
         <h2 class="case-title">
@@ -36,13 +36,13 @@
             class="video-container-wrapper"
             :style="{
               opacity: videoOpacity,
-              transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`
+              transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`,
             }"
           >
             <div
               class="video-wrapper"
               :class="{
-                'video-playing': videoExpanded
+                'video-playing': videoExpanded,
               }"
             >
               <svg
@@ -70,7 +70,7 @@
                 class="case-video"
                 :class="{
                   'video-visible': videoExpanded,
-                  'video-paused-blur': !isPlaying && hasStartedPlayback
+                  'video-paused-blur': !isPlaying && hasStartedPlayback,
                 }"
                 :muted="shouldBeMutedByDefault || isMuted"
                 playsinline
@@ -80,7 +80,12 @@
               ></video>
               <!-- Pause Overlay (inside video wrapper) -->
               <motion.div
-                v-if="!isPlaying && !showFinalOverlay && hasStartedPlayback && videoExpanded"
+                v-if="
+                  !isPlaying &&
+                  !showFinalOverlay &&
+                  hasStartedPlayback &&
+                  videoExpanded
+                "
                 class="case-video-pause-overlay"
                 :initial="{ opacity: 0 }"
                 :animate="{ opacity: 1 }"
@@ -88,7 +93,10 @@
                 :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
               >
                 <!-- Transparent clickable overlay -->
-                <div class="pause-overlay-clickable" @click="togglePlayPause"></div>
+                <div
+                  class="pause-overlay-clickable"
+                  @click="togglePlayPause"
+                ></div>
                 <!-- Large black play icon -->
                 <svg
                   viewBox="0 0 100 100"
@@ -97,7 +105,9 @@
                   @click="togglePlayPause"
                   aria-label="Play video"
                 >
-                  <path d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z" />
+                  <path
+                    d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z"
+                  />
                 </svg>
               </motion.div>
               <!-- Video Controls Bar (inside video wrapper) -->
@@ -117,9 +127,6 @@
         </div>
       </div>
     </div>
-// Unpin logic: when scrollYProgress > 0.85, unpin the sticky block
-import { computed } from "vue";
-const unpinned = computed(() => scrollYProgress.get() > 0.85);
 
     <!-- Final Overlay -->
     <motion.div
@@ -338,11 +345,11 @@ function isComingFromStory() {
 // ============================================================
 
 function getUserHasInteracted() {
-  return sessionStorage.getItem('user-has-interacted') === 'true';
+  return sessionStorage.getItem("user-has-interacted") === "true";
 }
 
 function setUserHasInteracted() {
-  sessionStorage.setItem('user-has-interacted', 'true');
+  sessionStorage.setItem("user-has-interacted", "true");
 }
 
 // ============================================================
@@ -390,7 +397,9 @@ function attemptPlay() {
 
   // If user has NOT interacted - try muted autoplay
   const shouldTryMuted = !userHasInteracted && !shouldBeMutedByDefault.value;
-  video.muted = shouldTryMuted ? true : (shouldBeMutedByDefault.value || isMuted.value);
+  video.muted = shouldTryMuted
+    ? true
+    : shouldBeMutedByDefault.value || isMuted.value;
   video.playsInline = true;
 
   video
@@ -533,31 +542,31 @@ function handleVideoEnded() {
 }
 
 function handleVideoClick(event) {
-  console.log('[handleVideoClick]', event.target);
+  console.log("[handleVideoClick]", event.target);
 
   // Don't toggle if clicking on control buttons
-  if (event.target.closest('.case-video-controls')) {
-    console.log('[handleVideoClick] Ignoring - clicked on controls');
+  if (event.target.closest(".case-video-controls")) {
+    console.log("[handleVideoClick] Ignoring - clicked on controls");
     return;
   }
 
-  console.log('[handleVideoClick] Toggling play/pause');
+  console.log("[handleVideoClick] Toggling play/pause");
   togglePlayPause();
 }
 
 function togglePlayPause() {
   const video = getVideoElement();
-  console.log('[togglePlayPause]', {
+  console.log("[togglePlayPause]", {
     hasVideo: !!video,
     paused: video?.paused,
-    isPlaying: isPlaying.value
+    isPlaying: isPlaying.value,
   });
 
   if (!video) return;
 
   if (video.paused) {
     // User is resuming playback
-    console.log('[togglePlayPause] Resuming playback');
+    console.log("[togglePlayPause] Resuming playback");
     userPaused.value = false;
     setUserHasInteracted();
 
@@ -574,11 +583,11 @@ function togglePlayPause() {
     video.play().then(() => {
       isPlaying.value = true;
       hasStartedPlayback.value = true;
-      console.log('[togglePlayPause] Playing');
+      console.log("[togglePlayPause] Playing");
     });
   } else {
     // User is manually pausing
-    console.log('[togglePlayPause] Pausing');
+    console.log("[togglePlayPause] Pausing");
     userPaused.value = true;
     video.pause();
     isPlaying.value = false;
@@ -599,7 +608,8 @@ function toggleFullscreen() {
 
   if (!document.fullscreenElement) {
     // Enter fullscreen
-    const container = video.parentElement?.parentElement?.parentElement?.parentElement;
+    const container =
+      video.parentElement?.parentElement?.parentElement?.parentElement;
     if (container && container.requestFullscreen) {
       container
         .requestFullscreen()
@@ -736,11 +746,32 @@ const videoExpanded = ref(false);
 const videoScaleValue = ref(0.125); // Start small (1/8)
 const videoYValue = ref(0);
 
+// Store unsubscribe function for cleanup
+let scrollUnsubscribe = null;
+
 // watchEffect для отслеживания scrollYProgress через onChange
 onMounted(() => {
   // Подписываемся на изменения scrollYProgress
-  const unsubscribe = scrollYProgress.on?.('change', (progress) => {
+  scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
     const shouldExpand = progress >= 0.45;
+    // Unpin after video finishes (later in the scroll)
+    const shouldUnpin = progress >= 0.65;
+
+    // Update unpin state and calculate offset to prevent jump
+    if (shouldUnpin !== unpinned.value) {
+      if (shouldUnpin && containerRef.value) {
+        // Calculate where the element would be in the flow vs where it is now (fixed)
+        // When fixed at 50% viewport, we need to offset by the scroll amount
+        const containerRect = containerRef.value.getBoundingClientRect();
+
+        // The element is fixed at 50vh from top of viewport
+        // When it becomes relative, offset = how far container has scrolled past viewport top
+        // This keeps the element at the same visual position during the transition
+        const offset = -containerRect.top;
+        unpinOffset.value = `${offset}px`;
+      }
+      unpinned.value = shouldUnpin;
+    }
 
     if (shouldExpand !== videoExpanded.value) {
       videoExpanded.value = shouldExpand;
@@ -769,15 +800,14 @@ onMounted(() => {
       }
     }
   });
-
-  // Очистка при unmount
-  onUnmounted(() => {
-    if (unsubscribe) unsubscribe();
-  });
 });
 
 // Показываем текст всегда, когда секция в viewport
 const showText = ref(true);
+
+// Unpin logic: transition from fixed to normal flow
+const unpinned = ref(false);
+const unpinOffset = ref("0px");
 
 // ============================================================
 // User interaction listeners for unmuting
@@ -791,7 +821,13 @@ function handleUserInteraction() {
 
   // If video is playing muted - try to unmute
   const video = getVideoElement();
-  if (video && !video.paused && hasStartedPlayback.value && isMuted.value && !shouldBeMutedByDefault.value) {
+  if (
+    video &&
+    !video.paused &&
+    hasStartedPlayback.value &&
+    isMuted.value &&
+    !shouldBeMutedByDefault.value
+  ) {
     video.muted = false;
     isMuted.value = false;
   }
@@ -902,7 +938,9 @@ onMounted(() => {
   // Add user interaction listeners
   // ============================================================
   document.addEventListener("click", handleUserInteraction);
-  document.addEventListener("touchstart", handleUserInteraction, { passive: true });
+  document.addEventListener("touchstart", handleUserInteraction, {
+    passive: true,
+  });
   document.addEventListener("keydown", handleUserInteraction);
 
   // ============================================================
@@ -913,6 +951,12 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  // Clean up scroll listener
+  if (scrollUnsubscribe) {
+    scrollUnsubscribe();
+    scrollUnsubscribe = null;
+  }
+
   if (observer && containerRef.value) {
     observer.unobserve(containerRef.value);
   }
@@ -935,7 +979,10 @@ onUnmounted(() => {
 
   // Remove fullscreen listeners
   document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+  document.removeEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
 
   // Pause video if playing
   const video = getVideoElement();
@@ -966,8 +1013,8 @@ defineExpose({
   width: 100%;
 }
 
-/* Text frame sticky - прибито к центру экрана */
-.text-frame-sticky {
+/* Text frame wrapper - fixed when pinned, normal flow when unpinned */
+.text-frame-wrapper {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -978,6 +1025,17 @@ defineExpose({
   justify-content: center;
   z-index: 200;
   pointer-events: none;
+}
+
+/* Unpinned - becomes part of document flow */
+.text-frame-wrapper.unpinned {
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+  z-index: 1;
+  min-height: 100vh;
+  margin-bottom: 0;
 }
 
 .text-content {
@@ -994,7 +1052,7 @@ defineExpose({
   margin: 0;
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
-  font-size: 63px;
+  font-size: clamp(32px, 4.5vw, 63px);
   line-height: 1.2;
   color: #000000;
   width: 100%;
@@ -1009,7 +1067,7 @@ defineExpose({
   margin: 0;
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
   font-weight: 400;
-  font-size: 48px;
+  font-size: clamp(24px, 3.5vw, 48px);
   line-height: 1.3;
   color: #000000;
   width: 100%;
@@ -1021,14 +1079,13 @@ defineExpose({
 
 /* Final spacer - для скrolла */
 .final-spacer {
-  height: 150vh;
+  height: 50vh;
   width: 100%;
 }
 
 /* Constraint wrapper - maintains layout space */
 .video-constraint-wrapper {
-  width: 16.67%; /* Visual space in layout */
-  max-width: calc(1662px / 6);
+  width: clamp(120px, 20vw, calc(1662px / 6)); /* More responsive width */
   margin-top: 24px;
   position: relative;
   /* Height matches the aspect ratio at small scale */
@@ -1040,7 +1097,10 @@ defineExpose({
 .video-container-wrapper {
   /* Inverse scale approach: start large, scale down, then scale up to 1 */
   width: 800%; /* 133.33% relative to constraint wrapper = 16.67% of text-content */
-  max-width: 1662px; /* Full width at scale(1) */
+  max-width: min(
+    1200px,
+    85vw
+  ); /* Adaptive max width: smaller on MacBooks, larger on big screens */
   pointer-events: none;
   transform-origin: center center;
   transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -1101,7 +1161,8 @@ defineExpose({
   object-fit: cover;
   opacity: 0;
   border-radius: 70px; /* Inner radius matches outer - padding (80px - 10px) */
-  transition: opacity 0.4s ease-in, border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
+  transition: opacity 0.4s ease-in,
+    border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
   transition-delay: 0.2s;
   z-index: 1;
   cursor: pointer;
