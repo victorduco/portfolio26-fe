@@ -5,9 +5,6 @@
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
   >
-    <!-- Spacer для начального скролла -->
-    <div class="initial-spacer"></div>
-
     <!-- Text frame - фиксируется в центре viewport, потом становится частью потока -->
     <div
       :class="['text-frame-wrapper', { unpinned: unpinned }]"
@@ -56,9 +53,9 @@
               >
                 <path
                   d="M8 5v14l11-7L8 5z"
-                  fill="white"
-                  stroke="white"
-                  stroke-width="1"
+                  fill="black"
+                  stroke="black"
+                  stroke-width="2"
                   stroke-linejoin="round"
                   stroke-linecap="round"
                 />
@@ -189,9 +186,6 @@
         </motion.button>
       </div>
     </motion.div>
-
-    <!-- Spacer после видео для завершения анимации -->
-    <div class="final-spacer"></div>
   </div>
 </template>
 
@@ -696,13 +690,13 @@ function handleFullscreenChange() {
 }
 
 // useScroll отслеживает скролл контейнера
-// offset: ["start end", "end start"] означает:
-// progress = 0 когда начало секции появляется внизу экрана
-// progress = 1 когда конец секции уходит вверх экрана
+// offset: ["start start", "end end"] означает:
+// progress = 0 когда начало секции доходит до верха экрана
+// progress = 1 когда конец секции доходит до низа экрана
 const { scrollYProgress } = useScroll({
   target: containerRef,
   container: scrollContainerRef,
-  offset: ["start end", "end start"],
+  offset: ["start start", "end end"],
 });
 
 // Трансформируем прогресс скролла в значения для анимации
@@ -712,11 +706,11 @@ const { scrollYProgress } = useScroll({
 const titleWords = computed(() => props.title.split(" "));
 
 // Общая анимация для subtitle (появляется после title)
-const subtitleOpacity = useTransform(scrollYProgress, [0.32, 0.37], [0, 1]);
+const subtitleOpacity = useTransform(scrollYProgress, [0.22, 0.27], [0, 1]);
 
 // Создаем opacity для каждого слова
-const appearStart = 0.25;
-const appearEnd = 0.35;
+const appearStart = 0;
+const appearEnd = 0.1;
 
 const wordOpacities = computed(() => {
   const words = titleWords.value;
@@ -737,13 +731,13 @@ const getWordOpacity = (wordIndex) => {
 };
 
 // Видео wrapper появляется после слова "Apple" (subtitle)
-// Subtitle появляется на 0.32-0.37, видео появляется сразу после с такой же задержкой
-const videoOpacity = useTransform(scrollYProgress, [0.37, 0.42], [0, 1]);
+// Subtitle появляется на 0.22-0.27, видео появляется сразу после с такой же задержкой
+const videoOpacity = useTransform(scrollYProgress, [0.27, 0.32], [0, 1]);
 
-// Видео увеличивается по триггеру при scrollYProgress >= 0.45
-// Inverse scale: start at 0.125 (small), scale up to 1 (large)
+// Видео увеличивается по триггеру при scrollYProgress >= 0.35
+// Inverse scale: start at 0.1875 (small), scale up to 1 (large)
 const videoExpanded = ref(false);
-const videoScaleValue = ref(0.125); // Start small (1/8)
+const videoScaleValue = ref(0.1875); // Start small (1/8 × 1.5 = 0.1875)
 const videoYValue = ref(0);
 
 // Store unsubscribe function for cleanup
@@ -753,9 +747,9 @@ let scrollUnsubscribe = null;
 onMounted(() => {
   // Подписываемся на изменения scrollYProgress
   scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
-    const shouldExpand = progress >= 0.45;
+    const shouldExpand = progress >= 0.35;
     // Unpin after video finishes (later in the scroll)
-    const shouldUnpin = progress >= 0.65;
+    const shouldUnpin = progress >= 0.55;
 
     // Update unpin state and calculate offset to prevent jump
     if (shouldUnpin !== unpinned.value) {
@@ -775,7 +769,7 @@ onMounted(() => {
 
     if (shouldExpand !== videoExpanded.value) {
       videoExpanded.value = shouldExpand;
-      videoScaleValue.value = shouldExpand ? 1 : 0.125; // Expand to scale(1)
+      videoScaleValue.value = shouldExpand ? 1 : 0.1875; // Expand to scale(1)
       // Adjusted value to properly center when expanded
       videoYValue.value = shouldExpand ? -12 : 0;
 
@@ -1007,12 +1001,6 @@ defineExpose({
   /* overflow: hidden убран - блокирует sticky */
 }
 
-/* Spacer - половина экрана */
-.initial-spacer {
-  height: 50vh;
-  width: 100%;
-}
-
 /* Text frame wrapper - fixed when pinned, normal flow when unpinned */
 .text-frame-wrapper {
   position: fixed;
@@ -1077,12 +1065,6 @@ defineExpose({
   opacity: 1;
 }
 
-/* Final spacer - для скrolла */
-.final-spacer {
-  height: 50vh;
-  width: 100%;
-}
-
 /* Constraint wrapper - maintains layout space */
 .video-constraint-wrapper {
   width: clamp(120px, 20vw, calc(1662px / 6)); /* More responsive width */
@@ -1121,25 +1103,25 @@ defineExpose({
   justify-content: center;
   overflow: visible; /* Changed from hidden to visible for controls */
   box-sizing: border-box;
-  background: #000000;
-  /* Larger radius at scale(0.125) = 80px × 0.125 = 10px visual */
-  border-radius: 80px;
+  background: #ffffff;
+  border: 40px solid #000000;
+  /* Outer radius 120px: at scale(0.1875) = 22.5px visual outer, inner = 120-40 = 80px → 15px visual */
+  border-radius: 120px;
   /* Use padding instead of border for proper inner radius */
-  padding: 10px;
-  transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  padding: 0;
+  transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .video-wrapper.video-playing {
-  background: transparent;
-  /* Keep black background/frame when playing */
-  background: #000000;
-  /* Smaller radius at scale(1) for expanded state */
-  border-radius: 10px;
+  background: #ffffff;
+  border-width: 10px;
+  /* Outer radius 20px at scale(1), inner = 20-10 = 10px */
+  border-radius: 20px;
 }
 
 .play-icon {
-  width: 800px; /* 100px × 8 to compensate for scale(0.125) */
-  height: 800px;
+  width: 453px; /* Уменьшено на 15% (533 × 0.85 = 453) */
+  height: 453px;
   opacity: 1;
   transition: opacity 0.3s ease-out;
   position: absolute;
@@ -1152,15 +1134,15 @@ defineExpose({
 
 .case-video {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  width: calc(100% - 20px);
-  height: calc(100% - 20px);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   opacity: 0;
-  border-radius: 70px; /* Inner radius matches outer - padding (80px - 10px) */
+  border-radius: 80px; /* Inner radius matches container inner (120px - 40px = 80px) */
   transition: opacity 0.4s ease-in,
     border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
   transition-delay: 0.2s;
@@ -1170,7 +1152,7 @@ defineExpose({
 
 .case-video.video-visible {
   opacity: 1;
-  border-radius: 3px; /* Smaller radius when video is visible/expanded */
+  border-radius: 10px; /* Inner radius when expanded (20px - 10px = 10px) */
 }
 
 .case-video.video-paused-blur {
@@ -1204,10 +1186,10 @@ defineExpose({
 
 .case-video-pause-overlay {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1248,9 +1230,9 @@ defineExpose({
 
 .case-video-controls {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;

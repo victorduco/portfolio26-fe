@@ -4,7 +4,10 @@
     <div
       ref="contentWrapperRef"
       :class="['content-wrapper', { 'pinned': pinned, 'unpinned': unpinned }]"
-      :style="unpinned ? { top: `${unpinTopOffset}px` } : {}"
+      :style="{
+        ...(unpinned ? { top: `${unpinTopOffset}px` } : {}),
+        ...(pinned ? { transform: `translate(-50%, -50%) scale(${currentScale})` } : { transform: `scale(${currentScale})` })
+      }"
     >
       <!-- Left Side: Content -->
       <div class="case2-content">
@@ -235,8 +238,20 @@ const { scrollYProgress } = useScroll({
   offset: ["start start", "end end"],
 });
 
-// Store unsubscribe function for cleanup
+// Separate scroll tracker for scale animation (from "start end" to "start start")
+// This triggers before the section reaches the top
+const { scrollYProgress: scaleProgress } = useScroll({
+  target: containerRef,
+  container: scrollContainerRef,
+  offset: ["start end", "start start"],
+});
+
+// Store current scale value
+const currentScale = ref(0.5);
+
+// Store unsubscribe functions for cleanup
 let scrollUnsubscribe = null;
+let scaleUnsubscribe = null;
 
 
 onMounted(() => {
@@ -245,6 +260,12 @@ onMounted(() => {
   if (scrollContainer) {
     scrollContainerRef.value = scrollContainer;
   }
+
+  // Subscribe to scale progress changes
+  scaleUnsubscribe = scaleProgress.on?.('change', (progress) => {
+    // Scale from 0.5 to 1 as section enters viewport
+    currentScale.value = 0.5 + (progress * 0.5);
+  });
 
   // Subscribe to scroll progress changes for pinning/unpinning
   scrollUnsubscribe = scrollYProgress.on?.('change', (progress) => {
@@ -261,8 +282,9 @@ onMounted(() => {
       const video = videoElement.value.$el || videoElement.value;
 
       if (video && video.duration && !isNaN(video.duration)) {
-        // Map progress (0-1) to video duration
-        const targetTime = progress * video.duration;
+        // Map progress (0-0.9) to video duration, video completes at 0.9 progress
+        const videoProgress = Math.min(progress / 0.9, 1);
+        const targetTime = videoProgress * video.duration;
 
         // Only update if difference is significant to avoid jitter
         if (Math.abs(video.currentTime - targetTime) > 0.05) {
@@ -369,10 +391,14 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // Clean up scroll listener
+  // Clean up scroll listeners
   if (scrollUnsubscribe) {
     scrollUnsubscribe();
     scrollUnsubscribe = null;
+  }
+  if (scaleUnsubscribe) {
+    scaleUnsubscribe();
+    scaleUnsubscribe = null;
   }
 });
 
@@ -400,7 +426,7 @@ defineExpose({
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #E9D3D2;
+  background-color: #ffffff;
 }
 
 
@@ -421,7 +447,6 @@ defineExpose({
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   width: 100%;
   height: 100vh;
   z-index: 200;

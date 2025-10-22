@@ -1,12 +1,5 @@
 <template>
-  <div
-    class="main-page"
-    :style="{
-      backgroundColor: currentBackgroundColor,
-      color: textColor,
-      transition: 'background-color 0.5s ease, color 0.5s ease',
-    }"
-  >
+  <div class="main-page">
     <PageNavigation
       :sections="navigationSections"
       :enable-intro-animation="shouldPlayNavIntro"
@@ -27,6 +20,7 @@
         :key="caseData.id"
         :id="caseData.id"
         class="item case-section"
+        :style="{ backgroundColor: caseData.backgroundColor }"
       >
         <CaseItem
           :title="caseData.title"
@@ -85,7 +79,7 @@ const casesData = [
     videoSrc: new URL("@/assets/case-videos/case2-2.mp4", import.meta.url).href,
     imageSrc: new URL("@/assets/images/p2-3@2x.png", import.meta.url).href,
     routeTo: "/story/two",
-    backgroundColor: "#E9D3D2",
+    backgroundColor: "#ffffff", // White for case 2
     useSplitLayout: true,
   },
   {
@@ -98,7 +92,7 @@ const casesData = [
       import.meta.url
     ).href,
     routeTo: "/story/three",
-    backgroundColor: "#EAF5FF",
+    backgroundColor: "#EAF5FF", // Blue for case 3
     useUniqueLayout: true,
   },
 ];
@@ -119,20 +113,8 @@ const router = useRouter();
 const introVisible = ref(false);
 const scrollContainerRef = ref(null);
 
-// Color transition system
-const currentBackgroundColor = ref("#171717"); // Default background
-const textColor = ref("#ffffff"); // Dynamic text color based on background
-const isDarkMode = ref(true); // Navigation mode based on background
-
-// Define section colors including intro and other sections
-const sectionColors = {
-  intro: "#171717", // Default dark
-  case1: "#ffffff", // White
-  case2: "#E9D3D2", // Smarp background
-  case3: "#EAF5FF", // Mirai background
-  "ai-play": "#171717", // Default dark
-  contacts: "#171717", // Default dark
-};
+// Navigation dark mode (static for now)
+const isDarkMode = ref(true);
 
 const shouldPlayNavIntro = computed(() => !route.meta?.skipNavIntro);
 
@@ -172,48 +154,19 @@ function handleNavAnimationComplete() {
 }
 
 function handleActiveSectionChange(sectionId) {
-  const color = sectionColors[sectionId];
-  if (color) {
-    currentBackgroundColor.value = color;
-    textColor.value = getContrastTextColor(color);
-
-    // Update navigation mode based on background color
-    // Dark mode = true means white menu elements
-    // Light mode = false means black menu elements
-    // Special case: case2 should have white menu
-    if (sectionId === 'case2') {
-      isDarkMode.value = true; // White menu for case2
-    } else {
-      isDarkMode.value = getContrastTextColor(color) === "#ffffff";
-    }
-
-    // Also update CSS custom properties for global styling
-    document.documentElement.style.setProperty("--page-background", color);
-    document.documentElement.style.setProperty(
-      "--page-text",
-      getContrastTextColor(color)
-    );
+  // Update navigation mode based on section
+  // Dark mode = true means white menu elements
+  // Light mode = false means black menu elements
+  if (sectionId === 'case2') {
+    isDarkMode.value = true; // White menu for case2
+  } else if (sectionId === 'case1' || sectionId === 'case3') {
+    isDarkMode.value = false; // Black menu for case1 and case3
+  } else {
+    isDarkMode.value = true; // White menu for intro, ai-play, contacts (dark backgrounds)
   }
 }
 
-// Function to determine text color based on background brightness
-function getContrastTextColor(backgroundColor) {
-  const hex = backgroundColor.replace("#", "");
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
-
-  // Calculate relative luminance using WCAG formula
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-  // Return dark text for light backgrounds, light text for dark backgrounds
-  return luminance > 0.5 ? "#000000" : "#ffffff";
-}
-
 onMounted(() => {
-  // Initialize theme for intro section immediately
-  handleActiveSectionChange("intro");
-
   const cameFromStory = route.meta?.skipNavIntro;
   if (!cameFromStory) {
     casesData.forEach((caseData) => {
@@ -228,7 +181,7 @@ onMounted(() => {
 .main-page {
   width: 100%;
   min-height: 100vh;
-  /* Background color is now dynamic via :style binding */
+  background-color: #171717; /* Default dark background */
 }
 
 #intro {
