@@ -10,7 +10,10 @@
       }"
     >
       <!-- Left Side: Content -->
-      <div class="case2-content">
+      <div
+        class="case2-content"
+        :style="{ transform: `translateY(${contentParallaxY}vh)` }"
+      >
         <div class="case2-content-wrapper">
           <!-- Glass card background (appears separately) -->
           <div class="case2-card-background" :style="{ opacity: getCardOpacity() }"></div>
@@ -256,6 +259,9 @@ const currentScale = ref(0.5);
 // Store parallax transform value
 const parallaxY = ref(0);
 
+// Store content parallax value for text
+const contentParallaxY = ref(0);
+
 // Store unsubscribe functions for cleanup
 let scrollUnsubscribe = null;
 let scaleUnsubscribe = null;
@@ -282,6 +288,26 @@ onMounted(() => {
     // Update parallax effect (image moves slower than scroll)
     // Parallax range: +10% to -10% over the entire scroll progress (opposite direction)
     parallaxY.value = (0.5 - progress) * 20;
+
+    // Content parallax effect (text moves slower upward)
+    // Similar to Case1, but with different range for Case2
+    if (progress < 0.92) {
+      // Slow parallax while text appears and stays (0 to 0.92)
+      // Move from 0 to -3vh (upward) - very slow movement, keep content readable for longer
+      const adjustedProgress = progress / 0.92;
+      contentParallaxY.value = -(adjustedProgress * 3);
+    } else {
+      // After progress 0.92, continue with dynamic scroll
+      const laterProgress = (progress - 0.92) / (1 - 0.92); // 0 to 1 over remaining range
+
+      // Use easing function: start slow, accelerate towards the end
+      const easeInCubic = laterProgress * laterProgress * laterProgress;
+
+      // Move from -3vh and keep going as user scrolls
+      const startOffset = -3;
+      const endOffset = -120; // Continue moving throughout scroll
+      contentParallaxY.value = startOffset + (easeInCubic * (endOffset - startOffset));
+    }
 
     // Get content-wrapper position for debugging
     const wrapperRect = contentWrapperRef.value?.getBoundingClientRect();
@@ -495,6 +521,8 @@ defineExpose({
   padding: clamp(60px, 10vh, 120px) 20px 20px 20px;
   box-sizing: border-box;
   pointer-events: none;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
 }
 
 /* Wrapper for card and content */

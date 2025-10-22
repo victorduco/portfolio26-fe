@@ -5,30 +5,32 @@
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
   >
-    <!-- Text frame - фиксируется в центре viewport, потом становится частью потока -->
+    <!-- Text frame - always fixed with dynamic parallax scroll -->
     <div
-      :class="['text-frame-wrapper', { unpinned: unpinned }]"
+      ref="contentWrapperRef"
+      class="text-frame-wrapper"
       :style="{
-        ...(unpinned ? { marginTop: unpinOffset } : {}),
-        transform: unpinned ? 'none' : `translate(-50%, calc(-50% + ${slowScrollY}vh))`
+        transform: `translate(-50%, calc(-50% + ${slowScrollY}vh))`
       }"
       v-show="showText"
     >
       <div class="text-content">
-        <h2 class="case-title">
-          <motion.span
-            v-for="(word, index) in titleWords"
-            :key="'title-' + index"
-            :style="{ opacity: getWordOpacity(index) }"
-            class="word"
-            >{{ word }}</motion.span
-          >
-        </h2>
-        <p class="case-subtitle">
-          <motion.span :style="{ opacity: subtitleOpacity }">
-            {{ company }}
-          </motion.span>
-        </p>
+        <div class="text-only" :style="{ opacity: textOpacity }">
+          <h2 class="case-title">
+            <motion.span
+              v-for="(word, index) in titleWords"
+              :key="'title-' + index"
+              :style="{ opacity: getWordOpacity(index) }"
+              class="word"
+              >{{ word }}</motion.span
+            >
+          </h2>
+          <p class="case-subtitle">
+            <motion.span :style="{ opacity: subtitleOpacity }">
+              {{ company }}
+            </motion.span>
+          </p>
+        </div>
         <!-- Video под текстом -->
         <!-- Constraint wrapper to maintain layout -->
         <div class="video-constraint-wrapper">
@@ -319,6 +321,7 @@ const props = defineProps({
 });
 
 const containerRef = ref(null);
+const contentWrapperRef = ref(null);
 const videoElement = ref(null);
 const scrollContainerRef = ref(null);
 
@@ -653,13 +656,13 @@ function handleFullscreenChange() {
 }
 
 // useScroll отслеживает скролл контейнера
-// offset: ["start start", "end end"] означает:
-// progress = 0 когда начало секции доходит до верха экрана
+// offset: ["start end", "end end"] означает:
+// progress = 0 когда начало секции доходит до конца viewport (низ экрана)
 // progress = 1 когда конец секции доходит до низа экрана
 const { scrollYProgress } = useScroll({
   target: containerRef,
   container: scrollContainerRef,
-  offset: ["start start", "end end"],
+  offset: ["start end", "end end"],
 });
 
 // Трансформируем прогресс скролла в значения для анимации
@@ -669,11 +672,11 @@ const { scrollYProgress } = useScroll({
 const titleWords = computed(() => props.title.split(" "));
 
 // Общая анимация для subtitle (появляется после title)
-const subtitleOpacity = useTransform(scrollYProgress, [0.22, 0.27], [0, 1]);
+const subtitleOpacity = useTransform(scrollYProgress, [0.42, 0.47], [0, 1]);
 
 // Создаем opacity для каждого слова
-const appearStart = 0;
-const appearEnd = 0.1;
+const appearStart = 0.2;
+const appearEnd = 0.3;
 
 const wordOpacities = computed(() => {
   const words = titleWords.value;
@@ -694,8 +697,8 @@ const getWordOpacity = (wordIndex) => {
 };
 
 // Видео wrapper появляется после слова "Apple" (subtitle)
-// Subtitle появляется на 0.22-0.27, видео появляется сразу после с такой же задержкой
-const videoOpacity = useTransform(scrollYProgress, [0.27, 0.32], [0, 1]);
+// Subtitle появляется на 0.42-0.47, видео появляется сразу после с такой же задержкой
+const videoOpacity = useTransform(scrollYProgress, [0.47, 0.52], [0, 1]);
 
 // Видео увеличивается по триггеру при scrollYProgress >= 0.35
 // Inverse scale: start at 0.1875 (small), scale up to 1 (large)
@@ -706,6 +709,9 @@ const videoYValue = ref(0);
 // Slow scroll effect when video is pinned
 const slowScrollY = ref(0);
 
+// Text opacity during video expansion
+const textOpacity = ref(1);
+
 // Store unsubscribe function for cleanup
 let scrollUnsubscribe = null;
 
@@ -713,39 +719,54 @@ let scrollUnsubscribe = null;
 onMounted(() => {
   // Подписываемся на изменения scrollYProgress
   scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
-    // Slow scroll effect: compensate for video expansion jump
-    // When video expands at 0.35, videoYValue changes to -20, so we need to compensate
-    if (progress < 0.35) {
-      // Stay at 0 (centered) before video expands
-      slowScrollY.value = 0;
-    } else if (progress < 0.80) {
-      // At 0.35, jump to +3vh to compensate for videoYValue = -20
-      // Then slowly move from +3vh to -17vh over range 0.35 to 0.80
-      const pinnedProgress = (progress - 0.35) / (0.80 - 0.35);
-      slowScrollY.value = 3 - (pinnedProgress * 20);
+    // Dynamic parallax: gradually increase scroll speed from slow to normal
+    // Element stays fixed throughout, just moves with increasing speed
+
+    // Text opacity animation
+    if (progress < 0.55) {
+      textOpacity.value = 1; // Text fully visible
+    } else if (progress < 0.60) {
+      // Fade out text as video expands (0.55 to 0.60) - faster animation
+      const fadeProgress = (progress - 0.55) / (0.60 - 0.55);
+      textOpacity.value = 1 - fadeProgress;
     } else {
-      slowScrollY.value = -17;
+      textOpacity.value = 0;
     }
 
-    const shouldExpand = progress >= 0.35;
-    // Unpin after video finishes (later in the scroll)
-    const shouldUnpin = progress >= 0.80;
+    // Slow scroll animation - continuous from beginning
+    if (progress < 0.55) {
+      // Slow parallax while text appears (0.2 to 0.55)
+      // Move from 0 to -4.5vh (upward) - 1.5x faster
+      const adjustedProgress = Math.max(0, (progress - 0.2) / (0.55 - 0.2));
+      slowScrollY.value = -(adjustedProgress * 4.5);
+    } else {
+      // After video starts expanding, continue with dynamic scroll
+      const pinnedProgress = (progress - 0.55) / (1 - 0.55); // 0 to 1 over entire remaining range
 
-    // Update unpin state and calculate offset to prevent jump
-    if (shouldUnpin !== unpinned.value) {
-      if (shouldUnpin && containerRef.value) {
-        // Calculate where the element would be in the flow vs where it is now (fixed)
-        // When fixed at 50% viewport, we need to offset by the scroll amount
-        const containerRect = containerRef.value.getBoundingClientRect();
+      // Use easing function: start slow, accelerate towards the end
+      // Cubic easing for smoother acceleration
+      const easeInCubic = pinnedProgress * pinnedProgress * pinnedProgress;
 
-        // The element is fixed at 50vh from top of viewport
-        // When it becomes relative, offset = how far container has scrolled past viewport top
-        // This keeps the element at the same visual position during the transition
-        const offset = -containerRect.top;
-        unpinOffset.value = `${offset}px`;
-      }
-      unpinned.value = shouldUnpin;
+      // Move from -4.5vh and keep going as user scrolls
+      // The easing makes it start slow and catch up to normal scroll speed
+      const startOffset = -4.5;
+      const endOffset = -120; // Continue moving throughout scroll - 1.5x faster
+      slowScrollY.value = startOffset + (easeInCubic * (endOffset - startOffset));
     }
+
+    // Log scroll position for debugging
+    const wrapperRect = contentWrapperRef.value?.getBoundingClientRect();
+    const containerRect = containerRef.value?.getBoundingClientRect();
+
+    console.log('[Case1 Scroll]', {
+      progress: progress.toFixed(3),
+      slowScrollY: slowScrollY.value.toFixed(2),
+      wrapperTop: wrapperRect ? wrapperRect.top.toFixed(0) : 'N/A',
+      containerTop: containerRect ? containerRect.top.toFixed(0) : 'N/A',
+      videoExpanded: videoExpanded.value
+    });
+
+    const shouldExpand = progress >= 0.55;
 
     if (shouldExpand !== videoExpanded.value) {
       console.log("[DEBUG] 🎬 Video expand state changing:", {
@@ -757,7 +778,9 @@ onMounted(() => {
       videoExpanded.value = shouldExpand;
       videoScaleValue.value = shouldExpand ? 1 : 0.1875; // Expand to scale(1)
       // Adjusted value to properly center when expanded
-      videoYValue.value = shouldExpand ? -20 : 0;
+      // Compensate for slowScrollY at progress 0.55 (which is -4.5vh)
+      // Move video lower by reducing negative offset
+      videoYValue.value = shouldExpand ? -10 : 0;
 
       // Show story link 800ms after video expands (only if not already shown/scheduled)
       if (shouldExpand) {
@@ -825,10 +848,6 @@ onMounted(() => {
 
 // Показываем текст всегда, когда секция в viewport
 const showText = ref(true);
-
-// Unpin logic: transition from fixed to normal flow
-const unpinned = ref(false);
-const unpinOffset = ref("0px");
 
 // ============================================================
 // User interaction listeners for unmuting
@@ -1217,7 +1236,7 @@ defineExpose({
   /* overflow: hidden убран - блокирует sticky */
 }
 
-/* Text frame wrapper - fixed when pinned, normal flow when unpinned */
+/* Text frame wrapper - always fixed with dynamic parallax */
 .text-frame-wrapper {
   position: fixed;
   top: 50%;
@@ -1231,17 +1250,6 @@ defineExpose({
   pointer-events: none;
 }
 
-/* Unpinned - becomes part of document flow */
-.text-frame-wrapper.unpinned {
-  position: relative;
-  top: 0;
-  left: 0;
-  transform: none;
-  z-index: 1;
-  min-height: 100vh;
-  margin-bottom: 0;
-}
-
 .text-content {
   display: flex;
   flex-direction: column;
@@ -1250,6 +1258,10 @@ defineExpose({
   text-align: center;
   padding: 0 5vw;
   max-width: 1400px;
+}
+
+.text-only {
+  transition: opacity 0.3s ease-out;
 }
 
 .case-title {
