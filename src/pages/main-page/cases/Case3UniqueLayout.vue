@@ -109,6 +109,7 @@ const videoElement = ref(null);
 let scrollListener = null;
 let intersectionObserver = null;
 let hasVideoPlayed = ref(false);
+let videoTimeUpdateHandler = null;
 
 // Animation states
 const animationState = ref("initial");
@@ -175,7 +176,7 @@ function triggerFadeIn() {
       videoElement.value.currentTime = 3.5;
 
       // Add timeupdate listener for ease-out effect
-      const handleTimeUpdate = () => {
+      videoTimeUpdateHandler = () => {
         if (!videoElement.value) return;
 
         const video = videoElement.value;
@@ -191,7 +192,7 @@ function triggerFadeIn() {
         video.playbackRate = maxRate - easeOutProgress * (maxRate - minRate);
       };
 
-      videoElement.value.addEventListener("timeupdate", handleTimeUpdate);
+      videoElement.value.addEventListener("timeupdate", videoTimeUpdateHandler);
 
       videoElement.value.play().catch((err) => {
         console.error("[Case3UniqueLayout] Video play error:", err);
@@ -264,6 +265,11 @@ onUnmounted(() => {
     if (scrollContainer) {
       scrollContainer.removeEventListener("scroll", scrollListener);
     }
+  }
+
+  if (videoTimeUpdateHandler && videoElement.value) {
+    videoElement.value.removeEventListener("timeupdate", videoTimeUpdateHandler);
+    videoTimeUpdateHandler = null;
   }
 
   if (intersectionObserver && layoutElement.value) {

@@ -22,37 +22,47 @@
         </p>
 
         <!-- Video под текстом -->
-        <motion.div
-          class="video-container-wrapper"
-          :style="{
-            opacity: videoOpacity,
-            transform: `translateY(${videoYValue}%) scale(${videoScaleValue})`
-          }"
-        >
-          <div class="video-wrapper" :class="{ 'video-playing': videoExpanded }">
-            <svg
-              class="play-icon"
-              :class="{ 'play-icon-hidden': videoExpanded }"
-              width="100"
-              height="100"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M8 5v14l11-7L8 5z" fill="white" rx="2" />
-            </svg>
-            <video
-              v-if="videoSrc"
-              ref="videoElement"
-              :src="videoSrc"
-              class="case-video"
-              :class="{ 'video-visible': videoExpanded }"
-              muted
-              loop
-              playsinline
-            ></video>
-          </div>
-        </motion.div>
+        <!-- Constraint wrapper to maintain layout -->
+        <div class="video-constraint-wrapper">
+          <motion.div
+            class="video-container-wrapper"
+            :style="{
+              opacity: videoOpacity,
+              transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`
+            }"
+          >
+            <div class="video-wrapper" :class="{ 'video-playing': videoExpanded }">
+              <svg
+                class="play-icon"
+                :class="{ 'play-icon-hidden': videoExpanded }"
+                width="100"
+                height="100"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8 5v14l11-7L8 5z"
+                  fill="white"
+                  stroke="white"
+                  stroke-width="1"
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <video
+                v-if="videoSrc"
+                ref="videoElement"
+                :src="videoSrc"
+                class="case-video"
+                :class="{ 'video-visible': videoExpanded }"
+                muted
+                loop
+                playsinline
+              ></video>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
 
@@ -63,7 +73,6 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import { RouterLink } from "vue-router";
 import { motion, useScroll, useTransform } from "motion-v";
 
 const props = defineProps({
@@ -112,23 +121,26 @@ const titleWords = computed(() => props.title.split(" "));
 // Общая анимация для subtitle (появляется после title)
 const subtitleOpacity = useTransform(scrollYProgress, [0.32, 0.37], [0, 1]);
 
-// Создаем opacity для каждого слова напрямую (максимум 20 слов)
-const words = props.title.split(" ");
-const totalWords = words.length;
+// Создаем opacity для каждого слова
 const appearStart = 0.25;
 const appearEnd = 0.35;
 
-const wordOpacities = words.map((_, wordIndex) => {
-  const wordAppearDuration = (appearEnd - appearStart) / totalWords;
-  const wordStart = appearStart + wordIndex * wordAppearDuration;
-  const wordEnd = wordStart + wordAppearDuration;
+const wordOpacities = computed(() => {
+  const words = titleWords.value;
+  const totalWords = words.length;
 
-  return useTransform(scrollYProgress, [wordStart, wordEnd], [0, 1]);
+  return words.map((_, wordIndex) => {
+    const wordAppearDuration = (appearEnd - appearStart) / totalWords;
+    const wordStart = appearStart + wordIndex * wordAppearDuration;
+    const wordEnd = wordStart + wordAppearDuration;
+
+    return useTransform(scrollYProgress, [wordStart, wordEnd], [0, 1]);
+  });
 });
 
 // Функция для получения opacity слова по индексу
 const getWordOpacity = (wordIndex) => {
-  return wordOpacities[wordIndex];
+  return wordOpacities.value[wordIndex];
 };
 
 // Видео wrapper появляется после слова "Apple" (subtitle)
@@ -136,8 +148,9 @@ const getWordOpacity = (wordIndex) => {
 const videoOpacity = useTransform(scrollYProgress, [0.37, 0.42], [0, 1]);
 
 // Видео увеличивается по триггеру при scrollYProgress >= 0.45
+// Inverse scale: start at 0.125 (small), scale up to 1 (large)
 const videoExpanded = ref(false);
-const videoScaleValue = ref(1);
+const videoScaleValue = ref(0.125); // Start small (1/8)
 const videoYValue = ref(0);
 
 // watchEffect для отслеживания scrollYProgress через onChange
@@ -148,21 +161,9 @@ onMounted(() => {
 
     if (shouldExpand !== videoExpanded.value) {
       videoExpanded.value = shouldExpand;
-      videoScaleValue.value = shouldExpand ? 8 : 1;
-      videoYValue.value = shouldExpand ? -100 : 0;
-
-      console.log(`🎬 Video trigger: ${shouldExpand ? 'EXPAND' : 'COLLAPSE'} at progress ${progress.toFixed(4)}`);
-
-      // Автоплей отключен
-      // if (shouldExpand && videoElement.value) {
-      //   setTimeout(() => {
-      //     videoElement.value.play().catch(err => {
-      //       console.error("[Case1ScrollLayout] Video play error:", err);
-      //     });
-      //   }, 300);
-      // } else if (!shouldExpand && videoElement.value) {
-      //   videoElement.value.pause();
-      // }
+      videoScaleValue.value = shouldExpand ? 1 : 0.125; // Expand to scale(1)
+      // Adjusted value to properly center when expanded
+      videoYValue.value = shouldExpand ? -12 : 0;
     }
   });
 
@@ -175,26 +176,12 @@ onMounted(() => {
 // Показываем текст всегда, когда секция в viewport
 const showText = ref(true);
 
-let isInViewport = false;
-
 function handleEnter() {
-  isInViewport = true;
-
-  // Автоплей отключен
-  // if (videoElement.value) {
-  //   videoElement.value.play().catch((err) => {
-  //     console.error("[Case1ScrollLayout] Video play error:", err);
-  //   });
-  // }
+  // Called when section enters viewport
 }
 
 function handleLeave() {
-  isInViewport = false;
-
-  // Автоплей отключен
-  // if (videoElement.value && typeof videoElement.value.pause === "function") {
-  //   videoElement.value.pause();
-  // }
+  // Called when section leaves viewport
 }
 
 function handleStoryLinkClick() {
@@ -208,47 +195,6 @@ onMounted(() => {
   const scrollContainer = document.querySelector(".scroll-snap-container");
   if (scrollContainer) {
     scrollContainerRef.value = scrollContainer;
-
-    // Add scroll event listener to log scroll position
-    let scrollTimeout = null;
-    const handleScroll = () => {
-      // Clear previous timeout
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-
-      // Throttle logging to avoid spam
-      scrollTimeout = setTimeout(() => {
-        // Get motion values
-        const getMotionValue = (motionVal) => {
-          if (typeof motionVal.get === "function") return motionVal.get();
-          if (typeof motionVal.value === "function") return motionVal.value();
-          return motionVal.value || motionVal;
-        };
-
-        const opacity = getMotionValue(videoOpacity);
-        const progress = getMotionValue(scrollYProgress);
-        const subtitleOp = getMotionValue(subtitleOpacity);
-
-        // Проверяем триггер прямо в логе
-        const shouldTrigger = progress >= 0.45;
-
-        console.log(
-          `%c[Case1ScrollLayout]%c scrollYProgress: ${progress.toFixed(
-            4
-          )} | shouldTrigger: ${shouldTrigger} | videoExpanded: ${videoExpanded.value} | videoScaleValue: ${videoScaleValue.value} | videoYValue: ${videoYValue.value}% | videoOpacity: ${opacity.toFixed(
-            4
-          )} | subtitleOpacity: ${subtitleOp.toFixed(4)}`,
-          "color: #00d4ff; font-weight: bold;",
-          "color: #ff69b4;"
-        );
-      }, 100);
-    };
-
-    scrollContainer.addEventListener("scroll", handleScroll);
-
-    // Store for cleanup
-    scrollContainerRef.value._scrollHandler = handleScroll;
   }
 
   // IntersectionObserver для определения видимости секции
@@ -275,17 +221,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // Remove scroll listener
-  if (scrollContainerRef.value && scrollContainerRef.value._scrollHandler) {
-    const scrollContainer = document.querySelector(".scroll-snap-container");
-    if (scrollContainer) {
-      scrollContainer.removeEventListener(
-        "scroll",
-        scrollContainerRef.value._scrollHandler
-      );
-    }
-  }
-
   if (observer && containerRef.value) {
     observer.unobserve(containerRef.value);
   }
@@ -293,11 +228,6 @@ onUnmounted(() => {
     observer.disconnect();
     observer = null;
   }
-
-  // Автоплей отключен
-  // if (videoElement.value && typeof videoElement.value.pause === "function") {
-  //   videoElement.value.pause();
-  // }
 });
 
 defineExpose({
@@ -375,55 +305,75 @@ defineExpose({
   opacity: 1;
 }
 
-/* Final spacer - для скролла */
+/* Final spacer - для скrolла */
 .final-spacer {
   height: 150vh;
   width: 100%;
 }
 
-.video-container-wrapper {
-  width: 16.67%;
+/* Constraint wrapper - maintains layout space */
+.video-constraint-wrapper {
+  width: 16.67%; /* Visual space in layout */
   max-width: calc(1662px / 6);
   margin-top: 24px;
+  position: relative;
+  /* Height matches the aspect ratio at small scale */
+  aspect-ratio: 1662 / 1080;
+  overflow: visible;
+  /* This container defines the layout space */
+}
+
+.video-container-wrapper {
+  /* Inverse scale approach: start large, scale down, then scale up to 1 */
+  width: 800%; /* 133.33% relative to constraint wrapper = 16.67% of text-content */
+  max-width: 1662px; /* Full width at scale(1) */
   pointer-events: none;
   transform-origin: center center;
   transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Base transform is set via inline style to include reactive values */
 }
 
 .video-wrapper {
   position: relative;
   width: 100%;
-  background: #000000;
   aspect-ratio: 1662 / 1080;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
-  padding: 10px;
   box-sizing: border-box;
-  transition: background-color 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  background: #000000;
+  /* Larger radius at scale(0.125) = 80px × 0.125 = 10px visual */
+  border-radius: 80px;
+  /* Use padding instead of border for proper inner radius */
+  padding: 10px;
+  transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .video-wrapper.video-playing {
   background: transparent;
+  /* Keep black background/frame when playing */
+  background: #000000;
+  /* Smaller radius at scale(1) for expanded state */
+  border-radius: 10px;
 }
 
 .play-icon {
-  width: 100px;
-  height: 100px;
+  width: 800px; /* 100px × 8 to compensate for scale(0.125) */
+  height: 800px;
   opacity: 1;
   transition: opacity 0.3s ease-out;
-  position: relative;
+  position: absolute;
   z-index: 2;
 }
 
 .play-icon.play-icon-hidden {
   opacity: 0;
-}
-
-.play-icon path {
-  rx: 3;
 }
 
 .case-video {
@@ -436,13 +386,15 @@ defineExpose({
   height: calc(100% - 20px);
   object-fit: cover;
   opacity: 0;
-  border-radius: 3px;
-  transition: opacity 0.4s ease-in;
+  border-radius: 70px; /* Inner radius matches outer - padding (80px - 10px) */
+  transition: opacity 0.4s ease-in, border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
   transition-delay: 0.2s;
+  z-index: 1;
 }
 
 .case-video.video-visible {
   opacity: 1;
+  border-radius: 3px; /* Smaller radius when video is visible/expanded */
 }
 
 .case-open-story {
@@ -473,7 +425,8 @@ defineExpose({
   }
 
   .video-wrapper {
-    border: none;
+    background: transparent;
+    border-radius: 0;
     padding: 0;
   }
 
