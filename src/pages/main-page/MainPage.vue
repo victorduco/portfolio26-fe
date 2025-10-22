@@ -203,16 +203,16 @@ onMounted(() => {
 
 /* Case1 needs extra height for scroll animation */
 #case1.case-section.item {
-  height: 250vh;
-  min-height: 250vh;
-  max-height: 250vh;
+  height: 400vh;
+  min-height: 400vh;
+  max-height: 400vh;
   /* overflow: hidden убран - мешает sticky */
 }
 
 /* Case2 needs extra height for scroll animation */
 #case2.case-section.item {
-  height: 200vh;
-  min-height: 200vh;
-  max-height: 200vh;
+  height: 250vh;
+  min-height: 250vh;
+  max-height: 250vh;
 }
 </style>

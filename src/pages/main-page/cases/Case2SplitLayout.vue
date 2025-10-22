@@ -60,7 +60,11 @@
 
       <!-- Right Side: Image with Parallax -->
       <div class="case2-image-container" ref="imageContainer">
-        <div class="case2-image-wrapper" ref="imageWrapper">
+        <div
+          class="case2-image-wrapper"
+          ref="imageWrapper"
+          :style="{ transform: `translateY(${parallaxY}%)` }"
+        >
           <!-- Static Image (always visible on background) -->
           <img
             :src="imageSrc"
@@ -164,12 +168,12 @@ const videoTransition = {
 };
 
 // Functions to calculate word opacity based on scroll progress
-// Title part 1 appears first (0 - 0.18)
+// Title part 1 appears first (0 - 0.15)
 function getTitlePart1WordOpacity(wordIndex) {
   const totalWords = titlePart1Words.value.length;
   const wordProgress = wordIndex / totalWords;
-  const startProgress = wordProgress * 0.18;
-  const endProgress = startProgress + (0.18 / totalWords);
+  const startProgress = wordProgress * 0.15;
+  const endProgress = startProgress + (0.15 / totalWords);
 
   if (currentScrollProgress.value < startProgress) return 0;
   if (currentScrollProgress.value > endProgress) return 1;
@@ -177,12 +181,12 @@ function getTitlePart1WordOpacity(wordIndex) {
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
 
-// Title part 2 appears second (0.18 - 0.36)
+// Title part 2 appears second (0.15 - 0.3)
 function getTitlePart2WordOpacity(wordIndex) {
   const totalWords = titlePart2Words.value.length;
   const wordProgress = wordIndex / totalWords;
-  const startProgress = 0.18 + (wordProgress * 0.18);
-  const endProgress = startProgress + (0.18 / totalWords);
+  const startProgress = 0.15 + (wordProgress * 0.15);
+  const endProgress = startProgress + (0.15 / totalWords);
 
   if (currentScrollProgress.value < startProgress) return 0;
   if (currentScrollProgress.value > endProgress) return 1;
@@ -192,10 +196,10 @@ function getTitlePart2WordOpacity(wordIndex) {
 
 function getDescriptionWordOpacity(wordIndex) {
   const totalWords = descriptionWords.value.length;
-  // Description appears after card (0.6 - 0.78)
+  // Description appears after card (0.5 - 0.65)
   const wordProgress = wordIndex / totalWords;
-  const startProgress = 0.6 + (wordProgress * 0.18);
-  const endProgress = startProgress + (0.18 / totalWords);
+  const startProgress = 0.5 + (wordProgress * 0.15);
+  const endProgress = startProgress + (0.15 / totalWords);
 
   if (currentScrollProgress.value < startProgress) return 0;
   if (currentScrollProgress.value > endProgress) return 1;
@@ -203,10 +207,10 @@ function getDescriptionWordOpacity(wordIndex) {
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
 
-// Card appears after title parts (0.54 - 0.6)
+// Card appears after title parts (0.45 - 0.5)
 function getCardOpacity() {
-  const startProgress = 0.54;
-  const endProgress = 0.6;
+  const startProgress = 0.45;
+  const endProgress = 0.5;
 
   if (currentScrollProgress.value < startProgress) return 0;
   if (currentScrollProgress.value > endProgress) return 1;
@@ -214,10 +218,10 @@ function getCardOpacity() {
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
 
-// Button appears at the end (0.78 - 0.9)
+// Button appears at the end (0.65 - 0.75)
 function getButtonOpacity() {
-  const startProgress = 0.78;
-  const endProgress = 0.9;
+  const startProgress = 0.65;
+  const endProgress = 0.75;
 
   if (currentScrollProgress.value < startProgress) return 0;
   if (currentScrollProgress.value > endProgress) return 1;
@@ -249,6 +253,9 @@ const { scrollYProgress: scaleProgress } = useScroll({
 // Store current scale value
 const currentScale = ref(0.5);
 
+// Store parallax transform value
+const parallaxY = ref(0);
+
 // Store unsubscribe functions for cleanup
 let scrollUnsubscribe = null;
 let scaleUnsubscribe = null;
@@ -272,6 +279,10 @@ onMounted(() => {
     // Update current scroll progress for word animations
     currentScrollProgress.value = progress;
 
+    // Update parallax effect (image moves slower than scroll)
+    // Parallax range: +10% to -10% over the entire scroll progress (opposite direction)
+    parallaxY.value = (0.5 - progress) * 20;
+
     // Get content-wrapper position for debugging
     const wrapperRect = contentWrapperRef.value?.getBoundingClientRect();
     const wrapperTop = wrapperRect ? Math.round(wrapperRect.top) : 'N/A';
@@ -282,8 +293,8 @@ onMounted(() => {
       const video = videoElement.value.$el || videoElement.value;
 
       if (video && video.duration && !isNaN(video.duration)) {
-        // Map progress (0-0.9) to video duration, video completes at 0.9 progress
-        const videoProgress = Math.min(progress / 0.9, 1);
+        // Map progress (0-0.75) to video duration, video completes at 0.75 progress
+        const videoProgress = Math.min(progress / 0.75, 1);
         const targetTime = videoProgress * video.duration;
 
         // Only update if difference is significant to avoid jitter
@@ -300,8 +311,8 @@ onMounted(() => {
       `Pinned: ${pinned.value} | Unpinned: ${unpinned.value}`
     );
 
-    // With offset ["start start", "end end"] tracking entire case2 container (200vh):
-    // - containerRef includes: content-wrapper (100vh) + final-spacer (100vh)
+    // With offset ["start start", "end end"] tracking entire case2 container (250vh):
+    // - containerRef includes: content-wrapper (100vh) + final-spacer (150vh)
     //
     // progress <= 0: case2 at or below viewport (scrolling up from case1) → NOT PINNED
     // progress > 0 and < 1: case2 in viewport → PINNED
@@ -466,7 +477,7 @@ defineExpose({
 
 /* Final spacer - for scroll exit */
 .final-spacer {
-  height: 100vh;
+  height: 150vh;
   width: 100%;
 }
 
@@ -595,12 +606,14 @@ defineExpose({
 
 .case2-image-wrapper {
   width: 100%;
-  height: 100%;
+  height: 120%;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
 }
 
 .case2-image,

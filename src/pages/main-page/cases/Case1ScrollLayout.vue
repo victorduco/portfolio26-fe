@@ -8,8 +8,11 @@
     <!-- Text frame - фиксируется в центре viewport, потом становится частью потока -->
     <div
       :class="['text-frame-wrapper', { unpinned: unpinned }]"
-      :style="unpinned ? { marginTop: unpinOffset } : {}"
-      v-show="showText && !showFinalOverlay"
+      :style="{
+        ...(unpinned ? { marginTop: unpinOffset } : {}),
+        transform: unpinned ? 'none' : `translate(-50%, calc(-50% + ${slowScrollY}vh))`
+      }"
+      v-show="showText"
     >
       <div class="text-content">
         <h2 class="case-title">
@@ -36,12 +39,13 @@
               transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`,
             }"
           >
-            <div
-              class="video-wrapper"
-              :class="{
-                'video-playing': videoExpanded,
-              }"
-            >
+            <div class="video-and-link-wrapper">
+              <div
+                class="video-wrapper"
+                :class="{
+                  'video-playing': videoExpanded,
+                }"
+              >
               <svg
                 class="play-icon"
                 :class="{ 'play-icon-hidden': videoExpanded }"
@@ -73,14 +77,11 @@
                 playsinline
                 @ended="handleVideoEnded"
                 @timeupdate="handleTimeUpdate"
-                @click.stop="handleVideoClick"
-                @wheel.passive="handleVideoWheel"
               ></video>
               <!-- Pause Overlay (inside video wrapper) -->
               <motion.div
                 v-if="
                   !isPlaying &&
-                  !showFinalOverlay &&
                   hasStartedPlayback &&
                   videoExpanded
                 "
@@ -91,13 +92,7 @@
                 :exit="{ opacity: 0 }"
                 :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
               >
-                <!-- Transparent clickable overlay -->
-                <div
-                  class="pause-overlay-clickable"
-                  @click.stop="() => { console.log('[DEBUG] Pause overlay clicked'); togglePlayPause(); }"
-                  @wheel.passive="handleVideoWheel"
-                ></div>
-                <!-- Large black play icon -->
+                <!-- Large black play icon (clickable) -->
                 <svg
                   viewBox="0 0 100 100"
                   fill="currentColor"
@@ -110,9 +105,10 @@
                   />
                 </svg>
               </motion.div>
+
               <!-- Video Controls Bar (inside video wrapper) -->
               <div
-                v-if="hasStartedPlayback && !showFinalOverlay && videoExpanded"
+                v-if="hasStartedPlayback && videoExpanded"
                 class="case-video-controls"
               >
                 <!-- Mute/Unmute button -->
@@ -273,80 +269,30 @@
                   </motion.svg>
                 </motion.button>
               </div>
+              </div>
+              <!-- Open Story Link (inside video-and-link-wrapper, after video-wrapper) -->
+              <motion.a
+                :href="routeTo"
+                class="case-open-story-link"
+                :initial="{ opacity: 0 }"
+                :animate="{ opacity: showStoryLink && videoExpanded ? 1 : 0 }"
+                :transition="{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }"
+                :style="{ pointerEvents: showStoryLink && videoExpanded ? 'auto' : 'none' }"
+                @click.prevent="handleStoryLinkClick"
+              >
+                Open Story
+              </motion.a>
             </div>
           </motion.div>
         </div>
       </div>
     </div>
-
-    <!-- Final Overlay -->
-    <motion.div
-      v-if="showFinalOverlay"
-      class="case-video-final"
-      :animate="finalOverlayState"
-      :variants="overlayVariants"
-      :transition="overlayTransition"
-      :initial="false"
-    >
-      <div class="case-video-final-content">
-        <h2 class="case-video-final-title">
-          Dive Deeper into the Design Process
-        </h2>
-        <RouterLink
-          class="case-video-final-link"
-          :to="routeTo"
-          @mouseenter="linkHovered = true"
-          @mouseleave="linkHovered = false"
-          @click="handleStoryLinkClick"
-        >
-          <motion.div
-            class="case-video-final-diamond"
-            :style="{ backgroundColor: '#319BF8' }"
-            :animate="linkHovered ? 'hover' : 'default'"
-            :variants="diamondVariants"
-            :transition="diamondTransition"
-          />
-          <span class="case-video-final-link-text"> Open Story </span>
-        </RouterLink>
-      </div>
-
-      <!-- Restart button positioned like during playback -->
-      <div class="case-video-final-controls">
-        <motion.button
-          class="control-button control-button-final"
-          type="button"
-          @click="replayVideo"
-          @mouseenter="finalRestartHovered = true"
-          @mouseleave="finalRestartHovered = false"
-          :animate="finalRestartHovered ? 'hover' : 'default'"
-          :variants="buttonVariants"
-          :transition="buttonTransition"
-          aria-label="Restart video"
-        >
-          <motion.svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            class="control-icon"
-            :animate="finalRestartHovered ? 'hover' : 'default'"
-            :variants="iconVariants"
-            :transition="iconTransition"
-          >
-            <path
-              d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
-            />
-          </motion.svg>
-        </motion.button>
-      </div>
-    </motion.div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { motion, useScroll, useTransform } from "motion-v";
-import { RouterLink } from "vue-router";
 import { useMediaQuery } from "@/composables/useMediaQuery.js";
 
 const props = defineProps({
@@ -385,24 +331,19 @@ const isMuted = ref(true);
 const hasStartedPlayback = ref(false);
 const userPaused = ref(false);
 const wasStateRestored = ref(false);
-
-// Final overlay states
-const showFinalOverlay = ref(false);
-const finalOverlayState = ref("hidden");
+const showStoryLink = ref(false);
 
 // Hover states for controls
 const isHovering = ref(false);
 const muteHovered = ref(false);
 const playHovered = ref(false);
 const restartHovered = ref(false);
-const finalRestartHovered = ref(false);
 const fullscreenHovered = ref(false);
-const linkHovered = ref(false);
 const isFullscreen = ref(false);
 
 // Playback attempt tracking
 let playAttempts = 0;
-let finalCleanupTimeout = null;
+let storyLinkTimeout = null;
 
 // Detect mobile for muted by default
 const shouldBeMutedByDefault = computed(() => {
@@ -425,7 +366,6 @@ function saveVideoState() {
     isPlaying: isPlaying.value,
     isMuted: isMuted.value,
     hasStartedPlayback: hasStartedPlayback.value,
-    showFinalOverlay: showFinalOverlay.value,
     timestamp: Date.now(),
   };
 
@@ -457,11 +397,8 @@ function restoreVideoState() {
     isMuted.value = state.isMuted || false;
     video.muted = isMuted.value;
     hasStartedPlayback.value = state.hasStartedPlayback || false;
-    showFinalOverlay.value = state.showFinalOverlay || false;
 
-    if (showFinalOverlay.value) {
-      finalOverlayState.value = "visible";
-    } else if (hasStartedPlayback.value) {
+    if (hasStartedPlayback.value) {
       if (state.isPlaying) {
         video
           .play()
@@ -551,28 +488,8 @@ function attemptPlay() {
 }
 
 // ============================================================
-// Animation variants for controls and overlays
+// Animation variants for controls
 // ============================================================
-
-const overlayVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
-const overlayTransition = {
-  duration: 0.5,
-  ease: [0.33, 1, 0.68, 1],
-};
-
-const controlsVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const controlsTransition = {
-  duration: 0.3,
-  ease: [0.33, 1, 0.68, 1],
-};
 
 const buttonVariants = {
   default: {
@@ -608,105 +525,17 @@ const iconTransition = {
   mass: 1.2,
 };
 
-const diamondVariants = {
-  default: {
-    rotate: 45,
-    backgroundColor: "#319BF8",
-  },
-  hover: {
-    rotate: 0,
-    backgroundColor: "#319BF8",
-  },
-};
-
-const diamondTransition = {
-  type: "spring",
-  stiffness: 320,
-  damping: 11,
-  mass: 1.2,
-};
-
 // ============================================================
 // Video control functions
 // ============================================================
 
-function clearFinalTimers() {
-  if (finalCleanupTimeout) {
-    clearTimeout(finalCleanupTimeout);
-    finalCleanupTimeout = null;
-  }
-}
-
-function handleTimeUpdate(event) {
-  // Show overlay at 39.5 seconds
-  if (!showFinalOverlay.value) {
-    const video = event.target;
-    if (video.currentTime >= 39.5) {
-      showFinalOverlay.value = true;
-      finalOverlayState.value = "visible";
-      // Don't hide video, don't pause - let it keep playing with audio
-    }
-  }
+function handleTimeUpdate() {
+  // No special handling needed - video plays to the end
 }
 
 function handleVideoEnded() {
-  // Video ended - final overlay should already be visible
-  if (!showFinalOverlay.value) {
-    showFinalOverlay.value = true;
-    finalOverlayState.value = "visible";
-  }
+  // Video ended - just stop playing
   isPlaying.value = false;
-}
-
-function handleVideoClick(event) {
-  console.log("[handleVideoClick] CALLED!", {
-    target: event.target,
-    currentTarget: event.currentTarget,
-    eventPhase: event.eventPhase,
-    type: event.type,
-  });
-
-  // Don't toggle if clicking on control buttons
-  if (event.target.closest(".case-video-controls")) {
-    console.log("[handleVideoClick] Ignoring - clicked on controls");
-    return;
-  }
-
-  console.log("[handleVideoClick] Toggling play/pause");
-  togglePlayPause();
-}
-
-function handleVideoWheel(event) {
-  // This handler manually scrolls the page when wheel event occurs on video/overlay
-  console.log("[handleVideoWheel] Wheel event on video/overlay - manually scrolling", {
-    deltaY: event.deltaY,
-    deltaX: event.deltaX,
-    target: event.target.tagName,
-    targetClasses: event.target.className,
-    currentScrollY: window.scrollY,
-  });
-
-  // Find the scroll container (vue-scroll-snap container or window)
-  const scrollContainer = scrollContainerRef.value || window;
-
-  // Manually scroll the container
-  if (scrollContainer === window) {
-    window.scrollBy({
-      top: event.deltaY,
-      left: event.deltaX,
-      behavior: 'auto', // Instant scroll to match native behavior
-    });
-  } else {
-    scrollContainer.scrollBy({
-      top: event.deltaY,
-      left: event.deltaX,
-      behavior: 'auto',
-    });
-  }
-
-  console.log("[handleVideoWheel] After manual scroll:", {
-    newScrollY: window.scrollY,
-  });
 }
 
 function togglePlayPause() {
@@ -819,37 +648,6 @@ function restartVideo() {
   });
 }
 
-function replayVideo() {
-  const video = getVideoElement();
-  if (!video) return;
-
-  clearFinalTimers();
-  finalOverlayState.value = "hidden";
-  finalCleanupTimeout = setTimeout(() => {
-    showFinalOverlay.value = false;
-  }, 500);
-
-  video.currentTime = 0;
-
-  // Clear saved state when replaying
-  clearVideoState();
-  wasStateRestored.value = false;
-  userPaused.value = false;
-
-  video
-    .play()
-    .then(() => {
-      hasStartedPlayback.value = true;
-      isPlaying.value = true;
-    })
-    .catch(() => {
-      // If playback fails, restore final overlay
-      clearFinalTimers();
-      showFinalOverlay.value = true;
-      finalOverlayState.value = "visible";
-    });
-}
-
 function handleFullscreenChange() {
   isFullscreen.value = !!document.fullscreenElement;
 }
@@ -905,6 +703,9 @@ const videoExpanded = ref(false);
 const videoScaleValue = ref(0.1875); // Start small (1/8 × 1.5 = 0.1875)
 const videoYValue = ref(0);
 
+// Slow scroll effect when video is pinned
+const slowScrollY = ref(0);
+
 // Store unsubscribe function for cleanup
 let scrollUnsubscribe = null;
 
@@ -912,6 +713,20 @@ let scrollUnsubscribe = null;
 onMounted(() => {
   // Подписываемся на изменения scrollYProgress
   scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
+    // Slow scroll effect: compensate for video expansion jump
+    // When video expands at 0.35, videoYValue changes to -20, so we need to compensate
+    if (progress < 0.35) {
+      // Stay at 0 (centered) before video expands
+      slowScrollY.value = 0;
+    } else if (progress < 0.80) {
+      // At 0.35, jump to +3vh to compensate for videoYValue = -20
+      // Then slowly move from +3vh to -17vh over range 0.35 to 0.80
+      const pinnedProgress = (progress - 0.35) / (0.80 - 0.35);
+      slowScrollY.value = 3 - (pinnedProgress * 20);
+    } else {
+      slowScrollY.value = -17;
+    }
+
     const shouldExpand = progress >= 0.35;
     // Unpin after video finishes (later in the scroll)
     const shouldUnpin = progress >= 0.80;
@@ -942,7 +757,28 @@ onMounted(() => {
       videoExpanded.value = shouldExpand;
       videoScaleValue.value = shouldExpand ? 1 : 0.1875; // Expand to scale(1)
       // Adjusted value to properly center when expanded
-      videoYValue.value = shouldExpand ? -12 : 0;
+      videoYValue.value = shouldExpand ? -20 : 0;
+
+      // Show story link 800ms after video expands (only if not already shown/scheduled)
+      if (shouldExpand) {
+        // Only set new timeout if link is not already visible and no timeout is pending
+        if (!showStoryLink.value && !storyLinkTimeout) {
+          console.log("[DEBUG] 🔗 Setting timeout to show story link in 800ms");
+          storyLinkTimeout = setTimeout(() => {
+            console.log("[DEBUG] 🔗 Showing story link now");
+            showStoryLink.value = true;
+            storyLinkTimeout = null;
+          }, 800);
+        }
+      } else {
+        // Clear timeout and hide link when video shrinks
+        console.log("[DEBUG] 🔗 Video shrinking, hiding story link");
+        if (storyLinkTimeout) {
+          clearTimeout(storyLinkTimeout);
+          storyLinkTimeout = null;
+        }
+        showStoryLink.value = false;
+      }
 
       // Log computed styles after state change
       setTimeout(() => {
@@ -1058,10 +894,14 @@ function handleLeave() {
   }
 }
 
-function handleStoryLinkClick() {
+function handleStoryLinkClick(event) {
   // Called before navigation to story page - save state
   if (hasStartedPlayback.value) {
     saveVideoState();
+  }
+  // Navigate to the route
+  if (event && event.currentTarget && event.currentTarget.href) {
+    window.location.href = event.currentTarget.href;
   }
 }
 
@@ -1347,9 +1187,6 @@ onUnmounted(() => {
   // Clean up interaction listeners
   removeInteractionListeners();
 
-  // Clean up final timers
-  clearFinalTimers();
-
   // Remove fullscreen listeners
   document.removeEventListener("fullscreenchange", handleFullscreenChange);
   document.removeEventListener(
@@ -1473,6 +1310,14 @@ defineExpose({
   /* Base transform is set via inline style to include reactive values */
 }
 
+.video-and-link-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+}
+
 .video-wrapper {
   position: relative;
   width: 100%;
@@ -1489,8 +1334,7 @@ defineExpose({
   /* Use padding instead of border for proper inner radius */
   padding: 0;
   isolation: isolate; /* Create stacking context to contain blur */
-  cursor: pointer;
-  pointer-events: auto; /* Catch clicks on wrapper */
+  pointer-events: none; /* Don't block scroll */
   transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -1529,7 +1373,7 @@ defineExpose({
   transition: opacity 0.4s ease-in,
     border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
   z-index: 1;
-  cursor: pointer;
+  pointer-events: none; /* Don't block scroll */
 }
 
 .case-video.video-visible {
@@ -1562,6 +1406,24 @@ defineExpose({
   opacity: 0.7;
 }
 
+.case-open-story-link {
+  display: block;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: clamp(24px, 3vw, 42px);
+  line-height: 1.2;
+  color: #000000;
+  text-decoration: underline;
+  text-align: center;
+  transition: text-decoration 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.case-open-story-link:hover {
+  text-decoration: none;
+}
+
 /* ============================================================ */
 /* Pause Overlay */
 /* ============================================================ */
@@ -1576,22 +1438,9 @@ defineExpose({
   align-items: center;
   justify-content: center;
   z-index: 100;
-  pointer-events: none; /* Default: don't block */
+  pointer-events: none; /* Don't block scroll - only icon is clickable */
   isolation: isolate;
   border-radius: 3px;
-}
-
-/* Only catch clicks when fully visible (opacity = 1) */
-.case-video-pause-overlay:not(.is-playing) {
-  pointer-events: auto;
-}
-
-.pause-overlay-clickable {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  border-radius: 10px;
 }
 
 .pause-play-icon {
@@ -1601,6 +1450,7 @@ defineExpose({
   height: 140px;
   color: #000000;
   cursor: pointer;
+  pointer-events: auto; /* Icon is clickable */
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1));
   transition: opacity 0.2s ease;
   will-change: transform;
@@ -1681,93 +1531,6 @@ defineExpose({
 .case-video-controls.mobile-controls {
   opacity: 1;
   pointer-events: auto;
-}
-
-/* ============================================================ */
-/* Final Overlay */
-/* ============================================================ */
-
-.case-video-final {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 100vh;
-  padding: clamp(16px, 3vw, 32px);
-  gap: clamp(12px, 2vw, 20px);
-  z-index: 200;
-  background: #ffffff;
-  color: #171717;
-  pointer-events: auto;
-}
-
-.case-video-final-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  text-align: center;
-  max-width: 80%;
-}
-
-.case-video-final-title {
-  margin: 0;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-weight: 600;
-  font-size: clamp(32px, 4vw, 48px);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: #333333;
-}
-
-.case-video-final-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 19px;
-  color: #333333;
-  text-decoration: none;
-  transition: color 0.2s ease, font-size 0.2s ease;
-  pointer-events: auto;
-}
-
-.case-video-final-link:hover {
-  color: #000000;
-  font-size: 20px;
-}
-
-.case-video-final-link-text {
-  display: inline;
-  transition: inherit;
-}
-
-.case-video-final-diamond {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  flex-shrink: 0;
-}
-
-.case-video-final-controls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 15px;
-  padding: 16px 20px;
-  z-index: 201;
-}
-
-.control-button-final {
-  /* Same styling as regular control buttons */
 }
 
 /* Mobile Responsive */
