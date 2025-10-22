@@ -31,6 +31,8 @@
     :image-src="imageSrc"
     :video-src="videoSrc"
     :background-color="backgroundColor"
+    :route-to="routeTo"
+    @navigation-click="handleNavigationClick"
   />
 
   <!-- Default layout for other cases -->

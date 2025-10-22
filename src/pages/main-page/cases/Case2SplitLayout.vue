@@ -291,14 +291,14 @@ onMounted(() => {
 
     // Content parallax effect (text moves slower upward)
     // Similar to Case1, but with different range for Case2
-    if (progress < 0.92) {
-      // Slow parallax while text appears and stays (0 to 0.92)
+    if (progress < 0.7) {
+      // Slow parallax while text appears and stays (0 to 0.7)
       // Move from 0 to -3vh (upward) - very slow movement, keep content readable for longer
-      const adjustedProgress = progress / 0.92;
+      const adjustedProgress = progress / 0.7;
       contentParallaxY.value = -(adjustedProgress * 3);
     } else {
-      // After progress 0.92, continue with dynamic scroll
-      const laterProgress = (progress - 0.92) / (1 - 0.92); // 0 to 1 over remaining range
+      // After progress 0.7, continue with dynamic scroll (starts earlier now)
+      const laterProgress = (progress - 0.7) / (1 - 0.7); // 0 to 1 over remaining range
 
       // Use easing function: start slow, accelerate towards the end
       const easeInCubic = laterProgress * laterProgress * laterProgress;
@@ -464,6 +464,7 @@ defineExpose({
   width: 100%;
   height: 100%;
   background-color: #ffffff;
+  overflow: hidden;
 }
 
 

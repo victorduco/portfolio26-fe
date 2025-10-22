@@ -84,7 +84,7 @@ const casesData = [
   },
   {
     id: "case3",
-    title: "From Chaos to Clarity: Terminal Shift Redesign",
+    title: "Terminal Shift Redesign",
     subtitle: "Mirai",
     imageSrc: new URL("@/assets/images/cs3-ipad.png", import.meta.url).href,
     videoSrc: new URL(
@@ -92,7 +92,7 @@ const casesData = [
       import.meta.url
     ).href,
     routeTo: "/story/three",
-    backgroundColor: "#EAF5FF", // Blue for case 3
+    backgroundColor: "#B9E2F7", // Blue for case 3
     useUniqueLayout: true,
   },
 ];
@@ -214,5 +214,12 @@ onMounted(() => {
   height: 250vh;
   min-height: 250vh;
   max-height: 250vh;
+}
+
+/* Case3 standard height */
+#case3.case-section.item {
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
 }
 </style>
