@@ -73,16 +73,9 @@
                 playsinline
                 @ended="handleVideoEnded"
                 @timeupdate="handleTimeUpdate"
-                @click="handleVideoClick"
+                @click.stop="handleVideoClick"
+                @wheel.passive="handleVideoWheel"
               ></video>
-              <!-- Clickable overlay for video interactions -->
-              <button
-                v-if="videoExpanded && !showFinalOverlay"
-                class="video-clickable-overlay"
-                type="button"
-                @click="handleVideoClick"
-                aria-label="Toggle video playback"
-              ></button>
               <!-- Pause Overlay (inside video wrapper) -->
               <motion.div
                 v-if="
@@ -92,6 +85,7 @@
                   videoExpanded
                 "
                 class="case-video-pause-overlay"
+                :class="{ 'is-playing': isPlaying }"
                 :initial="{ opacity: 0 }"
                 :animate="{ opacity: 1 }"
                 :exit="{ opacity: 0 }"
@@ -100,14 +94,15 @@
                 <!-- Transparent clickable overlay -->
                 <div
                   class="pause-overlay-clickable"
-                  @click="togglePlayPause"
+                  @click.stop="() => { console.log('[DEBUG] Pause overlay clicked'); togglePlayPause(); }"
+                  @wheel.passive="handleVideoWheel"
                 ></div>
                 <!-- Large black play icon -->
                 <svg
                   viewBox="0 0 100 100"
                   fill="currentColor"
                   class="pause-play-icon"
-                  @click="togglePlayPause"
+                  @click.stop="togglePlayPause"
                   aria-label="Play video"
                 >
                   <path
@@ -116,20 +111,15 @@
                 </svg>
               </motion.div>
               <!-- Video Controls Bar (inside video wrapper) -->
-              <motion.div
+              <div
                 v-if="hasStartedPlayback && !showFinalOverlay && videoExpanded"
                 class="case-video-controls"
-                :class="{ 'mobile-controls': isSmallScreen }"
-                :animate="isHovering || isSmallScreen ? 'visible' : 'hidden'"
-                :variants="controlsVariants"
-                :transition="controlsTransition"
-                :initial="false"
               >
                 <!-- Mute/Unmute button -->
                 <motion.button
                   class="control-button"
                   type="button"
-                  @click="toggleMute"
+                  @click.stop="toggleMute"
                   @mouseenter="muteHovered = true"
                   @mouseleave="muteHovered = false"
                   :initial="'default'"
@@ -174,7 +164,7 @@
                 <motion.button
                   class="control-button"
                   type="button"
-                  @click="togglePlayPause"
+                  @click.stop="togglePlayPause"
                   @mouseenter="playHovered = true"
                   @mouseleave="playHovered = false"
                   :initial="'default'"
@@ -212,7 +202,7 @@
                 <motion.button
                   class="control-button"
                   type="button"
-                  @click="restartVideo"
+                  @click.stop="restartVideo"
                   @mouseenter="restartHovered = true"
                   @mouseleave="restartHovered = false"
                   :initial="'default'"
@@ -242,7 +232,7 @@
                   v-if="isSmallScreen"
                   class="control-button"
                   type="button"
-                  @click="toggleFullscreen"
+                  @click.stop="toggleFullscreen"
                   @mouseenter="fullscreenHovered = true"
                   @mouseleave="fullscreenHovered = false"
                   :initial="'default'"
@@ -282,7 +272,7 @@
                     />
                   </motion.svg>
                 </motion.button>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -669,7 +659,12 @@ function handleVideoEnded() {
 }
 
 function handleVideoClick(event) {
-  console.log("[handleVideoClick]", event.target);
+  console.log("[handleVideoClick] CALLED!", {
+    target: event.target,
+    currentTarget: event.currentTarget,
+    eventPhase: event.eventPhase,
+    type: event.type,
+  });
 
   // Don't toggle if clicking on control buttons
   if (event.target.closest(".case-video-controls")) {
@@ -679,6 +674,39 @@ function handleVideoClick(event) {
 
   console.log("[handleVideoClick] Toggling play/pause");
   togglePlayPause();
+}
+
+function handleVideoWheel(event) {
+  // This handler manually scrolls the page when wheel event occurs on video/overlay
+  console.log("[handleVideoWheel] Wheel event on video/overlay - manually scrolling", {
+    deltaY: event.deltaY,
+    deltaX: event.deltaX,
+    target: event.target.tagName,
+    targetClasses: event.target.className,
+    currentScrollY: window.scrollY,
+  });
+
+  // Find the scroll container (vue-scroll-snap container or window)
+  const scrollContainer = scrollContainerRef.value || window;
+
+  // Manually scroll the container
+  if (scrollContainer === window) {
+    window.scrollBy({
+      top: event.deltaY,
+      left: event.deltaX,
+      behavior: 'auto', // Instant scroll to match native behavior
+    });
+  } else {
+    scrollContainer.scrollBy({
+      top: event.deltaY,
+      left: event.deltaX,
+      behavior: 'auto',
+    });
+  }
+
+  console.log("[handleVideoWheel] After manual scroll:", {
+    newScrollY: window.scrollY,
+  });
 }
 
 function togglePlayPause() {
@@ -722,14 +750,17 @@ function togglePlayPause() {
 }
 
 function toggleMute() {
+  console.log("[toggleMute] Button clicked");
   const video = getVideoElement();
   if (!video) return;
 
   isMuted.value = !isMuted.value;
   video.muted = isMuted.value;
+  console.log("[toggleMute] Muted:", isMuted.value);
 }
 
 function toggleFullscreen() {
+  console.log("[toggleFullscreen] Button clicked");
   const video = getVideoElement();
   if (!video) return;
 
@@ -772,6 +803,7 @@ function toggleFullscreen() {
 }
 
 function restartVideo() {
+  console.log("[restartVideo] Button clicked");
   const video = getVideoElement();
   if (!video) return;
 
@@ -901,10 +933,38 @@ onMounted(() => {
     }
 
     if (shouldExpand !== videoExpanded.value) {
+      console.log("[DEBUG] 🎬 Video expand state changing:", {
+        from: videoExpanded.value,
+        to: shouldExpand,
+        scrollProgress: progress,
+      });
+
       videoExpanded.value = shouldExpand;
       videoScaleValue.value = shouldExpand ? 1 : 0.1875; // Expand to scale(1)
       // Adjusted value to properly center when expanded
       videoYValue.value = shouldExpand ? -12 : 0;
+
+      // Log computed styles after state change
+      setTimeout(() => {
+        const videoContainerWrapper = containerRef.value?.querySelector('.video-container-wrapper');
+        const videoWrapper = containerRef.value?.querySelector('.video-wrapper');
+
+        console.log("[DEBUG] 🎨 Styles after expand state change:", {
+          videoExpanded: videoExpanded.value,
+          videoContainerWrapper: videoContainerWrapper ? {
+            pointerEvents: window.getComputedStyle(videoContainerWrapper).pointerEvents,
+            transform: window.getComputedStyle(videoContainerWrapper).transform,
+            position: window.getComputedStyle(videoContainerWrapper).position,
+            zIndex: window.getComputedStyle(videoContainerWrapper).zIndex,
+          } : 'NOT FOUND',
+          videoWrapper: videoWrapper ? {
+            pointerEvents: window.getComputedStyle(videoWrapper).pointerEvents,
+            cursor: window.getComputedStyle(videoWrapper).cursor,
+            position: window.getComputedStyle(videoWrapper).position,
+            zIndex: window.getComputedStyle(videoWrapper).zIndex,
+          } : 'NOT FOUND',
+        });
+      }, 50);
 
       // ============================================================
       // Autoplay when video expands, pause when shrinks
@@ -1008,8 +1068,207 @@ function handleStoryLinkClick() {
 let observer = null;
 
 onMounted(() => {
-  // Try to restore state only if coming from story page
+  // DEBUG: Log document structure on mount
+  console.log("[DEBUG] 📋 Component mounted. Checking document structure...");
+  setTimeout(() => {
+    const container = containerRef.value;
+    if (container) {
+      const textFrame = container.querySelector('.text-frame-wrapper');
+      const videoContainerWrapper = container.querySelector('.video-container-wrapper');
+      const videoWrapper = container.querySelector('.video-wrapper');
+      const video = container.querySelector('.case-video');
+
+      console.log("[DEBUG] 📊 Element structure:", {
+        container: {
+          exists: !!container,
+          pointerEvents: window.getComputedStyle(container).pointerEvents,
+          position: window.getComputedStyle(container).position,
+          zIndex: window.getComputedStyle(container).zIndex,
+        },
+        textFrame: {
+          exists: !!textFrame,
+          pointerEvents: textFrame ? window.getComputedStyle(textFrame).pointerEvents : 'N/A',
+          position: textFrame ? window.getComputedStyle(textFrame).position : 'N/A',
+          zIndex: textFrame ? window.getComputedStyle(textFrame).zIndex : 'N/A',
+        },
+        videoContainerWrapper: {
+          exists: !!videoContainerWrapper,
+          pointerEvents: videoContainerWrapper ? window.getComputedStyle(videoContainerWrapper).pointerEvents : 'N/A',
+          position: videoContainerWrapper ? window.getComputedStyle(videoContainerWrapper).position : 'N/A',
+          zIndex: videoContainerWrapper ? window.getComputedStyle(videoContainerWrapper).zIndex : 'N/A',
+        },
+        videoWrapper: {
+          exists: !!videoWrapper,
+          pointerEvents: videoWrapper ? window.getComputedStyle(videoWrapper).pointerEvents : 'N/A',
+          position: videoWrapper ? window.getComputedStyle(videoWrapper).position : 'N/A',
+          zIndex: videoWrapper ? window.getComputedStyle(videoWrapper).zIndex : 'N/A',
+        },
+        video: {
+          exists: !!video,
+          pointerEvents: video ? window.getComputedStyle(video).pointerEvents : 'N/A',
+          position: video ? window.getComputedStyle(video).position : 'N/A',
+          zIndex: video ? window.getComputedStyle(video).zIndex : 'N/A',
+        },
+      });
+    }
+  }, 500);
+
+  // DEBUG: Wheel event listener to catch scroll events
+  let lastScrollY = window.scrollY;
+  let wheelEventCount = 0;
+
+  document.addEventListener('wheel', (e) => {
+    wheelEventCount++;
+    const path = e.composedPath ? e.composedPath() : (e.path || []);
+    const videoWrapper = path.find(el => el.className && el.className.includes && el.className.includes('video-container-wrapper'));
+    if (videoWrapper) {
+      console.log(`[DEBUG] 🔍 Wheel over video-container-wrapper detected! (Event #${wheelEventCount})`);
+
+      // Get the element directly under cursor
+      const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY);
+      if (elementUnderCursor) {
+        console.log("[DEBUG] 🎯 Element directly under cursor:", {
+          tag: elementUnderCursor.tagName,
+          classes: elementUnderCursor.className,
+          pointerEvents: window.getComputedStyle(elementUnderCursor).pointerEvents,
+          zIndex: window.getComputedStyle(elementUnderCursor).zIndex,
+          position: window.getComputedStyle(elementUnderCursor).position,
+        });
+      }
+
+      // Log ALL elements in path with their pointer-events
+      const pathInfo = path.slice(0, 15).map(el => {
+        if (!el.tagName) return null;
+        const styles = window.getComputedStyle(el);
+        return {
+          tag: el.tagName,
+          classes: el.className,
+          pointerEvents: styles.pointerEvents,
+          position: styles.position,
+          zIndex: styles.zIndex,
+          overflow: styles.overflow,
+          width: styles.width,
+          height: styles.height,
+        };
+      }).filter(Boolean);
+
+      console.log("[DEBUG] Wheel event FULL PATH", {
+        targetTag: e.target.tagName,
+        targetClasses: e.target.className,
+        deltaY: e.deltaY,
+        deltaX: e.deltaX,
+        defaultPrevented: e.defaultPrevented,
+        cancelable: e.cancelable,
+        bubbles: e.bubbles,
+        eventPhase: e.eventPhase,
+        currentScrollY: window.scrollY,
+        documentScrollHeight: document.documentElement.scrollHeight,
+        documentClientHeight: document.documentElement.clientHeight,
+        canScrollMore: window.scrollY < (document.documentElement.scrollHeight - document.documentElement.clientHeight),
+        fullPath: pathInfo,
+      });
+
+      // Check if any element in path has pointer-events: none
+      const blockedElements = pathInfo.filter(el => el.pointerEvents === 'none');
+      if (blockedElements.length > 0) {
+        console.log("[DEBUG] ⚠️ Elements with pointer-events:none in path:", blockedElements.map(el => ({
+          tag: el.tag,
+          classes: el.classes,
+          position: el.position,
+          zIndex: el.zIndex,
+          width: el.width,
+          height: el.height,
+        })));
+      }
+
+      // Find which specific element is blocking scroll
+      const motionDivs = path.filter(el =>
+        el.tagName === 'DIV' &&
+        el.hasAttribute &&
+        (el.hasAttribute('data-motion-id') || el.className.includes('motion'))
+      );
+      if (motionDivs.length > 0) {
+        console.log("[DEBUG] 🎭 Motion divs in path:", motionDivs.map(div => ({
+          tag: div.tagName,
+          classes: div.className,
+          hasDataMotionId: div.hasAttribute('data-motion-id'),
+          pointerEvents: window.getComputedStyle(div).pointerEvents,
+          position: window.getComputedStyle(div).position,
+        })));
+      }
+
+      // Check for elements that might be covering the scroll container
+      const textFrameWrapper = path.find(el => el.className && el.className.includes && el.className.includes('text-frame-wrapper'));
+      if (textFrameWrapper) {
+        const textFrameStyles = window.getComputedStyle(textFrameWrapper);
+        console.log("[DEBUG] 📐 text-frame-wrapper in path:", {
+          pointerEvents: textFrameStyles.pointerEvents,
+          position: textFrameStyles.position,
+          zIndex: textFrameStyles.zIndex,
+          top: textFrameStyles.top,
+          left: textFrameStyles.left,
+          width: textFrameStyles.width,
+          height: textFrameStyles.height,
+        });
+      }
+
+      setTimeout(() => {
+        const newScrollY = window.scrollY;
+        const scrolled = newScrollY !== lastScrollY;
+        const diff = newScrollY - lastScrollY;
+
+        console.log("[DEBUG] Wheel over video - DID PAGE SCROLL?", {
+          oldScrollY: lastScrollY,
+          newScrollY: newScrollY,
+          diff: diff,
+          scrolled: scrolled,
+        });
+
+        if (!scrolled && Math.abs(e.deltaY) > 0) {
+          console.log("[DEBUG] ⚠️ SCROLL BLOCKED! Wheel event but page didn't scroll", {
+            deltaY: e.deltaY,
+            scrollY: newScrollY,
+            reasonCheck: {
+              isEventPrevented: e.defaultPrevented,
+              hasPointerEventsNone: blockedElements.length > 0,
+              targetPointerEvents: window.getComputedStyle(e.target).pointerEvents,
+            }
+          });
+        }
+        lastScrollY = newScrollY;
+      }, 10);
+    }
+  }, true);
+
+  // DEBUG: Global click listener to catch ALL clicks
+  document.addEventListener('click', (e) => {
+    const path = e.composedPath ? e.composedPath() : (e.path || []);
+    console.log("[DEBUG] Global click on document", {
+      target: e.target,
+      targetTagName: e.target.tagName,
+      targetClasses: e.target.className,
+      pointerEvents: window.getComputedStyle(e.target).pointerEvents,
+      zIndex: window.getComputedStyle(e.target).zIndex,
+      eventPath: path.slice(0, 10).map(el => ({
+        tag: el.tagName,
+        classes: el.className,
+        pointerEvents: el.style ? window.getComputedStyle(el).pointerEvents : 'N/A',
+      })),
+    });
+  }, true); // Capture phase - first
+
+  // DEBUG: Add direct click listener to video element
   const video = getVideoElement();
+  if (video) {
+    video.addEventListener('click', (e) => {
+      console.log("[DEBUG] Direct click listener on <video>", {
+        target: e.target,
+        timestamp: Date.now(),
+      });
+    }, true); // Use capture phase
+  }
+
+  // Try to restore state only if coming from story page
   if (video && isComingFromStory()) {
     // Wait for video metadata to be loaded
     video.addEventListener(
@@ -1203,7 +1462,7 @@ defineExpose({
     1200px,
     85vw
   ); /* Adaptive max width: smaller on MacBooks, larger on big screens */
-  pointer-events: none;
+  pointer-events: none; /* Don't block scroll */
   transform-origin: center center;
   transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: transform;
@@ -1230,6 +1489,8 @@ defineExpose({
   /* Use padding instead of border for proper inner radius */
   padding: 0;
   isolation: isolate; /* Create stacking context to contain blur */
+  cursor: pointer;
+  pointer-events: auto; /* Catch clicks on wrapper */
   transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -1251,6 +1512,7 @@ defineExpose({
 
 .play-icon.play-icon-hidden {
   opacity: 0;
+  pointer-events: none; /* Don't block clicks when hidden */
 }
 
 .case-video {
@@ -1301,37 +1563,6 @@ defineExpose({
 }
 
 /* ============================================================ */
-/* Clickable Overlay */
-/* ============================================================ */
-
-.video-clickable-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 75;
-  cursor: pointer;
-  pointer-events: auto;
-  /* Reset button styles */
-  border: none;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.video-clickable-overlay:focus {
-  outline: none;
-}
-
-.video-clickable-overlay:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
-  outline-offset: -2px;
-}
-
-/* ============================================================ */
 /* Pause Overlay */
 /* ============================================================ */
 
@@ -1345,9 +1576,14 @@ defineExpose({
   align-items: center;
   justify-content: center;
   z-index: 100;
-  pointer-events: auto;
+  pointer-events: none; /* Default: don't block */
   isolation: isolate;
   border-radius: 3px;
+}
+
+/* Only catch clicks when fully visible (opacity = 1) */
+.case-video-pause-overlay:not(.is-playing) {
+  pointer-events: auto;
 }
 
 .pause-overlay-clickable {
@@ -1381,17 +1617,15 @@ defineExpose({
 
 .case-video-controls {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 16px;
+  right: 20px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 15px;
-  padding: 16px 20px;
   background: transparent;
   z-index: 150;
-  pointer-events: none;
+  pointer-events: none; /* Container doesn't block, only buttons do */
 }
 
 .control-button {
