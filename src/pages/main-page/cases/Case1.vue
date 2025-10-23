@@ -10,273 +10,57 @@
       @mouseenter="isHovering = true"
       @mouseleave="isHovering = false"
     >
-    <div ref="contentWrapperRef" class="text-frame-wrapper">
-      <div class="text-content">
-        <div class="text-only" :style="{ opacity: textOpacity }">
-          <h2 class="case-title">
-            <motion.span
-              v-for="(word, index) in titleWords"
-              :key="'title-' + index"
-              :style="{ opacity: getWordOpacity(index) }"
-              class="word"
-              >{{ word }}</motion.span
+      <div ref="contentWrapperRef" class="text-frame-wrapper">
+        <div class="text-content">
+          <div class="text-only" :style="{ opacity: textOpacity }">
+            <h2 class="case-title">
+              <motion.span
+                v-for="(word, index) in titleWords"
+                :key="'title-' + index"
+                :style="{ opacity: getWordOpacity(index) }"
+                class="word"
+                >{{ word }}</motion.span
+              >
+            </h2>
+            <p class="case-subtitle">
+              <motion.span :style="{ opacity: subtitleOpacity }">
+                {{ company }}
+              </motion.span>
+            </p>
+          </div>
+          <div class="video-constraint-wrapper">
+            <motion.div
+              class="video-container-wrapper"
+              :style="{
+                opacity: videoOpacity,
+                transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`,
+              }"
             >
-          </h2>
-          <p class="case-subtitle">
-            <motion.span :style="{ opacity: subtitleOpacity }">
-              {{ company }}
-            </motion.span>
-          </p>
-        </div>
-        <div class="video-constraint-wrapper">
-          <motion.div
-            class="video-container-wrapper"
-            :style="{
-              opacity: videoOpacity,
-              transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`,
-            }"
-          >
-            <div class="video-and-link-wrapper">
-              <div
-                class="video-wrapper"
-                :class="{
-                  'video-playing': videoExpanded,
-                }"
-              >
-                <svg
-                  class="play-icon"
-                  :class="{ 'play-icon-hidden': videoExpanded }"
-                  width="100"
-                  height="100"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M8 5v14l11-7L8 5z"
-                    fill="black"
-                    stroke="black"
-                    stroke-width="2"
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                  />
-                </svg>
-                <video
-                  v-if="videoSrc"
-                  ref="videoElement"
-                  :src="videoSrc"
-                  class="case-video"
-                  :class="{
-                    'video-visible': videoExpanded,
-                    'video-paused-blur': !isPlaying && hasStartedPlayback,
-                  }"
-                  :muted="shouldBeMutedByDefault || isMuted"
-                  playsinline
-                  @ended="handleVideoEnded"
-                  @timeupdate="handleTimeUpdate"
-                ></video>
-                <motion.div
-                  v-if="!isPlaying && hasStartedPlayback && videoExpanded"
-                  class="case-video-pause-overlay"
-                  :class="{ 'is-playing': isPlaying }"
+              <div class="video-and-link-wrapper">
+                <VideoPlayer
+                  ref="videoPlayerRef"
+                  :video-src="videoSrc"
+                  :video-expanded="videoExpanded"
+                />
+                <motion.a
+                  :href="routeTo"
+                  class="case-open-story-link"
                   :initial="{ opacity: 0 }"
-                  :animate="{ opacity: 1 }"
-                  :exit="{ opacity: 0 }"
-                  :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
+                  :animate="{ opacity: showStoryLink && videoExpanded ? 1 : 0 }"
+                  :transition="{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }"
+                  :style="{
+                    pointerEvents:
+                      showStoryLink && videoExpanded ? 'auto' : 'none',
+                  }"
+                  @click.prevent="handleStoryLinkClick"
                 >
-                  <svg
-                    viewBox="0 0 100 100"
-                    fill="currentColor"
-                    class="pause-play-icon"
-                    @click.stop="togglePlayPause"
-                    aria-label="Play video"
-                  >
-                    <path
-                      d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z"
-                    />
-                  </svg>
-                </motion.div>
-
-                <div
-                  v-if="hasStartedPlayback && videoExpanded"
-                  class="case-video-controls"
-                >
-                  <motion.button
-                    class="control-button"
-                    type="button"
-                    @click.stop="toggleMute"
-                    @mouseenter="muteHovered = true"
-                    @mouseleave="muteHovered = false"
-                    :initial="'default'"
-                    :animate="muteHovered ? 'hover' : 'default'"
-                    :variants="buttonVariants"
-                    :transition="buttonTransition"
-                    :aria-label="isMuted ? 'Unmute' : 'Mute'"
-                  >
-                    <motion.svg
-                      v-if="isMuted"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      class="control-icon"
-                      :animate="muteHovered ? 'hover' : 'default'"
-                      :variants="iconVariants"
-                      :transition="iconTransition"
-                    >
-                      <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                      <line x1="23" y1="9" x2="17" y2="15" />
-                      <line x1="17" y1="9" x2="23" y2="15" />
-                    </motion.svg>
-                    <motion.svg
-                      v-else
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      class="control-icon"
-                      :animate="muteHovered ? 'hover' : 'default'"
-                      :variants="iconVariants"
-                      :transition="iconTransition"
-                    >
-                      <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                    </motion.svg>
-                  </motion.button>
-
-                  <motion.button
-                    class="control-button"
-                    type="button"
-                    @click.stop="togglePlayPause"
-                    @mouseenter="playHovered = true"
-                    @mouseleave="playHovered = false"
-                    :initial="'default'"
-                    :animate="playHovered ? 'hover' : 'default'"
-                    :variants="buttonVariants"
-                    :transition="buttonTransition"
-                    :aria-label="isPlaying ? 'Pause' : 'Play'"
-                  >
-                    <motion.svg
-                      v-if="isPlaying"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="control-icon"
-                      :animate="playHovered ? 'hover' : 'default'"
-                      :variants="iconVariants"
-                      :transition="iconTransition"
-                    >
-                      <rect x="6" y="5" width="4" height="14" rx="1" />
-                      <rect x="14" y="5" width="4" height="14" rx="1" />
-                    </motion.svg>
-                    <motion.svg
-                      v-else
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      class="control-icon"
-                      :animate="playHovered ? 'hover' : 'default'"
-                      :variants="iconVariants"
-                      :transition="iconTransition"
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </motion.svg>
-                  </motion.button>
-
-                  <motion.button
-                    class="control-button"
-                    type="button"
-                    @click.stop="restartVideo"
-                    @mouseenter="restartHovered = true"
-                    @mouseleave="restartHovered = false"
-                    :initial="'default'"
-                    :animate="restartHovered ? 'hover' : 'default'"
-                    :variants="buttonVariants"
-                    :transition="buttonTransition"
-                    aria-label="Restart video"
-                  >
-                    <motion.svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      class="control-icon"
-                      :animate="restartHovered ? 'hover' : 'default'"
-                      :variants="iconVariants"
-                      :transition="iconTransition"
-                    >
-                      <path
-                        d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
-                      />
-                    </motion.svg>
-                  </motion.button>
-
-                  <motion.button
-                    v-if="isSmallScreen"
-                    class="control-button"
-                    type="button"
-                    @click.stop="toggleFullscreen"
-                    @mouseenter="fullscreenHovered = true"
-                    @mouseleave="fullscreenHovered = false"
-                    :initial="'default'"
-                    :animate="fullscreenHovered ? 'hover' : 'default'"
-                    :variants="buttonVariants"
-                    :transition="buttonTransition"
-                    :aria-label="
-                      isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'
-                    "
-                  >
-                    <motion.svg
-                      v-if="!isFullscreen"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      class="control-icon"
-                      :animate="fullscreenHovered ? 'hover' : 'default'"
-                      :variants="iconVariants"
-                      :transition="iconTransition"
-                    >
-                      <path
-                        d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
-                      />
-                    </motion.svg>
-                    <motion.svg
-                      v-else
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      class="control-icon"
-                      :animate="fullscreenHovered ? 'hover' : 'default'"
-                      :variants="iconVariants"
-                      :transition="iconTransition"
-                    >
-                      <path
-                        d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
-                      />
-                    </motion.svg>
-                  </motion.button>
-                </div>
+                  Open Story
+                </motion.a>
               </div>
-              <motion.a
-                :href="routeTo"
-                class="case-open-story-link"
-                :initial="{ opacity: 0 }"
-                :animate="{ opacity: showStoryLink && videoExpanded ? 1 : 0 }"
-                :transition="{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }"
-                :style="{
-                  pointerEvents:
-                    showStoryLink && videoExpanded ? 'auto' : 'none',
-                }"
-                @click.prevent="handleStoryLinkClick"
-              >
-                Open Story
-              </motion.a>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </section>
 </template>
@@ -284,287 +68,22 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { motion, useScroll, useTransform } from "motion-v";
-import { useMediaQuery } from "@/composables/useMediaQuery.js";
-import { useRoute } from "vue-router";
+import VideoPlayer from "@/components/VideoPlayer.vue";
 
 const title = "Cross-Domain AI Solution for Account Reconcilers";
 const company = "Apple";
 const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url).href;
 const routeTo = "/story/one";
-const primaryColor = "#319BF8";
-const backgroundColor = "#ffffff";
-const finalOverlayTime = 39.5;
 
 const containerRef = ref(null);
 const contentWrapperRef = ref(null);
-const videoElement = ref(null);
 const scrollContainerRef = ref(null);
+const videoPlayerRef = ref(null);
 
-const isSmallScreen = useMediaQuery("(max-width: 600px)");
-
-const isPlaying = ref(false);
-const isMuted = ref(true);
-const hasStartedPlayback = ref(false);
-const userPaused = ref(false);
-const wasStateRestored = ref(false);
 const showStoryLink = ref(false);
-
 const isHovering = ref(false);
-const muteHovered = ref(false);
-const playHovered = ref(false);
-const restartHovered = ref(false);
-const fullscreenHovered = ref(false);
-const isFullscreen = ref(false);
 
-let playAttempts = 0;
 let storyLinkTimeout = null;
-
-const shouldBeMutedByDefault = computed(() => {
-  if (typeof window === "undefined") return false;
-  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-});
-
-const getStorageKey = () => `video-state-${videoSrc}`;
-
-function saveVideoState() {
-  const video = getVideoElement();
-  if (!video) return;
-
-  const state = {
-    currentTime: video.currentTime,
-    isPlaying: isPlaying.value,
-    isMuted: isMuted.value,
-    hasStartedPlayback: hasStartedPlayback.value,
-    timestamp: Date.now(),
-  };
-
-  sessionStorage.setItem(getStorageKey(), JSON.stringify(state));
-}
-
-function clearVideoState() {
-  sessionStorage.removeItem(getStorageKey());
-}
-
-function restoreVideoState() {
-  try {
-    const stored = sessionStorage.getItem(getStorageKey());
-    if (!stored) return false;
-
-    const state = JSON.parse(stored);
-    const video = getVideoElement();
-    if (!video) return false;
-
-    const isRecent = Date.now() - state.timestamp < 5 * 60 * 1000;
-    if (!isRecent) {
-      clearVideoState();
-      return false;
-    }
-
-    video.currentTime = state.currentTime || 0;
-    isMuted.value = state.isMuted || false;
-    video.muted = isMuted.value;
-    hasStartedPlayback.value = state.hasStartedPlayback || false;
-
-    if (hasStartedPlayback.value) {
-      if (state.isPlaying) {
-        video
-          .play()
-          .then(() => {
-            isPlaying.value = true;
-          })
-          .catch(() => {
-            isPlaying.value = false;
-          });
-      }
-    }
-
-    wasStateRestored.value = true;
-    return true;
-  } catch (error) {
-    clearVideoState();
-    return false;
-  }
-}
-
-function isComingFromStory() {
-  return sessionStorage.getItem(getStorageKey()) !== null;
-}
-
-function getUserHasInteracted() {
-  return sessionStorage.getItem("user-has-interacted") === "true";
-}
-
-function setUserHasInteracted() {
-  sessionStorage.setItem("user-has-interacted", "true");
-}
-
-function getVideoElement() {
-  return videoElement.value;
-}
-
-function attemptPlay() {
-  const video = getVideoElement();
-  const userHasInteracted = getUserHasInteracted();
-
-  if (!video) return;
-
-  if (!video.paused && hasStartedPlayback.value) {
-    return;
-  }
-
-  if (!userHasInteracted || shouldBeMutedByDefault.value) {
-    hasStartedPlayback.value = true;
-    isPlaying.value = false;
-    return;
-  }
-
-  video.muted = false;
-  isMuted.value = false;
-  video.playsInline = true;
-
-  video
-    .play()
-    .then(() => {
-      playAttempts = 0;
-      hasStartedPlayback.value = true;
-      isPlaying.value = true;
-    })
-    .catch(() => {
-      hasStartedPlayback.value = true;
-      isPlaying.value = false;
-      playAttempts = 0;
-    });
-}
-
-const buttonVariants = {
-  default: {
-    rotate: 45,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
-  },
-  hover: {
-    rotate: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-  },
-};
-
-const buttonTransition = {
-  type: "spring",
-  stiffness: 320,
-  damping: 11,
-  mass: 1.2,
-};
-
-const iconVariants = {
-  default: {
-    rotate: -45,
-  },
-  hover: {
-    rotate: 0,
-  },
-};
-
-const iconTransition = {
-  type: "spring",
-  stiffness: 320,
-  damping: 11,
-  mass: 1.2,
-};
-
-function handleTimeUpdate() {
-}
-
-function handleVideoEnded() {
-  isPlaying.value = false;
-}
-
-function togglePlayPause() {
-  const video = getVideoElement();
-
-  if (!video) return;
-
-  if (video.paused) {
-    userPaused.value = false;
-    setUserHasInteracted();
-
-    if (!shouldBeMutedByDefault.value) {
-      video.muted = false;
-      isMuted.value = false;
-    } else {
-      video.muted = true;
-      isMuted.value = true;
-    }
-
-    video.play().then(() => {
-      isPlaying.value = true;
-      hasStartedPlayback.value = true;
-    });
-  } else {
-    userPaused.value = true;
-    video.pause();
-    isPlaying.value = false;
-  }
-}
-
-function toggleMute() {
-  const video = getVideoElement();
-  if (!video) return;
-
-  isMuted.value = !isMuted.value;
-  video.muted = isMuted.value;
-}
-
-function toggleFullscreen() {
-  const video = getVideoElement();
-  if (!video) return;
-
-  if (!document.fullscreenElement) {
-    const container =
-      video.parentElement?.parentElement?.parentElement?.parentElement;
-    if (container && container.requestFullscreen) {
-      container
-        .requestFullscreen()
-        .then(() => {
-          isFullscreen.value = true;
-        })
-        .catch(() => {});
-    } else if (video.webkitRequestFullscreen) {
-      video
-        .webkitRequestFullscreen()
-        .then(() => {
-          isFullscreen.value = true;
-        })
-        .catch(() => {});
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen().then(() => {
-        isFullscreen.value = false;
-      });
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-      isFullscreen.value = false;
-    }
-  }
-}
-
-function restartVideo() {
-  const video = getVideoElement();
-  if (!video) return;
-
-  video.currentTime = 0;
-
-  clearVideoState();
-  wasStateRestored.value = false;
-  userPaused.value = false;
-
-  video.play().then(() => {
-    isPlaying.value = true;
-  });
-}
-
-function handleFullscreenChange() {
-  isFullscreen.value = !!document.fullscreenElement;
-}
 
 const { scrollYProgress } = useScroll({
   target: containerRef,
@@ -658,57 +177,9 @@ onMounted(() => {
 
 const showText = ref(true);
 
-function handleUserInteraction() {
-  if (getUserHasInteracted()) return;
-
-  setUserHasInteracted();
-
-  const video = getVideoElement();
-  if (
-    video &&
-    !video.paused &&
-    hasStartedPlayback.value &&
-    isMuted.value &&
-    !shouldBeMutedByDefault.value
-  ) {
-    video.muted = false;
-    isMuted.value = false;
-  }
-
-  removeInteractionListeners();
-}
-
-function removeInteractionListeners() {
-  document.removeEventListener("click", handleUserInteraction);
-  document.removeEventListener("touchstart", handleUserInteraction);
-  document.removeEventListener("keydown", handleUserInteraction);
-}
-
-function handleEnter() {
-  const video = getVideoElement();
-
-  if (!video) return;
-
-  if (wasStateRestored.value) {
-    wasStateRestored.value = false;
-    return;
-  }
-}
-
-function handleLeave() {
-  const video = getVideoElement();
-
-  playAttempts = 0;
-
-  if (video && typeof video.pause === "function" && !video.paused) {
-    video.pause();
-    isPlaying.value = false;
-  }
-}
-
 function handleStoryLinkClick(event) {
-  if (hasStartedPlayback.value) {
-    saveVideoState();
+  if (videoPlayerRef.value) {
+    videoPlayerRef.value.saveState();
   }
   if (event && event.currentTarget && event.currentTarget.href) {
     window.location.href = event.currentTarget.href;
@@ -718,28 +189,6 @@ function handleStoryLinkClick(event) {
 let observer = null;
 
 onMounted(() => {
-  const route = useRoute();
-  const cameFromStory = route.meta?.skipNavIntro;
-  if (!cameFromStory) {
-    const videoStateKey = 'video-state-' + videoSrc;
-    sessionStorage.removeItem(videoStateKey);
-  }
-
-  const video = getVideoElement();
-  if (video && isComingFromStory()) {
-    video.addEventListener(
-      "loadedmetadata",
-      () => {
-        restoreVideoState();
-      },
-      { once: true }
-    );
-
-    if (video.readyState >= 1) {
-      restoreVideoState();
-    }
-  }
-
   const scrollContainer = document.querySelector(".scroll-snap-container");
   if (scrollContainer) {
     scrollContainerRef.value = scrollContainer;
@@ -749,12 +198,6 @@ onMounted(() => {
     (entries) => {
       entries.forEach((entry) => {
         showText.value = entry.isIntersecting;
-
-        if (entry.isIntersecting) {
-          handleEnter();
-        } else {
-          handleLeave();
-        }
       });
     },
     {
@@ -765,15 +208,6 @@ onMounted(() => {
   if (containerRef.value) {
     observer.observe(containerRef.value);
   }
-
-  document.addEventListener("click", handleUserInteraction);
-  document.addEventListener("touchstart", handleUserInteraction, {
-    passive: true,
-  });
-  document.addEventListener("keydown", handleUserInteraction);
-
-  document.addEventListener("fullscreenchange", handleFullscreenChange);
-  document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 });
 
 onUnmounted(() => {
@@ -789,24 +223,9 @@ onUnmounted(() => {
     observer.disconnect();
     observer = null;
   }
-
-  removeInteractionListeners();
-
-  document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  document.removeEventListener(
-    "webkitfullscreenchange",
-    handleFullscreenChange
-  );
-
-  const video = getVideoElement();
-  if (video && typeof video.pause === "function" && !video.paused) {
-    video.pause();
-  }
 });
 
 defineExpose({
-  handleEnter,
-  handleLeave,
   handleStoryLinkClick,
 });
 </script>
@@ -905,73 +324,6 @@ defineExpose({
   width: 100%;
 }
 
-.video-wrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1662 / 1080;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-sizing: border-box;
-  background: #ffffff;
-  border: 40px solid #000000;
-  border-radius: 80px;
-  padding: 0;
-  isolation: isolate;
-  pointer-events: none;
-  transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
-    border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.video-wrapper.video-playing {
-  background: #ffffff;
-  border-width: 10px;
-  border-radius: 20px;
-}
-
-.play-icon {
-  width: 340px;
-  height: 340px;
-  opacity: 1;
-  transition: opacity 0.3s ease-out;
-  position: absolute;
-  z-index: 2;
-}
-
-.play-icon.play-icon-hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.case-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  border-radius: 40px;
-  transition: opacity 0.4s ease-in,
-    border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.case-video.video-visible {
-  opacity: 1;
-  border-radius: 10px;
-}
-
-.case-video.video-paused-blur {
-  filter: blur(10px);
-}
-
-.video-wrapper.video-paused-blur {
-}
 
 .case-open-story {
   align-self: flex-end;
@@ -1008,114 +360,6 @@ defineExpose({
   text-decoration: none;
 }
 
-/* ============================================================ */
-/* Pause Overlay */
-/* ============================================================ */
-
-.case-video-pause-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  pointer-events: none; /* Don't block scroll - only icon is clickable */
-  isolation: isolate;
-  border-radius: 3px;
-}
-
-.pause-play-icon {
-  position: relative;
-  z-index: 101;
-  width: 140px;
-  height: 140px;
-  color: #000000;
-  cursor: pointer;
-  pointer-events: auto; /* Icon is clickable */
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1));
-  transition: opacity 0.2s ease;
-  will-change: transform;
-  transform: translateZ(0);
-}
-
-.pause-play-icon:hover {
-  opacity: 0.8;
-}
-
-/* ============================================================ */
-/* Video Controls Bar */
-/* ============================================================ */
-
-.case-video-controls {
-  position: absolute;
-  bottom: 16px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 15px;
-  background: transparent;
-  z-index: 150;
-  pointer-events: none; /* Container doesn't block, only buttons do */
-}
-
-.control-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  pointer-events: auto;
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent;
-  /* Transform and background controlled by motion variants */
-}
-
-.control-button:focus {
-  outline: none !important;
-}
-
-.control-button:focus-visible {
-  outline: none !important;
-}
-
-.control-button:active {
-  background: rgba(0, 0, 0, 0.4);
-  outline: none !important;
-}
-
-.control-icon {
-  width: 18px;
-  height: 18px;
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent;
-  /* Counter-rotate to keep icon straight when button is diamond */
-  transform: rotate(-45deg);
-}
-
-.control-icon:focus {
-  outline: none !important;
-}
-
-.control-icon:focus-visible {
-  outline: none !important;
-}
-
-/* Mobile controls always visible */
-.case-video-controls.mobile-controls {
-  opacity: 1;
-  pointer-events: auto;
-}
 
 /* Mobile Responsive */
 @media (max-width: 899px) {
@@ -1125,12 +369,6 @@ defineExpose({
 
   .case-subtitle {
     font-size: 24px;
-  }
-
-  .video-wrapper {
-    background: transparent;
-    border-radius: 0;
-    padding: 0;
   }
 
   .case-open-story {

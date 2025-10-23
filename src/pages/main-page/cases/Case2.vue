@@ -103,55 +103,36 @@
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { motion, useScroll } from "motion-v";
 
-const title = "Redesigning the Communications App";
-const subtitle = "Smarp";
 const description = "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
 const videoSrc = new URL("@/assets/case-videos/case2-2.mp4", import.meta.url).href;
 const imageSrc = new URL("@/assets/images/p2-3@2x.png", import.meta.url).href;
-const routeTo = "/story/two";
-const primaryColor = "#979797";
-const backgroundColor = "#ffffff";
 
 const containerRef = ref(null);
 const contentWrapperRef = ref(null);
 const scrollContainerRef = ref(null);
-const imageContainer = ref(null);
-const imageWrapper = ref(null);
-const imageElement = ref(null);
 const videoElement = ref(null);
-
 
 const pinned = ref(false);
 const unpinned = ref(false);
 const unpinTopOffset = ref(0);
 
 
-const videoState = ref("visible");
-
-
 const showVideo = computed(() => !!videoSrc);
-
-
 const titlePart1Words = computed(() => ['Redesigning', 'the']);
 const titlePart2Words = computed(() => ['Communications', 'App']);
 const descriptionWords = computed(() => description.split(' '));
-
-
 const currentScrollProgress = ref(0);
-
 
 const videoVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
 
-
 const videoTransition = {
   type: "tween",
   ease: [0.4, 0, 0.2, 1],
   duration: 0.5,
 };
-
 
 
 function getTitlePart1WordOpacity(wordIndex) {
@@ -165,7 +146,6 @@ function getTitlePart1WordOpacity(wordIndex) {
 
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
-
 
 function getTitlePart2WordOpacity(wordIndex) {
   const totalWords = titlePart2Words.value.length;
@@ -181,7 +161,6 @@ function getTitlePart2WordOpacity(wordIndex) {
 
 function getDescriptionWordOpacity(wordIndex) {
   const totalWords = descriptionWords.value.length;
-  
   const wordProgress = wordIndex / totalWords;
   const startProgress = 0.5 + (wordProgress * 0.15);
   const endProgress = startProgress + (0.15 / totalWords);
@@ -191,7 +170,6 @@ function getDescriptionWordOpacity(wordIndex) {
 
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
-
 
 function getCardOpacity() {
   const startProgress = 0.45;
@@ -203,7 +181,6 @@ function getCardOpacity() {
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
 
-
 function getButtonOpacity() {
   const startProgress = 0.65;
   const endProgress = 0.75;
@@ -213,10 +190,6 @@ function getButtonOpacity() {
 
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
-
-
-
-
 
 
 
