@@ -33,7 +33,7 @@
     @click="handleButtonClick"
   >
     <div class="nav-chevron__inner" aria-hidden="true">
-      <!-- Arrow icon for back/forward -->
+      
       <svg
         v-if="direction === 'back' || direction === 'forward'"
         class="nav-chevron__icon"
@@ -48,7 +48,7 @@
           fill="currentColor"
         />
       </svg>
-      <!-- Menu icon -->
+      
       <svg
         v-else-if="direction === 'menu'"
         class="nav-chevron__icon nav-chevron__icon--menu"
@@ -62,7 +62,7 @@
         <rect y="6" width="18" height="2" rx="1" fill="currentColor" />
         <rect y="12" width="18" height="2" rx="1" fill="currentColor" />
       </svg>
-      <!-- Close icon -->
+      
       <svg
         v-else-if="direction === 'close'"
         class="nav-chevron__icon nav-chevron__icon--close"
@@ -152,7 +152,7 @@ const computedAriaLabel = computed(() => {
   return "Open link";
 });
 
-// Dev mode validation removed for production
+
 
 function handleButtonClick(event) {
   if (props.type === "back") {

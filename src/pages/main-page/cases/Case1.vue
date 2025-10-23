@@ -10,7 +10,6 @@
       @mouseenter="isHovering = true"
       @mouseleave="isHovering = false"
     >
-    <!-- Text frame - normal scroll flow -->
     <div ref="contentWrapperRef" class="text-frame-wrapper">
       <div class="text-content">
         <div class="text-only" :style="{ opacity: textOpacity }">
@@ -29,8 +28,6 @@
             </motion.span>
           </p>
         </div>
-        <!-- Video под текстом -->
-        <!-- Constraint wrapper to maintain layout -->
         <div class="video-constraint-wrapper">
           <motion.div
             class="video-container-wrapper"
@@ -78,7 +75,6 @@
                   @ended="handleVideoEnded"
                   @timeupdate="handleTimeUpdate"
                 ></video>
-                <!-- Pause Overlay (inside video wrapper) -->
                 <motion.div
                   v-if="!isPlaying && hasStartedPlayback && videoExpanded"
                   class="case-video-pause-overlay"
@@ -88,7 +84,6 @@
                   :exit="{ opacity: 0 }"
                   :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
                 >
-                  <!-- Large black play icon (clickable) -->
                   <svg
                     viewBox="0 0 100 100"
                     fill="currentColor"
@@ -102,12 +97,10 @@
                   </svg>
                 </motion.div>
 
-                <!-- Video Controls Bar (inside video wrapper) -->
                 <div
                   v-if="hasStartedPlayback && videoExpanded"
                   class="case-video-controls"
                 >
-                  <!-- Mute/Unmute button -->
                   <motion.button
                     class="control-button"
                     type="button"
@@ -152,7 +145,6 @@
                     </motion.svg>
                   </motion.button>
 
-                  <!-- Play/Pause button -->
                   <motion.button
                     class="control-button"
                     type="button"
@@ -190,7 +182,6 @@
                     </motion.svg>
                   </motion.button>
 
-                  <!-- Restart button -->
                   <motion.button
                     class="control-button"
                     type="button"
@@ -219,7 +210,6 @@
                     </motion.svg>
                   </motion.button>
 
-                  <!-- Fullscreen button (mobile only) -->
                   <motion.button
                     v-if="isSmallScreen"
                     class="control-button"
@@ -268,7 +258,6 @@
                   </motion.button>
                 </div>
               </div>
-              <!-- Open Story Link (inside video-and-link-wrapper, after video-wrapper) -->
               <motion.a
                 :href="routeTo"
                 class="case-open-story-link"
@@ -298,7 +287,6 @@ import { motion, useScroll, useTransform } from "motion-v";
 import { useMediaQuery } from "@/composables/useMediaQuery.js";
 import { useRoute } from "vue-router";
 
-// Case 1 Data - Apple
 const title = "Cross-Domain AI Solution for Account Reconcilers";
 const company = "Apple";
 const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url).href;
@@ -312,10 +300,8 @@ const contentWrapperRef = ref(null);
 const videoElement = ref(null);
 const scrollContainerRef = ref(null);
 
-// Media query for small screens
 const isSmallScreen = useMediaQuery("(max-width: 600px)");
 
-// Video playback states
 const isPlaying = ref(false);
 const isMuted = ref(true);
 const hasStartedPlayback = ref(false);
@@ -323,7 +309,6 @@ const userPaused = ref(false);
 const wasStateRestored = ref(false);
 const showStoryLink = ref(false);
 
-// Hover states for controls
 const isHovering = ref(false);
 const muteHovered = ref(false);
 const playHovered = ref(false);
@@ -331,19 +316,13 @@ const restartHovered = ref(false);
 const fullscreenHovered = ref(false);
 const isFullscreen = ref(false);
 
-// Playback attempt tracking
 let playAttempts = 0;
 let storyLinkTimeout = null;
 
-// Detect mobile for muted by default
 const shouldBeMutedByDefault = computed(() => {
   if (typeof window === "undefined") return false;
   return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 });
-
-// ============================================================
-// SessionStorage for video state management
-// ============================================================
 
 const getStorageKey = () => `video-state-${videoSrc}`;
 
@@ -375,14 +354,12 @@ function restoreVideoState() {
     const video = getVideoElement();
     if (!video) return false;
 
-    // Check if state is recent (within 5 minutes)
     const isRecent = Date.now() - state.timestamp < 5 * 60 * 1000;
     if (!isRecent) {
       clearVideoState();
       return false;
     }
 
-    // Restore video state
     video.currentTime = state.currentTime || 0;
     isMuted.value = state.isMuted || false;
     video.muted = isMuted.value;
@@ -413,10 +390,6 @@ function isComingFromStory() {
   return sessionStorage.getItem(getStorageKey()) !== null;
 }
 
-// ============================================================
-// Global user interaction tracking (sessionStorage)
-// ============================================================
-
 function getUserHasInteracted() {
   return sessionStorage.getItem("user-has-interacted") === "true";
 }
@@ -425,17 +398,9 @@ function setUserHasInteracted() {
   sessionStorage.setItem("user-has-interacted", "true");
 }
 
-// ============================================================
-// Video element getter helper
-// ============================================================
-
 function getVideoElement() {
   return videoElement.value;
 }
-
-// ============================================================
-// Main autoplay function with retry logic
-// ============================================================
 
 function attemptPlay() {
   const video = getVideoElement();
@@ -443,19 +408,16 @@ function attemptPlay() {
 
   if (!video) return;
 
-  // Don't attempt if already playing
   if (!video.paused && hasStartedPlayback.value) {
     return;
   }
 
-  // If user has NOT interacted OR on mobile - show play button (pause state)
   if (!userHasInteracted || shouldBeMutedByDefault.value) {
     hasStartedPlayback.value = true;
     isPlaying.value = false;
     return;
   }
 
-  // User has interacted - try to play with sound
   video.muted = false;
   isMuted.value = false;
   video.playsInline = true;
@@ -463,21 +425,16 @@ function attemptPlay() {
   video
     .play()
     .then(() => {
-      playAttempts = 0; // Reset on success
+      playAttempts = 0;
       hasStartedPlayback.value = true;
       isPlaying.value = true;
     })
     .catch(() => {
-      // If autoplay fails - show play button (pause state)
       hasStartedPlayback.value = true;
       isPlaying.value = false;
       playAttempts = 0;
     });
 }
-
-// ============================================================
-// Animation variants for controls
-// ============================================================
 
 const buttonVariants = {
   default: {
@@ -513,16 +470,10 @@ const iconTransition = {
   mass: 1.2,
 };
 
-// ============================================================
-// Video control functions
-// ============================================================
-
 function handleTimeUpdate() {
-  // No special handling needed - video plays to the end
 }
 
 function handleVideoEnded() {
-  // Video ended - just stop playing
   isPlaying.value = false;
 }
 
@@ -532,16 +483,13 @@ function togglePlayPause() {
   if (!video) return;
 
   if (video.paused) {
-    // User is resuming playback
     userPaused.value = false;
     setUserHasInteracted();
 
-    // Always unmute on user click (desktop only)
     if (!shouldBeMutedByDefault.value) {
       video.muted = false;
       isMuted.value = false;
     } else {
-      // On mobile, keep muted
       video.muted = true;
       isMuted.value = true;
     }
@@ -551,7 +499,6 @@ function togglePlayPause() {
       hasStartedPlayback.value = true;
     });
   } else {
-    // User is manually pausing
     userPaused.value = true;
     video.pause();
     isPlaying.value = false;
@@ -571,7 +518,6 @@ function toggleFullscreen() {
   if (!video) return;
 
   if (!document.fullscreenElement) {
-    // Enter fullscreen
     const container =
       video.parentElement?.parentElement?.parentElement?.parentElement;
     if (container && container.requestFullscreen) {
@@ -582,7 +528,6 @@ function toggleFullscreen() {
         })
         .catch(() => {});
     } else if (video.webkitRequestFullscreen) {
-      // Safari fallback
       video
         .webkitRequestFullscreen()
         .then(() => {
@@ -591,13 +536,11 @@ function toggleFullscreen() {
         .catch(() => {});
     }
   } else {
-    // Exit fullscreen
     if (document.exitFullscreen) {
       document.exitFullscreen().then(() => {
         isFullscreen.value = false;
       });
     } else if (document.webkitExitFullscreen) {
-      // Safari fallback
       document.webkitExitFullscreen();
       isFullscreen.value = false;
     }
@@ -610,7 +553,6 @@ function restartVideo() {
 
   video.currentTime = 0;
 
-  // Clear saved state when restarting
   clearVideoState();
   wasStateRestored.value = false;
   userPaused.value = false;
@@ -624,26 +566,16 @@ function handleFullscreenChange() {
   isFullscreen.value = !!document.fullscreenElement;
 }
 
-// useScroll отслеживает скролл контейнера
-// offset: ["start end", "end end"] означает:
-// progress = 0 когда начало секции доходит до конца viewport (низ экрана)
-// progress = 1 когда конец секции доходит до низа экрана
 const { scrollYProgress } = useScroll({
   target: containerRef,
   container: scrollContainerRef,
   offset: ["start end", "end end"],
 });
 
-// Трансформируем прогресс скролла в значения для анимации
-// scrollYProgress от 0 (секция внизу экрана) до 1 (секция ушла вверх)
-
-// Разбиваем title на слова
 const titleWords = computed(() => title.split(" "));
 
-// Общая анимация для subtitle (появляется после title)
 const subtitleOpacity = useTransform(scrollYProgress, [0.70, 0.75], [0.2, 1]);
 
-// Создаем opacity для каждого слова
 const appearStart = 0.60;
 const appearEnd = 0.70;
 
@@ -660,61 +592,41 @@ const wordOpacities = computed(() => {
   });
 });
 
-// Функция для получения opacity слова по индексу
 const getWordOpacity = (wordIndex) => {
   return wordOpacities.value[wordIndex];
 };
 
-// Видео wrapper появляется после слова "Apple" (subtitle)
-// Subtitle появляется на 0.70-0.75, видео появляется сразу после с такой же задержкой
 const videoOpacity = useTransform(scrollYProgress, [0.75, 0.80], [0.2, 1]);
 
-// Видео увеличивается по триггеру при scrollYProgress >= 0.80
-// Inverse scale: start at 0.1875 (small), scale up to 1 (large)
 const videoExpanded = ref(false);
-const videoScaleValue = ref(0.1875); // Start small (1/8 × 1.5 = 0.1875)
+const videoScaleValue = ref(0.1875);
 const videoYValue = ref(0);
 
-// Slow scroll effect when video is pinned
 const slowScrollY = ref(0);
 
-// Text opacity during video expansion
 const textOpacity = ref(1);
 
-// Store unsubscribe function for cleanup
 let scrollUnsubscribe = null;
 
-// watchEffect для отслеживания scrollYProgress через onChange
 onMounted(() => {
-  // Подписываемся на изменения scrollYProgress
   scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
-    // Dynamic parallax: gradually increase scroll speed from slow to normal
-    // Element stays fixed throughout, just moves with increasing speed
-
-    // Text opacity animation
     if (progress < 0.80) {
-      textOpacity.value = 1; // Text fully visible
+      textOpacity.value = 1;
     } else if (progress < 0.90) {
-      // Fade out text as video expands (0.80 to 0.90) - faster animation
       const fadeProgress = (progress - 0.80) / (0.90 - 0.80);
       textOpacity.value = 1 - fadeProgress;
     } else {
       textOpacity.value = 0;
     }
 
-    // No parallax effect - text scrolls naturally with page
-
     const shouldExpand = progress >= 0.80;
 
     if (shouldExpand !== videoExpanded.value) {
       videoExpanded.value = shouldExpand;
-      videoScaleValue.value = shouldExpand ? 1 : 0.1875; // Expand to scale(1)
-      // Move video down when expanded for better positioning
+      videoScaleValue.value = shouldExpand ? 1 : 0.1875;
       videoYValue.value = shouldExpand ? 10 : 0;
 
-      // Show story link 800ms after video expands (only if not already shown/scheduled)
       if (shouldExpand) {
-        // Only set new timeout if link is not already visible and no timeout is pending
         if (!showStoryLink.value && !storyLinkTimeout) {
           storyLinkTimeout = setTimeout(() => {
             showStoryLink.value = true;
@@ -722,7 +634,6 @@ onMounted(() => {
           }, 800);
         }
       } else {
-        // Clear timeout and hide link when video shrinks
         if (storyLinkTimeout) {
           clearTimeout(storyLinkTimeout);
           storyLinkTimeout = null;
@@ -730,20 +641,14 @@ onMounted(() => {
         showStoryLink.value = false;
       }
 
-      // ============================================================
-      // Autoplay when video expands, pause when shrinks
-      // ============================================================
       const video = getVideoElement();
       if (video) {
         if (shouldExpand) {
-          // Video is expanding - attempt autoplay
           attemptPlay();
         } else {
-          // Video is shrinking - auto-pause (not user-initiated)
           if (!video.paused) {
             video.pause();
             isPlaying.value = false;
-            // Don't set userPaused - this is auto-pause
           }
         }
       }
@@ -751,20 +656,13 @@ onMounted(() => {
   });
 });
 
-// Показываем текст всегда, когда секция в viewport
 const showText = ref(true);
 
-// ============================================================
-// User interaction listeners for unmuting
-// ============================================================
-
 function handleUserInteraction() {
-  if (getUserHasInteracted()) return; // Already handled
+  if (getUserHasInteracted()) return;
 
-  // Mark interaction
   setUserHasInteracted();
 
-  // If video is playing muted - try to unmute
   const video = getVideoElement();
   if (
     video &&
@@ -777,7 +675,6 @@ function handleUserInteraction() {
     isMuted.value = false;
   }
 
-  // Remove listeners after first interaction
   removeInteractionListeners();
 }
 
@@ -788,42 +685,31 @@ function removeInteractionListeners() {
 }
 
 function handleEnter() {
-  // Called when section enters viewport
   const video = getVideoElement();
 
   if (!video) return;
 
-  // Don't autoplay if state was restored
   if (wasStateRestored.value) {
     wasStateRestored.value = false;
     return;
   }
-
-  // Note: Autoplay only happens when video expands (scrollYProgress >= 0.80)
-  // This function just prepares the video element
 }
 
 function handleLeave() {
-  // Called when section leaves viewport
   const video = getVideoElement();
 
-  // Reset attempt counter
   playAttempts = 0;
 
-  // Auto-pause when leaving (NOT user-initiated)
   if (video && typeof video.pause === "function" && !video.paused) {
     video.pause();
     isPlaying.value = false;
-    // Don't set userPaused - this is auto-pause
   }
 }
 
 function handleStoryLinkClick(event) {
-  // Called before navigation to story page - save state
   if (hasStartedPlayback.value) {
     saveVideoState();
   }
-  // Navigate to the route
   if (event && event.currentTarget && event.currentTarget.href) {
     window.location.href = event.currentTarget.href;
   }
@@ -832,7 +718,6 @@ function handleStoryLinkClick(event) {
 let observer = null;
 
 onMounted(() => {
-  // Clear video state if not coming from story page
   const route = useRoute();
   const cameFromStory = route.meta?.skipNavIntro;
   if (!cameFromStory) {
@@ -840,10 +725,8 @@ onMounted(() => {
     sessionStorage.removeItem(videoStateKey);
   }
 
-  // Try to restore state only if coming from story page
   const video = getVideoElement();
   if (video && isComingFromStory()) {
-    // Wait for video metadata to be loaded
     video.addEventListener(
       "loadedmetadata",
       () => {
@@ -852,19 +735,16 @@ onMounted(() => {
       { once: true }
     );
 
-    // If metadata is already loaded
     if (video.readyState >= 1) {
       restoreVideoState();
     }
   }
 
-  // Найти скролл-контейнер от vue-scroll-snap
   const scrollContainer = document.querySelector(".scroll-snap-container");
   if (scrollContainer) {
     scrollContainerRef.value = scrollContainer;
   }
 
-  // IntersectionObserver для определения видимости секции
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -886,24 +766,17 @@ onMounted(() => {
     observer.observe(containerRef.value);
   }
 
-  // ============================================================
-  // Add user interaction listeners
-  // ============================================================
   document.addEventListener("click", handleUserInteraction);
   document.addEventListener("touchstart", handleUserInteraction, {
     passive: true,
   });
   document.addEventListener("keydown", handleUserInteraction);
 
-  // ============================================================
-  // Listen for fullscreen changes
-  // ============================================================
   document.addEventListener("fullscreenchange", handleFullscreenChange);
   document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 });
 
 onUnmounted(() => {
-  // Clean up scroll listener
   if (scrollUnsubscribe) {
     scrollUnsubscribe();
     scrollUnsubscribe = null;
@@ -917,17 +790,14 @@ onUnmounted(() => {
     observer = null;
   }
 
-  // Clean up interaction listeners
   removeInteractionListeners();
 
-  // Remove fullscreen listeners
   document.removeEventListener("fullscreenchange", handleFullscreenChange);
   document.removeEventListener(
     "webkitfullscreenchange",
     handleFullscreenChange
   );
 
-  // Pause video if playing
   const video = getVideoElement();
   if (video && typeof video.pause === "function" && !video.paused) {
     video.pause();
@@ -947,10 +817,7 @@ defineExpose({
   width: 100%;
   min-height: 100vh;
   background-color: #ffffff;
-  /* overflow: hidden убран - блокирует sticky */
 }
-
-/* Text frame wrapper - normal scroll flow */
 .text-frame-wrapper {
   position: relative;
   width: 100%;
@@ -1006,25 +873,21 @@ defineExpose({
   opacity: 1;
 }
 
-/* Constraint wrapper - maintains layout space */
 .video-constraint-wrapper {
-  width: clamp(120px, 20vw, calc(1662px / 6)); /* More responsive width */
+  width: clamp(120px, 20vw, calc(1662px / 6));
   margin-top: 24px;
   position: relative;
-  /* Height matches the aspect ratio at small scale */
   aspect-ratio: 1662 / 1080;
   overflow: visible;
-  /* This container defines the layout space */
 }
 
 .video-container-wrapper {
-  /* Inverse scale approach: start large, scale down, then scale up to 1 */
-  width: 800%; /* 133.33% relative to constraint wrapper = 16.67% of text-content */
+  width: 800%;
   max-width: min(
     1200px,
     85vw
-  ); /* Adaptive max width: smaller on MacBooks, larger on big screens */
-  pointer-events: none; /* Don't block scroll */
+  );
+  pointer-events: none;
   transform-origin: center center;
   transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: transform;
@@ -1032,7 +895,6 @@ defineExpose({
   position: absolute;
   top: 50%;
   left: 50%;
-  /* Base transform is set via inline style to include reactive values */
 }
 
 .video-and-link-wrapper {
@@ -1050,16 +912,14 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* Clip blur edges to prevent bleeding onto border */
+  overflow: hidden;
   box-sizing: border-box;
   background: #ffffff;
   border: 40px solid #000000;
-  /* Outer radius 80px: at scale(0.1875) = 15px visual outer, inner = 80-40 = 40px → 7.5px visual */
   border-radius: 80px;
-  /* Use padding instead of border for proper inner radius */
   padding: 0;
-  isolation: isolate; /* Create stacking context to contain blur */
-  pointer-events: none; /* Don't block scroll */
+  isolation: isolate;
+  pointer-events: none;
   transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
     border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -1067,12 +927,11 @@ defineExpose({
 .video-wrapper.video-playing {
   background: #ffffff;
   border-width: 10px;
-  /* Outer radius 20px at scale(1), inner = 20-10 = 10px */
   border-radius: 20px;
 }
 
 .play-icon {
-  width: 340px; /* Уменьшено еще больше для лучшей пропорции с маленьким видео */
+  width: 340px;
   height: 340px;
   opacity: 1;
   transition: opacity 0.3s ease-out;
@@ -1082,7 +941,7 @@ defineExpose({
 
 .play-icon.play-icon-hidden {
   opacity: 0;
-  pointer-events: none; /* Don't block clicks when hidden */
+  pointer-events: none;
 }
 
 .case-video {
@@ -1095,16 +954,16 @@ defineExpose({
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  border-radius: 40px; /* Inner radius matches container inner (80px - 40px = 40px) */
+  border-radius: 40px;
   transition: opacity 0.4s ease-in,
     border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
   z-index: 1;
-  pointer-events: none; /* Don't block scroll */
+  pointer-events: none;
 }
 
 .case-video.video-visible {
   opacity: 1;
-  border-radius: 10px; /* Inner radius when expanded (20px - 10px = 10px) */
+  border-radius: 10px;
 }
 
 .case-video.video-paused-blur {
@@ -1112,7 +971,6 @@ defineExpose({
 }
 
 .video-wrapper.video-paused-blur {
-  /* No additional blur on wrapper to avoid double blur */
 }
 
 .case-open-story {

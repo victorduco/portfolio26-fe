@@ -5,12 +5,12 @@
     style="background-color: #B9E2F7"
   >
     <div class="case3-unique-layout" ref="layoutElement">
-    <!-- Cloud decorations in corners -->
+    
     <CloudCorners />
 
-    <!-- Container with 80% width -->
+    
     <div class="case3-container">
-      <!-- Text Section: 30% height -->
+      
       <div class="case3-text-section" ref="textSection">
         <motion.div
           class="case3-title-wrapper"
@@ -68,9 +68,9 @@
         </motion.button>
       </div>
 
-      <!-- Image Section: 70% height -->
+      
       <div class="case3-image-section" ref="imageContainer">
-        <!-- Media container with background image and video overlay -->
+        
         <motion.div
           class="case3-media-container"
           :style="{ backgroundImage: `url(${imageSrc})` }"
@@ -80,7 +80,7 @@
           :animate="animationState"
           :transition="smoothTransition"
         >
-          <!-- Video overlay positioned absolutely -->
+          
           <div
             v-if="videoSrc"
             class="case3-video-container"
@@ -113,7 +113,7 @@ import CloudCorners from "./CloudCorners.vue";
 
 const router = useRouter();
 
-// Case 3 Data - Mirai
+
 const title = "Terminal Shift Redesign";
 const company = "Mirai";
 const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
@@ -122,7 +122,7 @@ const routeTo = "/story/three";
 const primaryColor = "#979797";
 const backgroundColor = "#B9E2F7";
 
-// Case3-specific configuration
+
 const videoPositionX = "62.5%";
 const videoPositionY = "39%";
 const videoScale = 0.33;
@@ -145,13 +145,13 @@ const videoElement = ref(null);
 let scrollListener = null;
 let intersectionObserver = null;
 
-// Animation states
+
 const animationState = ref("initial");
 const titleState = ref("hidden");
 const companyState = ref("hidden");
 const buttonState = ref("hidden");
 
-// Motion variants - no zoom animation
+
 const mediaVariants = {
   initial: {
     opacity: 1,
@@ -161,18 +161,18 @@ const mediaVariants = {
   },
 };
 
-// No transition needed
+
 const smoothTransition = {
   duration: 0,
 };
 
-// Text animation variants
+
 const textVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
 
-// Text transition config
+
 const textTransition = {
   type: "tween",
   ease: [0.4, 0, 0.2, 1],
@@ -180,14 +180,14 @@ const textTransition = {
 };
 
 function triggerTextAnimation() {
-  // Show text immediately (no zoom animation)
+  
   titleState.value = "visible";
 
-  // Show company 0.25s after title
+  
   setTimeout(() => {
     companyState.value = "visible";
 
-    // Show button 0.25s after company
+    
     setTimeout(() => {
       buttonState.value = "visible";
     }, 250);
@@ -195,15 +195,15 @@ function triggerTextAnimation() {
 }
 
 function triggerFadeIn() {
-  // Trigger text animation
+  
   triggerTextAnimation();
 
-  // Play video from 3s to 8s with slowdown
+  
   if (videoElement.value) {
     videoElement.value.currentTime = 3; // Start at 3 seconds
     videoElement.value.playbackRate = 1; // Normal speed
 
-    // Add elegant exit animation near the end
+    
     videoElement.value.addEventListener("timeupdate", handleVideoTimeUpdate);
 
     videoElement.value.play().catch(() => {});
@@ -214,18 +214,18 @@ function handleVideoTimeUpdate() {
   if (videoElement.value) {
     const currentTime = videoElement.value.currentTime;
 
-    // Stop video at 8 seconds
+    
     if (currentTime >= 8) {
       videoElement.value.pause();
       videoElement.value.currentTime = 8;
       return;
     }
 
-    // Start moderate slowdown when approaching 8 seconds (from 7s)
+    
     if (currentTime >= 7) {
-      // Calculate progress from 7s to 8s
+      
       const progress = (currentTime - 7) / 1; // 1 second range
-      // Moderate slowdown: from 1x to 0.3x speed
+      
       const newSpeed = 1 - progress * 0.7; // From 1x to 0.3x
       videoElement.value.playbackRate = Math.max(0.3, newSpeed);
     }
@@ -233,12 +233,12 @@ function handleVideoTimeUpdate() {
 }
 
 function resetAnimations() {
-  // Reset text animation states
+  
   titleState.value = "hidden";
   companyState.value = "hidden";
   buttonState.value = "hidden";
 
-  // Stop video and remove event listener
+  
   if (videoElement.value) {
     videoElement.value.pause();
     videoElement.value.removeEventListener("timeupdate", handleVideoTimeUpdate);
@@ -246,12 +246,12 @@ function resetAnimations() {
 }
 
 function updateParallax() {
-  // Update parallax for entire image container
+  
   if (imageContainer.value) {
     const rect = imageContainer.value.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
 
-    // Calculate parallax offset based on scroll position
+    
     const scrollProgress = 1 - (rect.top + rect.height / 2) / viewportHeight;
     const parallaxOffset = Math.max(
       -50,
@@ -263,14 +263,14 @@ function updateParallax() {
 }
 
 onMounted(() => {
-  // Setup IntersectionObserver to trigger animation when scrolling into view
+  
   intersectionObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           triggerFadeIn();
         } else {
-          // Reset animations when leaving viewport
+          
           resetAnimations();
         }
       });
@@ -290,7 +290,7 @@ onMounted(() => {
 
   window.addEventListener("scroll", scrollListener, { passive: true });
 
-  // Find the scroll container for vue-scroll-snap
+  
   const scrollContainer = document.querySelector(".scroll-snap-container");
   if (scrollContainer) {
     scrollContainer.addEventListener("scroll", scrollListener, {
@@ -298,7 +298,7 @@ onMounted(() => {
     });
   }
 
-  // Don't trigger animations immediately - wait for scroll
+  
   updateParallax();
 });
 
@@ -311,7 +311,7 @@ onUnmounted(() => {
     }
   }
 
-  // Remove video timeupdate handler
+  
   if (videoElement.value) {
     videoElement.value.removeEventListener("timeupdate", handleVideoTimeUpdate);
   }
@@ -324,17 +324,17 @@ onUnmounted(() => {
 });
 
 function handleEnter() {
-  // Called when section enters viewport
-  // Don't call triggerFadeIn here - it's handled by IntersectionObserver
+  
+  
   updateParallax();
 }
 
 function handleLeave() {
-  // Called when section leaves viewport
+  
 }
 
 function handleStoryLinkClick() {
-  // Called before navigation to story page
+  
 }
 
 defineExpose({

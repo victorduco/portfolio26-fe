@@ -1,6 +1,6 @@
 <template>
   <section class="case1-summary">
-    <!-- Case 1 Summary content will go here -->
+    
   </section>
 </template>
 

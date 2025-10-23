@@ -112,7 +112,7 @@ const isIntroAnimation = computed(() => {
   return props.introGreen || props.introHighlight;
 });
 
-// Theme-aware variants for labels
+
 const computedLabelVariants = computed(() => {
   const textColor = props.darkMode ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)";
 
@@ -148,7 +148,7 @@ const computedLabelVariants = computed(() => {
   };
 });
 
-// Theme-aware variants for navigation squares
+
 const computedNavItemVariants = computed(() => {
   const bgDefault = props.darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
   const bgHover = props.darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)";
@@ -192,19 +192,19 @@ const computedNavItemVariants = computed(() => {
 });
 
 function getAnimationState() {
-  // Упрощенная логика для mobile
+  
   if (props.mobileMode) {
     if (isPressed.value) return "pressed";
     if (props.isActive) return "active";
     return "default";
   }
 
-  // Приоритет: fadeOut > зеленый > highlight > остальное
+  
   if (props.introFadeOut) return "introFadeOut";
   if (props.introGreen) return "introGreen";
   if (props.introHighlight) return "introHighlight";
   if (isPressed.value) return "pressed";
-  // Показываем active только после того как элемент прошел intro анимацию
+  
   if (props.isActive && hasBeenIntroHighlighted.value) return "active";
   if (isHovered.value) return "hover";
   return "default";
@@ -213,7 +213,7 @@ function getAnimationState() {
 const hasAppeared = ref(false);
 const hasBeenIntroHighlighted = ref(false);
 
-// Отслеживаем когда квадрат и текст должны появиться
+
 watch(
   () => props.introHighlight,
   (newVal) => {
@@ -225,7 +225,7 @@ watch(
   { flush: "sync" }
 );
 
-// Также отслеживаем зеленое состояние
+
 watch(
   () => props.introGreen,
   (newVal) => {
@@ -249,20 +249,20 @@ watch(
 );
 
 function getSquareAnimationState() {
-  // Приоритет: зеленый > highlight > остальное
+  
   if (props.introGreen) {
     return "introGreen";
   }
 
-  // Во время introHighlight показываем квадрат
+  
   if (props.introHighlight) {
     return "introHighlight";
   }
 
-  // Пока квадрат не появился - скрываем
+  
   if (!hasAppeared.value) return "hidden";
 
-  // После появления работаем как обычно
+  
   if (isPressed.value) return "pressed";
   if (props.isActive) return "active";
   if (isHovered.value) return "hover";
@@ -284,7 +284,7 @@ function getLabelTransition() {
       ease: [0.4, 0, 0.6, 1], // ease-out curve (начинает быстро, заканчивает медленно)
     };
   }
-  // Используем плавный transition без пружины для opacity
+  
   return {
     type: "tween",
     duration: 0.25,
@@ -293,10 +293,10 @@ function getLabelTransition() {
 }
 
 function getSquareBackgroundColor() {
-  // For intro animations
+  
   if (props.introGreen) return "#00FFBC";
 
-  // Calculate based on current state
+  
   const state = getSquareAnimationState();
 
   if (state === 'active') {

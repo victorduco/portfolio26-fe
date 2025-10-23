@@ -13,20 +13,20 @@ onMounted(async () => {
 });
 
 const handleUnlock = async () => {
-  // Track successful unlock event
+  
   mixpanel.track("Gate Unlocked");
 
-  // Small buffer to ensure smooth transition
+  
   await new Promise(resolve => setTimeout(resolve, 100));
 
-  // Now mark as authenticated (this will unmount Keypad)
+  
   setAuthenticated(true);
   await checkAuth();
 };
 </script>
 
 <template>
-  <!-- Show nothing while checking auth to prevent flash -->
+  
   <div v-if="isLoading" class="auth-loading"></div>
 
   <Keypad v-else-if="!isAuthenticated" @unlock="handleUnlock" />

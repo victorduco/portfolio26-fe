@@ -1,6 +1,6 @@
 <template>
   <div :class="['keypad-container', { 'is-resizing': isResizing }]">
-    <!-- Base layer with normal colors -->
+    
     <div
       :class="[
         'background-numbers',
@@ -12,7 +12,7 @@
     >
     </div>
 
-    <!-- Overlay layer with success/fail colors -->
+    
     <div
       :class="[
         'background-numbers',
@@ -75,10 +75,10 @@ import {
 
 const emit = defineEmits(["unlock"]);
 
-// API URL from environment
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-// Animation timing logger removed
+
 
 const enteredDigits = ref([]);
 
@@ -94,27 +94,27 @@ let resizeStartTimer = null;
 let lastResizeTime = 0;
 const RESIZE_THROTTLE_MS = 16; // ~60fps
 
-// No longer using SVG generation - using pre-generated PNG backgrounds
 
-// Update CSS variables with PNG backgrounds
+
+
 watch(
   () => enteredDigits.value,
   (digits) => {
     if (digits.length === 0) {
-      // Reset glass filter to force Safari to clear cached background
+      
       document.documentElement.style.setProperty("--glass-filter", "none");
       void document.documentElement.offsetHeight;
 
-      // Use empty string instead of 'none' for Safari compatibility
+      
       document.documentElement.style.setProperty("--global-keypad-bg", "");
       document.documentElement.style.setProperty("--global-keypad-mask", "");
-      // Add class to force hide background on all elements
+      
       document.documentElement.classList.add("keypad-no-bg");
 
-      // Force Safari to apply changes immediately
+      
       void document.documentElement.offsetHeight;
 
-      // Restore glass filter after a small delay
+      
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           document.documentElement.style.removeProperty("--glass-filter");
@@ -124,10 +124,10 @@ watch(
       return;
     }
 
-    // Remove no-background class when we have digits
+    
     document.documentElement.classList.remove("keypad-no-bg");
 
-    // Sharp background for both main display and buttons (CSS blur applied to buttons)
+    
     const sharpPath = getBackgroundPath(digits);
     document.documentElement.style.setProperty(
       "--global-keypad-bg",
@@ -141,7 +141,7 @@ watch(
   { immediate: true, deep: true }
 );
 
-// Update overlay color based on animation state
+
 watch(
   () => animationState.value,
   (state) => {
@@ -156,7 +156,7 @@ watch(
   { immediate: true }
 );
 
-// Backend integration
+
 const loading = ref(false);
 const errorMessage = ref("");
 const rateLimited = ref(false);
@@ -212,17 +212,17 @@ const checkCodeWithBackend = async (code) => {
     const data = await response.json();
 
     if (response.ok && data.ok) {
-      // Success
+      
       return { success: true };
     } else if (response.status === 429) {
-      // Rate limited
+      
       rateLimited.value = true;
       remainingTime.value = 60;
       startRateLimitTimer();
       errorMessage.value = data.error || "Too many attempts";
       return { success: false, rateLimited: true };
     } else {
-      // Invalid code
+      
       errorMessage.value = data.error || "Invalid code";
       return { success: false };
     }
@@ -235,45 +235,45 @@ const checkCodeWithBackend = async (code) => {
 };
 
 const animateFadeSequence = async (colorState, shouldUnlock) => {
-  // Show success/fail color overlay on digits
+  
   animationState.value = colorState;
   await new Promise((resolve) => setTimeout(resolve, 500));
 
-  // Fade out background numbers (digits) with 0.25s animation
+  
   bgNumbersState.value = "fadeOut";
   await new Promise((resolve) => setTimeout(resolve, 250));
 
   if (shouldUnlock) {
-    // Small buffer before emitting unlock
+    
     await new Promise((resolve) => setTimeout(resolve, 50));
     emit("unlock");
   } else {
-    // Hide overlay - watch will set color to transparent
+    
     animationState.value = "initial";
 
-    // Wait for overlay to fully fade
+    
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Unmount keypad buttons to clear all cached state
+    
     isResetting.value = true;
 
-    // Now clear digits and backgrounds
+    
     enteredDigits.value = [];
 
-    // Wait for watch to clear backgrounds
+    
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // Force Safari to reflow
+    
     void document.documentElement.offsetHeight;
 
-    // Extra delay to ensure everything is cleared
+    
     await new Promise((resolve) => setTimeout(resolve, 50));
 
-    // Reset states
+    
     bgNumbersState.value = "initial";
     keypadGridState.value = "initial";
 
-    // Remount keypad buttons - everything is clean
+    
     await new Promise((resolve) => setTimeout(resolve, 50));
     isResetting.value = false;
 
@@ -286,34 +286,34 @@ async function handleButtonClick(value) {
   if (isAnimating.value || isResizing.value || enteredDigits.value.length >= 4)
     return;
 
-  // Mark user interaction for video autoplay
+  
   sessionStorage.setItem('user-has-interacted', 'true');
 
   enteredDigits.value.push(value);
 
-  // Preload next possible backgrounds based on current input
+  
   prefetchNextDigits(enteredDigits.value);
 
   if (enteredDigits.value.length === 4) {
     isAnimating.value = true;
     const code = enteredDigits.value.join("");
 
-    // Fade out keypad grid immediately after entering 4th digit
+    
     keypadGridState.value = "fadeOut";
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Check code with backend
+    
     const result = await checkCodeWithBackend(code);
 
     if (result.rateLimited) {
-      // Rate limited - reset immediately
+      
       enteredDigits.value = [];
       animationState.value = "initial";
       bgNumbersState.value = "initial";
       keypadGridState.value = "initial";
       isAnimating.value = false;
     } else {
-      // Animate success or failure
+      
       await animateFadeSequence(
         result.success ? "success" : "fail",
         result.success
@@ -325,25 +325,25 @@ async function handleButtonClick(value) {
 function handleClear() {
   if (isAnimating.value || isResizing.value) return;
 
-  // Mark user interaction for video autoplay
+  
   sessionStorage.setItem('user-has-interacted', 'true');
 
-  // Reset glass filter to force Safari to clear cached background
+  
   document.documentElement.style.setProperty("--glass-filter", "none");
   void document.documentElement.offsetHeight;
 
-  // Explicitly clear backgrounds for Safari
+  
   document.documentElement.style.setProperty("--global-keypad-bg", "");
   document.documentElement.style.setProperty("--global-keypad-mask", "");
   document.documentElement.classList.add("keypad-no-bg");
   void document.documentElement.offsetHeight; // Force Safari reflow
 
-  // Then clear state
+  
   enteredDigits.value = [];
   animationState.value = "initial";
   bgNumbersState.value = "initial";
 
-  // Restore glass filter after a small delay
+  
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       document.documentElement.style.removeProperty("--glass-filter");
@@ -389,7 +389,7 @@ function handleKeyDown(event) {
 function handleResizeThrottled() {
   const now = Date.now();
 
-  // Throttle the actual resize handling
+  
   if (now - lastResizeTime < RESIZE_THROTTLE_MS) {
     return;
   }
@@ -399,7 +399,7 @@ function handleResizeThrottled() {
 }
 
 function handleResize() {
-  // Clear existing timers
+  
   if (resizeTimer) {
     clearTimeout(resizeTimer);
   }
@@ -407,40 +407,40 @@ function handleResize() {
     clearTimeout(resizeStartTimer);
   }
 
-  // Mark as resizing immediately (prevents interactions)
+  
   if (!isResizing.value && enteredDigits.value.length > 0) {
     isResizing.value = true;
 
-    // Hide backgrounds immediately during resize to prevent artifacts
+    
     document.documentElement.style.setProperty("--global-keypad-bg", "none");
     document.documentElement.style.setProperty("--global-keypad-mask", "none");
 
-    // Force immediate reflow
+    
     void document.documentElement.offsetHeight;
   }
 
-  // Debounce: wait for resize to stop
+  
   resizeTimer = setTimeout(() => {
     if (enteredDigits.value.length === 0) {
       isResizing.value = false;
       return;
     }
 
-    // Force Safari to clear any cached backgrounds
+    
     document.documentElement.style.setProperty("--glass-filter", "none");
     void document.documentElement.offsetHeight;
 
     const sharpPath = getBackgroundPath(enteredDigits.value);
 
-    // Clear CSS variables completely
+    
     document.documentElement.style.setProperty("--global-keypad-bg", "");
     document.documentElement.style.setProperty("--global-keypad-mask", "");
     void document.documentElement.offsetHeight;
 
-    // Use double rAF for reliable re-render
+    
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        // Re-apply backgrounds
+        
         document.documentElement.style.setProperty(
           "--global-keypad-bg",
           `url("${sharpPath}")`
@@ -450,10 +450,10 @@ function handleResize() {
           `url("${sharpPath}")`
         );
 
-        // Force reflow
+        
         void document.documentElement.offsetHeight;
 
-        // Restore glass filter and unlock interactions
+        
         requestAnimationFrame(() => {
           document.documentElement.style.removeProperty("--glass-filter");
           isResizing.value = false;
@@ -466,11 +466,11 @@ function handleResize() {
 onMounted(() => {
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
-    // Use throttled version and passive listener for better performance
+    
     window.addEventListener("resize", handleResizeThrottled, { passive: true });
   }
 
-  // Preload manifest and initial backgrounds
+  
   preloadInitialBackgrounds();
 });
 

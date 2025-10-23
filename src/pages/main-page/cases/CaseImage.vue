@@ -19,7 +19,7 @@
       />
     </motion.div>
 
-    <!-- Final Overlay -->
+    
     <motion.div
       v-if="showFinalOverlay"
       class="case-image-final"
@@ -128,16 +128,16 @@ function handleImageClick() {
 }
 
 function handleStoryLinkClick() {
-  // Navigation handled by RouterLink
+  
 }
 
 function handleEnter() {
-  // Show image when entering viewport
+  
   imageState.value = "visible";
 }
 
 function handleLeave() {
-  // Keep image visible when leaving viewport
+  
 }
 
 defineExpose({

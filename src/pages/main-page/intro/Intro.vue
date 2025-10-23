@@ -82,12 +82,12 @@ import {
   useMediaQuery,
 } from "@/composables/useMediaQuery.js";
 
-// Internal intro visibility logic
+
 const route = useRoute();
 const introVisible = ref(false);
 const shouldPlayNavIntro = computed(() => !route.meta?.skipNavIntro);
 
-// Set initial visibility based on route
+
 watch(
   () => shouldPlayNavIntro.value,
   (play) => {
@@ -96,12 +96,12 @@ watch(
   { immediate: true }
 );
 
-// Handle animation complete event from PageNavigation
+
 function handleNavAnimationComplete() {
   introVisible.value = true;
 }
 
-// Expose methods and computed for MainPage
+
 defineExpose({
   handleNavAnimationComplete,
   shouldPlayNavIntro,
@@ -114,15 +114,15 @@ const isMobileLayout = useMediaQuery(NAVIGATION_MOBILE);
 const isSmallestBreakpoints = useMediaQuery(INTRO_MOBILE_FULLSCREEN);
 const activeMobileIndex = ref(-1);
 
-// Обработчик клика вне блоков
+
 function handleClickOutside(event) {
-  // Проверяем, есть ли активные блоки
+  
   if (activeCount.value === 0) return;
 
-  // Проверяем, был ли клик по элементу .intro-square или его потомкам
+  
   const clickedSquare = event.target.closest(".intro-square");
 
-  // На двух наименьших брейкпоинтах используем fullscreen модальный режим
+  
   if (isSmallestBreakpoints.value) {
     if (!clickedSquare && activeMobileIndex.value !== -1) {
       handleMobileClose();
@@ -130,7 +130,7 @@ function handleClickOutside(event) {
     return;
   }
 
-  // На мобильных (но не на самых маленьких) также используем mobile логику
+  
   if (isMobileLayout.value) {
     if (!clickedSquare && activeMobileIndex.value !== -1) {
       handleMobileClose();
@@ -139,23 +139,23 @@ function handleClickOutside(event) {
   }
 
   if (!clickedSquare) {
-    // Клик был вне всех блоков - закрываем все
+    
     forceCloseAll.value = true;
-    // Сбрасываем флаг после небольшой задержки
+    
     setTimeout(() => {
       forceCloseAll.value = false;
     }, 50);
   }
 }
 
-// Состояния анимации
+
 const titleState = ref("hidden");
 const subtitleState = ref("hidden");
 const rectangleStates = ref([false, false, false, false]); // Индивидуальные состояния для каждого rectangle
 const showRectangles = ref(false);
 const scrollHintState = ref("hidden");
 
-// Shared animation variants
+
 const sharedVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
@@ -165,13 +165,13 @@ const titleVariants = sharedVariants;
 const subtitleVariants = sharedVariants;
 const scrollHintVariants = sharedVariants;
 
-// Shared transition base config
+
 const baseTransition = {
   type: "tween",
   ease: [0.4, 0, 0.2, 1],
 };
 
-// Transition конфиги
+
 const titleTransition = {
   ...baseTransition,
   duration: 0.6,
@@ -187,17 +187,17 @@ const scrollHintTransition = {
   duration: 0.4,
 };
 
-// Ease-in-out функция для плавного изменения скорости
+
 function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-// Последовательная анимация при появлении intro
+
 watch(
   () => introVisible.value,
   async (newVal) => {
     if (!newVal) {
-      // Reset animations when intro becomes invisible
+      
       titleState.value = "hidden";
       subtitleState.value = "hidden";
       rectangleStates.value = [false, false, false, false];
@@ -208,36 +208,36 @@ watch(
       return;
     }
 
-    // Общее количество шагов: Title, Subtitle, 4 Rectangle, ScrollHint = 7 шагов
+    
     const totalSteps = 7;
 
-    // Базовые задержки: медленный старт и конец (400ms), середина (250ms)
+    
     const minDelay = 250;
     const maxDelay = 400;
 
     function getDelay(stepIndex) {
       const progress = stepIndex / (totalSteps - 1);
       const eased = easeInOutCubic(progress);
-      // Инвертируем easing: в начале и конце медленно (большие задержки), в середине быстро (маленькие задержки)
+      
       return maxDelay - eased * (maxDelay - minDelay);
     }
 
-    // 1. Заголовок
+    
     titleState.value = "visible";
     await new Promise((resolve) => setTimeout(resolve, getDelay(0)));
 
-    // 2. Подзаголовок
+    
     subtitleState.value = "visible";
     await new Promise((resolve) => setTimeout(resolve, getDelay(1)));
 
-    // 3-6. Прямоугольники по одному
+    
     showRectangles.value = true;
     for (let i = 0; i < 4; i++) {
       rectangleStates.value[i] = true;
       await new Promise((resolve) => setTimeout(resolve, getDelay(2 + i)));
     }
 
-    // 7. Scroll hint
+    
     scrollHintState.value = "visible";
   },
   { immediate: true }
@@ -245,14 +245,14 @@ watch(
 
 function handleActiveChange(isActive) {
   if (isMobileLayout.value) {
-    // На мобильной верстке количество активных всегда 0 или 1
+    
     activeCount.value = isActive ? 1 : 0;
   } else {
     activeCount.value += isActive ? 1 : -1;
   }
 }
 
-// Отслеживаем скролл и сбрасываем квадраты при уходе из viewport
+
 let observer = null;
 
 onMounted(() => {
@@ -261,16 +261,16 @@ onMounted(() => {
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Если секция полностью ушла из viewport
+          
           if (!entry.isIntersecting && activeCount.value > 0) {
-            // Принудительно закрываем все квадраты одновременно с анимацией
+            
             if (isMobileLayout.value || isSmallestBreakpoints.value) {
               handleMobileClose();
             } else {
               forceCloseAll.value = true;
             }
           } else if (entry.isIntersecting) {
-            // Когда возвращаемся - снимаем блокировку
+            
             if (!isMobileLayout.value && !isSmallestBreakpoints.value) {
               forceCloseAll.value = false;
             }
@@ -285,13 +285,13 @@ onMounted(() => {
     observer.observe(introSection);
   }
 
-  // Добавляем обработчик клика вне блоков
+  
   document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
   observer?.disconnect();
-  // Удаляем обработчик клика при размонтировании
+  
   document.removeEventListener("click", handleClickOutside);
 });
 

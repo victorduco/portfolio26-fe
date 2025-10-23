@@ -4,7 +4,7 @@
       class="ai-play-hero"
       :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
     >
-    <!-- Floating images -->
+    
     <div class="floating-images">
       <motion.div
         v-for="(item, index) in floatingItems"
@@ -96,7 +96,7 @@ defineProps({
   },
 });
 
-// Random placeholder images (using picsum.photos)
+
 const floatingItems = [
   {
     icon: HaIcon,
@@ -160,10 +160,10 @@ const floatingItems = [
   },
 ];
 
-// Track hover state for each individual item
+
 const hoveredIndex = ref(-1);
 
-// Создаем computed массив состояний анимации для всех элементов
+
 const animationStates = computed(() => {
   return floatingItems.map((_, index) => {
     const state = hoveredIndex.value === index ? 'groupHover' : 'default';
@@ -175,17 +175,17 @@ function getAnimationState(index) {
   return animationStates.value[index];
 }
 
-// Функция для получения иконки в зависимости от состояния
+
 function getCurrentIcon(item, state) {
   return state === 'groupHover' ? item.icon : item.defaultIcon;
 }
 
-// Функция для получения цвета иконки в зависимости от состояния
+
 function getIconColor(state) {
   return state === 'groupHover' ? '#000000' : '#999999';
 }
 
-// Функция для получения spring конфигурации для элемента
+
 function getSpringConfig(item) {
   return createSpring(item.hoverSpringMultiplier);
 }

@@ -71,7 +71,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
-// Уникальный контент для каждого блока
+
 const contentData = [
   {
     title: "Vision",
@@ -95,8 +95,8 @@ const contentData = [
   },
 ];
 
-// Получаем класс иконки в зависимости от индекса
-// Маппинг: Vision→icon-d, Connection→icon-a, Technology→icon-c, Scale→icon-b
+
+
 function getIconClass(index) {
   const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];
   return iconNames[index] || "icon-a";
@@ -107,7 +107,7 @@ function emitClose() {
 }
 
 function handleBackdropClick() {
-  // На маленьких брейкпоинтах и мобильных - закрываем при клике на backdrop
+  
   if (!props.isMobileLayout && !props.isSmallestBreakpoints) return;
   emitClose();
 }

@@ -24,7 +24,7 @@
       ></video>
     </motion.div>
 
-    <!-- Pause Overlay (outside of video shell to avoid blur) -->
+    
     <motion.div
       v-if="!isPlaying && !showFinalOverlay && hasStartedPlayback"
       class="case-video-pause-overlay"
@@ -33,10 +33,10 @@
       :exit="{ opacity: 0 }"
       :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
     >
-      <!-- Transparent clickable overlay -->
+      
       <div class="pause-overlay-clickable" @click="togglePlayPause"></div>
 
-      <!-- Large black play icon with smooth rounded corners -->
+      
       <svg
         viewBox="0 0 100 100"
         fill="currentColor"
@@ -48,7 +48,7 @@
       </svg>
     </motion.div>
 
-    <!-- Video Controls Bar -->
+    
     <motion.div
       v-if="hasStartedPlayback && !showFinalOverlay"
       class="case-video-controls"
@@ -58,7 +58,7 @@
       :transition="controlsTransition"
       :initial="false"
     >
-      <!-- Fullscreen button (mobile only) -->
+      
       <motion.button
         v-if="isSmallScreen"
         class="control-button"
@@ -103,7 +103,7 @@
         </motion.svg>
       </motion.button>
 
-      <!-- Mute/Unmute button - always visible on mobile -->
+      
       <motion.button
         class="control-button"
         type="button"
@@ -147,7 +147,7 @@
         </motion.svg>
       </motion.button>
 
-      <!-- Play/Pause button (second) -->
+      
       <motion.button
         class="control-button"
         type="button"
@@ -184,7 +184,7 @@
         </motion.svg>
       </motion.button>
 
-      <!-- Restart button (third) -->
+      
       <motion.button
         class="control-button"
         type="button"
@@ -243,7 +243,7 @@
         </RouterLink>
       </div>
 
-      <!-- Restart button positioned like during playback -->
+      
       <div class="case-video-final-controls">
         <motion.button
           class="control-button control-button-final"
@@ -326,16 +326,16 @@ const shouldSaveState = ref(false); // Track if we should save state on unmount
 const userPaused = ref(false); // Track if user manually paused the video
 const isFullscreen = ref(false);
 
-// Video starts muted on small screens by default
+
 const shouldBeMutedByDefault = computed(() => isSmallScreen.value);
 
-// Check if user has interacted (for template)
+
 const userHasInteracted = computed(() => getUserHasInteracted());
 
-// Storage key based on video src
+
 const getStorageKey = () => `video-state-${props.src}`;
 
-// Save video state to sessionStorage (only when navigating to story page)
+
 function saveVideoState() {
   const video = getVideoElement();
   if (!video) return;
@@ -352,12 +352,12 @@ function saveVideoState() {
   sessionStorage.setItem(getStorageKey(), JSON.stringify(state));
 }
 
-// Clear video state from sessionStorage
+
 function clearVideoState() {
   sessionStorage.removeItem(getStorageKey());
 }
 
-// Restore video state from sessionStorage
+
 function restoreVideoState() {
   try {
     const stored = sessionStorage.getItem(getStorageKey());
@@ -367,14 +367,14 @@ function restoreVideoState() {
     const video = getVideoElement();
     if (!video) return false;
 
-    // Check if state is recent (within 5 minutes)
+    
     const isRecent = Date.now() - state.timestamp < 5 * 60 * 1000;
     if (!isRecent) {
       clearVideoState();
       return false;
     }
 
-    // Restore video state
+    
     video.currentTime = state.currentTime || 0;
     isMuted.value = state.isMuted || false;
     video.muted = isMuted.value;
@@ -406,9 +406,9 @@ function restoreVideoState() {
   }
 }
 
-// Check if we're navigating from a story page
+
 function isComingFromStory() {
-  // Check if there's stored state - this means we came back from story
+  
   return sessionStorage.getItem(getStorageKey()) !== null;
 }
 
@@ -418,7 +418,7 @@ let initialCleanupTimeout = null;
 let finalCleanupTimeout = null;
 let playAttempts = 0; // Track number of play attempts to prevent infinite loop
 
-// Global flag shared across all video instances via sessionStorage
+
 function getUserHasInteracted() {
   return sessionStorage.getItem('user-has-interacted') === 'true';
 }
@@ -561,20 +561,20 @@ function attemptPlay() {
 
   if (!video || showFinalOverlay.value) return;
 
-  // Don't try to play if already playing
+  
   if (!video.paused && hasStartedPlayback.value) {
     return;
   }
 
-  // Limit retry attempts to prevent infinite loop
+  
   playAttempts++;
   if (playAttempts > 3) {
-    // Fall back to muted playback
+    
     video.muted = true;
     isMuted.value = true;
   }
 
-  // If user hasn't interacted yet, try muted playback first
+  
   const shouldTryMuted = !userHasInteracted && !shouldBeMutedByDefault.value;
   video.muted = shouldTryMuted ? true : (shouldBeMutedByDefault.value || isMuted.value);
   video.playsInline = true;
@@ -587,11 +587,11 @@ function attemptPlay() {
       isPlaying.value = true;
       videoState.value = "visible";
 
-      // If we started muted due to no interaction, update state
+      
       if (shouldTryMuted) {
         isMuted.value = true;
 
-        // Try to unmute immediately if user has already interacted
+        
         if (getUserHasInteracted()) {
           video.muted = false;
           isMuted.value = false;
@@ -601,7 +601,7 @@ function attemptPlay() {
     .catch(() => {
       /* Handle autoplay rejections */
 
-      // If autoplay failed with sound, just show play button instead of retrying
+      
       if (userHasInteracted && !video.muted) {
         hasStartedPlayback.value = true; // Show play button
         playAttempts = 0; // Reset
@@ -612,19 +612,19 @@ function attemptPlay() {
 }
 
 function handleTimeUpdate(event) {
-  // If finalOverlayTime is set, show overlay at that time
+  
   if (props.finalOverlayTime !== null && !showFinalOverlay.value) {
     const video = event.target;
     if (video.currentTime >= props.finalOverlayTime) {
       showFinalOverlay.value = true;
       finalOverlayState.value = "visible";
-      // Don't hide video, don't pause - let it keep playing with audio
+      
     }
   }
 }
 
 function handleVideoEnded() {
-  // Only trigger on video end if finalOverlayTime is not set
+  
   if (props.finalOverlayTime === null) {
     showFinalOverlay.value = true;
     finalOverlayState.value = "visible";
@@ -646,7 +646,7 @@ function replayVideo() {
   videoState.value = "visible";
   video.currentTime = 0;
 
-  // Clear saved state when replaying
+  
   clearVideoState();
   wasStateRestored.value = false;
   userPaused.value = false; // Reset user pause state on replay
@@ -658,7 +658,7 @@ function replayVideo() {
       isPlaying.value = true;
     })
     .catch(() => {
-      // If playback fails, restore final overlay so the user keeps controls
+      
       clearFinalTimers();
       showFinalOverlay.value = true;
       finalOverlayState.value = "visible";
@@ -680,20 +680,20 @@ function handleEnter() {
 
   if (!video) return;
 
-  // Don't auto-play if we just restored state
+  
   if (wasStateRestored.value) {
     wasStateRestored.value = false;
     return;
   }
 
-  // Always show video when entering viewport
+  
   videoState.value = "visible";
 
-  // If user has interacted before, try autoplay with sound
+  
   if (!showFinalOverlay.value && !userPaused.value && userHasInteracted) {
     schedulePlay();
   } else if (!hasStartedPlayback.value) {
-    // Show first frame and play button
+    
     hasStartedPlayback.value = true;
   }
 }
@@ -705,21 +705,21 @@ function handleLeave() {
     playTimeout = null;
   }
 
-  // Reset play attempts counter
+  
   playAttempts = 0;
 
-  // Auto-pause when leaving viewport (not user-initiated)
+  
   if (video && typeof video.pause === "function" && !video.paused) {
     video.pause();
     isPlaying.value = false;
-    // Don't set userPaused here - this is automatic pause
+    
   }
 
-  // Don't hide video to prevent black screen on return
+  
 }
 
 function handleVideoClick(event) {
-  // Don't toggle if clicking on control buttons
+  
   if (event.target.closest('.case-video-controls')) {
     return;
   }
@@ -732,16 +732,16 @@ function togglePlayPause() {
   if (!video) return;
 
   if (video.paused) {
-    // User is resuming playback - this is user interaction, unmute if needed
+    
     userPaused.value = false;
     setUserHasInteracted();
 
-    // Always unmute on user click (desktop only)
+    
     if (!shouldBeMutedByDefault.value) {
       video.muted = false;
       isMuted.value = false;
     } else {
-      // On mobile, keep muted
+      
       video.muted = true;
       isMuted.value = true;
     }
@@ -752,7 +752,7 @@ function togglePlayPause() {
       videoState.value = "visible";
     });
   } else {
-    // User is manually pausing
+    
     userPaused.value = true;
     video.pause();
     isPlaying.value = false;
@@ -772,7 +772,7 @@ function toggleFullscreen() {
   if (!video) return;
 
   if (!document.fullscreenElement) {
-    // Enter fullscreen
+    
     const container = video.parentElement?.parentElement;
     if (container && container.requestFullscreen) {
       container
@@ -782,7 +782,7 @@ function toggleFullscreen() {
         })
         .catch(() => {});
     } else if (video.webkitRequestFullscreen) {
-      // Safari fallback
+      
       video
         .webkitRequestFullscreen()
         .then(() => {
@@ -791,13 +791,13 @@ function toggleFullscreen() {
         .catch(() => {});
     }
   } else {
-    // Exit fullscreen
+    
     if (document.exitFullscreen) {
       document.exitFullscreen().then(() => {
         isFullscreen.value = false;
       });
     } else if (document.webkitExitFullscreen) {
-      // Safari fallback
+      
       document.webkitExitFullscreen();
       isFullscreen.value = false;
     }
@@ -810,7 +810,7 @@ function restartVideo() {
 
   video.currentTime = 0;
 
-  // Clear saved state when restarting
+  
   clearVideoState();
   wasStateRestored.value = false;
   userPaused.value = false; // Reset user pause state on restart
@@ -820,7 +820,7 @@ function restartVideo() {
   });
 }
 
-// Handle click on story link - save state before navigation
+
 function handleStoryLinkClick() {
   if (hasStartedPlayback.value) {
     saveVideoState();
@@ -831,21 +831,21 @@ function handleFullscreenChange() {
   isFullscreen.value = !!document.fullscreenElement;
 }
 
-// Handle user interaction to unlock autoplay with sound
+
 function handleUserInteraction() {
   if (getUserHasInteracted()) return; // Already handled
 
-  // Mark as interacted
+  
   setUserHasInteracted();
 
-  // If video is playing but muted due to autoplay restrictions, try to unmute
+  
   const video = getVideoElement();
   if (video && !video.paused && hasStartedPlayback.value && isMuted.value && !shouldBeMutedByDefault.value) {
     video.muted = false;
     isMuted.value = false;
   }
 
-  // Remove listeners after first interaction
+  
   removeInteractionListeners();
 }
 
@@ -856,10 +856,10 @@ function removeInteractionListeners() {
 }
 
 onMounted(() => {
-  // Try to restore state only if coming from story page
+  
   const video = getVideoElement();
   if (video && isComingFromStory()) {
-    // Wait for video metadata to be loaded
+    
     video.addEventListener(
       "loadedmetadata",
       () => {
@@ -868,18 +868,18 @@ onMounted(() => {
       { once: true }
     );
 
-    // If metadata is already loaded
+    
     if (video.readyState >= 1) {
       restoreVideoState();
     }
   }
 
-  // Listen for fullscreen changes
+  
   document.addEventListener("fullscreenchange", handleFullscreenChange);
   document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 
-  // Listen for REAL user interactions to unlock autoplay (not scroll!)
-  // Scroll is NOT a valid user gesture for media autoplay policy
+  
+  
   document.addEventListener("click", handleUserInteraction);
   document.addEventListener("touchstart", handleUserInteraction, { passive: true });
   document.addEventListener("keydown", handleUserInteraction);
@@ -897,14 +897,14 @@ onUnmounted(() => {
   clearInitialTimers();
   clearFinalTimers();
 
-  // Remove fullscreen listeners
+  
   document.removeEventListener("fullscreenchange", handleFullscreenChange);
   document.removeEventListener(
     "webkitfullscreenchange",
     handleFullscreenChange
   );
 
-  // Remove user interaction listeners
+  
   removeInteractionListeners();
 });
 

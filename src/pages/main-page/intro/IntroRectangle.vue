@@ -63,7 +63,7 @@ import {
   useBoxVariants,
 } from "./variants.js";
 
-// Используем реактивные варианты с обработкой resize
+
 const boxVariants = useBoxVariants();
 
 const props = defineProps({
@@ -113,35 +113,35 @@ const localActive = ref(false);
 const isHovered = ref(false);
 
 const isActive = computed(() => {
-  // На двух наименьших брейкпоинтах используем fullscreen модальный режим
+  
   if (props.isSmallestBreakpoints || props.isMobileLayout) {
     return props.activeMobileIndex === props.index;
   }
   return localActive.value;
 });
 
-// Определение состояния анимации (computed для переиспользования)
+
 const animationState = computed(() => {
-  // На двух наименьших брейкпоинтах: только default или active (без hover)
+  
   if (props.isSmallestBreakpoints || props.isMobileLayout) {
     if (isActive.value) return "active";
     return "default";
   }
-  // Обычные интерактивные состояния
+  
   if (isActive.value) return "active";
-  // Не показываем hover пока Intro не появился И пока этот конкретный прямоугольник не анимировался
+  
   if (isHovered.value && props.introVisible && props.shouldAnimate)
     return "hover";
   return "default";
 });
 
-// Мягкая пружина для обратной анимации (active -> default)
+
 const boxTransition = computed(() => {
   if (isActive.value) {
-    // При открытии - обычная пружина
+    
     return spring;
   } else {
-    // При закрытии - более мягкая пружина (меньше колебаний)
+    
     return {
       type: "spring",
       stiffness: 70,
@@ -155,7 +155,7 @@ const emit = defineEmits(["activeChange", "mobileOpen", "mobileClose"]);
 
 function toggleState() {
   isHovered.value = false;
-  // На двух наименьших брейкпоинтах используем fullscreen модальный режим
+  
   if (props.isSmallestBreakpoints || props.isMobileLayout) {
     if (isActive.value) {
       handleMobileCloseRequest();
@@ -170,7 +170,7 @@ function toggleState() {
   emit("activeChange", localActive.value);
 }
 
-// Следим за forceClose и закрываем с анимацией
+
 watch(
   () => props.forceClose,
   (newVal) => {
@@ -186,16 +186,16 @@ watch(
   }
 );
 
-// Computed additional margin для сдвига влево при активации
-// На маленьких брейкпоинтах не сдвигаем
+
+
 const additionalMargin = computed(() =>
   props.isMobileLayout || props.isSmallestBreakpoints
     ? 0
     : props.activeCount * -40
 );
 
-// Получаем класс иконки в зависимости от индекса
-// Маппинг: Vision→icon-d, Connection→icon-a, Technology→icon-c, Scale→icon-b
+
+
 function getIconClass(index) {
   const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];
   return iconNames[index] || "icon-a";

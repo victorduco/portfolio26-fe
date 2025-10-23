@@ -20,14 +20,14 @@ async function generateBackgroundSVG() {
   if (isGenerating) return;
   isGenerating = true;
 
-  // Validate watchData is an array of digits
+  
   if (!Array.isArray(props.watchData) || props.watchData.length === 0) {
     isGenerating = false;
     return;
   }
 
   try {
-    // Generate SVG markup
+    
     const svgMarkup = generateCompositeSVG(props.watchData);
 
     if (!svgMarkup) {
@@ -35,12 +35,12 @@ async function generateBackgroundSVG() {
       return;
     }
 
-    // Render SVG to .background-numbers container
+    
     if (backgroundNumbers.value) {
       backgroundNumbers.value.innerHTML = svgMarkup;
     }
   } catch (error) {
-    // Silent error handling
+    
   } finally {
     isGenerating = false;
   }

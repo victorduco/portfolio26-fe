@@ -1,5 +1,5 @@
 <template>
-  <!-- Desktop версия (текущая) -->
+  
   <nav
     v-if="!isMobile"
     class="page-navigation"
@@ -22,9 +22,9 @@
     />
   </nav>
 
-  <!-- Mobile версия -->
+  
   <div v-else class="page-navigation-mobile">
-    <!-- Menu button -->
+    
     <NavigationChevron
       v-if="!isMenuOpen"
       type="button"
@@ -34,7 +34,7 @@
       @click="toggleMenu"
     />
 
-    <!-- Fullscreen overlay -->
+    
     <Transition name="menu-fade">
       <div
         v-if="isMenuOpen"
@@ -43,7 +43,7 @@
         @click.self="toggleMenu"
         @keydown.escape="toggleMenu"
       >
-        <!-- Close button -->
+        
         <NavigationChevron
           class="menu-close-button"
           type="button"
@@ -53,7 +53,7 @@
           @click="toggleMenu"
         />
 
-        <!-- Menu items -->
+        
         <nav class="menu-content">
           <NavigationItem
             v-for="(section, index) in sections"
@@ -111,7 +111,7 @@ const props = defineProps({
   },
 });
 
-// Internal logic: check if intro animation should play
+
 const route = useRoute();
 const shouldPlayIntroAnimation = computed(() => !route.meta?.skipNavIntro);
 
@@ -174,7 +174,7 @@ function startIntroAnimation() {
 
   function animateNext() {
     if (currentIndex < 0) {
-      // Финализируем последний элемент (index 0)
+      
       if (previousIndex === 0) {
         introFadeOutIndex.value = 0;
 
@@ -185,10 +185,10 @@ function startIntroAnimation() {
             introHighlightIndex.value = -1;
             introGreenIndex.value = -1;
 
-            // Активируем первую секцию (intro) после завершения анимации
+            
             activeSection.value = props.sections[0]?.id || "";
 
-            // Уведомляем родителя что анимация завершена
+            
             setTimeout(() => {
               introFinished.value = true;
               emit("animationComplete");
@@ -208,10 +208,10 @@ function startIntroAnimation() {
       return;
     }
 
-    // Одновременно: делаем зеленым текущий И начинаем затухание предыдущего
+    
     introGreenIndex.value = currentIndex;
 
-    // Вычисляем задержку: начинаем с 88ms (медленно), заканчиваем на 24ms (быстро) — в 2 раза быстрее исходного темпа
+    
     const progress = (totalSections - 1 - currentIndex) / (totalSections - 1);
     const easeIn = Math.pow(progress, 2); // ease-in кривая для ускорения
     const baseDelay = (176 - easeIn * 128) * 0.5; // ускоряем в 2 раза: 88ms до 24ms
@@ -220,11 +220,11 @@ function startIntroAnimation() {
     if (previousIndex !== -1) {
       introFadeOutIndex.value = previousIndex;
 
-      // Через 75ms (время затухания) убираем fadeOut и меняем цвет на белый (пока opacity = 0)
+      
       setTimeout(() => {
         introFadeOutIndex.value = -1;
 
-        // Сразу после смены цвета показываем белым
+        
         setTimeout(() => {
           introHighlightIndex.value = previousIndex;
         }, 0);
@@ -245,12 +245,12 @@ onMounted(() => {
   const shouldRunIntro = shouldPlayIntroAnimation.value && !isMobile.value;
 
   if (shouldRunIntro) {
-    // Задержка перед началом анимации меню
+    
     setTimeout(() => {
       startIntroAnimation();
     }, 250);
   } else {
-    // Без анимации сразу сообщаем о завершении
+    
     introHighlightIndex.value = -1;
     introGreenIndex.value = -1;
     introFadeOutIndex.value = -1;

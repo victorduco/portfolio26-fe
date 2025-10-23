@@ -45,10 +45,10 @@ const route = useRoute();
 const introRef = ref(null);
 const scrollContainerRef = ref(null);
 
-// Navigation dark mode (static for now)
+
 const isDarkMode = ref(true);
 
-// Watch for scroll restoration when coming back from story page
+
 watch(
   () => route.meta?.restoreScrollTop,
   async (scrollTop) => {
@@ -79,14 +79,14 @@ watch(
 );
 
 function handleNavAnimationComplete() {
-  // Call exposed method on Intro component
+  
   introRef.value?.handleNavAnimationComplete();
 }
 
 function handleActiveSectionChange(sectionId) {
-  // Update navigation mode based on section
-  // Dark mode = true means white menu elements
-  // Light mode = false means black menu elements
+  
+  
+  
   if (sectionId === 'case2') {
     isDarkMode.value = true; // White menu for case2
   } else if (sectionId === 'case1' || sectionId === 'case3') {
@@ -96,7 +96,7 @@ function handleActiveSectionChange(sectionId) {
   }
 }
 
-// No onMounted logic needed in MainPage
+
 </script>
 
 <style scoped>

@@ -1,7 +1,5 @@
-/* Design tokens for responsive design system */
-
 :root {
-  /* Spacing scale (4px module) */
+  /* Spacing scale */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -11,16 +9,15 @@
   --space-3xl: 64px;
   --space-4xl: 80px;
 
-  /* Adaptive gutters (horizontal padding) */
+  /* Gutters */
   --gutter: 16px;
 
-  /* Container max-width */
   --container-max: 100%;
 
-  /* Touch targets (minimum size for tappable elements) */
+  /* Touch targets */
   --tap-min: 44px;
 
-  /* Typography base (for body text) */
+  /* Typography */
   --fs-body: clamp(14px, 1.6vw, 16px);
   --lh-body: 1.7;
 }

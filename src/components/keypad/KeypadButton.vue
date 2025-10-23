@@ -8,7 +8,7 @@
     @mouseenter="handleMouseEnter"
     @click="handleClick"
   >
-    <!-- Desktop portrait: mask-element + GlassEffect -->
+    
     <div
       v-if="!isMobile && !isLandscapeMobile"
       class="keypad-button-wrapper"
@@ -30,7 +30,7 @@
       </motion.div>
     </div>
 
-    <!-- Mobile/Tablet: simple wrapper, backdrop-filter via CSS -->
+    
     <div
       v-else
       class="keypad-button-wrapper"

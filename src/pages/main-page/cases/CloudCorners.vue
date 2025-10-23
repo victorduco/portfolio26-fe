@@ -1,8 +1,8 @@
 <template>
   <div class="cloud-corners" ref="cloudContainer">
-    <!-- Top Left Cloud -->
+    
     <div class="cloud-group top-left" ref="topLeftCloud">
-      <!-- White triangle fill: right angle at (0,0), hypotenuse from (100,0) to (0,100) -->
+      
       <svg
         class="triangle-fill"
         :width="triangleSize"
@@ -12,7 +12,7 @@
       >
         <polygon points="0,0 100,0 0,100" fill="white" />
       </svg>
-      <!-- Circles on hypotenuse -->
+      
       <div
         v-for="(circle, index) in topLeftCircles"
         :key="`tl-${index}`"
@@ -21,9 +21,9 @@
       ></div>
     </div>
 
-    <!-- Top Right Cloud -->
+    
     <div class="cloud-group top-right" ref="topRightCloud">
-      <!-- White triangle fill: right angle at (100,0), hypotenuse from (0,0) to (100,100) -->
+      
       <svg
         class="triangle-fill"
         :width="triangleSize"
@@ -33,7 +33,7 @@
       >
         <polygon points="100,0 0,0 100,100" fill="white" />
       </svg>
-      <!-- Circles on hypotenuse -->
+      
       <div
         v-for="(circle, index) in topRightCircles"
         :key="`tr-${index}`"
@@ -42,9 +42,9 @@
       ></div>
     </div>
 
-    <!-- Bottom Left Cloud -->
+    
     <div class="cloud-group bottom-left" ref="bottomLeftCloud">
-      <!-- White triangle fill: right angle at (0,100), hypotenuse from (0,0) to (100,100) -->
+      
       <svg
         class="triangle-fill"
         :width="triangleSize"
@@ -54,7 +54,7 @@
       >
         <polygon points="0,100 0,0 100,100" fill="white" />
       </svg>
-      <!-- Circles on hypotenuse -->
+      
       <div
         v-for="(circle, index) in bottomLeftCircles"
         :key="`bl-${index}`"
@@ -63,9 +63,9 @@
       ></div>
     </div>
 
-    <!-- Bottom Right Cloud -->
+    
     <div class="cloud-group bottom-right" ref="bottomRightCloud">
-      <!-- White triangle fill: right angle at (100,100), hypotenuse from (100,0) to (0,100) -->
+      
       <svg
         class="triangle-fill"
         :width="triangleSize"
@@ -75,7 +75,7 @@
       >
         <polygon points="100,100 100,0 0,100" fill="white" />
       </svg>
-      <!-- Circles on hypotenuse -->
+      
       <div
         v-for="(circle, index) in bottomRightCircles"
         :key="`br-${index}`"
@@ -89,7 +89,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
-// Refs for cloud elements
+
 const cloudContainer = ref(null);
 const topLeftCloud = ref(null);
 const topRightCloud = ref(null);
@@ -98,7 +98,7 @@ const bottomRightCloud = ref(null);
 
 let scrollListener = null;
 
-// Parallax speeds for different clouds (vertical only, more noticeable)
+
 const parallaxSpeeds = {
   topLeft: { x: 0, y: 0.3 },
   topRight: { x: 0, y: 0.4 },
@@ -112,14 +112,14 @@ function updateCloudParallax() {
   const rect = cloudContainer.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
 
-  // Calculate scroll progress based on element position
+  
   const scrollProgress = 1 - (rect.top + rect.height / 2) / viewportHeight;
   const parallaxOffset = Math.max(
     -100,
     Math.min(100, scrollProgress * 200 - 100)
   );
 
-  // Apply different parallax effects to each cloud
+  
   if (topLeftCloud.value) {
     const x = parallaxOffset * parallaxSpeeds.topLeft.x;
     const y = parallaxOffset * parallaxSpeeds.topLeft.y;
@@ -152,7 +152,7 @@ onMounted(() => {
 
   window.addEventListener("scroll", scrollListener, { passive: true });
 
-  // Find the scroll container for vue-scroll-snap
+  
   const scrollContainer = document.querySelector(".scroll-snap-container");
   if (scrollContainer) {
     scrollContainer.addEventListener("scroll", scrollListener, {
@@ -160,7 +160,7 @@ onMounted(() => {
     });
   }
 
-  // Initial update
+  
   updateCloudParallax();
 });
 
@@ -174,43 +174,43 @@ onUnmounted(() => {
   }
 });
 
-// Function to generate random scale between 1 and 1.6 (увеличено для большей вариативности)
+
 const randomScale = () => 1 + Math.random() * 0.6;
 
-// Function to generate random offset from center
+
 const randomOffset = (max) => (Math.random() - 0.5) * max;
 
-// Function to generate random cathetus ratio between 1 and 1.3
+
 const randomCathetusRatio = () => 1 + Math.random() * 0.3;
 
-// Generate circles ONLY along the hypotenuse of a right triangle
-// corner: 'tl' | 'tr' | 'bl' | 'br'
-// Triangle has right angle at corner (0,0)
+
+
+
 const generateTriangularCloud = (count, baseSizes, corner, cathetusRatio) => {
   const circles = [];
   const baseSize = 225; // Увеличено в 1.5 раза (было 150)
 
-  // Размеры катетов в зависимости от соотношения
+  
   const cathetusX = baseSize;
   const cathetusY = baseSize * cathetusRatio;
 
-  // Triangle vertices (right angle at origin):
-  // Point A: (0, 0) - right angle at corner
-  // Point B: (cathetusX, 0) - end of horizontal cathetus
-  // Point C: (0, cathetusY) - end of vertical cathetus
-  // Hypotenuse connects B to C
+  
+  
+  
+  
+  
 
-  // Calculate hypotenuse length
+  
   const hypotenuse = Math.sqrt(cathetusX * cathetusX + cathetusY * cathetusY);
 
-  // Distance between circles along hypotenuse
+  
   const step = hypotenuse / count;
 
-  // Calculate perpendicular direction to hypotenuse
-  // Hypotenuse goes from (cathetusX, 0) to (0, cathetusY)
-  // Direction vector: (-cathetusX, cathetusY)
-  // Perpendicular vector: (cathetusY, cathetusX) - rotated 90 degrees
-  // Normalize it
+  
+  
+  
+  
+  
   const hypotenuseLength = Math.sqrt(
     cathetusX * cathetusX + cathetusY * cathetusY
   );
@@ -218,35 +218,35 @@ const generateTriangularCloud = (count, baseSizes, corner, cathetusRatio) => {
   const perpY = cathetusX / hypotenuseLength;
 
   for (let i = 0; i < count; i++) {
-    // Random size variation - add random offset to base size
+    
     const baseSize = baseSizes[i % baseSizes.length];
     const sizeVariation = (Math.random() - 0.5) * 20; // ±10px variation
     let size = Math.max(20, baseSize + sizeVariation);
 
-    // Make one circle (index 2) twice as large
+    
     if (i === 2) {
       size = size * 2;
     }
 
-    // Position along hypotenuse: from (cathetusX, 0) to (0, cathetusY)
-    // Make sure first and last circles are at the corners
+    
+    
     const t = i / (count - 1); // 0 to 1 along hypotenuse (включая концы)
     const baseX = cathetusX * (1 - t);
     const baseY = cathetusY * t;
 
-    // Add random offset perpendicular to hypotenuse, but not for corner circles
+    
     let offsetX = 0;
     let offsetY = 0;
 
-    // Only add offset if not at corners (first or last circle)
+    
     if (i !== 0 && i !== count - 1) {
-      // Random distance along perpendicular direction (±15px, увеличено в 2 раза)
+      
       const perpDistance = randomOffset(30);
       offsetX = perpX * perpDistance;
       offsetY = perpY * perpDistance;
     }
 
-    // Random scale - make one axis scale more than the other for ellipse effect
+    
     const scaleX = randomScale();
     const scaleY = randomScale();
 
@@ -262,16 +262,16 @@ const generateTriangularCloud = (count, baseSizes, corner, cathetusRatio) => {
   return circles;
 };
 
-// Triangle base size (увеличено в 1.5 раза)
+
 const triangleSize = 225;
 
-// Generate random cathetus ratios for each corner (between 1 and 1.3)
+
 const tlRatio = randomCathetusRatio();
 const trRatio = randomCathetusRatio();
 const blRatio = randomCathetusRatio();
 const brRatio = randomCathetusRatio();
 
-// Top Left: 5 circles with varied sizes (одна большая, остальные обычные)
+
 const topLeftCircles = ref(
   generateTriangularCloud(
     5,
@@ -281,7 +281,7 @@ const topLeftCircles = ref(
   )
 );
 
-// Top Right: 5 circles with different sizes (одна большая, остальные обычные)
+
 const topRightCircles = ref(
   generateTriangularCloud(
     5,
@@ -291,7 +291,7 @@ const topRightCircles = ref(
   )
 );
 
-// Bottom Left: 6 circles (одна большая, остальные обычные)
+
 const bottomLeftCircles = ref(
   generateTriangularCloud(
     6,
@@ -301,7 +301,7 @@ const bottomLeftCircles = ref(
   )
 );
 
-// Bottom Right: 5 circles (одна большая, остальные обычные)
+
 const bottomRightCircles = ref(
   generateTriangularCloud(
     5,
@@ -311,7 +311,7 @@ const bottomRightCircles = ref(
   )
 );
 
-// Function to get circle style based on corner
+
 const getCircleStyle = (circle, corner) => {
   const baseStyle = {
     width: `${circle.size}px`,
@@ -319,12 +319,12 @@ const getCircleStyle = (circle, corner) => {
     transform: `scale(${circle.scaleX}, ${circle.scaleY})`,
   };
 
-  // Convert coordinates from pixel space (450px) to actual position
-  // Circles are positioned with their top-left corner, so we offset by half size
+  
+  
   const offsetX = circle.x - circle.size / 2;
   const offsetY = circle.y - circle.size / 2;
 
-  // Position based on corner
+  
   switch (corner) {
     case "tl": // Top-left: use left and top
       return {

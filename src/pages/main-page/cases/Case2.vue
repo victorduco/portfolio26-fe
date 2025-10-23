@@ -5,7 +5,6 @@
     style="background-color: #ffffff"
   >
     <div class="case2-split-layout" ref="containerRef">
-    <!-- Content wrapper - will be pinned during scroll -->
     <div
       ref="contentWrapperRef"
       :class="['content-wrapper', { 'pinned': pinned, 'unpinned': unpinned }]"
@@ -14,16 +13,13 @@
         ...(pinned ? { transform: `translate(-50%, -50%) scale(${currentScale})` } : { transform: `scale(${currentScale})` })
       }"
     >
-      <!-- Left Side: Content -->
       <div
         class="case2-content"
         :style="{ transform: `translateY(${contentParallaxY}vh)` }"
       >
         <div class="case2-content-wrapper">
-          <!-- Glass card background (appears separately) -->
           <div class="case2-card-background" :style="{ opacity: getCardOpacity() }"></div>
 
-          <!-- Content inner -->
           <div class="case2-content-inner">
             <h2 class="case2-title">
               <motion.span
@@ -66,14 +62,12 @@
         </div>
       </div>
 
-      <!-- Right Side: Image with Parallax -->
       <div class="case2-image-container" ref="imageContainer">
         <div
           class="case2-image-wrapper"
           ref="imageWrapper"
           :style="{ transform: `translateY(${parallaxY}%)` }"
         >
-          <!-- Static Image (always visible on background) -->
           <img
             :src="imageSrc"
             :alt="title"
@@ -81,7 +75,6 @@
             ref="imageElement"
           />
 
-          <!-- Video Animation (scroll-controlled, on top of image) -->
           <motion.video
             v-if="showVideo"
             ref="videoElement"
@@ -101,7 +94,6 @@
       </div>
     </div>
 
-    <!-- Final spacer for scroll exit -->
     <div class="final-spacer"></div>
     </div>
   </section>
@@ -111,7 +103,6 @@
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { motion, useScroll } from "motion-v";
 
-// Case 2 Data - Smarp
 const title = "Redesigning the Communications App";
 const subtitle = "Smarp";
 const description = "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
@@ -129,40 +120,40 @@ const imageWrapper = ref(null);
 const imageElement = ref(null);
 const videoElement = ref(null);
 
-// Pinning states
+
 const pinned = ref(false);
 const unpinned = ref(false);
 const unpinTopOffset = ref(0);
 
-// Animation states
+
 const videoState = ref("visible");
 
-// Always show video when videoSrc is provided (it will reset each time)
+
 const showVideo = computed(() => !!videoSrc);
 
-// Split text into words for animation
+
 const titlePart1Words = computed(() => ['Redesigning', 'the']);
 const titlePart2Words = computed(() => ['Communications', 'App']);
 const descriptionWords = computed(() => description.split(' '));
 
-// Store current scroll progress for word animations
+
 const currentScrollProgress = ref(0);
 
-// Video animation variants
+
 const videoVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
 
-// Video transition config
+
 const videoTransition = {
   type: "tween",
   ease: [0.4, 0, 0.2, 1],
   duration: 0.5,
 };
 
-// Functions to calculate word opacity based on scroll progress
-// Title part 1 appears first (0 - 0.15)
+
+
 function getTitlePart1WordOpacity(wordIndex) {
   const totalWords = titlePart1Words.value.length;
   const wordProgress = wordIndex / totalWords;
@@ -175,7 +166,7 @@ function getTitlePart1WordOpacity(wordIndex) {
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
 
-// Title part 2 appears second (0.15 - 0.3)
+
 function getTitlePart2WordOpacity(wordIndex) {
   const totalWords = titlePart2Words.value.length;
   const wordProgress = wordIndex / totalWords;
@@ -190,7 +181,7 @@ function getTitlePart2WordOpacity(wordIndex) {
 
 function getDescriptionWordOpacity(wordIndex) {
   const totalWords = descriptionWords.value.length;
-  // Description appears after card (0.5 - 0.65)
+  
   const wordProgress = wordIndex / totalWords;
   const startProgress = 0.5 + (wordProgress * 0.15);
   const endProgress = startProgress + (0.15 / totalWords);
@@ -201,7 +192,7 @@ function getDescriptionWordOpacity(wordIndex) {
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
 
-// Card appears after title parts (0.45 - 0.5)
+
 function getCardOpacity() {
   const startProgress = 0.45;
   const endProgress = 0.5;
@@ -212,7 +203,7 @@ function getCardOpacity() {
   return (currentScrollProgress.value - startProgress) / (endProgress - startProgress);
 }
 
-// Button appears at the end (0.65 - 0.75)
+
 function getButtonOpacity() {
   const startProgress = 0.65;
   const endProgress = 0.75;
@@ -226,47 +217,47 @@ function getButtonOpacity() {
 
 
 
-// Single unified scroll tracker covering entire animation range
-// offset: ["start end", "end end"] means:
-// progress = 0 when start of case2-split-layout reaches end of viewport (bottom of screen)
-// progress = 1 when end of case2-split-layout reaches end of viewport (bottom of screen)
-// This allows scale animation to happen first, then all other animations
+
+
+
+
+
 const { scrollYProgress } = useScroll({
   target: containerRef,
   container: scrollContainerRef,
   offset: ["start end", "end end"],
 });
 
-// Store current scale value
+
 const currentScale = ref(0.5);
 
-// Store parallax transform value
+
 const parallaxY = ref(0);
 
-// Store content parallax value for text
+
 const contentParallaxY = ref(0);
 
-// Store unsubscribe function for cleanup
+
 let scrollUnsubscribe = null;
 
 
 onMounted(() => {
-  // Find the scroll container for vue-scroll-snap
+  
   const scrollContainer = document.querySelector(".scroll-snap-container");
   if (scrollContainer) {
     scrollContainerRef.value = scrollContainer;
   }
 
-  // Subscribe to unified scroll progress
+  
   scrollUnsubscribe = scrollYProgress.on?.('change', (rawProgress) => {
-    // With unified scroll tracker ["start end", "end end"]:
-    // rawProgress = 0: section start touches viewport bottom (scale starts)
-    // rawProgress = ~0.15: section start touches viewport top (scale completes, pinning begins)
-    // rawProgress = 1: section end exits viewport
+    
+    
+    
+    
 
     const progress = rawProgress;
 
-    // SCALE ANIMATION (0 - 0.4): happens as section enters viewport and scrolls up
+    
     const scaleEndThreshold = 0.4;
 
     if (progress <= scaleEndThreshold) {
@@ -276,61 +267,61 @@ onMounted(() => {
       currentScale.value = 1;
     }
 
-    // TEXT ANIMATIONS (0.4 - 1): remapped to 0-1 range for existing text animations
-    // Text starts appearing only after scale completes
+    
+    
     let textProgress;
     if (progress <= scaleEndThreshold) {
       textProgress = 0;
     } else {
-      // Remap 0.4-1 to 0-1
+      
       textProgress = (progress - scaleEndThreshold) / (1 - scaleEndThreshold);
     }
 
-    // VIDEO ANIMATION (0 - 1): plays throughout entire scroll, including scale phase
+    
     const videoProgress = progress;
 
-    // Update current scroll progress for word animations (using text progress)
+    
     currentScrollProgress.value = textProgress;
 
-    // Update parallax effect (image moves slower than scroll)
-    // Parallax range: +10% to -10% over the entire scroll progress (opposite direction)
+    
+    
     parallaxY.value = (0.5 - textProgress) * 20;
 
-    // Content parallax effect (text moves slower upward)
-    // Similar to Case1, but with different range for Case2
+    
+    
     if (textProgress < 0.7) {
-      // Slow parallax while text appears and stays (0 to 0.7)
-      // Move from 0 to -3vh (upward) - very slow movement, keep content readable for longer
+      
+      
       const adjustedProgress = textProgress / 0.7;
       contentParallaxY.value = -(adjustedProgress * 3);
     } else {
-      // After progress 0.7, continue with dynamic scroll (starts earlier now)
+      
       const laterProgress = (textProgress - 0.7) / (1 - 0.7); // 0 to 1 over remaining range
 
-      // Use easing function: start slow, accelerate towards the end
+      
       const easeInCubic = laterProgress * laterProgress * laterProgress;
 
-      // Move from -3vh and keep going as user scrolls
+      
       const startOffset = -3;
       const endOffset = -120; // Continue moving throughout scroll
       contentParallaxY.value = startOffset + (easeInCubic * (endOffset - startOffset));
     }
 
-    // Get content-wrapper position for debugging
+    
     const wrapperRect = contentWrapperRef.value?.getBoundingClientRect();
     const wrapperTop = wrapperRect ? Math.round(wrapperRect.top) : 'N/A';
     const wrapperLeft = wrapperRect ? Math.round(wrapperRect.left) : 'N/A';
 
-    // Update video currentTime based on scroll progress
-    // Video plays throughout the entire animation (0-1), starting from the very beginning
+    
+    
     if (videoElement.value && videoSrc) {
       const video = videoElement.value.$el || videoElement.value;
 
       if (video && video.duration && !isNaN(video.duration)) {
-        // Map videoProgress (0-1) to full video duration, plays during entire scroll
+        
         const targetTime = videoProgress * video.duration;
 
-        // Only update if difference is significant to avoid jitter
+        
         if (Math.abs(video.currentTime - targetTime) > 0.05) {
           video.currentTime = targetTime;
         }
@@ -338,39 +329,39 @@ onMounted(() => {
     }
 
 
-    // With unified offset ["start end", "end end"] tracking entire case2 container:
-    // - progress starts when section enters viewport bottom (0)
-    // - Let section scroll naturally until it reaches top
-    // - Pin when section is at top and content needs to stay visible
-    // - progress = 1: section exits viewport
-    //
-    // Pin when section has scrolled to top (progress > 0.4 and < 1)
-    // This gives more natural scroll before pinning
+    
+    
+    
+    
+    
+    
+    
+    
     const pinStartThreshold = 0.4;
 
     const shouldPin = progress >= pinStartThreshold && progress < 1;
     const shouldUnpin = progress >= 1 || progress < pinStartThreshold;
 
-    // Update pin state
+    
     if (shouldPin !== pinned.value) {
-      // Before pinning (when scrolling up from unpinned state), calculate offset
+      
       if (shouldPin && unpinned.value && containerRef.value && contentWrapperRef.value) {
         const containerRect = containerRef.value.getBoundingClientRect();
         const wrapperRect = contentWrapperRef.value.getBoundingClientRect();
 
-        // Current wrapper top position relative to viewport
+        
         const currentTop = wrapperRect.top;
 
-        // Container top position relative to viewport
+        
         const containerTop = containerRect.top;
 
-        // Calculate offset before we change to pinned
+        
         const offset = currentTop - containerTop;
 
         unpinTopOffset.value = offset;
       }
 
-      // If we're going from unpinned back to pinned, clear unpinned state first
+      
       if (shouldPin && unpinned.value) {
         unpinned.value = false;
       }
@@ -378,23 +369,23 @@ onMounted(() => {
       pinned.value = shouldPin;
     }
 
-    // Update unpin state
+    
     if (shouldUnpin !== unpinned.value) {
 
-      // Before unpinning (scrolling down), calculate where wrapper should be positioned
-      // Wrapper is currently fixed at center (top: 50%, transform: translate(-50%, -50%))
-      // When it becomes absolute, we need to offset it so it stays in the same visual position
+      
+      
+      
       if (shouldUnpin && containerRef.value && contentWrapperRef.value) {
         const containerRect = containerRef.value.getBoundingClientRect();
         const wrapperRect = contentWrapperRef.value.getBoundingClientRect();
 
-        // Current wrapper top position relative to viewport
+        
         const currentTop = wrapperRect.top;
 
-        // Container top position relative to viewport
+        
         const containerTop = containerRect.top;
 
-        // Calculate offset: where wrapper is now minus where container starts
+        
         const offset = currentTop - containerTop;
 
         unpinTopOffset.value = offset;
@@ -406,7 +397,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // Clean up scroll listener
+  
   if (scrollUnsubscribe) {
     scrollUnsubscribe();
     scrollUnsubscribe = null;
@@ -414,15 +405,15 @@ onUnmounted(() => {
 });
 
 function handleEnter() {
-  // Called when section enters viewport
+  
 }
 
 function handleLeave() {
-  // Called when section leaves viewport
+  
 }
 
 function handleStoryLinkClick() {
-  // Called before navigation to story page
+  
 }
 
 defineExpose({

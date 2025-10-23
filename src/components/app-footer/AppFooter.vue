@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-// Footer component
+
 </script>
 
 <style scoped>
