@@ -88,7 +88,7 @@ const casesData = [
     subtitle: "Mirai",
     imageSrc: new URL("@/assets/images/cs3-ipad.png", import.meta.url).href,
     videoSrc: new URL(
-      "@/assets/case-videos/case3-reversed-flipped.mp4",
+      "@/assets/case-videos/case3-2.mp4",
       import.meta.url
     ).href,
     routeTo: "/story/three",
