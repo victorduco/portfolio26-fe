@@ -4,47 +4,51 @@
       class="contacts"
       :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
     >
-    <div class="contacts__content">
-      <div class="contacts__container">
-        <h1 class="contacts__name">Victor Diukov</h1>
-        <div class="contacts__links">
-          <a
-            href="mailto:mail@victorduco.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="contacts__email"
-          >
-            mail@victorduco.com
-          </a>
-          <div class="contacts__social">
+      <div class="contacts__content">
+        <div class="contacts__container">
+          <h1 class="contacts__name">Victor Diukov</h1>
+          <div class="contacts__links">
             <a
-              href="/resume.pdf"
+              href="mailto:mail@victorduco.com"
               target="_blank"
               rel="noopener noreferrer"
-              class="contacts__link"
+              class="contacts__email"
             >
-              Resume
+              mail@victorduco.com
+              <span class="contacts__icon"></span>
             </a>
-            <a
-              href="https://www.linkedin.com/in/victordiukov/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="contacts__link"
-            >
-              LinkedIn
-            </a>
-            <a
-              href="https://github.com/viktordiukov"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="contacts__link"
-            >
-              GitHub
-            </a>
+            <div class="contacts__social">
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="contacts__link"
+              >
+                Resume
+                <span class="contacts__icon"></span>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/victordiukov/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="contacts__link"
+              >
+                LinkedIn
+                <span class="contacts__icon"></span>
+              </a>
+              <a
+                href="https://github.com/viktordiukov"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="contacts__link"
+              >
+                GitHub
+                <span class="contacts__icon"></span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </section>
   </section>
 </template>
@@ -115,13 +119,33 @@ defineProps({
   letter-spacing: -0.01em;
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .contacts__email:hover {
-  text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 1);
+  color: var(--color-text-secondary);
+}
+
+.contacts__icon {
+  width: 44px;
+  height: 44px;
+  background-image: url("@/assets/icons/link.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  filter: brightness(1);
+  flex-shrink: 0;
+}
+
+.contacts__email:hover .contacts__icon {
+  opacity: 1;
+  filter: brightness(0.7);
 }
 
 .contacts__social {
@@ -138,13 +162,20 @@ defineProps({
   letter-spacing: -0.01em;
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .contacts__link:hover {
-  text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 1);
+  color: var(--color-text-secondary);
+}
+
+.contacts__link:hover .contacts__icon {
+  opacity: 1;
+  filter: brightness(0.7);
 }
 
 /* Tablet */
@@ -181,6 +212,11 @@ defineProps({
 
   .contacts__email {
     font-size: clamp(16px, 4vw, 20px);
+  }
+
+  .contacts__icon {
+    width: 20px;
+    height: 20px;
   }
 }
 </style>

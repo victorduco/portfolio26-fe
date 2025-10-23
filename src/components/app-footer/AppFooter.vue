@@ -9,9 +9,7 @@
   </footer>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>
 
 <style scoped>
 .app-footer {
@@ -47,11 +45,36 @@
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.72);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
+  position: relative;
+  display: inline-block;
+  padding-right: 20px;
 }
 
 .app-footer__email:hover {
   color: rgba(255, 255, 255, 0.95);
+}
+
+.app-footer__email::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(calc(-50% + 1px));
+  width: 16px;
+  height: 16px;
+  background-image: url("@/assets/icons/link.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  filter: brightness(1);
+}
+
+.app-footer__email:hover::after {
+  opacity: 1;
+  filter: brightness(0.95);
 }
 
 @media (max-width: 768px) {

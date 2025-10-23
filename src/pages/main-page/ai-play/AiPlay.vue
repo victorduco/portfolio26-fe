@@ -4,90 +4,93 @@
       class="ai-play-hero"
       :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
     >
-    
-    <div class="floating-images">
-      <motion.div
-        v-for="(item, index) in floatingItems"
-        :key="index"
-        :class="['float-img', `float-img-${index + 1}`]"
-        :variants="diamondVariants"
-        :animate="getAnimationState(index)"
-        initial="default"
-        :transition="getSpringConfig(item)"
-        @mouseenter="() => handleHover(index, true)"
-        @mouseleave="() => handleHover(index, false)"
-      >
-        <div class="diamond-shape">
-          <motion.div
-            class="diamond-shape-color"
-            :style="{
-              backgroundColor: item.color,
-            }"
-            :variants="diamondShapeVariants"
-            :animate="getAnimationState(index)"
-            initial="default"
-            :transition="getSpringConfig(item)"
-          />
-          <motion.div
-            class="plant-icon-wrapper"
-            :initial="{ rotate: -45 + item.rotation }"
-            :animate="{ rotate: -45 + item.rotation }"
-            :transition="spring"
-          >
+      <div class="floating-images">
+        <motion.div
+          v-for="(item, index) in floatingItems"
+          :key="index"
+          :class="['float-img', `float-img-${index + 1}`]"
+          :variants="diamondVariants"
+          :animate="getAnimationState(index)"
+          initial="default"
+          :transition="getSpringConfig(item)"
+          @mouseenter="() => handleHover(index, true)"
+          @mouseleave="() => handleHover(index, false)"
+        >
+          <div class="diamond-shape">
             <motion.div
-              class="icon-rotation-compensator"
-              :initial="{ rotate: item.animateRotation ? 0 : -item.rotation }"
-              :animate="{
-                rotate: getAnimationState(index) === 'groupHover'
-                  ? -item.rotation
-                  : (item.animateRotation ? 0 : -item.rotation)
+              class="diamond-shape-color"
+              :style="{
+                backgroundColor: item.color,
               }"
-              :transition="item.animateRotation ? spring : { duration: 0 }"
+              :variants="diamondShapeVariants"
+              :animate="getAnimationState(index)"
+              initial="default"
+              :transition="getSpringConfig(item)"
+            />
+            <motion.div
+              class="plant-icon-wrapper"
+              :initial="{ rotate: -45 + item.rotation }"
+              :animate="{ rotate: -45 + item.rotation }"
+              :transition="spring"
             >
-              <component
-                :is="getCurrentIcon(item, getAnimationState(index))"
-                :size="item.iconSize"
-                :color="getIconColor(getAnimationState(index))"
-                class="plant-icon"
-              />
+              <motion.div
+                class="icon-rotation-compensator"
+                :initial="{ rotate: item.animateRotation ? 0 : -item.rotation }"
+                :animate="{
+                  rotate:
+                    getAnimationState(index) === 'groupHover'
+                      ? -item.rotation
+                      : item.animateRotation
+                      ? 0
+                      : -item.rotation,
+                }"
+                :transition="item.animateRotation ? spring : { duration: 0 }"
+              >
+                <component
+                  :is="getCurrentIcon(item, getAnimationState(index))"
+                  :size="item.iconSize"
+                  :color="getIconColor(getAnimationState(index))"
+                  class="plant-icon"
+                />
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
-      </motion.div>
-    </div>
+          </div>
+        </motion.div>
+      </div>
 
-    <div class="ai-play__title">
-      <h1 class="h1">AI Playground</h1>
-      <p class="body1">
-        Building my own AI system for fun, exploring how agents think and act. Experimenting with neural networks and machine learning patterns.
-      </p>
-      <a
-        href="https://github.com/viktordiukov"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="body1 ai-play__link"
-        aria-label="View GitHub Repository"
-      >
-        View Repository →
-      </a>
-    </div>
+      <div class="ai-play__title">
+        <h1 class="h1">AI Playground</h1>
+        <p class="body1">
+          Building my own AI system for fun, exploring how agents think and act.
+          Experimenting with neural networks and machine learning patterns.
+        </p>
+        <a
+          href="https://github.com/viktordiukov"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="body1 ai-play__link"
+          aria-label="View GitHub Repository"
+        >
+          View Repository
+        </a>
+      </div>
     </section>
   </section>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { motion } from 'motion-v';
-import { Leaf, Flower2, Palmtree, Flower } from 'lucide-vue-next';
-import HaIcon from './HaIcon.vue';
-import DropIcon from './DropIcon.vue';
-import SproutIcon from './SproutIcon.vue';
+import { ref, computed } from "vue";
+import { motion } from "motion-v";
+import { Leaf, Flower2, Palmtree, Flower } from "lucide-vue-next";
+import HaIcon from "./HaIcon.vue";
+import DropIcon from "./DropIcon.vue";
+import SproutIcon from "./SproutIcon.vue";
 import {
   spring,
   createSpring,
   diamondVariants,
   diamondShapeVariants,
-} from './aiPlayVariants.js';
+} from "./aiPlayVariants.js";
 
 defineProps({
   darkMode: {
@@ -96,13 +99,12 @@ defineProps({
   },
 });
 
-
 const floatingItems = [
   {
     icon: HaIcon,
     defaultIcon: Leaf, // показываем Leaf по умолчанию
-    color: '#27A9FF',
-    image: 'https://picsum.photos/seed/ai1/400/400',
+    color: "#27A9FF",
+    image: "https://picsum.photos/seed/ai1/400/400",
     iconSize: 40, // базовый размер (100-170px)
     rotation: 0, // 0 градусов
     animateRotation: false, // иконка сразу в правильной ориентации
@@ -111,8 +113,8 @@ const floatingItems = [
   {
     icon: Flower2,
     defaultIcon: Leaf,
-    color: '#FF83A2',
-    image: 'https://picsum.photos/seed/ai2/400/400',
+    color: "#FF83A2",
+    image: "https://picsum.photos/seed/ai2/400/400",
     iconSize: 32, // 85-135px (~80% от базового)
     rotation: 45, // 45 градусов
     animateRotation: true, // розовый с цветком - анимация поворота
@@ -121,8 +123,8 @@ const floatingItems = [
   {
     icon: SproutIcon,
     defaultIcon: Leaf,
-    color: '#00FFBC',
-    image: 'https://picsum.photos/seed/ai3/400/400',
+    color: "#00FFBC",
+    image: "https://picsum.photos/seed/ai3/400/400",
     iconSize: 36, // 95-155px (~91% от базового)
     rotation: 90, // 90 градусов
     animateRotation: false, // иконка сразу в правильной ориентации
@@ -131,8 +133,8 @@ const floatingItems = [
   {
     icon: Palmtree,
     defaultIcon: Leaf,
-    color: '#FFFF78',
-    image: 'https://picsum.photos/seed/ai4/400/400',
+    color: "#FFFF78",
+    image: "https://picsum.photos/seed/ai4/400/400",
     iconSize: 45, // 120-190px (~112% от базового)
     rotation: 135, // 135 градусов
     animateRotation: false, // иконка сразу в правильной ориентации
@@ -141,8 +143,8 @@ const floatingItems = [
   {
     icon: DropIcon,
     defaultIcon: Leaf,
-    color: '#27A9FF',
-    image: 'https://picsum.photos/seed/ai5/400/400',
+    color: "#27A9FF",
+    image: "https://picsum.photos/seed/ai5/400/400",
     iconSize: 42, // 110-180px (~106% от базового)
     rotation: 180, // 180 градусов
     animateRotation: false, // иконка сразу в правильной ориентации
@@ -151,8 +153,8 @@ const floatingItems = [
   {
     icon: Flower,
     defaultIcon: Leaf,
-    color: '#FF83A2',
-    image: 'https://picsum.photos/seed/ai6/400/400',
+    color: "#FF83A2",
+    image: "https://picsum.photos/seed/ai6/400/400",
     iconSize: 30, // 75-130px (~76% от базового)
     rotation: 225, // 225 градусов
     animateRotation: true, // розовый с цветком - анимация поворота (элемент 6)
@@ -160,13 +162,11 @@ const floatingItems = [
   },
 ];
 
-
 const hoveredIndex = ref(-1);
-
 
 const animationStates = computed(() => {
   return floatingItems.map((_, index) => {
-    const state = hoveredIndex.value === index ? 'groupHover' : 'default';
+    const state = hoveredIndex.value === index ? "groupHover" : "default";
     return state;
   });
 });
@@ -175,16 +175,13 @@ function getAnimationState(index) {
   return animationStates.value[index];
 }
 
-
 function getCurrentIcon(item, state) {
-  return state === 'groupHover' ? item.icon : item.defaultIcon;
+  return state === "groupHover" ? item.icon : item.defaultIcon;
 }
-
 
 function getIconColor(state) {
-  return state === 'groupHover' ? '#000000' : '#999999';
+  return state === "groupHover" ? "#000000" : "#999999";
 }
-
 
 function getSpringConfig(item) {
   return createSpring(item.hoverSpringMultiplier);
@@ -193,7 +190,6 @@ function getSpringConfig(item) {
 function handleHover(index, isHovering) {
   hoveredIndex.value = isHovering ? index : -1;
 }
-
 </script>
 
 <style scoped>
@@ -348,7 +344,8 @@ function handleHover(index, isHovering) {
 
 /* Floating animations with different patterns */
 @keyframes float1 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) rotate(0deg);
   }
   25% {
@@ -363,7 +360,8 @@ function handleHover(index, isHovering) {
 }
 
 @keyframes float2 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) rotate(0deg);
   }
   33% {
@@ -375,7 +373,8 @@ function handleHover(index, isHovering) {
 }
 
 @keyframes float3 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) rotate(0deg);
   }
   30% {
@@ -387,7 +386,8 @@ function handleHover(index, isHovering) {
 }
 
 @keyframes float4 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) rotate(0deg);
   }
   40% {
@@ -399,7 +399,8 @@ function handleHover(index, isHovering) {
 }
 
 @keyframes float5 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) rotate(0deg);
   }
   35% {
@@ -411,7 +412,8 @@ function handleHover(index, isHovering) {
 }
 
 @keyframes float6 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) rotate(0deg);
   }
   25% {
@@ -444,12 +446,39 @@ function handleHover(index, isHovering) {
 
 .ai-play__link {
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
   margin: 0;
+  color: white;
+  font-weight: 400;
+  position: relative;
+  display: inline-block;
+  padding-right: 32px;
 }
 
 .ai-play__link:hover {
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
+}
+
+.ai-play__link::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(calc(-50% + 1px));
+  width: 24px;
+  height: 24px;
+  background-image: url("@/assets/icons/link.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  filter: brightness(1);
+}
+
+.ai-play__link:hover::after {
+  opacity: 1;
+  filter: brightness(0.7);
 }
 
 /* Hide or reduce floating images on mobile */
