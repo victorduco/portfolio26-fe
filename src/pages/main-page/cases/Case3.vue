@@ -206,9 +206,7 @@ function triggerFadeIn() {
     // Add elegant exit animation near the end
     videoElement.value.addEventListener("timeupdate", handleVideoTimeUpdate);
 
-    videoElement.value.play().catch((err) => {
-      console.error("[Case3UniqueLayout] Video play error:", err);
-    });
+    videoElement.value.play().catch(() => {});
   }
 }
 

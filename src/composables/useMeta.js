@@ -26,7 +26,6 @@ export function useMeta(pageKey) {
   const updateMeta = () => {
     // Проверяем, что route доступен
     if (!route?.path) {
-      console.warn("Route not available for meta update");
       return;
     }
 

@@ -401,7 +401,6 @@ function restoreVideoState() {
     wasStateRestored.value = true;
     return true;
   } catch (error) {
-    console.error("Failed to restore video state:", error);
     clearVideoState();
     return false;
   }
@@ -570,7 +569,6 @@ function attemptPlay() {
   // Limit retry attempts to prevent infinite loop
   playAttempts++;
   if (playAttempts > 3) {
-    console.warn('[CaseVideo] Max play attempts reached, falling back to muted');
     // Fall back to muted playback
     video.muted = true;
     isMuted.value = true;
@@ -600,9 +598,8 @@ function attemptPlay() {
         }
       }
     })
-    .catch((error) => {
+    .catch(() => {
       /* Handle autoplay rejections */
-      console.error('[CaseVideo] Play failed:', error.message);
 
       // If autoplay failed with sound, just show play button instead of retrying
       if (userHasInteracted && !video.muted) {
@@ -783,9 +780,7 @@ function toggleFullscreen() {
         .then(() => {
           isFullscreen.value = true;
         })
-        .catch((err) => {
-          console.error("Failed to enter fullscreen:", err);
-        });
+        .catch(() => {});
     } else if (video.webkitRequestFullscreen) {
       // Safari fallback
       video
@@ -793,9 +788,7 @@ function toggleFullscreen() {
         .then(() => {
           isFullscreen.value = true;
         })
-        .catch((err) => {
-          console.error("Failed to enter fullscreen:", err);
-        });
+        .catch(() => {});
     }
   } else {
     // Exit fullscreen

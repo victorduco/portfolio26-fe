@@ -337,13 +337,6 @@ onMounted(() => {
       }
     }
 
-    // Debug: log progress and position
-    console.log(
-      `[Case2] RawProgress: ${progress.toFixed(3)} | TextProgress: ${textProgress.toFixed(3)} | VideoProgress: ${videoProgress.toFixed(3)} | ` +
-      `Scale: ${currentScale.value.toFixed(2)} | ` +
-      `Wrapper position: (${wrapperLeft}, ${wrapperTop}) | ` +
-      `Pinned: ${pinned.value} | Unpinned: ${unpinned.value}`
-    );
 
     // With unified offset ["start end", "end end"] tracking entire case2 container:
     // - progress starts when section enters viewport bottom (0)
@@ -360,8 +353,6 @@ onMounted(() => {
 
     // Update pin state
     if (shouldPin !== pinned.value) {
-      console.log('[Case2] Pin state changed:', shouldPin);
-
       // Before pinning (when scrolling up from unpinned state), calculate offset
       if (shouldPin && unpinned.value && containerRef.value && contentWrapperRef.value) {
         const containerRect = containerRef.value.getBoundingClientRect();
@@ -376,8 +367,6 @@ onMounted(() => {
         // Calculate offset before we change to pinned
         const offset = currentTop - containerTop;
 
-        console.log(`[Case2] Before pinning - calculating offset: currentTop=${Math.round(currentTop)}, containerTop=${Math.round(containerTop)}, offset=${Math.round(offset)}`);
-
         unpinTopOffset.value = offset;
       }
 
@@ -387,19 +376,10 @@ onMounted(() => {
       }
 
       pinned.value = shouldPin;
-
-      // Log position after state change
-      setTimeout(() => {
-        const rect = contentWrapperRef.value?.getBoundingClientRect();
-        if (rect) {
-          console.log(`[Case2] After pin change - Position: (${Math.round(rect.left)}, ${Math.round(rect.top)})`);
-        }
-      }, 0);
     }
 
     // Update unpin state
     if (shouldUnpin !== unpinned.value) {
-      console.log('[Case2] Unpin state changed:', shouldUnpin);
 
       // Before unpinning (scrolling down), calculate where wrapper should be positioned
       // Wrapper is currently fixed at center (top: 50%, transform: translate(-50%, -50%))
@@ -417,20 +397,10 @@ onMounted(() => {
         // Calculate offset: where wrapper is now minus where container starts
         const offset = currentTop - containerTop;
 
-        console.log(`[Case2] Before unpinning - calculating offset: currentTop=${Math.round(currentTop)}, containerTop=${Math.round(containerTop)}, offset=${Math.round(offset)}`);
-
         unpinTopOffset.value = offset;
       }
 
       unpinned.value = shouldUnpin;
-
-      // Log position after state change
-      setTimeout(() => {
-        const rect = contentWrapperRef.value?.getBoundingClientRect();
-        if (rect) {
-          console.log(`[Case2] After unpin change - Position: (${Math.round(rect.left)}, ${Math.round(rect.top)})`);
-        }
-      }, 0);
     }
   });
 });

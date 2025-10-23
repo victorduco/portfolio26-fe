@@ -33,7 +33,6 @@ export function useAuth() {
         isAuthenticated.value = response.ok && data.ok;
         return isAuthenticated.value;
       } catch (err) {
-        console.error("Auth check error:", err);
         isAuthenticated.value = false;
         return false;
       } finally {

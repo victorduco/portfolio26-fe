@@ -227,7 +227,6 @@ const checkCodeWithBackend = async (code) => {
       return { success: false };
     }
   } catch (err) {
-    console.error("Error checking code:", err);
     errorMessage.value = "Network error. Please try again.";
     return { success: false };
   } finally {

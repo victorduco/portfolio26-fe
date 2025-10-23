@@ -17,10 +17,6 @@ async function loadManifest() {
     manifest = await response.json();
     return manifest;
   } catch (error) {
-    console.warn(
-      "Failed to load manifest, using fallback naming:",
-      error.message
-    );
     return null;
   }
 }
@@ -185,7 +181,6 @@ export async function loadBackground(digits, profile = null) {
     } catch (error) {
       stats.failures++;
       failedLoads.add(code);
-      console.error(`Failed to load background ${code}:`, error.message);
       throw error;
     } finally {
       inflightRequests.delete(code);

@@ -152,12 +152,7 @@ const computedAriaLabel = computed(() => {
   return "Open link";
 });
 
-if (import.meta.env?.DEV && props.type === "route" && !props.to) {
-  console.warn(
-    "[NavigationChevron] `to` prop is recommended when type is 'route'. Received:",
-    props.to
-  );
-}
+// Dev mode validation removed for production
 
 function handleButtonClick(event) {
   if (props.type === "back") {

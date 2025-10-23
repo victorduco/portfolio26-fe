@@ -404,7 +404,6 @@ function restoreVideoState() {
     wasStateRestored.value = true;
     return true;
   } catch (error) {
-    console.error("Failed to restore video state:", error);
     clearVideoState();
     return false;
   }
@@ -468,8 +467,7 @@ function attemptPlay() {
       hasStartedPlayback.value = true;
       isPlaying.value = true;
     })
-    .catch((error) => {
-      console.warn("[Case1ScrollLayout] Autoplay error:", error);
+    .catch(() => {
       // If autoplay fails - show play button (pause state)
       hasStartedPlayback.value = true;
       isPlaying.value = false;
@@ -530,17 +528,11 @@ function handleVideoEnded() {
 
 function togglePlayPause() {
   const video = getVideoElement();
-  console.log("[togglePlayPause]", {
-    hasVideo: !!video,
-    paused: video?.paused,
-    isPlaying: isPlaying.value,
-  });
 
   if (!video) return;
 
   if (video.paused) {
     // User is resuming playback
-    console.log("[togglePlayPause] Resuming playback");
     userPaused.value = false;
     setUserHasInteracted();
 
@@ -557,11 +549,9 @@ function togglePlayPause() {
     video.play().then(() => {
       isPlaying.value = true;
       hasStartedPlayback.value = true;
-      console.log("[togglePlayPause] Playing");
     });
   } else {
     // User is manually pausing
-    console.log("[togglePlayPause] Pausing");
     userPaused.value = true;
     video.pause();
     isPlaying.value = false;
@@ -569,17 +559,14 @@ function togglePlayPause() {
 }
 
 function toggleMute() {
-  console.log("[toggleMute] Button clicked");
   const video = getVideoElement();
   if (!video) return;
 
   isMuted.value = !isMuted.value;
   video.muted = isMuted.value;
-  console.log("[toggleMute] Muted:", isMuted.value);
 }
 
 function toggleFullscreen() {
-  console.log("[toggleFullscreen] Button clicked");
   const video = getVideoElement();
   if (!video) return;
 
@@ -593,9 +580,7 @@ function toggleFullscreen() {
         .then(() => {
           isFullscreen.value = true;
         })
-        .catch((err) => {
-          console.error("Failed to enter fullscreen:", err);
-        });
+        .catch(() => {});
     } else if (video.webkitRequestFullscreen) {
       // Safari fallback
       video
@@ -603,9 +588,7 @@ function toggleFullscreen() {
         .then(() => {
           isFullscreen.value = true;
         })
-        .catch((err) => {
-          console.error("Failed to enter fullscreen:", err);
-        });
+        .catch(() => {});
     }
   } else {
     // Exit fullscreen
@@ -622,7 +605,6 @@ function toggleFullscreen() {
 }
 
 function restartVideo() {
-  console.log("[restartVideo] Button clicked");
   const video = getVideoElement();
   if (!video) return;
 
@@ -722,27 +704,9 @@ onMounted(() => {
 
     // No parallax effect - text scrolls naturally with page
 
-    // Log scroll position for debugging
-    const wrapperRect = contentWrapperRef.value?.getBoundingClientRect();
-    const containerRect = containerRef.value?.getBoundingClientRect();
-
-    console.log("[Case1 Scroll]", {
-      progress: progress.toFixed(3),
-      slowScrollY: slowScrollY.value.toFixed(2),
-      wrapperTop: wrapperRect ? wrapperRect.top.toFixed(0) : "N/A",
-      containerTop: containerRect ? containerRect.top.toFixed(0) : "N/A",
-      videoExpanded: videoExpanded.value,
-    });
-
     const shouldExpand = progress >= 0.80;
 
     if (shouldExpand !== videoExpanded.value) {
-      console.log("[DEBUG] 🎬 Video expand state changing:", {
-        from: videoExpanded.value,
-        to: shouldExpand,
-        scrollProgress: progress,
-      });
-
       videoExpanded.value = shouldExpand;
       videoScaleValue.value = shouldExpand ? 1 : 0.1875; // Expand to scale(1)
       // Move video down when expanded for better positioning
@@ -752,55 +716,19 @@ onMounted(() => {
       if (shouldExpand) {
         // Only set new timeout if link is not already visible and no timeout is pending
         if (!showStoryLink.value && !storyLinkTimeout) {
-          console.log("[DEBUG] 🔗 Setting timeout to show story link in 800ms");
           storyLinkTimeout = setTimeout(() => {
-            console.log("[DEBUG] 🔗 Showing story link now");
             showStoryLink.value = true;
             storyLinkTimeout = null;
           }, 800);
         }
       } else {
         // Clear timeout and hide link when video shrinks
-        console.log("[DEBUG] 🔗 Video shrinking, hiding story link");
         if (storyLinkTimeout) {
           clearTimeout(storyLinkTimeout);
           storyLinkTimeout = null;
         }
         showStoryLink.value = false;
       }
-
-      // Log computed styles after state change
-      setTimeout(() => {
-        const videoContainerWrapper = containerRef.value?.querySelector(
-          ".video-container-wrapper"
-        );
-        const videoWrapper =
-          containerRef.value?.querySelector(".video-wrapper");
-
-        console.log("[DEBUG] 🎨 Styles after expand state change:", {
-          videoExpanded: videoExpanded.value,
-          videoContainerWrapper: videoContainerWrapper
-            ? {
-                pointerEvents: window.getComputedStyle(videoContainerWrapper)
-                  .pointerEvents,
-                transform: window.getComputedStyle(videoContainerWrapper)
-                  .transform,
-                position: window.getComputedStyle(videoContainerWrapper)
-                  .position,
-                zIndex: window.getComputedStyle(videoContainerWrapper).zIndex,
-              }
-            : "NOT FOUND",
-          videoWrapper: videoWrapper
-            ? {
-                pointerEvents:
-                  window.getComputedStyle(videoWrapper).pointerEvents,
-                cursor: window.getComputedStyle(videoWrapper).cursor,
-                position: window.getComputedStyle(videoWrapper).position,
-                zIndex: window.getComputedStyle(videoWrapper).zIndex,
-              }
-            : "NOT FOUND",
-        });
-      }, 50);
 
       // ============================================================
       // Autoplay when video expands, pause when shrinks
@@ -912,277 +840,8 @@ onMounted(() => {
     sessionStorage.removeItem(videoStateKey);
   }
 
-  // DEBUG: Log document structure on mount
-  console.log("[DEBUG] 📋 Component mounted. Checking document structure...");
-  setTimeout(() => {
-    const container = containerRef.value;
-    if (container) {
-      const textFrame = container.querySelector(".text-frame-wrapper");
-      const videoContainerWrapper = container.querySelector(
-        ".video-container-wrapper"
-      );
-      const videoWrapper = container.querySelector(".video-wrapper");
-      const video = container.querySelector(".case-video");
-
-      console.log("[DEBUG] 📊 Element structure:", {
-        container: {
-          exists: !!container,
-          pointerEvents: window.getComputedStyle(container).pointerEvents,
-          position: window.getComputedStyle(container).position,
-          zIndex: window.getComputedStyle(container).zIndex,
-        },
-        textFrame: {
-          exists: !!textFrame,
-          pointerEvents: textFrame
-            ? window.getComputedStyle(textFrame).pointerEvents
-            : "N/A",
-          position: textFrame
-            ? window.getComputedStyle(textFrame).position
-            : "N/A",
-          zIndex: textFrame ? window.getComputedStyle(textFrame).zIndex : "N/A",
-        },
-        videoContainerWrapper: {
-          exists: !!videoContainerWrapper,
-          pointerEvents: videoContainerWrapper
-            ? window.getComputedStyle(videoContainerWrapper).pointerEvents
-            : "N/A",
-          position: videoContainerWrapper
-            ? window.getComputedStyle(videoContainerWrapper).position
-            : "N/A",
-          zIndex: videoContainerWrapper
-            ? window.getComputedStyle(videoContainerWrapper).zIndex
-            : "N/A",
-        },
-        videoWrapper: {
-          exists: !!videoWrapper,
-          pointerEvents: videoWrapper
-            ? window.getComputedStyle(videoWrapper).pointerEvents
-            : "N/A",
-          position: videoWrapper
-            ? window.getComputedStyle(videoWrapper).position
-            : "N/A",
-          zIndex: videoWrapper
-            ? window.getComputedStyle(videoWrapper).zIndex
-            : "N/A",
-        },
-        video: {
-          exists: !!video,
-          pointerEvents: video
-            ? window.getComputedStyle(video).pointerEvents
-            : "N/A",
-          position: video ? window.getComputedStyle(video).position : "N/A",
-          zIndex: video ? window.getComputedStyle(video).zIndex : "N/A",
-        },
-      });
-    }
-  }, 500);
-
-  // DEBUG: Wheel event listener to catch scroll events
-  let lastScrollY = window.scrollY;
-  let wheelEventCount = 0;
-
-  document.addEventListener(
-    "wheel",
-    (e) => {
-      wheelEventCount++;
-      const path = e.composedPath ? e.composedPath() : e.path || [];
-      const videoWrapper = path.find(
-        (el) =>
-          el.className &&
-          el.className.includes &&
-          el.className.includes("video-container-wrapper")
-      );
-      if (videoWrapper) {
-        console.log(
-          `[DEBUG] 🔍 Wheel over video-container-wrapper detected! (Event #${wheelEventCount})`
-        );
-
-        // Get the element directly under cursor
-        const elementUnderCursor = document.elementFromPoint(
-          e.clientX,
-          e.clientY
-        );
-        if (elementUnderCursor) {
-          console.log("[DEBUG] 🎯 Element directly under cursor:", {
-            tag: elementUnderCursor.tagName,
-            classes: elementUnderCursor.className,
-            pointerEvents:
-              window.getComputedStyle(elementUnderCursor).pointerEvents,
-            zIndex: window.getComputedStyle(elementUnderCursor).zIndex,
-            position: window.getComputedStyle(elementUnderCursor).position,
-          });
-        }
-
-        // Log ALL elements in path with their pointer-events
-        const pathInfo = path
-          .slice(0, 15)
-          .map((el) => {
-            if (!el.tagName) return null;
-            const styles = window.getComputedStyle(el);
-            return {
-              tag: el.tagName,
-              classes: el.className,
-              pointerEvents: styles.pointerEvents,
-              position: styles.position,
-              zIndex: styles.zIndex,
-              overflow: styles.overflow,
-              width: styles.width,
-              height: styles.height,
-            };
-          })
-          .filter(Boolean);
-
-        console.log("[DEBUG] Wheel event FULL PATH", {
-          targetTag: e.target.tagName,
-          targetClasses: e.target.className,
-          deltaY: e.deltaY,
-          deltaX: e.deltaX,
-          defaultPrevented: e.defaultPrevented,
-          cancelable: e.cancelable,
-          bubbles: e.bubbles,
-          eventPhase: e.eventPhase,
-          currentScrollY: window.scrollY,
-          documentScrollHeight: document.documentElement.scrollHeight,
-          documentClientHeight: document.documentElement.clientHeight,
-          canScrollMore:
-            window.scrollY <
-            document.documentElement.scrollHeight -
-              document.documentElement.clientHeight,
-          fullPath: pathInfo,
-        });
-
-        // Check if any element in path has pointer-events: none
-        const blockedElements = pathInfo.filter(
-          (el) => el.pointerEvents === "none"
-        );
-        if (blockedElements.length > 0) {
-          console.log(
-            "[DEBUG] ⚠️ Elements with pointer-events:none in path:",
-            blockedElements.map((el) => ({
-              tag: el.tag,
-              classes: el.classes,
-              position: el.position,
-              zIndex: el.zIndex,
-              width: el.width,
-              height: el.height,
-            }))
-          );
-        }
-
-        // Find which specific element is blocking scroll
-        const motionDivs = path.filter(
-          (el) =>
-            el.tagName === "DIV" &&
-            el.hasAttribute &&
-            (el.hasAttribute("data-motion-id") ||
-              el.className.includes("motion"))
-        );
-        if (motionDivs.length > 0) {
-          console.log(
-            "[DEBUG] 🎭 Motion divs in path:",
-            motionDivs.map((div) => ({
-              tag: div.tagName,
-              classes: div.className,
-              hasDataMotionId: div.hasAttribute("data-motion-id"),
-              pointerEvents: window.getComputedStyle(div).pointerEvents,
-              position: window.getComputedStyle(div).position,
-            }))
-          );
-        }
-
-        // Check for elements that might be covering the scroll container
-        const textFrameWrapper = path.find(
-          (el) =>
-            el.className &&
-            el.className.includes &&
-            el.className.includes("text-frame-wrapper")
-        );
-        if (textFrameWrapper) {
-          const textFrameStyles = window.getComputedStyle(textFrameWrapper);
-          console.log("[DEBUG] 📐 text-frame-wrapper in path:", {
-            pointerEvents: textFrameStyles.pointerEvents,
-            position: textFrameStyles.position,
-            zIndex: textFrameStyles.zIndex,
-            top: textFrameStyles.top,
-            left: textFrameStyles.left,
-            width: textFrameStyles.width,
-            height: textFrameStyles.height,
-          });
-        }
-
-        setTimeout(() => {
-          const newScrollY = window.scrollY;
-          const scrolled = newScrollY !== lastScrollY;
-          const diff = newScrollY - lastScrollY;
-
-          console.log("[DEBUG] Wheel over video - DID PAGE SCROLL?", {
-            oldScrollY: lastScrollY,
-            newScrollY: newScrollY,
-            diff: diff,
-            scrolled: scrolled,
-          });
-
-          if (!scrolled && Math.abs(e.deltaY) > 0) {
-            console.log(
-              "[DEBUG] ⚠️ SCROLL BLOCKED! Wheel event but page didn't scroll",
-              {
-                deltaY: e.deltaY,
-                scrollY: newScrollY,
-                reasonCheck: {
-                  isEventPrevented: e.defaultPrevented,
-                  hasPointerEventsNone: blockedElements.length > 0,
-                  targetPointerEvents: window.getComputedStyle(e.target)
-                    .pointerEvents,
-                },
-              }
-            );
-          }
-          lastScrollY = newScrollY;
-        }, 10);
-      }
-    },
-    true
-  );
-
-  // DEBUG: Global click listener to catch ALL clicks
-  document.addEventListener(
-    "click",
-    (e) => {
-      const path = e.composedPath ? e.composedPath() : e.path || [];
-      console.log("[DEBUG] Global click on document", {
-        target: e.target,
-        targetTagName: e.target.tagName,
-        targetClasses: e.target.className,
-        pointerEvents: window.getComputedStyle(e.target).pointerEvents,
-        zIndex: window.getComputedStyle(e.target).zIndex,
-        eventPath: path.slice(0, 10).map((el) => ({
-          tag: el.tagName,
-          classes: el.className,
-          pointerEvents: el.style
-            ? window.getComputedStyle(el).pointerEvents
-            : "N/A",
-        })),
-      });
-    },
-    true
-  ); // Capture phase - first
-
-  // DEBUG: Add direct click listener to video element
-  const video = getVideoElement();
-  if (video) {
-    video.addEventListener(
-      "click",
-      (e) => {
-        console.log("[DEBUG] Direct click listener on <video>", {
-          target: e.target,
-          timestamp: Date.now(),
-        });
-      },
-      true
-    ); // Use capture phase
-  }
-
   // Try to restore state only if coming from story page
+  const video = getVideoElement();
   if (video && isComingFromStory()) {
     // Wait for video metadata to be loaded
     video.addEventListener(
