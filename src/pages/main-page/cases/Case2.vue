@@ -120,7 +120,6 @@ const contentWrapperRef = ref(null);
 const scrollContainerRef = ref(null);
 const videoElement = ref(null);
 
-// Initialize motion-v hooks first (they must be called during setup)
 const { scrollYProgress } = useScroll({
   target: containerRef,
   container: scrollContainerRef,
@@ -137,89 +136,49 @@ const titlePart2Words = computed(() => ["Communications", "App"]);
 const descriptionWords = computed(() => description.split(" "));
 const currentScrollProgress = ref(0);
 
-const videoVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
+const videoVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 const videoTransition = {
   type: "tween",
   ease: [0.4, 0, 0.2, 1],
   duration: 0.5,
 };
-
 const videoState = ref("hidden");
 
-function getTitlePart1WordOpacity(wordIndex) {
+const getOpacity = (startProgress, endProgress) => {
+  if (currentScrollProgress.value < startProgress) return 0;
+  if (currentScrollProgress.value > endProgress) return 1;
+  return (
+    (currentScrollProgress.value - startProgress) /
+    (endProgress - startProgress)
+  );
+};
+
+const getTitlePart1WordOpacity = (wordIndex) => {
   const totalWords = titlePart1Words.value.length;
   const wordProgress = wordIndex / totalWords;
   const startProgress = wordProgress * 0.15;
   const endProgress = startProgress + 0.15 / totalWords;
+  return getOpacity(startProgress, endProgress);
+};
 
-  if (currentScrollProgress.value < startProgress) return 0;
-  if (currentScrollProgress.value > endProgress) return 1;
-
-  return (
-    (currentScrollProgress.value - startProgress) /
-    (endProgress - startProgress)
-  );
-}
-
-function getTitlePart2WordOpacity(wordIndex) {
+const getTitlePart2WordOpacity = (wordIndex) => {
   const totalWords = titlePart2Words.value.length;
   const wordProgress = wordIndex / totalWords;
   const startProgress = 0.15 + wordProgress * 0.15;
   const endProgress = startProgress + 0.15 / totalWords;
+  return getOpacity(startProgress, endProgress);
+};
 
-  if (currentScrollProgress.value < startProgress) return 0;
-  if (currentScrollProgress.value > endProgress) return 1;
-
-  return (
-    (currentScrollProgress.value - startProgress) /
-    (endProgress - startProgress)
-  );
-}
-
-function getDescriptionWordOpacity(wordIndex) {
+const getDescriptionWordOpacity = (wordIndex) => {
   const totalWords = descriptionWords.value.length;
   const wordProgress = wordIndex / totalWords;
   const startProgress = 0.5 + wordProgress * 0.15;
   const endProgress = startProgress + 0.15 / totalWords;
+  return getOpacity(startProgress, endProgress);
+};
 
-  if (currentScrollProgress.value < startProgress) return 0;
-  if (currentScrollProgress.value > endProgress) return 1;
-
-  return (
-    (currentScrollProgress.value - startProgress) /
-    (endProgress - startProgress)
-  );
-}
-
-function getCardOpacity() {
-  const startProgress = 0.45;
-  const endProgress = 0.5;
-
-  if (currentScrollProgress.value < startProgress) return 0;
-  if (currentScrollProgress.value > endProgress) return 1;
-
-  return (
-    (currentScrollProgress.value - startProgress) /
-    (endProgress - startProgress)
-  );
-}
-
-function getButtonOpacity() {
-  const startProgress = 0.65;
-  const endProgress = 0.75;
-
-  if (currentScrollProgress.value < startProgress) return 0;
-  if (currentScrollProgress.value > endProgress) return 1;
-
-  return (
-    (currentScrollProgress.value - startProgress) /
-    (endProgress - startProgress)
-  );
-}
+const getCardOpacity = () => getOpacity(0.45, 0.5);
+const getButtonOpacity = () => getOpacity(0.65, 0.75);
 
 const currentScale = ref(0.5);
 
@@ -231,74 +190,46 @@ let scrollUnsubscribe = null;
 
 onMounted(() => {
   const scrollContainer = document.querySelector(".scroll-snap-container");
-  if (scrollContainer) {
-    scrollContainerRef.value = scrollContainer;
-  }
+  if (scrollContainer) scrollContainerRef.value = scrollContainer;
 
   scrollUnsubscribe = scrollYProgress.on?.("change", (rawProgress) => {
     const progress = rawProgress;
-
     const scaleEndThreshold = 0.4;
 
-    if (progress <= scaleEndThreshold) {
-      const scaleProgress = progress / scaleEndThreshold;
-      currentScale.value = 0.5 + scaleProgress * 0.5;
-    } else {
-      currentScale.value = 1;
-    }
+    currentScale.value =
+      progress <= scaleEndThreshold
+        ? 0.5 + (progress / scaleEndThreshold) * 0.5
+        : 1;
 
-    let textProgress;
-    if (progress <= scaleEndThreshold) {
-      textProgress = 0;
-    } else {
-      textProgress = (progress - scaleEndThreshold) / (1 - scaleEndThreshold);
-    }
-
-    const videoProgress = progress;
-
+    const textProgress =
+      progress <= scaleEndThreshold
+        ? 0
+        : (progress - scaleEndThreshold) / (1 - scaleEndThreshold);
     currentScrollProgress.value = textProgress;
 
     parallaxY.value = (0.5 - textProgress) * 20;
 
     if (textProgress < 0.7) {
-      const adjustedProgress = textProgress / 0.7;
-      contentParallaxY.value = -(adjustedProgress * 3);
+      contentParallaxY.value = -(textProgress / 0.7) * 3;
     } else {
-      const laterProgress = (textProgress - 0.7) / (1 - 0.7); // 0 to 1 over remaining range
-
+      const laterProgress = (textProgress - 0.7) / 0.3;
       const easeInCubic = laterProgress * laterProgress * laterProgress;
-
-      const startOffset = -3;
-      const endOffset = -120; // Continue moving throughout scroll
-      contentParallaxY.value =
-        startOffset + easeInCubic * (endOffset - startOffset);
+      contentParallaxY.value = -3 + easeInCubic * (-120 + 3);
     }
-
-    const wrapperRect = contentWrapperRef.value?.getBoundingClientRect();
-    const wrapperTop = wrapperRect ? Math.round(wrapperRect.top) : "N/A";
-    const wrapperLeft = wrapperRect ? Math.round(wrapperRect.left) : "N/A";
 
     if (videoElement.value && videoSrc) {
       const video = videoElement.value.$el || videoElement.value;
-
-      if (video && video.duration && !isNaN(video.duration)) {
-        const targetTime = videoProgress * video.duration;
-
+      if (video?.duration && !isNaN(video.duration)) {
+        const targetTime = progress * video.duration;
         if (Math.abs(video.currentTime - targetTime) > 0.05) {
           video.currentTime = targetTime;
         }
       }
     }
 
-    // Update video state based on scroll progress
-    if (videoProgress > 0.1) {
-      videoState.value = "visible";
-    } else {
-      videoState.value = "hidden";
-    }
+    videoState.value = progress > 0.1 ? "visible" : "hidden";
 
     const pinStartThreshold = 0.4;
-
     const shouldPin = progress >= pinStartThreshold && progress < 1;
     const shouldUnpin = progress >= 1 || progress < pinStartThreshold;
 
@@ -311,20 +242,9 @@ onMounted(() => {
       ) {
         const containerRect = containerRef.value.getBoundingClientRect();
         const wrapperRect = contentWrapperRef.value.getBoundingClientRect();
-
-        const currentTop = wrapperRect.top;
-
-        const containerTop = containerRect.top;
-
-        const offset = currentTop - containerTop;
-
-        unpinTopOffset.value = offset;
+        unpinTopOffset.value = wrapperRect.top - containerRect.top;
       }
-
-      if (shouldPin && unpinned.value) {
-        unpinned.value = false;
-      }
-
+      if (shouldPin && unpinned.value) unpinned.value = false;
       pinned.value = shouldPin;
     }
 
@@ -332,16 +252,8 @@ onMounted(() => {
       if (shouldUnpin && containerRef.value && contentWrapperRef.value) {
         const containerRect = containerRef.value.getBoundingClientRect();
         const wrapperRect = contentWrapperRef.value.getBoundingClientRect();
-
-        const currentTop = wrapperRect.top;
-
-        const containerTop = containerRect.top;
-
-        const offset = currentTop - containerTop;
-
-        unpinTopOffset.value = offset;
+        unpinTopOffset.value = wrapperRect.top - containerRect.top;
       }
-
       unpinned.value = shouldUnpin;
     }
   });
@@ -354,11 +266,9 @@ onUnmounted(() => {
   }
 });
 
-function handleEnter() {}
-
-function handleLeave() {}
-
-function handleStoryLinkClick() {}
+const handleEnter = () => {};
+const handleLeave = () => {};
+const handleStoryLinkClick = () => {};
 
 defineExpose({
   handleEnter,
@@ -376,7 +286,6 @@ defineExpose({
   overflow: hidden;
 }
 
-/* Content wrapper - normal flow by default */
 .content-wrapper {
   position: relative;
   width: 100%;
@@ -388,7 +297,6 @@ defineExpose({
   pointer-events: auto;
 }
 
-/* Pinned - fixed in center of viewport */
 .content-wrapper.pinned {
   position: fixed;
   top: 50%;
@@ -399,7 +307,6 @@ defineExpose({
   pointer-events: none;
 }
 
-/* Unpinned - back to normal flow after being pinned, but stay in center visually */
 .content-wrapper.unpinned {
   position: absolute;
   top: 0;
@@ -410,13 +317,11 @@ defineExpose({
   pointer-events: auto;
 }
 
-/* Final spacer - for scroll exit */
 .final-spacer {
   height: 150vh;
   width: 100%;
 }
 
-/* Left Side: Content - overlays the image */
 .case2-content {
   position: absolute;
   left: 0;
@@ -434,14 +339,12 @@ defineExpose({
   will-change: transform;
 }
 
-/* Wrapper for card and content */
 .case2-content-wrapper {
   position: relative;
   display: inline-flex;
   max-width: min(30vw, 550px);
 }
 
-/* Glass card background */
 .case2-card-background {
   position: absolute;
   inset: 0;
@@ -500,18 +403,15 @@ defineExpose({
   transition: opacity 0.1s ease-out;
 }
 
-/* Open Story button */
 .case2-open-story {
   background: none;
   border: none;
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-style: normal;
   font-weight: 500;
   font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
   color: #000000;
   cursor: pointer;
   padding: 0;
@@ -529,7 +429,6 @@ defineExpose({
   display: block;
 }
 
-/* Right Side: Image with Parallax - now full screen */
 .case2-image-container {
   position: absolute;
   inset: 0;
@@ -567,17 +466,14 @@ defineExpose({
   left: 0;
 }
 
-/* Background image stays behind video */
 .case2-background {
   z-index: 1;
 }
 
-/* Video is on top of image */
 .case2-video {
   z-index: 2;
 }
 
-/* Mobile Responsive */
 @media (max-width: 899px) {
   .case2-split-layout {
     flex-direction: column;
@@ -613,11 +509,6 @@ defineExpose({
     width: 100%;
   }
 
-  .case2-content-inner {
-    align-items: center;
-    text-align: center;
-  }
-
   .case2-open-story {
     font-size: 20px;
   }
@@ -645,6 +536,7 @@ defineExpose({
 
   .case2-content-inner {
     gap: 16px;
+    padding: 16px 20px;
   }
 
   .case2-title {
@@ -664,13 +556,8 @@ defineExpose({
     width: 24px;
     height: 24px;
   }
-
-  .case2-content-inner {
-    padding: 16px 20px;
-  }
 }
 
-/* Section wrapper styles from MainPage */
 .case-section.item {
   display: flex;
   align-items: center;
@@ -679,7 +566,6 @@ defineExpose({
   height: 100dvh;
 }
 
-/* Case2 needs extra height for scroll animation */
 #case2.case-section.item {
   height: 250vh;
   min-height: 250vh;
