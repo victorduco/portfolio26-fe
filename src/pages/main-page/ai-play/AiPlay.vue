@@ -8,14 +8,13 @@
       <motion.div
         v-for="(item, index) in floatingItems"
         :key="index"
-        :class="['float-img', `float-img-${index + 1}`, { active: activeIndex === index, 'any-hovered': anyHovered }]"
+        :class="['float-img', `float-img-${index + 1}`]"
         :variants="diamondVariants"
         :animate="getAnimationState(index)"
         initial="default"
-        :transition="spring"
+        :transition="getSpringConfig(item)"
         @mouseenter="() => handleHover(index, true)"
         @mouseleave="() => handleHover(index, false)"
-        @click="handleClick(index)"
       >
         <div class="diamond-shape">
           <motion.div
@@ -26,7 +25,7 @@
             :variants="diamondShapeVariants"
             :animate="getAnimationState(index)"
             initial="default"
-            :transition="spring"
+            :transition="getSpringConfig(item)"
           />
           <motion.div
             class="plant-icon-wrapper"
@@ -34,12 +33,23 @@
             :animate="{ rotate: -45 + item.rotation }"
             :transition="spring"
           >
-            <component
-              :is="getCurrentIcon(item, getAnimationState(index))"
-              :size="item.iconSize"
-              :color="getIconColor(getAnimationState(index))"
-              class="plant-icon"
-            />
+            <motion.div
+              class="icon-rotation-compensator"
+              :initial="{ rotate: item.animateRotation ? 0 : -item.rotation }"
+              :animate="{
+                rotate: getAnimationState(index) === 'groupHover'
+                  ? -item.rotation
+                  : (item.animateRotation ? 0 : -item.rotation)
+              }"
+              :transition="item.animateRotation ? spring : { duration: 0 }"
+            >
+              <component
+                :is="getCurrentIcon(item, getAnimationState(index))"
+                :size="item.iconSize"
+                :color="getIconColor(getAnimationState(index))"
+                class="plant-icon"
+              />
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
@@ -64,11 +74,15 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, watch, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { motion } from 'motion-v';
-import { Leaf, Flower2, Sprout, TreePine, Palmtree, Flower } from 'lucide-vue-next';
+import { Leaf, Flower2, Palmtree, Flower } from 'lucide-vue-next';
+import HaIcon from './HaIcon.vue';
+import DropIcon from './DropIcon.vue';
+import SproutIcon from './SproutIcon.vue';
 import {
   spring,
+  createSpring,
   diamondVariants,
   diamondShapeVariants,
 } from './aiPlayVariants.js';
@@ -83,12 +97,14 @@ defineProps({
 // Random placeholder images (using picsum.photos)
 const floatingItems = [
   {
-    icon: Leaf,
-    defaultIcon: Leaf, // все показывают Leaf по умолчанию
+    icon: HaIcon,
+    defaultIcon: Leaf, // показываем Leaf по умолчанию
     color: '#27A9FF',
     image: 'https://picsum.photos/seed/ai1/400/400',
     iconSize: 40, // базовый размер (100-170px)
     rotation: 0, // 0 градусов
+    animateRotation: false, // иконка сразу в правильной ориентации
+    hoverSpringMultiplier: 1.1, // немного медленнее
   },
   {
     icon: Flower2,
@@ -97,14 +113,18 @@ const floatingItems = [
     image: 'https://picsum.photos/seed/ai2/400/400',
     iconSize: 32, // 85-135px (~80% от базового)
     rotation: 45, // 45 градусов
+    animateRotation: true, // розовый с цветком - анимация поворота
+    hoverSpringMultiplier: 1.0, // оставляем как есть
   },
   {
-    icon: Sprout,
+    icon: SproutIcon,
     defaultIcon: Leaf,
     color: '#00FFBC',
     image: 'https://picsum.photos/seed/ai3/400/400',
     iconSize: 36, // 95-155px (~91% от базового)
     rotation: 90, // 90 градусов
+    animateRotation: false, // иконка сразу в правильной ориентации
+    hoverSpringMultiplier: 1.3, // медленнее
   },
   {
     icon: Palmtree,
@@ -113,14 +133,18 @@ const floatingItems = [
     image: 'https://picsum.photos/seed/ai4/400/400',
     iconSize: 45, // 120-190px (~112% от базового)
     rotation: 135, // 135 градусов
+    animateRotation: false, // иконка сразу в правильной ориентации
+    hoverSpringMultiplier: 1.4, // самый медленный
   },
   {
-    icon: TreePine,
+    icon: DropIcon,
     defaultIcon: Leaf,
     color: '#27A9FF',
     image: 'https://picsum.photos/seed/ai5/400/400',
     iconSize: 42, // 110-180px (~106% от базового)
     rotation: 180, // 180 градусов
+    animateRotation: false, // иконка сразу в правильной ориентации
+    hoverSpringMultiplier: 1.2, // средняя скорость
   },
   {
     icon: Flower,
@@ -129,22 +153,18 @@ const floatingItems = [
     image: 'https://picsum.photos/seed/ai6/400/400',
     iconSize: 30, // 75-130px (~76% от базового)
     rotation: 225, // 225 градусов
+    animateRotation: true, // розовый с цветком - анимация поворота (элемент 6)
+    hoverSpringMultiplier: 1.0, // оставляем как есть
   },
 ];
 
-const activeIndex = ref(-1);
-const anyHovered = ref(false);
-let autoCloseTimer = null;
+// Track hover state for each individual item
+const hoveredIndex = ref(-1);
 
 // Создаем computed массив состояний анимации для всех элементов
 const animationStates = computed(() => {
   return floatingItems.map((_, index) => {
-    const state = activeIndex.value === index
-      ? 'active'
-      : anyHovered.value
-        ? 'groupHover'
-        : 'default';
-
+    const state = hoveredIndex.value === index ? 'groupHover' : 'default';
     return state;
   });
 });
@@ -155,51 +175,23 @@ function getAnimationState(index) {
 
 // Функция для получения иконки в зависимости от состояния
 function getCurrentIcon(item, state) {
-  return state === 'groupHover' || state === 'active' ? item.icon : item.defaultIcon;
+  return state === 'groupHover' ? item.icon : item.defaultIcon;
 }
 
 // Функция для получения цвета иконки в зависимости от состояния
 function getIconColor(state) {
-  return state === 'groupHover' || state === 'active' ? '#000000' : '#999999';
+  return state === 'groupHover' ? '#000000' : '#999999';
+}
+
+// Функция для получения spring конфигурации для элемента
+function getSpringConfig(item) {
+  return createSpring(item.hoverSpringMultiplier);
 }
 
 function handleHover(index, isHovering) {
-  // Don't show hover if item is active
-  if (activeIndex.value === index) {
-    return;
-  }
-
-  anyHovered.value = isHovering;
+  hoveredIndex.value = isHovering ? index : -1;
 }
 
-function handleClick(index) {
-  // Clear any existing timer
-  if (autoCloseTimer) {
-    clearTimeout(autoCloseTimer);
-    autoCloseTimer = null;
-  }
-
-  // If clicking the same item, close it
-  if (activeIndex.value === index) {
-    activeIndex.value = -1;
-    return;
-  }
-
-  // Close previous, open new
-  activeIndex.value = index;
-
-  // Auto-close after 3 seconds
-  autoCloseTimer = setTimeout(() => {
-    activeIndex.value = -1;
-    autoCloseTimer = null;
-  }, 3000);
-}
-
-onUnmounted(() => {
-  if (autoCloseTimer) {
-    clearTimeout(autoCloseTimer);
-  }
-});
 </script>
 
 <style scoped>
@@ -225,8 +217,7 @@ onUnmounted(() => {
 .float-img {
   position: absolute;
   will-change: transform;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15));
-  cursor: pointer;
+  animation-play-state: running !important;
 }
 
 .diamond-shape {
@@ -251,6 +242,12 @@ onUnmounted(() => {
 }
 
 .plant-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-rotation-compensator {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -288,7 +285,7 @@ onUnmounted(() => {
   left: 14%;
 }
 
-.float-img-1:not(:hover):not(.active):not(.any-hovered) {
+.float-img-1 {
   animation: float1 8s ease-in-out infinite;
 }
 
@@ -299,7 +296,7 @@ onUnmounted(() => {
   right: 15%;
 }
 
-.float-img-2:not(:hover):not(.active):not(.any-hovered) {
+.float-img-2 {
   animation: float2 10s ease-in-out infinite;
 }
 
@@ -310,7 +307,7 @@ onUnmounted(() => {
   left: 42%;
 }
 
-.float-img-3:not(:hover):not(.active):not(.any-hovered) {
+.float-img-3 {
   animation: float3 9s ease-in-out infinite;
 }
 
@@ -321,7 +318,7 @@ onUnmounted(() => {
   left: 10%;
 }
 
-.float-img-4:not(:hover):not(.active):not(.any-hovered) {
+.float-img-4 {
   animation: float4 11s ease-in-out infinite;
 }
 
@@ -332,7 +329,7 @@ onUnmounted(() => {
   right: 10%;
 }
 
-.float-img-5:not(:hover):not(.active):not(.any-hovered) {
+.float-img-5 {
   animation: float5 7.5s ease-in-out infinite;
 }
 
@@ -343,7 +340,7 @@ onUnmounted(() => {
   right: 38%;
 }
 
-.float-img-6:not(:hover):not(.active):not(.any-hovered) {
+.float-img-6 {
   animation: float6 9.5s ease-in-out infinite;
 }
 

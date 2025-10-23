@@ -7,6 +7,17 @@ export const spring = {
   mass: 1.8,
 };
 
+// Create spring variants with different speeds
+// Multiplier range: 1.0 to 1.4 (slower)
+export function createSpring(multiplier = 1.0) {
+  return {
+    type: "spring",
+    stiffness: 60 / multiplier,
+    damping: 20,
+    mass: 1.8 * multiplier,
+  };
+}
+
 // Variants for floating diamond containers
 export const diamondVariants = {
   default: {
