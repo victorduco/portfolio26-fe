@@ -203,9 +203,9 @@ onMounted(() => {
 
 /* Case1 needs extra height for scroll animation */
 #case1.case-section.item {
-  height: 400vh;
-  min-height: 400vh;
-  max-height: 400vh;
+  height: 200vh;
+  min-height: 200vh;
+  max-height: 200vh;
   /* overflow: hidden убран - мешает sticky */
 }
 

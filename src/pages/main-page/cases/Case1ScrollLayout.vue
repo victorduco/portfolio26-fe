@@ -5,15 +5,8 @@
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
   >
-    <!-- Text frame - always fixed with dynamic parallax scroll -->
-    <div
-      ref="contentWrapperRef"
-      class="text-frame-wrapper"
-      :style="{
-        transform: `translate(-50%, calc(-50% + ${slowScrollY}vh))`
-      }"
-      v-show="showText"
-    >
+    <!-- Text frame - normal scroll flow -->
+    <div ref="contentWrapperRef" class="text-frame-wrapper">
       <div class="text-content">
         <div class="text-only" :style="{ opacity: textOpacity }">
           <h2 class="case-title">
@@ -48,229 +41,227 @@
                   'video-playing': videoExpanded,
                 }"
               >
-              <svg
-                class="play-icon"
-                :class="{ 'play-icon-hidden': videoExpanded }"
-                width="100"
-                height="100"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M8 5v14l11-7L8 5z"
-                  fill="black"
-                  stroke="black"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                  stroke-linecap="round"
-                />
-              </svg>
-              <video
-                v-if="videoSrc"
-                ref="videoElement"
-                :src="videoSrc"
-                class="case-video"
-                :class="{
-                  'video-visible': videoExpanded,
-                  'video-paused-blur': !isPlaying && hasStartedPlayback,
-                }"
-                :muted="shouldBeMutedByDefault || isMuted"
-                playsinline
-                @ended="handleVideoEnded"
-                @timeupdate="handleTimeUpdate"
-              ></video>
-              <!-- Pause Overlay (inside video wrapper) -->
-              <motion.div
-                v-if="
-                  !isPlaying &&
-                  hasStartedPlayback &&
-                  videoExpanded
-                "
-                class="case-video-pause-overlay"
-                :class="{ 'is-playing': isPlaying }"
-                :initial="{ opacity: 0 }"
-                :animate="{ opacity: 1 }"
-                :exit="{ opacity: 0 }"
-                :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
-              >
-                <!-- Large black play icon (clickable) -->
                 <svg
-                  viewBox="0 0 100 100"
-                  fill="currentColor"
-                  class="pause-play-icon"
-                  @click.stop="togglePlayPause"
-                  aria-label="Play video"
+                  class="play-icon"
+                  :class="{ 'play-icon-hidden': videoExpanded }"
+                  width="100"
+                  height="100"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z"
+                    d="M8 5v14l11-7L8 5z"
+                    fill="black"
+                    stroke="black"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
                   />
                 </svg>
-              </motion.div>
-
-              <!-- Video Controls Bar (inside video wrapper) -->
-              <div
-                v-if="hasStartedPlayback && videoExpanded"
-                class="case-video-controls"
-              >
-                <!-- Mute/Unmute button -->
-                <motion.button
-                  class="control-button"
-                  type="button"
-                  @click.stop="toggleMute"
-                  @mouseenter="muteHovered = true"
-                  @mouseleave="muteHovered = false"
-                  :initial="'default'"
-                  :animate="muteHovered ? 'hover' : 'default'"
-                  :variants="buttonVariants"
-                  :transition="buttonTransition"
-                  :aria-label="isMuted ? 'Unmute' : 'Mute'"
+                <video
+                  v-if="videoSrc"
+                  ref="videoElement"
+                  :src="videoSrc"
+                  class="case-video"
+                  :class="{
+                    'video-visible': videoExpanded,
+                    'video-paused-blur': !isPlaying && hasStartedPlayback,
+                  }"
+                  :muted="shouldBeMutedByDefault || isMuted"
+                  playsinline
+                  @ended="handleVideoEnded"
+                  @timeupdate="handleTimeUpdate"
+                ></video>
+                <!-- Pause Overlay (inside video wrapper) -->
+                <motion.div
+                  v-if="!isPlaying && hasStartedPlayback && videoExpanded"
+                  class="case-video-pause-overlay"
+                  :class="{ 'is-playing': isPlaying }"
+                  :initial="{ opacity: 0 }"
+                  :animate="{ opacity: 1 }"
+                  :exit="{ opacity: 0 }"
+                  :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
                 >
-                  <motion.svg
-                    v-if="isMuted"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="control-icon"
-                    :animate="muteHovered ? 'hover' : 'default'"
-                    :variants="iconVariants"
-                    :transition="iconTransition"
-                  >
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <line x1="23" y1="9" x2="17" y2="15" />
-                    <line x1="17" y1="9" x2="23" y2="15" />
-                  </motion.svg>
-                  <motion.svg
-                    v-else
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="control-icon"
-                    :animate="muteHovered ? 'hover' : 'default'"
-                    :variants="iconVariants"
-                    :transition="iconTransition"
-                  >
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" />
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                  </motion.svg>
-                </motion.button>
-
-                <!-- Play/Pause button -->
-                <motion.button
-                  class="control-button"
-                  type="button"
-                  @click.stop="togglePlayPause"
-                  @mouseenter="playHovered = true"
-                  @mouseleave="playHovered = false"
-                  :initial="'default'"
-                  :animate="playHovered ? 'hover' : 'default'"
-                  :variants="buttonVariants"
-                  :transition="buttonTransition"
-                  :aria-label="isPlaying ? 'Pause' : 'Play'"
-                >
-                  <motion.svg
-                    v-if="isPlaying"
-                    viewBox="0 0 24 24"
+                  <!-- Large black play icon (clickable) -->
+                  <svg
+                    viewBox="0 0 100 100"
                     fill="currentColor"
-                    class="control-icon"
-                    :animate="playHovered ? 'hover' : 'default'"
-                    :variants="iconVariants"
-                    :transition="iconTransition"
+                    class="pause-play-icon"
+                    @click.stop="togglePlayPause"
+                    aria-label="Play video"
                   >
-                    <rect x="6" y="5" width="4" height="14" rx="1" />
-                    <rect x="14" y="5" width="4" height="14" rx="1" />
-                  </motion.svg>
-                  <motion.svg
-                    v-else
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="control-icon"
-                    :animate="playHovered ? 'hover' : 'default'"
-                    :variants="iconVariants"
-                    :transition="iconTransition"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </motion.svg>
-                </motion.button>
+                    <path
+                      d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z"
+                    />
+                  </svg>
+                </motion.div>
 
-                <!-- Restart button -->
-                <motion.button
-                  class="control-button"
-                  type="button"
-                  @click.stop="restartVideo"
-                  @mouseenter="restartHovered = true"
-                  @mouseleave="restartHovered = false"
-                  :initial="'default'"
-                  :animate="restartHovered ? 'hover' : 'default'"
-                  :variants="buttonVariants"
-                  :transition="buttonTransition"
-                  aria-label="Restart video"
+                <!-- Video Controls Bar (inside video wrapper) -->
+                <div
+                  v-if="hasStartedPlayback && videoExpanded"
+                  class="case-video-controls"
                 >
-                  <motion.svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="control-icon"
+                  <!-- Mute/Unmute button -->
+                  <motion.button
+                    class="control-button"
+                    type="button"
+                    @click.stop="toggleMute"
+                    @mouseenter="muteHovered = true"
+                    @mouseleave="muteHovered = false"
+                    :initial="'default'"
+                    :animate="muteHovered ? 'hover' : 'default'"
+                    :variants="buttonVariants"
+                    :transition="buttonTransition"
+                    :aria-label="isMuted ? 'Unmute' : 'Mute'"
+                  >
+                    <motion.svg
+                      v-if="isMuted"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      class="control-icon"
+                      :animate="muteHovered ? 'hover' : 'default'"
+                      :variants="iconVariants"
+                      :transition="iconTransition"
+                    >
+                      <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                      <line x1="23" y1="9" x2="17" y2="15" />
+                      <line x1="17" y1="9" x2="23" y2="15" />
+                    </motion.svg>
+                    <motion.svg
+                      v-else
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      class="control-icon"
+                      :animate="muteHovered ? 'hover' : 'default'"
+                      :variants="iconVariants"
+                      :transition="iconTransition"
+                    >
+                      <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                    </motion.svg>
+                  </motion.button>
+
+                  <!-- Play/Pause button -->
+                  <motion.button
+                    class="control-button"
+                    type="button"
+                    @click.stop="togglePlayPause"
+                    @mouseenter="playHovered = true"
+                    @mouseleave="playHovered = false"
+                    :initial="'default'"
+                    :animate="playHovered ? 'hover' : 'default'"
+                    :variants="buttonVariants"
+                    :transition="buttonTransition"
+                    :aria-label="isPlaying ? 'Pause' : 'Play'"
+                  >
+                    <motion.svg
+                      v-if="isPlaying"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="control-icon"
+                      :animate="playHovered ? 'hover' : 'default'"
+                      :variants="iconVariants"
+                      :transition="iconTransition"
+                    >
+                      <rect x="6" y="5" width="4" height="14" rx="1" />
+                      <rect x="14" y="5" width="4" height="14" rx="1" />
+                    </motion.svg>
+                    <motion.svg
+                      v-else
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="control-icon"
+                      :animate="playHovered ? 'hover' : 'default'"
+                      :variants="iconVariants"
+                      :transition="iconTransition"
+                    >
+                      <path d="M8 5v14l11-7z" />
+                    </motion.svg>
+                  </motion.button>
+
+                  <!-- Restart button -->
+                  <motion.button
+                    class="control-button"
+                    type="button"
+                    @click.stop="restartVideo"
+                    @mouseenter="restartHovered = true"
+                    @mouseleave="restartHovered = false"
+                    :initial="'default'"
                     :animate="restartHovered ? 'hover' : 'default'"
-                    :variants="iconVariants"
-                    :transition="iconTransition"
+                    :variants="buttonVariants"
+                    :transition="buttonTransition"
+                    aria-label="Restart video"
                   >
-                    <path
-                      d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
-                    />
-                  </motion.svg>
-                </motion.button>
+                    <motion.svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      class="control-icon"
+                      :animate="restartHovered ? 'hover' : 'default'"
+                      :variants="iconVariants"
+                      :transition="iconTransition"
+                    >
+                      <path
+                        d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+                      />
+                    </motion.svg>
+                  </motion.button>
 
-                <!-- Fullscreen button (mobile only) -->
-                <motion.button
-                  v-if="isSmallScreen"
-                  class="control-button"
-                  type="button"
-                  @click.stop="toggleFullscreen"
-                  @mouseenter="fullscreenHovered = true"
-                  @mouseleave="fullscreenHovered = false"
-                  :initial="'default'"
-                  :animate="fullscreenHovered ? 'hover' : 'default'"
-                  :variants="buttonVariants"
-                  :transition="buttonTransition"
-                  :aria-label="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
-                >
-                  <motion.svg
-                    v-if="!isFullscreen"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="control-icon"
+                  <!-- Fullscreen button (mobile only) -->
+                  <motion.button
+                    v-if="isSmallScreen"
+                    class="control-button"
+                    type="button"
+                    @click.stop="toggleFullscreen"
+                    @mouseenter="fullscreenHovered = true"
+                    @mouseleave="fullscreenHovered = false"
+                    :initial="'default'"
                     :animate="fullscreenHovered ? 'hover' : 'default'"
-                    :variants="iconVariants"
-                    :transition="iconTransition"
+                    :variants="buttonVariants"
+                    :transition="buttonTransition"
+                    :aria-label="
+                      isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'
+                    "
                   >
-                    <path
-                      d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
-                    />
-                  </motion.svg>
-                  <motion.svg
-                    v-else
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="control-icon"
-                    :animate="fullscreenHovered ? 'hover' : 'default'"
-                    :variants="iconVariants"
-                    :transition="iconTransition"
-                  >
-                    <path
-                      d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
-                    />
-                  </motion.svg>
-                </motion.button>
-              </div>
+                    <motion.svg
+                      v-if="!isFullscreen"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      class="control-icon"
+                      :animate="fullscreenHovered ? 'hover' : 'default'"
+                      :variants="iconVariants"
+                      :transition="iconTransition"
+                    >
+                      <path
+                        d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                      />
+                    </motion.svg>
+                    <motion.svg
+                      v-else
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      class="control-icon"
+                      :animate="fullscreenHovered ? 'hover' : 'default'"
+                      :variants="iconVariants"
+                      :transition="iconTransition"
+                    >
+                      <path
+                        d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
+                      />
+                    </motion.svg>
+                  </motion.button>
+                </div>
               </div>
               <!-- Open Story Link (inside video-and-link-wrapper, after video-wrapper) -->
               <motion.a
@@ -279,7 +270,10 @@
                 :initial="{ opacity: 0 }"
                 :animate="{ opacity: showStoryLink && videoExpanded ? 1 : 0 }"
                 :transition="{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }"
-                :style="{ pointerEvents: showStoryLink && videoExpanded ? 'auto' : 'none' }"
+                :style="{
+                  pointerEvents:
+                    showStoryLink && videoExpanded ? 'auto' : 'none',
+                }"
                 @click.prevent="handleStoryLinkClick"
               >
                 Open Story
@@ -672,11 +666,11 @@ const { scrollYProgress } = useScroll({
 const titleWords = computed(() => props.title.split(" "));
 
 // Общая анимация для subtitle (появляется после title)
-const subtitleOpacity = useTransform(scrollYProgress, [0.42, 0.47], [0, 1]);
+const subtitleOpacity = useTransform(scrollYProgress, [0.70, 0.75], [0.2, 1]);
 
 // Создаем opacity для каждого слова
-const appearStart = 0.2;
-const appearEnd = 0.3;
+const appearStart = 0.60;
+const appearEnd = 0.70;
 
 const wordOpacities = computed(() => {
   const words = titleWords.value;
@@ -687,7 +681,7 @@ const wordOpacities = computed(() => {
     const wordStart = appearStart + wordIndex * wordAppearDuration;
     const wordEnd = wordStart + wordAppearDuration;
 
-    return useTransform(scrollYProgress, [wordStart, wordEnd], [0, 1]);
+    return useTransform(scrollYProgress, [wordStart, wordEnd], [0.2, 1]);
   });
 });
 
@@ -697,10 +691,10 @@ const getWordOpacity = (wordIndex) => {
 };
 
 // Видео wrapper появляется после слова "Apple" (subtitle)
-// Subtitle появляется на 0.42-0.47, видео появляется сразу после с такой же задержкой
-const videoOpacity = useTransform(scrollYProgress, [0.47, 0.52], [0, 1]);
+// Subtitle появляется на 0.70-0.75, видео появляется сразу после с такой же задержкой
+const videoOpacity = useTransform(scrollYProgress, [0.75, 0.80], [0.2, 1]);
 
-// Видео увеличивается по триггеру при scrollYProgress >= 0.35
+// Видео увеличивается по триггеру при scrollYProgress >= 0.80
 // Inverse scale: start at 0.1875 (small), scale up to 1 (large)
 const videoExpanded = ref(false);
 const videoScaleValue = ref(0.1875); // Start small (1/8 × 1.5 = 0.1875)
@@ -723,50 +717,31 @@ onMounted(() => {
     // Element stays fixed throughout, just moves with increasing speed
 
     // Text opacity animation
-    if (progress < 0.55) {
+    if (progress < 0.80) {
       textOpacity.value = 1; // Text fully visible
-    } else if (progress < 0.60) {
-      // Fade out text as video expands (0.55 to 0.60) - faster animation
-      const fadeProgress = (progress - 0.55) / (0.60 - 0.55);
+    } else if (progress < 0.90) {
+      // Fade out text as video expands (0.80 to 0.90) - faster animation
+      const fadeProgress = (progress - 0.80) / (0.90 - 0.80);
       textOpacity.value = 1 - fadeProgress;
     } else {
       textOpacity.value = 0;
     }
 
-    // Slow scroll animation - continuous from beginning
-    if (progress < 0.55) {
-      // Slow parallax while text appears (0.2 to 0.55)
-      // Move from 0 to -4.5vh (upward) - 1.5x faster
-      const adjustedProgress = Math.max(0, (progress - 0.2) / (0.55 - 0.2));
-      slowScrollY.value = -(adjustedProgress * 4.5);
-    } else {
-      // After video starts expanding, continue with dynamic scroll
-      const pinnedProgress = (progress - 0.55) / (1 - 0.55); // 0 to 1 over entire remaining range
-
-      // Use easing function: start slow, accelerate towards the end
-      // Cubic easing for smoother acceleration
-      const easeInCubic = pinnedProgress * pinnedProgress * pinnedProgress;
-
-      // Move from -4.5vh and keep going as user scrolls
-      // The easing makes it start slow and catch up to normal scroll speed
-      const startOffset = -4.5;
-      const endOffset = -120; // Continue moving throughout scroll - 1.5x faster
-      slowScrollY.value = startOffset + (easeInCubic * (endOffset - startOffset));
-    }
+    // No parallax effect - text scrolls naturally with page
 
     // Log scroll position for debugging
     const wrapperRect = contentWrapperRef.value?.getBoundingClientRect();
     const containerRect = containerRef.value?.getBoundingClientRect();
 
-    console.log('[Case1 Scroll]', {
+    console.log("[Case1 Scroll]", {
       progress: progress.toFixed(3),
       slowScrollY: slowScrollY.value.toFixed(2),
-      wrapperTop: wrapperRect ? wrapperRect.top.toFixed(0) : 'N/A',
-      containerTop: containerRect ? containerRect.top.toFixed(0) : 'N/A',
-      videoExpanded: videoExpanded.value
+      wrapperTop: wrapperRect ? wrapperRect.top.toFixed(0) : "N/A",
+      containerTop: containerRect ? containerRect.top.toFixed(0) : "N/A",
+      videoExpanded: videoExpanded.value,
     });
 
-    const shouldExpand = progress >= 0.55;
+    const shouldExpand = progress >= 0.80;
 
     if (shouldExpand !== videoExpanded.value) {
       console.log("[DEBUG] 🎬 Video expand state changing:", {
@@ -777,10 +752,8 @@ onMounted(() => {
 
       videoExpanded.value = shouldExpand;
       videoScaleValue.value = shouldExpand ? 1 : 0.1875; // Expand to scale(1)
-      // Adjusted value to properly center when expanded
-      // Compensate for slowScrollY at progress 0.55 (which is -4.5vh)
-      // Move video lower by reducing negative offset
-      videoYValue.value = shouldExpand ? -10 : 0;
+      // Move video down when expanded for better positioning
+      videoYValue.value = shouldExpand ? 10 : 0;
 
       // Show story link 800ms after video expands (only if not already shown/scheduled)
       if (shouldExpand) {
@@ -805,23 +778,34 @@ onMounted(() => {
 
       // Log computed styles after state change
       setTimeout(() => {
-        const videoContainerWrapper = containerRef.value?.querySelector('.video-container-wrapper');
-        const videoWrapper = containerRef.value?.querySelector('.video-wrapper');
+        const videoContainerWrapper = containerRef.value?.querySelector(
+          ".video-container-wrapper"
+        );
+        const videoWrapper =
+          containerRef.value?.querySelector(".video-wrapper");
 
         console.log("[DEBUG] 🎨 Styles after expand state change:", {
           videoExpanded: videoExpanded.value,
-          videoContainerWrapper: videoContainerWrapper ? {
-            pointerEvents: window.getComputedStyle(videoContainerWrapper).pointerEvents,
-            transform: window.getComputedStyle(videoContainerWrapper).transform,
-            position: window.getComputedStyle(videoContainerWrapper).position,
-            zIndex: window.getComputedStyle(videoContainerWrapper).zIndex,
-          } : 'NOT FOUND',
-          videoWrapper: videoWrapper ? {
-            pointerEvents: window.getComputedStyle(videoWrapper).pointerEvents,
-            cursor: window.getComputedStyle(videoWrapper).cursor,
-            position: window.getComputedStyle(videoWrapper).position,
-            zIndex: window.getComputedStyle(videoWrapper).zIndex,
-          } : 'NOT FOUND',
+          videoContainerWrapper: videoContainerWrapper
+            ? {
+                pointerEvents: window.getComputedStyle(videoContainerWrapper)
+                  .pointerEvents,
+                transform: window.getComputedStyle(videoContainerWrapper)
+                  .transform,
+                position: window.getComputedStyle(videoContainerWrapper)
+                  .position,
+                zIndex: window.getComputedStyle(videoContainerWrapper).zIndex,
+              }
+            : "NOT FOUND",
+          videoWrapper: videoWrapper
+            ? {
+                pointerEvents:
+                  window.getComputedStyle(videoWrapper).pointerEvents,
+                cursor: window.getComputedStyle(videoWrapper).cursor,
+                position: window.getComputedStyle(videoWrapper).position,
+                zIndex: window.getComputedStyle(videoWrapper).zIndex,
+              }
+            : "NOT FOUND",
         });
       }, 50);
 
@@ -894,7 +878,7 @@ function handleEnter() {
     return;
   }
 
-  // Note: Autoplay only happens when video expands (scrollYProgress >= 0.45)
+  // Note: Autoplay only happens when video expands (scrollYProgress >= 0.80)
   // This function just prepares the video element
 }
 
@@ -932,10 +916,12 @@ onMounted(() => {
   setTimeout(() => {
     const container = containerRef.value;
     if (container) {
-      const textFrame = container.querySelector('.text-frame-wrapper');
-      const videoContainerWrapper = container.querySelector('.video-container-wrapper');
-      const videoWrapper = container.querySelector('.video-wrapper');
-      const video = container.querySelector('.case-video');
+      const textFrame = container.querySelector(".text-frame-wrapper");
+      const videoContainerWrapper = container.querySelector(
+        ".video-container-wrapper"
+      );
+      const videoWrapper = container.querySelector(".video-wrapper");
+      const video = container.querySelector(".case-video");
 
       console.log("[DEBUG] 📊 Element structure:", {
         container: {
@@ -946,27 +932,45 @@ onMounted(() => {
         },
         textFrame: {
           exists: !!textFrame,
-          pointerEvents: textFrame ? window.getComputedStyle(textFrame).pointerEvents : 'N/A',
-          position: textFrame ? window.getComputedStyle(textFrame).position : 'N/A',
-          zIndex: textFrame ? window.getComputedStyle(textFrame).zIndex : 'N/A',
+          pointerEvents: textFrame
+            ? window.getComputedStyle(textFrame).pointerEvents
+            : "N/A",
+          position: textFrame
+            ? window.getComputedStyle(textFrame).position
+            : "N/A",
+          zIndex: textFrame ? window.getComputedStyle(textFrame).zIndex : "N/A",
         },
         videoContainerWrapper: {
           exists: !!videoContainerWrapper,
-          pointerEvents: videoContainerWrapper ? window.getComputedStyle(videoContainerWrapper).pointerEvents : 'N/A',
-          position: videoContainerWrapper ? window.getComputedStyle(videoContainerWrapper).position : 'N/A',
-          zIndex: videoContainerWrapper ? window.getComputedStyle(videoContainerWrapper).zIndex : 'N/A',
+          pointerEvents: videoContainerWrapper
+            ? window.getComputedStyle(videoContainerWrapper).pointerEvents
+            : "N/A",
+          position: videoContainerWrapper
+            ? window.getComputedStyle(videoContainerWrapper).position
+            : "N/A",
+          zIndex: videoContainerWrapper
+            ? window.getComputedStyle(videoContainerWrapper).zIndex
+            : "N/A",
         },
         videoWrapper: {
           exists: !!videoWrapper,
-          pointerEvents: videoWrapper ? window.getComputedStyle(videoWrapper).pointerEvents : 'N/A',
-          position: videoWrapper ? window.getComputedStyle(videoWrapper).position : 'N/A',
-          zIndex: videoWrapper ? window.getComputedStyle(videoWrapper).zIndex : 'N/A',
+          pointerEvents: videoWrapper
+            ? window.getComputedStyle(videoWrapper).pointerEvents
+            : "N/A",
+          position: videoWrapper
+            ? window.getComputedStyle(videoWrapper).position
+            : "N/A",
+          zIndex: videoWrapper
+            ? window.getComputedStyle(videoWrapper).zIndex
+            : "N/A",
         },
         video: {
           exists: !!video,
-          pointerEvents: video ? window.getComputedStyle(video).pointerEvents : 'N/A',
-          position: video ? window.getComputedStyle(video).position : 'N/A',
-          zIndex: video ? window.getComputedStyle(video).zIndex : 'N/A',
+          pointerEvents: video
+            ? window.getComputedStyle(video).pointerEvents
+            : "N/A",
+          position: video ? window.getComputedStyle(video).position : "N/A",
+          zIndex: video ? window.getComputedStyle(video).zIndex : "N/A",
         },
       });
     }
@@ -976,155 +980,205 @@ onMounted(() => {
   let lastScrollY = window.scrollY;
   let wheelEventCount = 0;
 
-  document.addEventListener('wheel', (e) => {
-    wheelEventCount++;
-    const path = e.composedPath ? e.composedPath() : (e.path || []);
-    const videoWrapper = path.find(el => el.className && el.className.includes && el.className.includes('video-container-wrapper'));
-    if (videoWrapper) {
-      console.log(`[DEBUG] 🔍 Wheel over video-container-wrapper detected! (Event #${wheelEventCount})`);
-
-      // Get the element directly under cursor
-      const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY);
-      if (elementUnderCursor) {
-        console.log("[DEBUG] 🎯 Element directly under cursor:", {
-          tag: elementUnderCursor.tagName,
-          classes: elementUnderCursor.className,
-          pointerEvents: window.getComputedStyle(elementUnderCursor).pointerEvents,
-          zIndex: window.getComputedStyle(elementUnderCursor).zIndex,
-          position: window.getComputedStyle(elementUnderCursor).position,
-        });
-      }
-
-      // Log ALL elements in path with their pointer-events
-      const pathInfo = path.slice(0, 15).map(el => {
-        if (!el.tagName) return null;
-        const styles = window.getComputedStyle(el);
-        return {
-          tag: el.tagName,
-          classes: el.className,
-          pointerEvents: styles.pointerEvents,
-          position: styles.position,
-          zIndex: styles.zIndex,
-          overflow: styles.overflow,
-          width: styles.width,
-          height: styles.height,
-        };
-      }).filter(Boolean);
-
-      console.log("[DEBUG] Wheel event FULL PATH", {
-        targetTag: e.target.tagName,
-        targetClasses: e.target.className,
-        deltaY: e.deltaY,
-        deltaX: e.deltaX,
-        defaultPrevented: e.defaultPrevented,
-        cancelable: e.cancelable,
-        bubbles: e.bubbles,
-        eventPhase: e.eventPhase,
-        currentScrollY: window.scrollY,
-        documentScrollHeight: document.documentElement.scrollHeight,
-        documentClientHeight: document.documentElement.clientHeight,
-        canScrollMore: window.scrollY < (document.documentElement.scrollHeight - document.documentElement.clientHeight),
-        fullPath: pathInfo,
-      });
-
-      // Check if any element in path has pointer-events: none
-      const blockedElements = pathInfo.filter(el => el.pointerEvents === 'none');
-      if (blockedElements.length > 0) {
-        console.log("[DEBUG] ⚠️ Elements with pointer-events:none in path:", blockedElements.map(el => ({
-          tag: el.tag,
-          classes: el.classes,
-          position: el.position,
-          zIndex: el.zIndex,
-          width: el.width,
-          height: el.height,
-        })));
-      }
-
-      // Find which specific element is blocking scroll
-      const motionDivs = path.filter(el =>
-        el.tagName === 'DIV' &&
-        el.hasAttribute &&
-        (el.hasAttribute('data-motion-id') || el.className.includes('motion'))
+  document.addEventListener(
+    "wheel",
+    (e) => {
+      wheelEventCount++;
+      const path = e.composedPath ? e.composedPath() : e.path || [];
+      const videoWrapper = path.find(
+        (el) =>
+          el.className &&
+          el.className.includes &&
+          el.className.includes("video-container-wrapper")
       );
-      if (motionDivs.length > 0) {
-        console.log("[DEBUG] 🎭 Motion divs in path:", motionDivs.map(div => ({
-          tag: div.tagName,
-          classes: div.className,
-          hasDataMotionId: div.hasAttribute('data-motion-id'),
-          pointerEvents: window.getComputedStyle(div).pointerEvents,
-          position: window.getComputedStyle(div).position,
-        })));
-      }
+      if (videoWrapper) {
+        console.log(
+          `[DEBUG] 🔍 Wheel over video-container-wrapper detected! (Event #${wheelEventCount})`
+        );
 
-      // Check for elements that might be covering the scroll container
-      const textFrameWrapper = path.find(el => el.className && el.className.includes && el.className.includes('text-frame-wrapper'));
-      if (textFrameWrapper) {
-        const textFrameStyles = window.getComputedStyle(textFrameWrapper);
-        console.log("[DEBUG] 📐 text-frame-wrapper in path:", {
-          pointerEvents: textFrameStyles.pointerEvents,
-          position: textFrameStyles.position,
-          zIndex: textFrameStyles.zIndex,
-          top: textFrameStyles.top,
-          left: textFrameStyles.left,
-          width: textFrameStyles.width,
-          height: textFrameStyles.height,
-        });
-      }
-
-      setTimeout(() => {
-        const newScrollY = window.scrollY;
-        const scrolled = newScrollY !== lastScrollY;
-        const diff = newScrollY - lastScrollY;
-
-        console.log("[DEBUG] Wheel over video - DID PAGE SCROLL?", {
-          oldScrollY: lastScrollY,
-          newScrollY: newScrollY,
-          diff: diff,
-          scrolled: scrolled,
-        });
-
-        if (!scrolled && Math.abs(e.deltaY) > 0) {
-          console.log("[DEBUG] ⚠️ SCROLL BLOCKED! Wheel event but page didn't scroll", {
-            deltaY: e.deltaY,
-            scrollY: newScrollY,
-            reasonCheck: {
-              isEventPrevented: e.defaultPrevented,
-              hasPointerEventsNone: blockedElements.length > 0,
-              targetPointerEvents: window.getComputedStyle(e.target).pointerEvents,
-            }
+        // Get the element directly under cursor
+        const elementUnderCursor = document.elementFromPoint(
+          e.clientX,
+          e.clientY
+        );
+        if (elementUnderCursor) {
+          console.log("[DEBUG] 🎯 Element directly under cursor:", {
+            tag: elementUnderCursor.tagName,
+            classes: elementUnderCursor.className,
+            pointerEvents:
+              window.getComputedStyle(elementUnderCursor).pointerEvents,
+            zIndex: window.getComputedStyle(elementUnderCursor).zIndex,
+            position: window.getComputedStyle(elementUnderCursor).position,
           });
         }
-        lastScrollY = newScrollY;
-      }, 10);
-    }
-  }, true);
+
+        // Log ALL elements in path with their pointer-events
+        const pathInfo = path
+          .slice(0, 15)
+          .map((el) => {
+            if (!el.tagName) return null;
+            const styles = window.getComputedStyle(el);
+            return {
+              tag: el.tagName,
+              classes: el.className,
+              pointerEvents: styles.pointerEvents,
+              position: styles.position,
+              zIndex: styles.zIndex,
+              overflow: styles.overflow,
+              width: styles.width,
+              height: styles.height,
+            };
+          })
+          .filter(Boolean);
+
+        console.log("[DEBUG] Wheel event FULL PATH", {
+          targetTag: e.target.tagName,
+          targetClasses: e.target.className,
+          deltaY: e.deltaY,
+          deltaX: e.deltaX,
+          defaultPrevented: e.defaultPrevented,
+          cancelable: e.cancelable,
+          bubbles: e.bubbles,
+          eventPhase: e.eventPhase,
+          currentScrollY: window.scrollY,
+          documentScrollHeight: document.documentElement.scrollHeight,
+          documentClientHeight: document.documentElement.clientHeight,
+          canScrollMore:
+            window.scrollY <
+            document.documentElement.scrollHeight -
+              document.documentElement.clientHeight,
+          fullPath: pathInfo,
+        });
+
+        // Check if any element in path has pointer-events: none
+        const blockedElements = pathInfo.filter(
+          (el) => el.pointerEvents === "none"
+        );
+        if (blockedElements.length > 0) {
+          console.log(
+            "[DEBUG] ⚠️ Elements with pointer-events:none in path:",
+            blockedElements.map((el) => ({
+              tag: el.tag,
+              classes: el.classes,
+              position: el.position,
+              zIndex: el.zIndex,
+              width: el.width,
+              height: el.height,
+            }))
+          );
+        }
+
+        // Find which specific element is blocking scroll
+        const motionDivs = path.filter(
+          (el) =>
+            el.tagName === "DIV" &&
+            el.hasAttribute &&
+            (el.hasAttribute("data-motion-id") ||
+              el.className.includes("motion"))
+        );
+        if (motionDivs.length > 0) {
+          console.log(
+            "[DEBUG] 🎭 Motion divs in path:",
+            motionDivs.map((div) => ({
+              tag: div.tagName,
+              classes: div.className,
+              hasDataMotionId: div.hasAttribute("data-motion-id"),
+              pointerEvents: window.getComputedStyle(div).pointerEvents,
+              position: window.getComputedStyle(div).position,
+            }))
+          );
+        }
+
+        // Check for elements that might be covering the scroll container
+        const textFrameWrapper = path.find(
+          (el) =>
+            el.className &&
+            el.className.includes &&
+            el.className.includes("text-frame-wrapper")
+        );
+        if (textFrameWrapper) {
+          const textFrameStyles = window.getComputedStyle(textFrameWrapper);
+          console.log("[DEBUG] 📐 text-frame-wrapper in path:", {
+            pointerEvents: textFrameStyles.pointerEvents,
+            position: textFrameStyles.position,
+            zIndex: textFrameStyles.zIndex,
+            top: textFrameStyles.top,
+            left: textFrameStyles.left,
+            width: textFrameStyles.width,
+            height: textFrameStyles.height,
+          });
+        }
+
+        setTimeout(() => {
+          const newScrollY = window.scrollY;
+          const scrolled = newScrollY !== lastScrollY;
+          const diff = newScrollY - lastScrollY;
+
+          console.log("[DEBUG] Wheel over video - DID PAGE SCROLL?", {
+            oldScrollY: lastScrollY,
+            newScrollY: newScrollY,
+            diff: diff,
+            scrolled: scrolled,
+          });
+
+          if (!scrolled && Math.abs(e.deltaY) > 0) {
+            console.log(
+              "[DEBUG] ⚠️ SCROLL BLOCKED! Wheel event but page didn't scroll",
+              {
+                deltaY: e.deltaY,
+                scrollY: newScrollY,
+                reasonCheck: {
+                  isEventPrevented: e.defaultPrevented,
+                  hasPointerEventsNone: blockedElements.length > 0,
+                  targetPointerEvents: window.getComputedStyle(e.target)
+                    .pointerEvents,
+                },
+              }
+            );
+          }
+          lastScrollY = newScrollY;
+        }, 10);
+      }
+    },
+    true
+  );
 
   // DEBUG: Global click listener to catch ALL clicks
-  document.addEventListener('click', (e) => {
-    const path = e.composedPath ? e.composedPath() : (e.path || []);
-    console.log("[DEBUG] Global click on document", {
-      target: e.target,
-      targetTagName: e.target.tagName,
-      targetClasses: e.target.className,
-      pointerEvents: window.getComputedStyle(e.target).pointerEvents,
-      zIndex: window.getComputedStyle(e.target).zIndex,
-      eventPath: path.slice(0, 10).map(el => ({
-        tag: el.tagName,
-        classes: el.className,
-        pointerEvents: el.style ? window.getComputedStyle(el).pointerEvents : 'N/A',
-      })),
-    });
-  }, true); // Capture phase - first
+  document.addEventListener(
+    "click",
+    (e) => {
+      const path = e.composedPath ? e.composedPath() : e.path || [];
+      console.log("[DEBUG] Global click on document", {
+        target: e.target,
+        targetTagName: e.target.tagName,
+        targetClasses: e.target.className,
+        pointerEvents: window.getComputedStyle(e.target).pointerEvents,
+        zIndex: window.getComputedStyle(e.target).zIndex,
+        eventPath: path.slice(0, 10).map((el) => ({
+          tag: el.tagName,
+          classes: el.className,
+          pointerEvents: el.style
+            ? window.getComputedStyle(el).pointerEvents
+            : "N/A",
+        })),
+      });
+    },
+    true
+  ); // Capture phase - first
 
   // DEBUG: Add direct click listener to video element
   const video = getVideoElement();
   if (video) {
-    video.addEventListener('click', (e) => {
-      console.log("[DEBUG] Direct click listener on <video>", {
-        target: e.target,
-        timestamp: Date.now(),
-      });
-    }, true); // Use capture phase
+    video.addEventListener(
+      "click",
+      (e) => {
+        console.log("[DEBUG] Direct click listener on <video>", {
+          target: e.target,
+          timestamp: Date.now(),
+        });
+      },
+      true
+    ); // Use capture phase
   }
 
   // Try to restore state only if coming from story page
@@ -1231,30 +1285,29 @@ defineExpose({
 .case1-scroll-layout {
   position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   background-color: #ffffff;
   /* overflow: hidden убран - блокирует sticky */
 }
 
-/* Text frame wrapper - always fixed with dynamic parallax */
+/* Text frame wrapper - normal scroll flow */
 .text-frame-wrapper {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 200;
   pointer-events: none;
+  padding-top: 15vh;
+  transform: translateY(0);
 }
 
 .text-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 32px;
   text-align: center;
   padding: 0 5vw;
   max-width: 1400px;
@@ -1283,7 +1336,7 @@ defineExpose({
   margin: 0;
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
   font-weight: 400;
-  font-size: clamp(24px, 3.5vw, 48px);
+  font-size: clamp(20px, 2.8vw, 38px);
   line-height: 1.3;
   color: #000000;
   width: 100%;
@@ -1341,13 +1394,14 @@ defineExpose({
   box-sizing: border-box;
   background: #ffffff;
   border: 40px solid #000000;
-  /* Outer radius 120px: at scale(0.1875) = 22.5px visual outer, inner = 120-40 = 80px → 15px visual */
-  border-radius: 120px;
+  /* Outer radius 80px: at scale(0.1875) = 15px visual outer, inner = 80-40 = 40px → 7.5px visual */
+  border-radius: 80px;
   /* Use padding instead of border for proper inner radius */
   padding: 0;
   isolation: isolate; /* Create stacking context to contain blur */
   pointer-events: none; /* Don't block scroll */
-  transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .video-wrapper.video-playing {
@@ -1358,8 +1412,8 @@ defineExpose({
 }
 
 .play-icon {
-  width: 453px; /* Уменьшено на 15% (533 × 0.85 = 453) */
-  height: 453px;
+  width: 340px; /* Уменьшено еще больше для лучшей пропорции с маленьким видео */
+  height: 340px;
   opacity: 1;
   transition: opacity 0.3s ease-out;
   position: absolute;
@@ -1381,7 +1435,7 @@ defineExpose({
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  border-radius: 80px; /* Inner radius matches container inner (120px - 40px = 80px) */
+  border-radius: 40px; /* Inner radius matches container inner (80px - 40px = 40px) */
   transition: opacity 0.4s ease-in,
     border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
   z-index: 1;
@@ -1422,7 +1476,7 @@ defineExpose({
   display: block;
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
-  font-size: clamp(24px, 3vw, 42px);
+  font-size: clamp(20px, 2.2vw, 36px);
   line-height: 1.2;
   color: #000000;
   text-decoration: underline;
