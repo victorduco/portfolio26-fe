@@ -1,5 +1,10 @@
 <template>
-  <div class="case3-unique-layout" ref="layoutElement">
+  <section
+    id="case3"
+    class="case-section item"
+    style="background-color: #B9E2F7"
+  >
+    <div class="case3-unique-layout" ref="layoutElement">
     <!-- Cloud decorations in corners -->
     <CloudCorners />
 
@@ -96,63 +101,36 @@
         </motion.div>
       </div>
     </div>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { motion } from "motion-v";
 import { useRouter } from "vue-router";
 import CloudCorners from "./CloudCorners.vue";
 
 const router = useRouter();
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  company: {
-    type: String,
-    required: true,
-  },
-  imageSrc: {
-    type: String,
-    required: true,
-  },
-  videoSrc: {
-    type: String,
-    default: "",
-  },
-  videoPositionX: {
-    type: String,
-    default: "62.5%",
-  },
-  videoPositionY: {
-    type: String,
-    default: "39%",
-  },
-  videoScale: {
-    type: Number,
-    default: 0.33,
-  },
-  backgroundColor: {
-    type: String,
-    default: "#B9E2F7",
-  },
-  routeTo: {
-    type: String,
-    default: "",
-  },
-});
+// Case 3 Data - Mirai
+const title = "Terminal Shift Redesign";
+const company = "Mirai";
+const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
+const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url).href;
+const routeTo = "/story/three";
+const primaryColor = "#979797";
+const backgroundColor = "#B9E2F7";
 
-const emit = defineEmits(["background-change", "navigation-click"]);
+// Case3-specific configuration
+const videoPositionX = "62.5%";
+const videoPositionY = "39%";
+const videoScale = 0.33;
 
 function handleButtonClick() {
-  if (props.routeTo) {
-    emit("navigation-click");
+  if (routeTo) {
     handleStoryLinkClick();
-    router.push(props.routeTo);
+    router.push(routeTo);
   }
 }
 
@@ -349,7 +327,6 @@ onUnmounted(() => {
 
 function handleEnter() {
   // Called when section enters viewport
-  emit("background-change", props.backgroundColor);
   // Don't call triggerFadeIn here - it's handled by IntersectionObserver
   updateParallax();
 }
@@ -704,5 +681,21 @@ defineExpose({
     top: 6px;
     left: 5px;
   }
+}
+
+/* Section wrapper styles from MainPage */
+.case-section.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  height: 100dvh;
+}
+
+/* Case3 standard height */
+#case3.case-section.item {
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
 }
 </style>

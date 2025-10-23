@@ -1,5 +1,10 @@
 <template>
-  <section class="intro-hero" id="intro-text-export-node">
+  <section
+    id="intro"
+    class="intro-section item"
+    :class="{ 'intro-visible': introVisible }"
+  >
+    <section class="intro-hero" id="intro-text-export-node">
     <div class="intro-hero__title">
       <Motion
         tag="h1"
@@ -45,28 +50,30 @@
     </Motion>
   </section>
 
-  <ul class="intro-list">
-    <IntroRectangle
-      v-for="(_, index) in rects"
-      :key="index"
-      :index="index"
-      :active-count="activeCount"
-      :intro-visible="showRectangles"
-      :force-close="forceCloseAll"
-      :should-animate="rectangleStates[index]"
-      :is-mobile-layout="isMobileLayout"
-      :is-smallest-breakpoints="isSmallestBreakpoints"
-      :active-mobile-index="activeMobileIndex"
-      @active-change="handleActiveChange"
-      @mobile-open="handleMobileOpen"
-      @mobile-close="handleMobileClose"
-    />
-  </ul>
+    <ul class="intro-list">
+      <IntroRectangle
+        v-for="(_, index) in rects"
+        :key="index"
+        :index="index"
+        :active-count="activeCount"
+        :intro-visible="showRectangles"
+        :force-close="forceCloseAll"
+        :should-animate="rectangleStates[index]"
+        :is-mobile-layout="isMobileLayout"
+        :is-smallest-breakpoints="isSmallestBreakpoints"
+        :active-mobile-index="activeMobileIndex"
+        @active-change="handleActiveChange"
+        @mobile-open="handleMobileOpen"
+        @mobile-close="handleMobileClose"
+      />
+    </ul>
+  </section>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { Motion } from "motion-v";
+import { useRoute } from "vue-router";
 import IntroRectangle from "./IntroRectangle.vue";
 import storyNavIcon from "@/assets/icons/headphones.svg";
 import {
@@ -75,11 +82,29 @@ import {
   useMediaQuery,
 } from "@/composables/useMediaQuery.js";
 
-const props = defineProps({
-  introVisible: {
-    type: Boolean,
-    default: false,
+// Internal intro visibility logic
+const route = useRoute();
+const introVisible = ref(false);
+const shouldPlayNavIntro = computed(() => !route.meta?.skipNavIntro);
+
+// Set initial visibility based on route
+watch(
+  () => shouldPlayNavIntro.value,
+  (play) => {
+    introVisible.value = !play; // If skip intro, show immediately
   },
+  { immediate: true }
+);
+
+// Handle animation complete event from PageNavigation
+function handleNavAnimationComplete() {
+  introVisible.value = true;
+}
+
+// Expose methods and computed for MainPage
+defineExpose({
+  handleNavAnimationComplete,
+  shouldPlayNavIntro,
 });
 
 const rects = Array(4).fill(null);
@@ -169,7 +194,7 @@ function easeInOutCubic(t) {
 
 // Последовательная анимация при появлении intro
 watch(
-  () => props.introVisible,
+  () => introVisible.value,
   async (newVal) => {
     if (!newVal) {
       // Reset animations when intro becomes invisible
@@ -455,5 +480,15 @@ function scrollToNextSection() {
     width: 12px;
     height: 12px;
   }
+}
+
+/* Section wrapper styles from MainPage */
+.intro-section {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.intro-section.intro-visible {
+  opacity: 1;
 }
 </style>

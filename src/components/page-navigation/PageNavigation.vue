@@ -73,7 +73,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
 import NavigationItem from "./NavigationItem.vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import {
@@ -104,18 +105,18 @@ const props = defineProps({
     type: String,
     default: "-50% 0px -50% 0px",
   },
-  enableIntroAnimation: {
-    type: Boolean,
-    default: false,
-  },
   darkMode: {
     type: Boolean,
     default: true, // Default to dark mode (safer for most sections)
   },
 });
 
+// Internal logic: check if intro animation should play
+const route = useRoute();
+const shouldPlayIntroAnimation = computed(() => !route.meta?.skipNavIntro);
+
 const activeSection = ref(""); // Не активируем ничего до завершения intro анимации
-const introFinished = ref(!props.enableIntroAnimation);
+const introFinished = ref(!shouldPlayIntroAnimation.value);
 const introHighlightIndex = ref(-1);
 const introGreenIndex = ref(-1);
 const introFadeOutIndex = ref(-1);
@@ -241,7 +242,7 @@ function startIntroAnimation() {
 onMounted(() => {
   setupIntersectionObserver();
 
-  const shouldRunIntro = props.enableIntroAnimation && !isMobile.value;
+  const shouldRunIntro = shouldPlayIntroAnimation.value && !isMobile.value;
 
   if (shouldRunIntro) {
     // Задержка перед началом анимации меню

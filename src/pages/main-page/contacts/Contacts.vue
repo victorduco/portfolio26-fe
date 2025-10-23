@@ -1,8 +1,9 @@
 <template>
-  <section
-    class="contacts"
-    :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
-  >
+  <section id="contacts" class="item">
+    <section
+      class="contacts"
+      :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
+    >
     <div class="contacts__content">
       <div class="contacts__container">
         <h1 class="contacts__name">Victor Diukov</h1>
@@ -44,6 +45,7 @@
         </div>
       </div>
     </div>
+    </section>
   </section>
 </template>
 

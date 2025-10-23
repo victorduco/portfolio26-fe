@@ -1,8 +1,9 @@
 <template>
-  <section
-    class="ai-play-hero"
-    :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
-  >
+  <section id="ai-play" class="item">
+    <section
+      class="ai-play-hero"
+      :class="{ 'dark-mode': darkMode, 'light-mode': !darkMode }"
+    >
     <!-- Floating images -->
     <div class="floating-images">
       <motion.div
@@ -70,6 +71,7 @@
         View Repository →
       </a>
     </div>
+    </section>
   </section>
 </template>
 

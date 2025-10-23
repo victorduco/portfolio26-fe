@@ -1,5 +1,10 @@
 <template>
-  <div class="case2-split-layout" ref="containerRef">
+  <section
+    id="case2"
+    class="case-section item"
+    style="background-color: #ffffff"
+  >
+    <div class="case2-split-layout" ref="containerRef">
     <!-- Content wrapper - will be pinned during scroll -->
     <div
       ref="contentWrapperRef"
@@ -98,37 +103,23 @@
 
     <!-- Final spacer for scroll exit -->
     <div class="final-spacer"></div>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { motion, useScroll } from "motion-v";
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  imageSrc: {
-    type: String,
-    required: true,
-  },
-  routeTo: {
-    type: String,
-    required: true,
-  },
-  videoSrc: {
-    type: String,
-    default: null,
-  },
-});
-
-const emit = defineEmits(["navigation-click"]);
+// Case 2 Data - Smarp
+const title = "Redesigning the Communications App";
+const subtitle = "Smarp";
+const description = "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
+const videoSrc = new URL("@/assets/case-videos/case2-2.mp4", import.meta.url).href;
+const imageSrc = new URL("@/assets/images/p2-3@2x.png", import.meta.url).href;
+const routeTo = "/story/two";
+const primaryColor = "#979797";
+const backgroundColor = "#ffffff";
 
 const containerRef = ref(null);
 const contentWrapperRef = ref(null);
@@ -147,12 +138,12 @@ const unpinTopOffset = ref(0);
 const videoState = ref("visible");
 
 // Always show video when videoSrc is provided (it will reset each time)
-const showVideo = computed(() => !!props.videoSrc);
+const showVideo = computed(() => !!videoSrc);
 
 // Split text into words for animation
 const titlePart1Words = computed(() => ['Redesigning', 'the']);
 const titlePart2Words = computed(() => ['Communications', 'App']);
-const descriptionWords = computed(() => props.description.split(' '));
+const descriptionWords = computed(() => description.split(' '));
 
 // Store current scroll progress for word animations
 const currentScrollProgress = ref(0);
@@ -332,7 +323,7 @@ onMounted(() => {
 
     // Update video currentTime based on scroll progress
     // Video plays throughout the entire animation (0-1), starting from the very beginning
-    if (videoElement.value && props.videoSrc) {
+    if (videoElement.value && videoSrc) {
       const video = videoElement.value.$el || videoElement.value;
 
       if (video && video.duration && !isNaN(video.duration)) {
@@ -773,5 +764,21 @@ defineExpose({
   .case2-content-inner {
     padding: 16px 20px;
   }
+}
+
+/* Section wrapper styles from MainPage */
+.case-section.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  height: 100dvh;
+}
+
+/* Case2 needs extra height for scroll animation */
+#case2.case-section.item {
+  height: 250vh;
+  min-height: 250vh;
+  max-height: 250vh;
 }
 </style>

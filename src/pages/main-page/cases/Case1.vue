@@ -1,10 +1,15 @@
 <template>
-  <div
-    class="case1-scroll-layout"
-    ref="containerRef"
-    @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false"
+  <section
+    id="case1"
+    class="case-section item"
+    style="background-color: #ffffff"
   >
+    <div
+      class="case1-scroll-layout"
+      ref="containerRef"
+      @mouseenter="isHovering = true"
+      @mouseleave="isHovering = false"
+    >
     <!-- Text frame - normal scroll flow -->
     <div ref="contentWrapperRef" class="text-frame-wrapper">
       <div class="text-content">
@@ -283,36 +288,24 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { motion, useScroll, useTransform } from "motion-v";
 import { useMediaQuery } from "@/composables/useMediaQuery.js";
+import { useRoute } from "vue-router";
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  company: {
-    type: String,
-    required: true,
-  },
-  videoSrc: {
-    type: String,
-    default: "",
-  },
-  routeTo: {
-    type: String,
-    required: true,
-  },
-  backgroundColor: {
-    type: String,
-    default: "#ffffff",
-  },
-});
+// Case 1 Data - Apple
+const title = "Cross-Domain AI Solution for Account Reconcilers";
+const company = "Apple";
+const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url).href;
+const routeTo = "/story/one";
+const primaryColor = "#319BF8";
+const backgroundColor = "#ffffff";
+const finalOverlayTime = 39.5;
 
 const containerRef = ref(null);
 const contentWrapperRef = ref(null);
@@ -352,7 +345,7 @@ const shouldBeMutedByDefault = computed(() => {
 // SessionStorage for video state management
 // ============================================================
 
-const getStorageKey = () => `video-state-${props.videoSrc}`;
+const getStorageKey = () => `video-state-${videoSrc}`;
 
 function saveVideoState() {
   const video = getVideoElement();
@@ -663,7 +656,7 @@ const { scrollYProgress } = useScroll({
 // scrollYProgress от 0 (секция внизу экрана) до 1 (секция ушла вверх)
 
 // Разбиваем title на слова
-const titleWords = computed(() => props.title.split(" "));
+const titleWords = computed(() => title.split(" "));
 
 // Общая анимация для subtitle (появляется после title)
 const subtitleOpacity = useTransform(scrollYProgress, [0.70, 0.75], [0.2, 1]);
@@ -911,6 +904,14 @@ function handleStoryLinkClick(event) {
 let observer = null;
 
 onMounted(() => {
+  // Clear video state if not coming from story page
+  const route = useRoute();
+  const cameFromStory = route.meta?.skipNavIntro;
+  if (!cameFromStory) {
+    const videoStateKey = 'video-state-' + videoSrc;
+    sessionStorage.removeItem(videoStateKey);
+  }
+
   // DEBUG: Log document structure on mount
   console.log("[DEBUG] 📋 Component mounted. Checking document structure...");
   setTimeout(() => {
@@ -1628,5 +1629,21 @@ defineExpose({
   .case-subtitle {
     font-size: 18px;
   }
+}
+
+/* Section wrapper styles from MainPage */
+.case-section.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  height: 100dvh;
+}
+
+/* Case1 needs extra height for scroll animation */
+#case1.case-section.item {
+  height: 200vh;
+  min-height: 200vh;
+  max-height: 200vh;
 }
 </style>
