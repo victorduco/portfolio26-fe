@@ -235,22 +235,15 @@ function getButtonOpacity() {
 
 
 
-// useScroll tracks scroll progress of entire case2 container
-// offset: ["start start", "end end"] means:
-// progress = 0 when start of case2-split-layout reaches start of viewport (top of screen)
+// Single unified scroll tracker covering entire animation range
+// offset: ["start end", "end end"] means:
+// progress = 0 when start of case2-split-layout reaches end of viewport (bottom of screen)
 // progress = 1 when end of case2-split-layout reaches end of viewport (bottom of screen)
+// This allows scale animation to happen first, then all other animations
 const { scrollYProgress } = useScroll({
   target: containerRef,
   container: scrollContainerRef,
-  offset: ["start start", "end end"],
-});
-
-// Separate scroll tracker for scale animation (from "start end" to "start start")
-// This triggers before the section reaches the top
-const { scrollYProgress: scaleProgress } = useScroll({
-  target: containerRef,
-  container: scrollContainerRef,
-  offset: ["start end", "start start"],
+  offset: ["start end", "end end"],
 });
 
 // Store current scale value
@@ -262,9 +255,8 @@ const parallaxY = ref(0);
 // Store content parallax value for text
 const contentParallaxY = ref(0);
 
-// Store unsubscribe functions for cleanup
+// Store unsubscribe function for cleanup
 let scrollUnsubscribe = null;
-let scaleUnsubscribe = null;
 
 
 onMounted(() => {
@@ -274,31 +266,55 @@ onMounted(() => {
     scrollContainerRef.value = scrollContainer;
   }
 
-  // Subscribe to scale progress changes
-  scaleUnsubscribe = scaleProgress.on?.('change', (progress) => {
-    // Scale from 0.5 to 1 as section enters viewport
-    currentScale.value = 0.5 + (progress * 0.5);
-  });
+  // Subscribe to unified scroll progress
+  scrollUnsubscribe = scrollYProgress.on?.('change', (rawProgress) => {
+    // With unified scroll tracker ["start end", "end end"]:
+    // rawProgress = 0: section start touches viewport bottom (scale starts)
+    // rawProgress = ~0.15: section start touches viewport top (scale completes, pinning begins)
+    // rawProgress = 1: section end exits viewport
 
-  // Subscribe to scroll progress changes for pinning/unpinning
-  scrollUnsubscribe = scrollYProgress.on?.('change', (progress) => {
-    // Update current scroll progress for word animations
-    currentScrollProgress.value = progress;
+    const progress = rawProgress;
+
+    // SCALE ANIMATION (0 - 0.4): happens as section enters viewport and scrolls up
+    const scaleEndThreshold = 0.4;
+
+    if (progress <= scaleEndThreshold) {
+      const scaleProgress = progress / scaleEndThreshold;
+      currentScale.value = 0.5 + (scaleProgress * 0.5);
+    } else {
+      currentScale.value = 1;
+    }
+
+    // TEXT ANIMATIONS (0.4 - 1): remapped to 0-1 range for existing text animations
+    // Text starts appearing only after scale completes
+    let textProgress;
+    if (progress <= scaleEndThreshold) {
+      textProgress = 0;
+    } else {
+      // Remap 0.4-1 to 0-1
+      textProgress = (progress - scaleEndThreshold) / (1 - scaleEndThreshold);
+    }
+
+    // VIDEO ANIMATION (0 - 1): plays throughout entire scroll, including scale phase
+    const videoProgress = progress;
+
+    // Update current scroll progress for word animations (using text progress)
+    currentScrollProgress.value = textProgress;
 
     // Update parallax effect (image moves slower than scroll)
     // Parallax range: +10% to -10% over the entire scroll progress (opposite direction)
-    parallaxY.value = (0.5 - progress) * 20;
+    parallaxY.value = (0.5 - textProgress) * 20;
 
     // Content parallax effect (text moves slower upward)
     // Similar to Case1, but with different range for Case2
-    if (progress < 0.7) {
+    if (textProgress < 0.7) {
       // Slow parallax while text appears and stays (0 to 0.7)
       // Move from 0 to -3vh (upward) - very slow movement, keep content readable for longer
-      const adjustedProgress = progress / 0.7;
+      const adjustedProgress = textProgress / 0.7;
       contentParallaxY.value = -(adjustedProgress * 3);
     } else {
       // After progress 0.7, continue with dynamic scroll (starts earlier now)
-      const laterProgress = (progress - 0.7) / (1 - 0.7); // 0 to 1 over remaining range
+      const laterProgress = (textProgress - 0.7) / (1 - 0.7); // 0 to 1 over remaining range
 
       // Use easing function: start slow, accelerate towards the end
       const easeInCubic = laterProgress * laterProgress * laterProgress;
@@ -315,12 +331,12 @@ onMounted(() => {
     const wrapperLeft = wrapperRect ? Math.round(wrapperRect.left) : 'N/A';
 
     // Update video currentTime based on scroll progress
+    // Video plays throughout the entire animation (0-1), starting from the very beginning
     if (videoElement.value && props.videoSrc) {
       const video = videoElement.value.$el || videoElement.value;
 
       if (video && video.duration && !isNaN(video.duration)) {
-        // Map progress (0-0.75) to video duration, video completes at 0.75 progress
-        const videoProgress = Math.min(progress / 0.75, 1);
+        // Map videoProgress (0-1) to full video duration, plays during entire scroll
         const targetTime = videoProgress * video.duration;
 
         // Only update if difference is significant to avoid jitter
@@ -332,23 +348,24 @@ onMounted(() => {
 
     // Debug: log progress and position
     console.log(
-      `[Case2] Progress: ${progress.toFixed(3)} | ` +
+      `[Case2] RawProgress: ${progress.toFixed(3)} | TextProgress: ${textProgress.toFixed(3)} | VideoProgress: ${videoProgress.toFixed(3)} | ` +
+      `Scale: ${currentScale.value.toFixed(2)} | ` +
       `Wrapper position: (${wrapperLeft}, ${wrapperTop}) | ` +
       `Pinned: ${pinned.value} | Unpinned: ${unpinned.value}`
     );
 
-    // With offset ["start start", "end end"] tracking entire case2 container (250vh):
-    // - containerRef includes: content-wrapper (100vh) + final-spacer (150vh)
+    // With unified offset ["start end", "end end"] tracking entire case2 container:
+    // - progress starts when section enters viewport bottom (0)
+    // - Let section scroll naturally until it reaches top
+    // - Pin when section is at top and content needs to stay visible
+    // - progress = 1: section exits viewport
     //
-    // progress <= 0: case2 at or below viewport (scrolling up from case1) → NOT PINNED
-    // progress > 0 and < 1: case2 in viewport → PINNED
-    // progress >= 1: case2 is above viewport (scrolled past) → UNPINNED
-    //
-    // Pin when in range (0 < progress < 1)
-    // Unpin when outside range (progress >= 1 OR progress <= 0)
+    // Pin when section has scrolled to top (progress > 0.4 and < 1)
+    // This gives more natural scroll before pinning
+    const pinStartThreshold = 0.4;
 
-    const shouldPin = progress > 0 && progress < 1;
-    const shouldUnpin = progress >= 1 || progress <= 0;
+    const shouldPin = progress >= pinStartThreshold && progress < 1;
+    const shouldUnpin = progress >= 1 || progress < pinStartThreshold;
 
     // Update pin state
     if (shouldPin !== pinned.value) {
@@ -428,14 +445,10 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // Clean up scroll listeners
+  // Clean up scroll listener
   if (scrollUnsubscribe) {
     scrollUnsubscribe();
     scrollUnsubscribe = null;
-  }
-  if (scaleUnsubscribe) {
-    scaleUnsubscribe();
-    scaleUnsubscribe = null;
   }
 });
 
