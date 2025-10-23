@@ -8,25 +8,21 @@ import { useMixpanel } from "./composables/useMixpanel.js";
 const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
 
-onMounted(async () => {
-  await checkAuth();
+onMounted(() => {
+  checkAuth();
 });
 
 const handleUnlock = async () => {
-  
   mixpanel.track("Gate Unlocked");
 
-  
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
-  
   setAuthenticated(true);
   await checkAuth();
 };
 </script>
 
 <template>
-  
   <div v-if="isLoading" class="auth-loading"></div>
 
   <Keypad v-else-if="!isAuthenticated" @unlock="handleUnlock" />

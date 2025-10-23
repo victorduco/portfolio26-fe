@@ -5,50 +5,50 @@
     :class="{ 'intro-visible': introVisible }"
   >
     <section class="intro-hero" id="intro-text-export-node">
-    <div class="intro-hero__title">
+      <div class="intro-hero__title">
+        <Motion
+          tag="h1"
+          class="h1"
+          :variants="titleVariants"
+          :animate="titleState"
+          :transition="titleTransition"
+          :initial="'hidden'"
+        >
+          Victor Diukov
+        </Motion>
+        <Motion
+          tag="p"
+          class="body1"
+          :variants="subtitleVariants"
+          :animate="subtitleState"
+          :transition="subtitleTransition"
+          :initial="'hidden'"
+        >
+          Currently designing for&nbsp;Apple. Bringing experience
+          from&nbsp;large&#8209;scale B2B & FinTech with&nbsp;a&nbsp;product
+          management&nbsp;background.
+        </Motion>
+      </div>
       <Motion
-        tag="h1"
-        class="h1"
-        :variants="titleVariants"
-        :animate="titleState"
-        :transition="titleTransition"
+        tag="div"
+        class="intro-scroll-hint"
+        :variants="scrollHintVariants"
+        :animate="scrollHintState"
+        :transition="scrollHintTransition"
         :initial="'hidden'"
+        @click="scrollToNextSection"
       >
-        Victor Diukov
+        <span class="intro-scroll-hint-content">
+          <img
+            :src="storyNavIcon"
+            alt=""
+            aria-hidden="true"
+            class="intro-scroll-hint-icon"
+          />
+          <span class="intro-scroll-hint-text">Scroll to Story One</span>
+        </span>
       </Motion>
-      <Motion
-        tag="p"
-        class="body1"
-        :variants="subtitleVariants"
-        :animate="subtitleState"
-        :transition="subtitleTransition"
-        :initial="'hidden'"
-      >
-        Currently designing for&nbsp;Apple. Bringing experience
-        from&nbsp;large&#8209;scale B2B & FinTech with&nbsp;a&nbsp;product
-        management&nbsp;background.
-      </Motion>
-    </div>
-    <Motion
-      tag="div"
-      class="intro-scroll-hint"
-      :variants="scrollHintVariants"
-      :animate="scrollHintState"
-      :transition="scrollHintTransition"
-      :initial="'hidden'"
-      @click="scrollToNextSection"
-    >
-      <span class="intro-scroll-hint-content">
-        <img
-          :src="storyNavIcon"
-          alt=""
-          aria-hidden="true"
-          class="intro-scroll-hint-icon"
-        />
-        <span class="intro-scroll-hint-text">Scroll to Story One</span>
-      </span>
-    </Motion>
-  </section>
+    </section>
 
     <ul class="intro-list">
       <IntroRectangle
@@ -82,11 +82,9 @@ import {
   useMediaQuery,
 } from "@/composables/useMediaQuery.js";
 
-
 const route = useRoute();
 const introVisible = ref(false);
 const shouldPlayNavIntro = computed(() => !route.meta?.skipNavIntro);
-
 
 watch(
   () => shouldPlayNavIntro.value,
@@ -96,11 +94,9 @@ watch(
   { immediate: true }
 );
 
-
 function handleNavAnimationComplete() {
   introVisible.value = true;
 }
-
 
 defineExpose({
   handleNavAnimationComplete,
@@ -114,15 +110,11 @@ const isMobileLayout = useMediaQuery(NAVIGATION_MOBILE);
 const isSmallestBreakpoints = useMediaQuery(INTRO_MOBILE_FULLSCREEN);
 const activeMobileIndex = ref(-1);
 
-
 function handleClickOutside(event) {
-  
   if (activeCount.value === 0) return;
 
-  
   const clickedSquare = event.target.closest(".intro-square");
 
-  
   if (isSmallestBreakpoints.value) {
     if (!clickedSquare && activeMobileIndex.value !== -1) {
       handleMobileClose();
@@ -130,7 +122,6 @@ function handleClickOutside(event) {
     return;
   }
 
-  
   if (isMobileLayout.value) {
     if (!clickedSquare && activeMobileIndex.value !== -1) {
       handleMobileClose();
@@ -139,22 +130,19 @@ function handleClickOutside(event) {
   }
 
   if (!clickedSquare) {
-    
     forceCloseAll.value = true;
-    
+
     setTimeout(() => {
       forceCloseAll.value = false;
     }, 50);
   }
 }
 
-
 const titleState = ref("hidden");
 const subtitleState = ref("hidden");
 const rectangleStates = ref([false, false, false, false]); // Индивидуальные состояния для каждого rectangle
 const showRectangles = ref(false);
 const scrollHintState = ref("hidden");
-
 
 const sharedVariants = {
   hidden: { opacity: 0 },
@@ -165,12 +153,10 @@ const titleVariants = sharedVariants;
 const subtitleVariants = sharedVariants;
 const scrollHintVariants = sharedVariants;
 
-
 const baseTransition = {
   type: "tween",
   ease: [0.4, 0, 0.2, 1],
 };
-
 
 const titleTransition = {
   ...baseTransition,
@@ -187,17 +173,14 @@ const scrollHintTransition = {
   duration: 0.4,
 };
 
-
 function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-
 watch(
   () => introVisible.value,
-  async (newVal) => {
+  (newVal) => {
     if (!newVal) {
-      
       titleState.value = "hidden";
       subtitleState.value = "hidden";
       rectangleStates.value = [false, false, false, false];
@@ -208,50 +191,52 @@ watch(
       return;
     }
 
-    
     const totalSteps = 7;
 
-    
     const minDelay = 250;
     const maxDelay = 400;
 
     function getDelay(stepIndex) {
       const progress = stepIndex / (totalSteps - 1);
       const eased = easeInOutCubic(progress);
-      
+
       return maxDelay - eased * (maxDelay - minDelay);
     }
 
-    
-    titleState.value = "visible";
-    await new Promise((resolve) => setTimeout(resolve, getDelay(0)));
+    // Use setTimeout instead of async/await to avoid lifecycle hook issues
+    const runAnimation = () => {
+      titleState.value = "visible";
+      setTimeout(() => {
+        subtitleState.value = "visible";
+        setTimeout(() => {
+          showRectangles.value = true;
+          let currentStep = 0;
+          const animateRectangles = () => {
+            if (currentStep < 4) {
+              rectangleStates.value[currentStep] = true;
+              currentStep++;
+              setTimeout(animateRectangles, getDelay(2 + currentStep - 1));
+            } else {
+              scrollHintState.value = "visible";
+            }
+          };
+          animateRectangles();
+        }, getDelay(1));
+      }, getDelay(0));
+    };
 
-    
-    subtitleState.value = "visible";
-    await new Promise((resolve) => setTimeout(resolve, getDelay(1)));
-
-    
-    showRectangles.value = true;
-    for (let i = 0; i < 4; i++) {
-      rectangleStates.value[i] = true;
-      await new Promise((resolve) => setTimeout(resolve, getDelay(2 + i)));
-    }
-
-    
-    scrollHintState.value = "visible";
+    runAnimation();
   },
   { immediate: true }
 );
 
 function handleActiveChange(isActive) {
   if (isMobileLayout.value) {
-    
     activeCount.value = isActive ? 1 : 0;
   } else {
     activeCount.value += isActive ? 1 : -1;
   }
 }
-
 
 let observer = null;
 
@@ -261,16 +246,13 @@ onMounted(() => {
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          
           if (!entry.isIntersecting && activeCount.value > 0) {
-            
             if (isMobileLayout.value || isSmallestBreakpoints.value) {
               handleMobileClose();
             } else {
               forceCloseAll.value = true;
             }
           } else if (entry.isIntersecting) {
-            
             if (!isMobileLayout.value && !isSmallestBreakpoints.value) {
               forceCloseAll.value = false;
             }
@@ -285,13 +267,12 @@ onMounted(() => {
     observer.observe(introSection);
   }
 
-  
   document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
   observer?.disconnect();
-  
+
   document.removeEventListener("click", handleClickOutside);
 });
 

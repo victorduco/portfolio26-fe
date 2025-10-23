@@ -20,14 +20,12 @@ async function generateBackgroundSVG() {
   if (isGenerating) return;
   isGenerating = true;
 
-  
   if (!Array.isArray(props.watchData) || props.watchData.length === 0) {
     isGenerating = false;
     return;
   }
 
   try {
-    
     const svgMarkup = generateCompositeSVG(props.watchData);
 
     if (!svgMarkup) {
@@ -35,12 +33,10 @@ async function generateBackgroundSVG() {
       return;
     }
 
-    
     if (backgroundNumbers.value) {
       backgroundNumbers.value.innerHTML = svgMarkup;
     }
   } catch (error) {
-    
   } finally {
     isGenerating = false;
   }
@@ -48,9 +44,10 @@ async function generateBackgroundSVG() {
 
 watch(
   () => props.watchData,
-  async () => {
-    await nextTick();
-    requestAnimationFrame(generateBackgroundSVG);
+  () => {
+    nextTick().then(() => {
+      requestAnimationFrame(generateBackgroundSVG);
+    });
   },
   { deep: true }
 );

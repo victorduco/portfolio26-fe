@@ -45,33 +45,32 @@ const route = useRoute();
 const introRef = ref(null);
 const scrollContainerRef = ref(null);
 
-
 const isDarkMode = ref(true);
-
 
 watch(
   () => route.meta?.restoreScrollTop,
-  async (scrollTop) => {
+  (scrollTop) => {
     if (scrollTop != null && typeof window !== "undefined") {
-      await nextTick();
-      requestAnimationFrame(() => {
-        if (!scrollContainerRef.value) {
-          scrollContainerRef.value = document.querySelector(
-            ".scroll-snap-container.fullscreen"
-          );
-        }
+      nextTick().then(() => {
+        requestAnimationFrame(() => {
+          if (!scrollContainerRef.value) {
+            scrollContainerRef.value = document.querySelector(
+              ".scroll-snap-container.fullscreen"
+            );
+          }
 
-        const container = scrollContainerRef.value;
-        if (container) {
-          const previousBehavior = container.style.scrollBehavior;
-          container.style.scrollBehavior = "auto";
-          container.scrollTop = scrollTop;
-          requestAnimationFrame(() => {
-            container.style.scrollBehavior = previousBehavior;
-          });
-        } else {
-          window.scrollTo({ top: scrollTop, behavior: "auto" });
-        }
+          const container = scrollContainerRef.value;
+          if (container) {
+            const previousBehavior = container.style.scrollBehavior;
+            container.style.scrollBehavior = "auto";
+            container.scrollTop = scrollTop;
+            requestAnimationFrame(() => {
+              container.style.scrollBehavior = previousBehavior;
+            });
+          } else {
+            window.scrollTo({ top: scrollTop, behavior: "auto" });
+          }
+        });
       });
     }
   },
@@ -79,24 +78,18 @@ watch(
 );
 
 function handleNavAnimationComplete() {
-  
   introRef.value?.handleNavAnimationComplete();
 }
 
 function handleActiveSectionChange(sectionId) {
-  
-  
-  
-  if (sectionId === 'case2') {
+  if (sectionId === "case2") {
     isDarkMode.value = true; // White menu for case2
-  } else if (sectionId === 'case1' || sectionId === 'case3') {
+  } else if (sectionId === "case1" || sectionId === "case3") {
     isDarkMode.value = false; // Black menu for case1 and case3
   } else {
     isDarkMode.value = true; // White menu for intro, ai-play, contacts (dark backgrounds)
   }
 }
-
-
 </script>
 
 <style scoped>
