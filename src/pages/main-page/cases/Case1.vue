@@ -4,195 +4,285 @@
     class="case-section item"
     style="background-color: #ffffff"
   >
-    <div
-      class="case1-scroll-layout"
-      ref="containerRef"
-      @mouseenter="isHovering = true"
-      @mouseleave="isHovering = false"
-    >
-      <div ref="contentWrapperRef" class="text-frame-wrapper">
-        <div class="text-content">
-          <div class="text-only" :style="{ opacity: textOpacity }">
-            <h2 class="case-title">
-              <motion.span
-                v-for="(word, index) in titleWords"
-                :key="'title-' + index"
-                :style="{ opacity: getWordOpacity(index) }"
-                class="word"
-                >{{ word }}</motion.span
-              >
-            </h2>
-            <p class="case-subtitle">
-              <motion.span :style="{ opacity: subtitleOpacity }">
-                {{ company }}
-              </motion.span>
-            </p>
-          </div>
-          <div class="video-constraint-wrapper">
-            <motion.div
-              class="video-container-wrapper"
-              :style="{
-                opacity: videoOpacity,
-                transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`,
-              }"
+    <div class="case1-container" ref="containerRef">
+      <div
+        v-if="wrapperVisible"
+        class="animation-stage-wrapper"
+        :class="{ hidden: !isActive }"
+      >
+        <!-- Text Container (z-index: 1, behind mask) -->
+        <motion.div
+          class="text-container"
+          :animate="currentTextAnimation"
+          :transition="currentTransition"
+        >
+          <h2 class="main-text">{{ mainText }}</h2>
+          <p class="sub-text">{{ subText }}</p>
+        </motion.div>
+
+        <!-- Mask Element (z-index: 2, hides text below line) -->
+        <motion.div
+          class="mask-element"
+          :animate="currentMaskAnimation"
+          :transition="currentTransition"
+        />
+
+        <!-- Line Element (z-index: 3, on top) -->
+        <motion.div
+          class="line-element"
+          :animate="currentLineAnimation"
+          :transition="currentTransition"
+        >
+          <motion.div
+            class="button-content-wrapper"
+            :animate="currentButtonContentAnimation"
+            :transition="currentTransition"
+          >
+            <svg
+              class="play-icon"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
             >
-              <div class="video-and-link-wrapper">
-                <VideoPlayer
-                  ref="videoPlayerRef"
-                  :video-src="videoSrc"
-                  :video-expanded="videoExpanded"
-                />
-                <motion.a
-                  :href="routeTo"
-                  class="case-open-story-link"
-                  :initial="{ opacity: 0 }"
-                  :animate="{ opacity: showStoryLink && videoExpanded ? 1 : 0 }"
-                  :transition="{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }"
-                  :style="{
-                    pointerEvents:
-                      showStoryLink && videoExpanded ? 'auto' : 'none',
-                  }"
-                  @click.prevent="handleStoryLinkClick"
-                >
-                  Open Story
-                </motion.a>
-              </div>
-            </motion.div>
-          </div>
-        </div>
+              <path d="M8 5v14l11-7L8 5z" fill="#007AFF" />
+            </svg>
+            <span class="button-text">Play Reel</span>
+          </motion.div>
+        </motion.div>
       </div>
+
+      <div class="final-spacer"></div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { motion, useScroll, useTransform } from "motion-v";
-import VideoPlayer from "@/components/VideoPlayer.vue";
-
-const title = "Cross-Domain AI Solution for Account Reconcilers";
-const company = "Apple";
-const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url)
-  .href;
-const routeTo = "/story/one";
+import { ref, onMounted, onUnmounted } from "vue";
+import { motion, useScroll } from "motion-v";
+import {
+  animationStages,
+  initialLineAnimation,
+  initialTextAnimation,
+  initialMaskAnimation,
+  initialButtonContentAnimation,
+  shapeTransition,
+} from "./case1-animation-stages.js";
 
 const containerRef = ref(null);
-const contentWrapperRef = ref(null);
 const scrollContainerRef = ref(null);
-const videoPlayerRef = ref(null);
+const currentStageIndex = ref(0);
+const wrapperVisible = ref(false);
+const isIntersecting = ref(false);
+const isActive = ref(false); // Controls CSS visibility
 
-const showStoryLink = ref(false);
-const isHovering = ref(false);
+// Text content
+const mainText = "Cross-Domain AI Solution for Account Reconcilers";
+const subText = "Apple";
 
-let storyLinkTimeout = null;
+// Current animation states for each element
+const currentLineAnimation = ref({ ...initialLineAnimation });
+const currentTextAnimation = ref({ ...initialTextAnimation });
+const currentMaskAnimation = ref({ ...initialMaskAnimation });
+const currentButtonContentAnimation = ref({ ...initialButtonContentAnimation });
+const currentTransition = ref(shapeTransition);
 
-// Initialize motion-v hooks first (they must be called during setup)
+// Setup scroll tracking
 const { scrollYProgress } = useScroll({
   target: containerRef,
   container: scrollContainerRef,
-  offset: ["start end", "end end"],
+  offset: ["start start", "end end"],
 });
 
-const titleWords = computed(() => title.split(" "));
-
-const subtitleOpacity = useTransform(scrollYProgress, [0.7, 0.75], [0.2, 1]);
-
-const appearStart = 0.6;
-const appearEnd = 0.7;
-
-// Create word opacities outside of computed to avoid lifecycle issues
-const words = title.split(" ");
-const totalWords = words.length;
-const wordOpacities = words.map((_, wordIndex) => {
-  const wordAppearDuration = (appearEnd - appearStart) / totalWords;
-  const wordStart = appearStart + wordIndex * wordAppearDuration;
-  const wordEnd = wordStart + wordAppearDuration;
-
-  return useTransform(scrollYProgress, [wordStart, wordEnd], [0.2, 1]);
-});
-
-const getWordOpacity = (wordIndex) => {
-  return wordOpacities[wordIndex];
+// Determine which stage should be active based on scroll progress
+const getActiveStage = (progress) => {
+  for (let i = animationStages.length - 1; i >= 0; i--) {
+    const stage = animationStages[i];
+    if (progress >= stage.startProgress) {
+      return { index: i, stage };
+    }
+  }
+  return { index: -1, stage: null };
 };
 
-const videoOpacity = useTransform(scrollYProgress, [0.75, 0.8], [0.2, 1]);
+// Find element state from current or previous stages (fallback)
+const getElementState = (elementName, currentStageIndex) => {
+  // Search backward from current stage to stage 0
+  for (let i = currentStageIndex; i >= 0; i--) {
+    const stage = animationStages[i];
+    if (stage.elements && stage.elements[elementName]) {
+      return stage.elements[elementName];
+    }
+  }
 
-const videoExpanded = ref(false);
-const videoScaleValue = ref(0.1875);
-const videoYValue = ref(0);
-const slowScrollY = ref(0);
-const textOpacity = ref(1);
-const showText = ref(true);
+  // If not found in any previous stage, return initial state
+  if (elementName === "line") return initialLineAnimation;
+  if (elementName === "textContainer") return initialTextAnimation;
+  if (elementName === "mask") return initialMaskAnimation;
+  if (elementName === "button") return initialButtonAnimation;
+  if (elementName === "buttonContent") return initialButtonContentAnimation;
 
-// Register lifecycle hooks after motion-v hooks
+  return null;
+};
+
+// Apply animations from stage to all elements with fallback
+const applyStageAnimations = (stage, stageIndex) => {
+  if (!stage) return;
+
+  // Update transition for this stage
+  currentTransition.value = stage.transition || shapeTransition;
+
+  // Apply animations to each element with fallback logic
+  if (stage.elements) {
+    // Apply line animation (with fallback)
+    currentLineAnimation.value = getElementState("line", stageIndex);
+
+    // Apply text animation (with fallback)
+    currentTextAnimation.value = getElementState("textContainer", stageIndex);
+
+    // Apply mask animation (with fallback)
+    currentMaskAnimation.value = getElementState("mask", stageIndex);
+
+    // Apply button content animation (with fallback)
+    currentButtonContentAnimation.value = getElementState(
+      "buttonContent",
+      stageIndex
+    );
+  } else if (stage.animation) {
+    // Backward compatibility: old format with animation property
+    currentLineAnimation.value = stage.animation;
+    // For old format, reset other elements to initial
+    currentTextAnimation.value = initialTextAnimation;
+    currentMaskAnimation.value = initialMaskAnimation;
+    currentButtonContentAnimation.value = initialButtonContentAnimation;
+  }
+};
+
 let scrollUnsubscribe = null;
 let observer = null;
 
 onMounted(() => {
-  // Setup scroll container
-  const scrollContainer = document.querySelector(".scroll-snap-container");
+  // Find the scroll container - try both selectors
+  const scrollContainer =
+    document.querySelector(".scroll-snap-container.fullscreen") ||
+    document.querySelector(".scroll-snap-container");
   if (scrollContainer) {
     scrollContainerRef.value = scrollContainer;
   }
 
-  // Setup scroll progress listener
-  scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
-    if (progress < 0.8) {
-      textOpacity.value = 1;
-    } else if (progress < 0.9) {
-      const fadeProgress = (progress - 0.8) / (0.9 - 0.8);
-      textOpacity.value = 1 - fadeProgress;
-    } else {
-      textOpacity.value = 0;
-    }
-
-    const shouldExpand = progress >= 0.8;
-
-    if (shouldExpand !== videoExpanded.value) {
-      videoExpanded.value = shouldExpand;
-      videoScaleValue.value = shouldExpand ? 1 : 0.1875;
-      videoYValue.value = shouldExpand ? 10 : 0;
-
-      if (shouldExpand) {
-        if (!showStoryLink.value && !storyLinkTimeout) {
-          storyLinkTimeout = setTimeout(() => {
-            showStoryLink.value = true;
-            storyLinkTimeout = null;
-          }, 800);
-        }
-      } else {
-        if (storyLinkTimeout) {
-          clearTimeout(storyLinkTimeout);
-          storyLinkTimeout = null;
-        }
-        showStoryLink.value = false;
-      }
-
-      if (videoPlayerRef.value) {
-        if (shouldExpand) {
-          videoPlayerRef.value.attemptPlay();
-        } else {
-          videoPlayerRef.value.pauseVideo();
-        }
-      }
-    }
-  });
-
-  // Setup intersection observer
+  // Setup Intersection Observer to detect when section is visible
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        showText.value = entry.isIntersecting;
+        isIntersecting.value = entry.isIntersecting;
+        console.log(
+          "Case1 intersecting:",
+          entry.isIntersecting,
+          "ratio:",
+          entry.intersectionRatio
+        );
+
+        // When section becomes visible, apply initial states
+        if (entry.isIntersecting) {
+          wrapperVisible.value = true;
+          // Apply initial states first (still hidden via CSS)
+          currentLineAnimation.value = { ...initialLineAnimation };
+          currentTextAnimation.value = { ...initialTextAnimation };
+          currentMaskAnimation.value = { ...initialMaskAnimation };
+          currentButtonContentAnimation.value = {
+            ...initialButtonContentAnimation,
+          };
+          isActive.value = false; // Keep hidden initially
+        } else {
+          // Force hide wrapper when not intersecting
+          wrapperVisible.value = false;
+          isActive.value = false;
+          currentLineAnimation.value = { ...initialLineAnimation };
+          currentTextAnimation.value = { ...initialTextAnimation };
+          currentMaskAnimation.value = { ...initialMaskAnimation };
+          currentButtonContentAnimation.value = {
+            ...initialButtonContentAnimation,
+          };
+        }
       });
     },
     {
+      root: scrollContainer,
       threshold: 0.1,
+      rootMargin: "-10px",
     }
   );
 
   if (containerRef.value) {
     observer.observe(containerRef.value);
   }
+
+  // Subscribe to scroll progress changes
+  scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
+    // Debug: log progress to see what's happening
+    console.log(
+      "Case1 scroll progress:",
+      progress,
+      "isIntersecting:",
+      isIntersecting.value,
+      "wrapperVisible:",
+      wrapperVisible.value
+    );
+
+    // Show wrapper only when section is intersecting AND progress is valid
+    if (isIntersecting.value && progress >= 0 && progress <= 1) {
+      wrapperVisible.value = true;
+    } else if (!isIntersecting.value) {
+      wrapperVisible.value = false;
+    }
+
+    // Only update animations if visible
+    if (isIntersecting.value) {
+      const { index, stage } = getActiveStage(progress);
+      console.log(
+        "Active stage:",
+        stage?.id,
+        "index:",
+        index,
+        "progress:",
+        progress
+      );
+
+      if (stage) {
+        // Update current stage index
+        currentStageIndex.value = index;
+
+        // Make visible when first stage starts
+        if (!isActive.value) {
+          isActive.value = true;
+        }
+
+        // Apply all animations for this stage (with fallback)
+        applyStageAnimations(stage, index);
+        console.log("Applied stage:", stage.id, "index:", index);
+      } else {
+        // Before first stage - keep initial state (hidden)
+        isActive.value = false; // Hide via CSS
+        currentLineAnimation.value = { ...initialLineAnimation };
+        currentTextAnimation.value = { ...initialTextAnimation };
+        currentMaskAnimation.value = { ...initialMaskAnimation };
+        currentButtonContentAnimation.value = {
+          ...initialButtonContentAnimation,
+        };
+        currentTransition.value = shapeTransition;
+        console.log("No stage found, using initial animations");
+      }
+    } else {
+      // When not intersecting, reset to initial state
+      isActive.value = false;
+      currentLineAnimation.value = { ...initialLineAnimation };
+      currentTextAnimation.value = { ...initialTextAnimation };
+      currentMaskAnimation.value = { ...initialMaskAnimation };
+      currentButtonContentAnimation.value = {
+        ...initialButtonContentAnimation,
+      };
+    }
+  });
 });
 
 onUnmounted(() => {
@@ -210,14 +300,8 @@ onUnmounted(() => {
   }
 });
 
-function handleStoryLinkClick(event) {
-  if (videoPlayerRef.value) {
-    videoPlayerRef.value.saveState();
-  }
-  if (event && event.currentTarget && event.currentTarget.href) {
-    window.location.href = event.currentTarget.href;
-  }
-}
+// Expose methods if needed
+const handleStoryLinkClick = () => {};
 
 defineExpose({
   handleStoryLinkClick,
@@ -225,157 +309,110 @@ defineExpose({
 </script>
 
 <style scoped>
-.case1-scroll-layout {
+.case1-container {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   background-color: #ffffff;
-}
-.text-frame-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  z-index: 200;
-  pointer-events: none;
-  padding-top: 15vh;
-  transform: translateY(0);
+  overflow: hidden;
 }
 
-.text-content {
+.animation-stage-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 32px;
-  text-align: center;
-  padding: 0 5vw;
-  max-width: 1400px;
-}
-
-.text-only {
+  justify-content: center;
+  pointer-events: none;
+  z-index: 100;
   transition: opacity 0.3s ease-out;
 }
 
-.case-title {
-  margin: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: clamp(32px, 4.5vw, 63px);
-  line-height: 1.2;
-  color: #000000;
-  width: 100%;
+.animation-stage-wrapper.hidden {
+  visibility: hidden;
+  opacity: 0;
 }
 
-.case-title .word {
-  display: inline-block;
-  margin-right: 0.25em;
-}
-
-.case-subtitle {
-  margin: 0;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-weight: 400;
-  font-size: clamp(20px, 2.8vw, 38px);
-  line-height: 1.3;
-  color: #000000;
-  width: 100%;
-}
-
-.case-subtitle span {
-  opacity: 1;
-}
-
-.video-constraint-wrapper {
-  width: clamp(120px, 20vw, calc(1662px / 6));
-  margin-top: 24px;
-  position: relative;
-  aspect-ratio: 1662 / 1080;
-  overflow: visible;
-}
-
-.video-container-wrapper {
-  width: 800%;
-  max-width: min(1200px, 85vw);
-  pointer-events: none;
-  transform-origin: center center;
-  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
-  will-change: transform;
-  backface-visibility: hidden;
+.line-element {
   position: absolute;
   top: 50%;
   left: 50%;
+  will-change: transform, width, height, border-radius;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.video-and-link-wrapper {
+.mask-element {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  will-change: transform, height;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.text-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  will-change: transform, opacity;
+  z-index: 1;
+  text-align: center;
   display: flex;
   flex-direction: column;
+  gap: 12px;
   align-items: center;
-  gap: 32px;
-  width: 100%;
 }
 
-.case-open-story {
-  align-self: flex-end;
+.main-text {
   margin: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 21px;
-  line-height: var(--line-height-snug);
-  text-align: right;
-  text-decoration: none;
-  color: #000000;
-  transition: opacity 0.2s ease;
-}
-
-.case-open-story:hover {
-  opacity: 0.7;
-}
-
-.case-open-story-link {
-  display: block;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: clamp(20px, 2.2vw, 36px);
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 48px);
   line-height: 1.2;
   color: #000000;
-  text-decoration: underline;
-  text-align: center;
-  transition: text-decoration 0.2s ease;
-  cursor: pointer;
+}
+
+.sub-text {
+  margin: 0;
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 400;
+  font-size: clamp(16px, 2vw, 28px);
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.button-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.play-icon {
+  flex-shrink: 0;
+}
+
+.button-text {
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 400;
+  font-size: clamp(16px, 2vw, 28px);
+  line-height: 1.4;
+  color: #007aff;
   white-space: nowrap;
 }
 
-.case-open-story-link:hover {
-  text-decoration: none;
+.final-spacer {
+  height: 500vh;
+  width: 100%;
 }
 
-/* Mobile Responsive */
-@media (max-width: 899px) {
-  .case-title {
-    font-size: 32px;
-  }
-
-  .case-subtitle {
-    font-size: 24px;
-  }
-
-  .case-open-story {
-    display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .case-title {
-    font-size: 24px;
-  }
-
-  .case-subtitle {
-    font-size: 18px;
-  }
-}
-
-/* Section wrapper styles from MainPage */
 .case-section.item {
   display: flex;
   align-items: center;
@@ -384,10 +421,9 @@ defineExpose({
   height: 100dvh;
 }
 
-/* Case1 needs extra height for scroll animation */
 #case1.case-section.item {
-  height: 200vh;
-  min-height: 200vh;
-  max-height: 200vh;
+  height: 600vh;
+  min-height: 600vh;
+  max-height: 600vh;
 }
 </style>
