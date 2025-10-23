@@ -52,13 +52,11 @@ const props = defineProps({
 
 useMeta(`case${props.caseId}`);
 
-
 const caseColors = {
   1: "#ffffff", // White for case 1
   2: "#f2668b", // Pink for case 2
   3: "#171717", // Dark for case 3
 };
-
 
 function getContrastTextColor(backgroundColor) {
   const hex = backgroundColor.replace("#", "");
@@ -66,13 +64,10 @@ function getContrastTextColor(backgroundColor) {
   const g = parseInt(hex.substr(2, 2), 16);
   const b = parseInt(hex.substr(4, 2), 16);
 
-  
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
-  
   return luminance > 0.5 ? "#000000" : "#ffffff";
 }
-
 
 const currentBackgroundColor = ref(caseColors[props.caseId]);
 const currentTextColor = ref(getContrastTextColor(caseColors[props.caseId]));

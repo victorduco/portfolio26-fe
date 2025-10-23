@@ -40,7 +40,6 @@ const navigationSections = [
 ];
 
 useMeta("home");
-
 const route = useRoute();
 const introRef = ref(null);
 const scrollContainerRef = ref(null);

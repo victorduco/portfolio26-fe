@@ -7,7 +7,17 @@ import { META_CONFIG } from "../config/meta.js";
  * @param {string} pageKey - ключ страницы из META_CONFIG.pages
  */
 export function useMeta(pageKey) {
-  const route = useRoute();
+  // Безопасно получаем route, если он доступен
+  let route = null;
+  try {
+    route = useRoute();
+  } catch (error) {
+    // Route недоступен (компонент вне RouterView или до инициализации роутера)
+    console.warn("useMeta: component is outside router context, meta tags will not be updated");
+    return {
+      updateMeta: () => {},
+    };
+  }
 
   const setOrUpdateMeta = (selector, attributes) => {
     let element = document.querySelector(selector);
@@ -23,9 +33,9 @@ export function useMeta(pageKey) {
     });
   };
 
-  const updateMeta = () => {
-    // Проверяем, что route доступен
-    if (!route?.path) {
+  const updateMeta = (route) => {
+    // Проверяем, что route доступен и имеет path
+    if (!route || !route.path) {
       return;
     }
 
@@ -88,13 +98,23 @@ export function useMeta(pageKey) {
   };
 
   onMounted(() => {
-    updateMeta();
+    // Обновляем мета после монтирования
+    if (route) {
+      updateMeta(route);
+    }
   });
 
   // Обновляем мета при изменении роута (если компонент переиспользуется)
-  watch(() => route?.path, updateMeta);
+  watch(
+    () => route?.path,
+    () => {
+      if (route) {
+        updateMeta(route);
+      }
+    }
+  );
 
   return {
-    updateMeta,
+    updateMeta: (route) => updateMeta(route),
   };
 }
