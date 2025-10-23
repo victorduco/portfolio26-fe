@@ -5,7 +5,7 @@ import Keypad from "./components/keypad/Keypad.vue";
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
 
-const { isAuthenticated, checkAuth, setAuthenticated } = useAuth();
+const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
 
 onMounted(async () => {
@@ -26,7 +26,10 @@ const handleUnlock = async () => {
 </script>
 
 <template>
-  <Keypad v-if="!isAuthenticated" @unlock="handleUnlock" />
+  <!-- Show nothing while checking auth to prevent flash -->
+  <div v-if="isLoading" class="auth-loading"></div>
+
+  <Keypad v-else-if="!isAuthenticated" @unlock="handleUnlock" />
 
   <div v-else class="app-shell">
     <main class="app-main">
@@ -36,6 +39,18 @@ const handleUnlock = async () => {
 </template>
 
 <style scoped>
+.auth-loading {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: #171717;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 .app-shell,
 .app-main {
   width: 100%;
