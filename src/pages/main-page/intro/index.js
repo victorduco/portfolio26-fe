@@ -1,1 +1,0 @@
-export { default as IntroRectangle } from "./IntroRectangle.vue";
