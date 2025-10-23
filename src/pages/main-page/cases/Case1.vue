@@ -23,7 +23,7 @@
               >
             </h2>
             <p class="case-subtitle">
-              <motion.span :style="{ opacity: subtitleOpacity || 0.2 }">
+              <motion.span :style="{ opacity: subtitleOpacity }">
                 {{ company }}
               </motion.span>
             </p>
@@ -32,7 +32,7 @@
             <motion.div
               class="video-container-wrapper"
               :style="{
-                opacity: videoOpacity || 0.2,
+                opacity: videoOpacity,
                 transform: `translate(-50%, -50%) translateY(${videoYValue}%) scale(${videoScaleValue})`,
               }"
             >
@@ -86,7 +86,45 @@ const isHovering = ref(false);
 
 let storyLinkTimeout = null;
 
-// Register lifecycle hooks first to ensure they're available
+// Initialize motion-v hooks first (they must be called during setup)
+const { scrollYProgress } = useScroll({
+  target: containerRef,
+  container: scrollContainerRef,
+  offset: ["start end", "end end"],
+});
+
+const titleWords = computed(() => title.split(" "));
+
+const subtitleOpacity = useTransform(scrollYProgress, [0.7, 0.75], [0.2, 1]);
+
+const appearStart = 0.6;
+const appearEnd = 0.7;
+
+// Create word opacities outside of computed to avoid lifecycle issues
+const words = title.split(" ");
+const totalWords = words.length;
+const wordOpacities = words.map((_, wordIndex) => {
+  const wordAppearDuration = (appearEnd - appearStart) / totalWords;
+  const wordStart = appearStart + wordIndex * wordAppearDuration;
+  const wordEnd = wordStart + wordAppearDuration;
+
+  return useTransform(scrollYProgress, [wordStart, wordEnd], [0.2, 1]);
+});
+
+const getWordOpacity = (wordIndex) => {
+  return wordOpacities[wordIndex];
+};
+
+const videoOpacity = useTransform(scrollYProgress, [0.75, 0.8], [0.2, 1]);
+
+const videoExpanded = ref(false);
+const videoScaleValue = ref(0.1875);
+const videoYValue = ref(0);
+const slowScrollY = ref(0);
+const textOpacity = ref(1);
+const showText = ref(true);
+
+// Register lifecycle hooks after motion-v hooks
 let scrollUnsubscribe = null;
 let observer = null;
 
@@ -98,49 +136,47 @@ onMounted(() => {
   }
 
   // Setup scroll progress listener
-  if (scrollYProgress) {
-    scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
-      if (progress < 0.8) {
-        textOpacity.value = 1;
-      } else if (progress < 0.9) {
-        const fadeProgress = (progress - 0.8) / (0.9 - 0.8);
-        textOpacity.value = 1 - fadeProgress;
-      } else {
-        textOpacity.value = 0;
-      }
+  scrollUnsubscribe = scrollYProgress.on?.("change", (progress) => {
+    if (progress < 0.8) {
+      textOpacity.value = 1;
+    } else if (progress < 0.9) {
+      const fadeProgress = (progress - 0.8) / (0.9 - 0.8);
+      textOpacity.value = 1 - fadeProgress;
+    } else {
+      textOpacity.value = 0;
+    }
 
-      const shouldExpand = progress >= 0.8;
+    const shouldExpand = progress >= 0.8;
 
-      if (shouldExpand !== videoExpanded.value) {
-        videoExpanded.value = shouldExpand;
-        videoScaleValue.value = shouldExpand ? 1 : 0.1875;
-        videoYValue.value = shouldExpand ? 10 : 0;
+    if (shouldExpand !== videoExpanded.value) {
+      videoExpanded.value = shouldExpand;
+      videoScaleValue.value = shouldExpand ? 1 : 0.1875;
+      videoYValue.value = shouldExpand ? 10 : 0;
 
-        if (shouldExpand) {
-          if (!showStoryLink.value && !storyLinkTimeout) {
-            storyLinkTimeout = setTimeout(() => {
-              showStoryLink.value = true;
-              storyLinkTimeout = null;
-            }, 800);
-          }
-        } else {
-          if (storyLinkTimeout) {
-            clearTimeout(storyLinkTimeout);
+      if (shouldExpand) {
+        if (!showStoryLink.value && !storyLinkTimeout) {
+          storyLinkTimeout = setTimeout(() => {
+            showStoryLink.value = true;
             storyLinkTimeout = null;
-          }
-          showStoryLink.value = false;
+          }, 800);
         }
+      } else {
+        if (storyLinkTimeout) {
+          clearTimeout(storyLinkTimeout);
+          storyLinkTimeout = null;
+        }
+        showStoryLink.value = false;
+      }
 
-        if (videoPlayerRef.value) {
-          if (shouldExpand) {
-            videoPlayerRef.value.attemptPlay();
-          } else {
-            videoPlayerRef.value.pauseVideo();
-          }
+      if (videoPlayerRef.value) {
+        if (shouldExpand) {
+          videoPlayerRef.value.attemptPlay();
+        } else {
+          videoPlayerRef.value.pauseVideo();
         }
       }
-    });
-  }
+    }
+  });
 
   // Setup intersection observer
   observer = new IntersectionObserver(
@@ -173,62 +209,6 @@ onUnmounted(() => {
     observer = null;
   }
 });
-
-// Initialize motion-v hooks with error handling
-let scrollYProgress = null;
-let subtitleOpacity = null;
-let wordOpacities = null;
-let videoOpacity = null;
-
-try {
-  scrollYProgress = useScroll({
-    target: containerRef,
-    container: scrollContainerRef,
-    offset: ["start end", "end end"],
-  });
-
-  subtitleOpacity = useTransform(scrollYProgress, [0.7, 0.75], [0.2, 1]);
-
-  wordOpacities = computed(() => {
-    const words = titleWords.value;
-    const totalWords = words.length;
-
-    return words.map((_, wordIndex) => {
-      const wordAppearDuration = (appearEnd - appearStart) / totalWords;
-      const wordStart = appearStart + wordIndex * wordAppearDuration;
-      const wordEnd = wordStart + wordAppearDuration;
-
-      return useTransform(scrollYProgress, [wordStart, wordEnd], [0.2, 1]);
-    });
-  });
-
-  videoOpacity = useTransform(scrollYProgress, [0.75, 0.8], [0.2, 1]);
-} catch (error) {
-  console.warn("Motion-v hooks failed to initialize:", error);
-  // Fallback values
-  subtitleOpacity = ref(0.2);
-  wordOpacities = computed(() => titleWords.value.map(() => ref(0.2)));
-  videoOpacity = ref(0.2);
-}
-
-const videoExpanded = ref(false);
-const videoScaleValue = ref(0.1875);
-const videoYValue = ref(0);
-
-const slowScrollY = ref(0);
-
-const textOpacity = ref(1);
-
-const showText = ref(true);
-
-const titleWords = computed(() => title.split(" "));
-
-const appearStart = 0.6;
-const appearEnd = 0.7;
-
-const getWordOpacity = (wordIndex) => {
-  return wordOpacities?.value?.[wordIndex] || 0.2;
-};
 
 function handleStoryLinkClick(event) {
   if (videoPlayerRef.value) {

@@ -5,35 +5,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
 
-const markdownContent = ref('');
+const markdownContent = ref("");
 
-onMounted(async () => {
+onMounted(() => {
+  loadMarkdownContent();
+});
+
+async function loadMarkdownContent() {
   try {
-    const response = await fetch('/docs/cases/case3-process.md');
+    const response = await fetch("/docs/cases/case3-process.md");
     const markdown = await response.text();
     markdownContent.value = renderMarkdown(markdown);
   } catch (error) {
-    markdownContent.value = '<p>Error loading content</p>';
+    markdownContent.value = "<p>Error loading content</p>";
   }
-});
+}
 
 function renderMarkdown(md) {
   return md
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-    .replace(/```(\w+)?\n([\s\S]*?)```/gim, '<pre><code>$2</code></pre>')
-    .replace(/`([^`]+)`/gim, '<code>$1</code>')
-    .replace(/^\- (.*$)/gim, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-    .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/^(?!<[hul]|<pre)/gm, '<p>')
-    .replace(/(?![hul]>|pre>)$/gm, '</p>');
+    .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+    .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+    .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+    .replace(/\*\*(.*?)\*\*/gim, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/gim, "<em>$1</em>")
+    .replace(/```(\w+)?\n([\s\S]*?)```/gim, "<pre><code>$2</code></pre>")
+    .replace(/`([^`]+)`/gim, "<code>$1</code>")
+    .replace(/^\- (.*$)/gim, "<li>$1</li>")
+    .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
+    .replace(/^\d+\. (.*$)/gim, "<li>$1</li>")
+    .replace(/\n\n/g, "</p><p>")
+    .replace(/^(?!<[hul]|<pre)/gm, "<p>")
+    .replace(/(?![hul]>|pre>)$/gm, "</p>");
 }
 </script>
 
@@ -95,7 +99,7 @@ function renderMarkdown(md) {
   background: #262626;
   padding: 2px 8px;
   border-radius: 4px;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
   font-size: 14px;
   color: #a3a3a3;
 }

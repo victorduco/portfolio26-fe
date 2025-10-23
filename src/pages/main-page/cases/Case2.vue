@@ -120,6 +120,13 @@ const contentWrapperRef = ref(null);
 const scrollContainerRef = ref(null);
 const videoElement = ref(null);
 
+// Initialize motion-v hooks first (they must be called during setup)
+const { scrollYProgress } = useScroll({
+  target: containerRef,
+  container: scrollContainerRef,
+  offset: ["start end", "end end"],
+});
+
 const pinned = ref(false);
 const unpinned = ref(false);
 const unpinTopOffset = ref(0);
@@ -213,12 +220,6 @@ function getButtonOpacity() {
     (endProgress - startProgress)
   );
 }
-
-const { scrollYProgress } = useScroll({
-  target: containerRef,
-  container: scrollContainerRef,
-  offset: ["start end", "end end"],
-});
 
 const currentScale = ref(0.5);
 
