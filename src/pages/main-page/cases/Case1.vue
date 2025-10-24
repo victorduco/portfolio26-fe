@@ -145,9 +145,9 @@ defineExpose({
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  width: 6px;
-  height: 6px;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: #007aff;
   z-index: 3;
