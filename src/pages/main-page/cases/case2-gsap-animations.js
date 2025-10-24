@@ -13,13 +13,12 @@ gsap.config({
 /**
  * Initialize Case2 GSAP animations with ScrollTrigger
  * This component features:
- * - Scale animation (0.5 to 1.0)
+ * - Scale animation (0.5 to 1.0) with pin
  * - Text reveal by words (title part 1, title part 2, description)
  * - Card background fade in
  * - Button fade in
- * - Parallax effects for image and content
+ * - Data-speed based parallax effects
  * - Video scrubbing synchronized with scroll
- * - Pin/unpin mechanism for content wrapper
  *
  * @param {HTMLElement} containerRef - Main container element
  * @param {HTMLElement} contentWrapperRef - Content wrapper to be pinned
@@ -33,7 +32,7 @@ export function initCase2Animations(
 ) {
   // Clean up any previous ScrollTriggers for this component
   ScrollTrigger.getAll().forEach((st) => {
-    if (st.vars.id === "case2-main") {
+    if (st.vars.id?.startsWith("case2-")) {
       st.kill();
     }
   });
@@ -46,131 +45,172 @@ export function initCase2Animations(
   const timelines = [];
   const scrollTriggers = [];
 
-  // Main ScrollTrigger for tracking progress
-  const mainST = ScrollTrigger.create({
-    trigger: containerRef,
-    start: "top top",
-    end: "bottom bottom",
-    scrub: 1,
-    id: "case2-main",
-    onUpdate: (self) => {
-      const progress = self.progress;
-
-      // Phase 1: Scale animation (0 -> 0.4)
-      const scaleEndThreshold = 0.4;
-      const scale = progress <= scaleEndThreshold
-        ? 0.5 + (progress / scaleEndThreshold) * 0.5
-        : 1;
-
-      gsap.set(contentWrapperRef, {
-        scale: scale,
-        transformOrigin: "center center",
-        force3D: true,
-      });
-
-      // Phase 2: Text and content animations (0.4 -> 1.0)
-      const textProgress =
-        progress <= scaleEndThreshold
-          ? 0
-          : (progress - scaleEndThreshold) / (1 - scaleEndThreshold);
-
-      // Animate title part 1 words (0 -> 0.15)
-      animateTitlePart1Words(textProgress);
-
-      // Animate title part 2 words (0.15 -> 0.3)
-      animateTitlePart2Words(textProgress);
-
-      // Animate description words (0.5 -> 0.65)
-      animateDescriptionWords(textProgress);
-
-      // Animate card background (0.45 -> 0.5)
-      animateCardBackground(textProgress);
-
-      // Animate button (0.65 -> 0.75)
-      animateButton(textProgress);
-
-      // Image parallax effect
-      const parallaxY = (0.5 - textProgress) * 20;
-      gsap.set(".case2-image-wrapper", {
-        y: `${parallaxY}%`,
-        force3D: true,
-      });
-
-      // Content parallax effect
-      let contentParallaxY;
-      if (textProgress < 0.7) {
-        contentParallaxY = -(textProgress / 0.7) * 3;
-      } else {
-        const laterProgress = (textProgress - 0.7) / 0.3;
-        const easeInCubic = laterProgress * laterProgress * laterProgress;
-        contentParallaxY = -3 + easeInCubic * (-120 + 3);
-      }
-      gsap.set(".case2-content", {
-        y: `${contentParallaxY}vh`,
-        force3D: true,
-      });
-
-      // Video scrubbing
-      if (videoElement && videoElement.duration && !isNaN(videoElement.duration)) {
-        const targetTime = progress * videoElement.duration;
-        if (Math.abs(videoElement.currentTime - targetTime) > 0.05) {
-          videoElement.currentTime = targetTime;
-        }
-      }
-
-      // Video opacity (fade in at 0.1)
-      const videoOpacity = progress > 0.1 ? 1 : 0;
-      if (videoElement) {
-        gsap.set(videoElement, { opacity: videoOpacity });
-      }
-
-      // Pin/unpin logic
-      const pinStartThreshold = 0.4;
-      const shouldPin = progress >= pinStartThreshold && progress < 1;
-
-      if (shouldPin) {
-        gsap.set(contentWrapperRef, {
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          x: "-50%",
-          y: "-50%",
-          width: "100%",
-          height: "100vh",
-          zIndex: 200,
-        });
-      } else if (progress >= 1) {
-        // Unpinned at the end
-        const containerRect = containerRef.getBoundingClientRect();
-        const wrapperHeight = contentWrapperRef.offsetHeight;
-        const unpinTopOffset = containerRect.height - wrapperHeight;
-
-        gsap.set(contentWrapperRef, {
-          position: "absolute",
-          top: `${unpinTopOffset}px`,
-          left: 0,
-          x: 0,
-          y: 0,
-          width: "100%",
-          zIndex: 1,
-        });
-      } else {
-        // Initial state
-        gsap.set(contentWrapperRef, {
-          position: "relative",
-          top: "auto",
-          left: "auto",
-          x: 0,
-          y: 0,
-          width: "100%",
-          height: "100vh",
-          zIndex: 1,
-        });
-      }
+  // Create main timeline for all animations
+  const mainTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: containerRef,
+      start: "top bottom", // Start when section enters viewport
+      end: "bottom bottom",
+      scrub: 1,
+      pin: contentWrapperRef,
+      pinSpacing: false,
+      id: "case2-main",
+      anticipatePin: 1,
     },
   });
 
-  scrollTriggers.push(mainST);
+  // Phase 1: Scale animation (0 -> 20%) - from entering viewport to center
+  mainTimeline.fromTo(
+    contentWrapperRef,
+    {
+      scale: 0.5,
+      transformOrigin: "center center",
+    },
+    {
+      scale: 1,
+      duration: 0.2,
+      ease: "power2.out",
+      force3D: true,
+    },
+    0
+  );
+
+  // Phase 2: Text animations (20% -> 100%)
+  const textStartTime = 0.2;
+
+  // Title part 1 words (40% -> 55%)
+  const titlePart1Elements = document.querySelectorAll(
+    ".case2-title .word[data-word-part1]"
+  );
+  if (titlePart1Elements.length > 0) {
+    mainTimeline.fromTo(
+      titlePart1Elements,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.15,
+        stagger: 0.15 / titlePart1Elements.length,
+        ease: "power2.out",
+      },
+      textStartTime
+    );
+  }
+
+  // Title part 2 words (55% -> 70%)
+  const titlePart2Elements = document.querySelectorAll(
+    ".case2-title .word[data-word-part2]"
+  );
+  if (titlePart2Elements.length > 0) {
+    mainTimeline.fromTo(
+      titlePart2Elements,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.15,
+        stagger: 0.15 / titlePart2Elements.length,
+        ease: "power2.out",
+      },
+      textStartTime + 0.15
+    );
+  }
+
+  // Card background (85% -> 90%)
+  const cardBackground = document.querySelector(".case2-card-background");
+  if (cardBackground) {
+    mainTimeline.fromTo(
+      cardBackground,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.05,
+        ease: "power2.out",
+      },
+      textStartTime + 0.45
+    );
+  }
+
+  // Description words (90% -> 105%)
+  const descriptionElements = document.querySelectorAll(
+    ".case2-description .word[data-word-desc]"
+  );
+  if (descriptionElements.length > 0) {
+    mainTimeline.fromTo(
+      descriptionElements,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.15,
+        stagger: 0.15 / descriptionElements.length,
+        ease: "power2.out",
+      },
+      textStartTime + 0.5
+    );
+  }
+
+  // Button (105% -> 115%)
+  const button = document.querySelector(".case2-open-story");
+  if (button) {
+    mainTimeline.fromTo(
+      button,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.1,
+        ease: "power2.out",
+      },
+      textStartTime + 0.65
+    );
+  }
+
+  // Video opacity - visible from the start
+  if (videoElement) {
+    mainTimeline.fromTo(
+      videoElement,
+      { opacity: 1 },
+      {
+        opacity: 1,
+        duration: 0.01,
+      },
+      0
+    );
+  }
+
+  timelines.push(mainTimeline);
+
+  // Data-speed based parallax for content (more dramatic movement)
+  const content = document.querySelector(".case2-content");
+  if (content) {
+    gsap.to(content, {
+      y: "-120vh",
+      ease: "power3.in",
+      scrollTrigger: {
+        trigger: containerRef,
+        start: "top bottom",
+        end: "bottom bottom",
+        scrub: 1,
+        id: "case2-parallax-content",
+      },
+    });
+  }
+
+  // Video scrubbing
+  if (videoElement) {
+    ScrollTrigger.create({
+      trigger: containerRef,
+      start: "top bottom",
+      end: "bottom bottom",
+      scrub: 1,
+      id: "case2-video-scrub",
+      onUpdate: (self) => {
+        if (videoElement.duration && !isNaN(videoElement.duration)) {
+          const targetTime = self.progress * videoElement.duration;
+          if (Math.abs(videoElement.currentTime - targetTime) > 0.05) {
+            videoElement.currentTime = targetTime;
+          }
+        }
+      },
+    });
+  }
 
   return {
     timelines,
@@ -190,7 +230,9 @@ function animateTitlePart1Words(textProgress) {
     const endProgress = startProgress + 0.15 / totalWords;
     const opacity = getOpacity(textProgress, startProgress, endProgress);
 
-    const element = document.querySelector(`.case2-title .word[data-word-part1="${index}"]`);
+    const element = document.querySelector(
+      `.case2-title .word[data-word-part1="${index}"]`
+    );
     if (element) {
       gsap.set(element, { opacity });
     }
@@ -209,7 +251,9 @@ function animateTitlePart2Words(textProgress) {
     const endProgress = startProgress + 0.15 / totalWords;
     const opacity = getOpacity(textProgress, startProgress, endProgress);
 
-    const element = document.querySelector(`.case2-title .word[data-word-part2="${index}"]`);
+    const element = document.querySelector(
+      `.case2-title .word[data-word-part2="${index}"]`
+    );
     if (element) {
       gsap.set(element, { opacity });
     }
@@ -220,7 +264,8 @@ function animateTitlePart2Words(textProgress) {
  * Animate description words
  */
 function animateDescriptionWords(textProgress) {
-  const description = "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
+  const description =
+    "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
   const words = description.split(" ");
 
   words.forEach((word, index) => {
@@ -230,7 +275,9 @@ function animateDescriptionWords(textProgress) {
     const endProgress = startProgress + 0.15 / totalWords;
     const opacity = getOpacity(textProgress, startProgress, endProgress);
 
-    const element = document.querySelector(`.case2-description .word[data-word-desc="${index}"]`);
+    const element = document.querySelector(
+      `.case2-description .word[data-word-desc="${index}"]`
+    );
     if (element) {
       gsap.set(element, { opacity });
     }

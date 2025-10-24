@@ -5,10 +5,7 @@
     style="background-color: #ffffff"
   >
     <div class="case2-split-layout" ref="containerRef">
-      <div
-        ref="contentWrapperRef"
-        class="content-wrapper"
-      >
+      <div ref="contentWrapperRef" class="content-wrapper">
         <div class="case2-content">
           <div class="case2-content-wrapper">
             <div class="case2-card-background"></div>
@@ -43,10 +40,7 @@
                 </span>
               </p>
 
-              <button
-                class="case2-open-story"
-                @click="handleStoryLinkClick"
-              >
+              <button class="case2-open-story" @click="handleStoryLinkClick">
                 <img src="@/assets/icons/case2.svg" alt="" class="case2-icon" />
                 Open Story
               </button>
@@ -55,10 +49,7 @@
         </div>
 
         <div class="case2-image-container" ref="imageContainer">
-          <div
-            class="case2-image-wrapper"
-            ref="imageWrapper"
-          >
+          <div class="case2-image-wrapper" ref="imageWrapper">
             <img
               :src="imageSrc"
               :alt="title"
@@ -80,8 +71,6 @@
           </div>
         </div>
       </div>
-
-      <div class="final-spacer"></div>
     </div>
   </section>
 </template>
@@ -96,8 +85,10 @@ import {
 const description =
   "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
 const title = "Redesigning the Communications App";
-const videoSrc = new URL("@/assets/case-videos/case2-2.mp4", import.meta.url)
-  .href;
+const videoSrc = new URL(
+  "@/assets/case-videos/case2-3-reversed.mp4",
+  import.meta.url
+).href;
 const imageSrc = new URL("@/assets/images/p2-3@2x.png", import.meta.url).href;
 
 const containerRef = ref(null);
@@ -149,7 +140,6 @@ defineExpose({
 }
 
 .content-wrapper {
-  position: relative;
   width: 100%;
   height: 100vh;
   min-height: 100vh;
@@ -157,13 +147,8 @@ defineExpose({
   z-index: 1;
   overflow: visible;
   pointer-events: auto;
-  will-change: transform;
 }
 
-.final-spacer {
-  height: 150vh;
-  width: 100%;
-}
 
 .case2-content {
   position: absolute;
@@ -178,8 +163,6 @@ defineExpose({
   padding: clamp(60px, 10vh, 120px) 20px 20px 20px;
   box-sizing: border-box;
   pointer-events: none;
-  transition: transform 0.1s ease-out;
-  will-change: transform;
 }
 
 .case2-content-wrapper {
@@ -194,7 +177,6 @@ defineExpose({
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
   border-radius: 16px;
-  transition: opacity 0.1s ease-out;
   pointer-events: none;
 }
 
@@ -226,7 +208,6 @@ defineExpose({
 .case2-title .word {
   display: inline-block;
   margin-right: 0.25em;
-  transition: opacity 0.1s ease-out;
 }
 
 .case2-description {
@@ -243,7 +224,6 @@ defineExpose({
 .case2-description .word {
   display: inline-block;
   margin-right: 0.25em;
-  transition: opacity 0.1s ease-out;
 }
 
 .case2-open-story {
@@ -259,7 +239,6 @@ defineExpose({
   cursor: pointer;
   padding: 0;
   gap: 10px;
-  transition: opacity 0.1s ease-out;
 }
 
 .case2-open-story:hover {
@@ -291,8 +270,6 @@ defineExpose({
   align-items: center;
   justify-content: center;
   overflow: visible;
-  transition: transform 0.1s ease-out;
-  will-change: transform;
 }
 
 .case2-image,
@@ -302,8 +279,6 @@ defineExpose({
   height: 100%;
   object-fit: cover;
   object-position: center;
-  will-change: transform;
-  transition: transform 0.1s ease-out;
   position: absolute;
   top: 0;
   left: 0;
