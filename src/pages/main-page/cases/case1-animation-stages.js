@@ -16,6 +16,12 @@ export const delayedTransition = {
   delay: 0.75, // Delay equals main transition duration
 };
 
+// Instant transition for resetting to initial state
+export const instantTransition = {
+  type: "tween",
+  duration: 0,
+};
+
 // Initial states for each element
 export const initialLineAnimation = {
   scale: 0,
@@ -25,6 +31,7 @@ export const initialLineAnimation = {
   backgroundColor: "#007AFF",
   x: "-50%",
   y: "0px",
+  opacity: 0,
 };
 
 export const initialTextAnimation = {
@@ -39,6 +46,7 @@ export const initialMaskAnimation = {
   width: "100vw",
   x: "-50%",
   backgroundColor: "#ffffff",
+  opacity: 1,
 };
 
 export const initialButtonContentAnimation = {
@@ -69,6 +77,11 @@ export const animationStages = [
         backgroundColor: "#007AFF",
         x: "-50%",
         y: "0px",
+        opacity: 1,
+      },
+      textContainer: {
+        x: "-50%",
+        y: "-50%",
       },
     },
   },
@@ -87,6 +100,7 @@ export const animationStages = [
         backgroundColor: "#007AFF",
         x: "-50%",
         y: "0px",
+        opacity: 1,
       },
     },
   },
@@ -105,6 +119,7 @@ export const animationStages = [
         backgroundColor: "#007AFF",
         x: "-50%",
         y: "0px",
+        opacity: 1,
       },
     },
   },
@@ -124,6 +139,7 @@ export const animationStages = [
         backgroundColor: "#007AFF",
         x: "-50%",
         y: "55px",
+        opacity: 1,
       },
       textContainer: {
         y: "-150px",
@@ -136,6 +152,7 @@ export const animationStages = [
         width: "100vw",
         x: "-50%",
         backgroundColor: "#ffffff",
+        opacity: 1,
       },
     },
   },
@@ -156,9 +173,14 @@ export const animationStages = [
         border: "6px solid #007AFF",
         x: "-50%",
         y: "100px", // 55px + 100px
-        opacity: 1, // Hide line, show button instead
+        opacity: 1,
       },
-
+      textContainer: {
+        opacity: 1,
+      },
+      mask: {
+        opacity: 1,
+      },
       buttonContent: {
         opacity: 1,
       },
@@ -217,6 +239,9 @@ export const animationStages = [
         opacity: 0,
         x: "-50%",
       },
+      mask: {
+        opacity: 1,
+      },
       buttonContent: {
         opacity: 0,
       },
@@ -254,6 +279,9 @@ export const animationStages = [
         opacity: 0,
         x: "-50%",
       },
+      mask: {
+        opacity: 1,
+      },
       buttonContent: {
         opacity: 0,
       },
@@ -264,6 +292,47 @@ export const animationStages = [
         y: "490px", // Half of video height (390px) + gap (100px)
         x: "-50%",
         transition: delayedTransition,
+      },
+    },
+  },
+  {
+    id: "stage8-enter-normal-flow",
+    startProgress: 0.7,
+    endProgress: 1,
+    description:
+      "Elements transition to normal document flow and become scrollable",
+    transition: shapeTransition,
+    videoExpanded: true,
+    normalFlow: true,
+    elements: {
+      line: {
+        scale: 1,
+        width: "min(1200px, 85vw)",
+        height: "min(780px, 55.26vw)",
+        borderRadius: "26px",
+        backgroundColor: "#ffffff",
+        border: "6px solid #DDDDDD",
+        x: "-50%",
+        y: "-50%",
+        opacity: 1,
+      },
+      textContainer: {
+        y: "-50px",
+        opacity: 0,
+        x: "-50%",
+      },
+      mask: {
+        opacity: 1,
+      },
+      buttonContent: {
+        opacity: 0,
+      },
+      openStory: {
+        width: "300px",
+        height: "60px",
+        opacity: 1,
+        y: "490px",
+        x: "-50%",
       },
     },
   },

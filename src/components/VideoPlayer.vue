@@ -25,10 +25,11 @@
         fill="currentColor"
         class="pause-play-icon"
         aria-label="Play video"
-        @click="togglePlayPause"
       >
         <path
+          class="pause-play-icon-path"
           d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z"
+          @click="togglePlayPause"
         />
       </svg>
     </div>
@@ -155,7 +156,10 @@ onUnmounted(() => {
   document.removeEventListener("touchstart", handleUserInteraction);
   document.removeEventListener("keydown", handleUserInteraction);
   document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+  document.removeEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
 
   pauseVideo();
 });
@@ -219,16 +223,22 @@ defineExpose({
 
 .pause-play-icon {
   display: block;
-  width: 60px;
-  height: 60px;
+  width: 120px;
+  height: 120px;
   color: #000000;
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1));
-  transition: opacity 0.2s ease;
-  cursor: pointer;
-  pointer-events: auto;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
 }
 
-.pause-play-icon:hover {
+.pause-play-icon-path {
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 0.2s ease;
+}
+
+.pause-play-icon-path:hover {
   opacity: 0.8;
 }
 </style>

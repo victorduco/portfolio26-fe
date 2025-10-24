@@ -8,11 +8,17 @@
       <div
         v-if="wrapperVisible"
         class="animation-stage-wrapper"
-        :class="{ hidden: !isActive }"
+        :class="{
+          hidden: !isActive,
+          ready: readyToShow,
+          'not-initialized': !isInitialized,
+          'normal-flow': isNormalFlow,
+        }"
       >
         <!-- Text Container (z-index: 1, behind mask) -->
         <motion.div
           class="text-container"
+          style="opacity: 0; transform: translate(-50%, 0px)"
           :animate="currentTextAnimation"
           :transition="currentTransition"
         >
@@ -23,6 +29,13 @@
         <!-- Mask Element (z-index: 2, hides text below line) -->
         <motion.div
           class="mask-element"
+          style="
+            transform: translate(-50%, 0px);
+            width: 100vw;
+            height: 50vh;
+            background-color: #ffffff;
+            opacity: 1;
+          "
           :animate="currentMaskAnimation"
           :transition="currentTransition"
         />
@@ -30,6 +43,7 @@
         <!-- Line Element (z-index: 3, on top) -->
         <motion.div
           class="line-element"
+          style="opacity: 0"
           :animate="currentLineAnimation"
           :transition="currentTransition"
         >
@@ -64,6 +78,12 @@
         <motion.a
           :href="routeTo"
           class="open-story-button"
+          style="
+            opacity: 0;
+            transform: translate(-50%, 520px);
+            width: 300px;
+            height: 0px;
+          "
           :animate="currentOpenStoryAnimation"
           :transition="currentOpenStoryTransition"
           @click.prevent="handleStoryLinkClick"
@@ -78,7 +98,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { motion, useScroll, useTransform } from "motion-v";
 import VideoPlayer from "@/components/VideoPlayer.vue";
 import {
@@ -90,6 +110,7 @@ import {
   initialOpenStoryAnimation,
   shapeTransition,
   delayedTransition,
+  instantTransition,
 } from "./case1-animation-stages.js";
 
 const containerRef = ref(null);
@@ -99,6 +120,9 @@ const currentStageIndex = ref(0);
 const wrapperVisible = ref(false);
 const isIntersecting = ref(false);
 const isActive = ref(false); // Controls CSS visibility
+const readyToShow = ref(false); // Controls when elements are ready to be visible
+const isInitialized = ref(false); // Controls transition timing
+const isNormalFlow = ref(false); // Controls whether wrapper is in normal document flow
 
 // Text content
 const mainText = "Cross-Domain AI Solution for Account Reconcilers";
@@ -118,6 +142,22 @@ const currentTextAnimation = ref({ ...initialTextAnimation });
 const currentMaskAnimation = ref({ ...initialMaskAnimation });
 const currentButtonContentAnimation = ref({ ...initialButtonContentAnimation });
 const currentOpenStoryAnimation = ref({ ...initialOpenStoryAnimation });
+
+// Function to initialize states and mark as ready
+const initializeStates = () => {
+  currentLineAnimation.value = { ...initialLineAnimation };
+  console.log("🎨 INITIAL TEXT CONTAINER STATE APPLIED:", initialTextAnimation);
+  currentTextAnimation.value = { ...initialTextAnimation };
+  currentMaskAnimation.value = { ...initialMaskAnimation };
+  currentButtonContentAnimation.value = { ...initialButtonContentAnimation };
+  currentOpenStoryAnimation.value = { ...initialOpenStoryAnimation };
+
+  // Wait for Motion-v to apply styles before showing element
+  nextTick(() => {
+    readyToShow.value = true; // Mark as ready to show
+    isInitialized.value = true; // Mark as initialized for transitions
+  });
+};
 const currentTransition = ref(shapeTransition);
 const currentOpenStoryTransition = ref(delayedTransition);
 
@@ -139,24 +179,32 @@ const getActiveStage = (progress) => {
   return { index: -1, stage: null };
 };
 
-// Find element state from current or previous stages (fallback)
+// Find element state from current or previous stages (fallback with merge)
 const getElementState = (elementName, currentStageIndex) => {
-  // Search backward from current stage to stage 0
-  for (let i = currentStageIndex; i >= 0; i--) {
+  // Get initial state for this element
+  let initialState = null;
+  if (elementName === "line") initialState = { ...initialLineAnimation };
+  if (elementName === "textContainer")
+    initialState = { ...initialTextAnimation };
+  if (elementName === "mask") initialState = { ...initialMaskAnimation };
+  if (elementName === "buttonContent")
+    initialState = { ...initialButtonContentAnimation };
+  if (elementName === "openStory")
+    initialState = { ...initialOpenStoryAnimation };
+
+  // Start with initial state
+  let mergedState = { ...initialState };
+
+  // Merge states from stage 0 to current stage
+  for (let i = 0; i <= currentStageIndex; i++) {
     const stage = animationStages[i];
     if (stage.elements && stage.elements[elementName]) {
-      return stage.elements[elementName];
+      // Merge current stage properties into accumulated state
+      mergedState = { ...mergedState, ...stage.elements[elementName] };
     }
   }
 
-  // If not found in any previous stage, return initial state
-  if (elementName === "line") return initialLineAnimation;
-  if (elementName === "textContainer") return initialTextAnimation;
-  if (elementName === "mask") return initialMaskAnimation;
-  if (elementName === "buttonContent") return initialButtonContentAnimation;
-  if (elementName === "openStory") return initialOpenStoryAnimation;
-
-  return null;
+  return mergedState;
 };
 
 // Apply animations from stage to all elements with fallback
@@ -172,7 +220,9 @@ const applyStageAnimations = (stage, stageIndex) => {
     currentLineAnimation.value = getElementState("line", stageIndex);
 
     // Apply text animation (with fallback)
-    currentTextAnimation.value = getElementState("textContainer", stageIndex);
+    const textState = getElementState("textContainer", stageIndex);
+    console.log("🎨 TEXT CONTAINER ANIMATION APPLIED:", textState);
+    currentTextAnimation.value = textState;
 
     // Apply mask animation (with fallback)
     currentMaskAnimation.value = getElementState("mask", stageIndex);
@@ -232,25 +282,17 @@ onMounted(() => {
 
         // When section becomes visible, apply initial states
         if (entry.isIntersecting) {
+          initializeStates(); // Initialize states first
+          // Don't show wrapper until Motion-v is ready
           wrapperVisible.value = true;
-          // Apply initial states first (still hidden via CSS)
-          currentLineAnimation.value = { ...initialLineAnimation };
-          currentTextAnimation.value = { ...initialTextAnimation };
-          currentMaskAnimation.value = { ...initialMaskAnimation };
-          currentButtonContentAnimation.value = {
-            ...initialButtonContentAnimation,
-          };
           isActive.value = false; // Keep hidden initially
         } else {
           // Force hide wrapper when not intersecting
           wrapperVisible.value = false;
           isActive.value = false;
-          currentLineAnimation.value = { ...initialLineAnimation };
-          currentTextAnimation.value = { ...initialTextAnimation };
-          currentMaskAnimation.value = { ...initialMaskAnimation };
-          currentButtonContentAnimation.value = {
-            ...initialButtonContentAnimation,
-          };
+          readyToShow.value = false; // Reset ready state
+          isInitialized.value = false; // Reset initialization state
+          initializeStates(); // Reset to initial states
         }
       });
     },
@@ -309,6 +351,9 @@ onMounted(() => {
         applyStageAnimations(stage, index);
         console.log("Applied stage:", stage.id, "index:", index);
 
+        // Update normal flow state
+        isNormalFlow.value = stage.normalFlow === true;
+
         // Video control logic from stage configuration
         if (stage.videoExpanded !== undefined) {
           const shouldExpand = stage.videoExpanded;
@@ -332,25 +377,23 @@ onMounted(() => {
       } else {
         // Before first stage - keep initial state (hidden)
         isActive.value = false; // Hide via CSS
-        currentLineAnimation.value = { ...initialLineAnimation };
-        currentTextAnimation.value = { ...initialTextAnimation };
-        currentMaskAnimation.value = { ...initialMaskAnimation };
-        currentButtonContentAnimation.value = {
-          ...initialButtonContentAnimation,
-        };
-        currentTransition.value = shapeTransition;
+        isInitialized.value = false; // Reset initialization state
+        isNormalFlow.value = false; // Reset normal flow
+        initializeStates(); // Reset to initial states
+        currentTransition.value = instantTransition; // Instant reset
+        currentOpenStoryTransition.value = instantTransition; // Instant reset
         videoExpanded.value = false;
         console.log("No stage found, using initial animations");
       }
     } else {
       // When not intersecting, reset to initial state
       isActive.value = false;
-      currentLineAnimation.value = { ...initialLineAnimation };
-      currentTextAnimation.value = { ...initialTextAnimation };
-      currentMaskAnimation.value = { ...initialMaskAnimation };
-      currentButtonContentAnimation.value = {
-        ...initialButtonContentAnimation,
-      };
+      readyToShow.value = false; // Reset ready state
+      isInitialized.value = false; // Reset initialization state
+      isNormalFlow.value = false; // Reset normal flow
+      initializeStates(); // Reset to initial states
+      currentTransition.value = instantTransition; // Instant reset
+      currentOpenStoryTransition.value = instantTransition; // Instant reset
       videoExpanded.value = false;
     }
   });
@@ -409,11 +452,29 @@ defineExpose({
   z-index: 100;
   transition: opacity 0.3s ease-out;
   overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Instant transition before initialization */
+.animation-stage-wrapper.not-initialized {
+  transition: none;
 }
 
 .animation-stage-wrapper.hidden {
   visibility: hidden;
   opacity: 0;
+}
+
+.animation-stage-wrapper.ready {
+  visibility: visible;
+  opacity: 1;
+}
+
+.animation-stage-wrapper.normal-flow {
+  position: absolute;
+  top: calc(420vh + 50vh);
+  transform: translate(-50%, -50%);
 }
 
 .line-element {
@@ -425,6 +486,13 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  /* Initial state from config */
+  transform: translate(-50%, 0px) scale(0);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #007aff;
 }
 
 .mask-element {
@@ -466,7 +534,7 @@ defineExpose({
   font-weight: 400;
   font-size: clamp(16px, 2vw, 28px);
   line-height: 1.4;
-  color: rgba(0, 0, 0, 0.7);
+  color: #000000;
 }
 
 .button-content-wrapper {
@@ -503,8 +571,6 @@ defineExpose({
   position: absolute;
   top: 50%;
   left: 50%;
-  opacity: 0;
-  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
