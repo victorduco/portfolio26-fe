@@ -83,8 +83,7 @@ export const animationStages = [
       {
         target: ".text-container",
         to: {
-          y: "-150px",
-          opacity: 1,
+          y: "-100px",
           duration: 0.5,
           ease: "power2.inOut",
         },
@@ -164,7 +163,6 @@ export const animationStages = [
         to: {
           height: "60px",
           opacity: 1,
-          y: "20vw",
           duration: 0.5,
           delay: 0.75,
           ease: "power2.out",
@@ -185,6 +183,12 @@ export function initAnimations(trigger) {
 
   // Clear any GSAP inline styles from previous runs
   gsap.set(trigger, { clearProps: "all" });
+
+  // Set initial state for text container (visible and positioned below)
+  gsap.set(".text-container", { opacity: 1, y: 100 });
+
+  // Set initial state for open story button (hidden initially)
+  gsap.set(".open-story-button", { opacity: 0, height: "60px" });
 
   const tl = gsap.timeline({
     scrollTrigger: {
