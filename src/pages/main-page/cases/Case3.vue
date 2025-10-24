@@ -3,22 +3,19 @@
     id="case3"
     class="case-section item"
     style="background-color: #B9E2F7"
+    ref="sectionRef"
   >
     <div class="case3-unique-layout" ref="layoutElement">
-    
+
     <CloudCorners />
 
-    
+
     <div class="case3-container">
-      
+
       <div class="case3-text-section" ref="textSection">
-        <motion.div
+        <div
           class="case3-title-wrapper"
           ref="titleElement"
-          :variants="textVariants"
-          :animate="titleState"
-          :transition="textTransition"
-          initial="hidden"
         >
           <h2 class="case3-title case3-title-shadow">
             {{ title }}
@@ -26,24 +23,16 @@
           <h2 class="case3-title case3-title-main" aria-hidden="true">
             {{ title }}
           </h2>
-        </motion.div>
-        <motion.p
+        </div>
+        <p
           class="case3-company"
           ref="companyElement"
-          :variants="textVariants"
-          :animate="companyState"
-          :transition="textTransition"
-          initial="hidden"
         >
           {{ company }}
-        </motion.p>
-        <motion.button
+        </p>
+        <button
           class="case3-button-wrapper"
           ref="buttonElement"
-          :variants="textVariants"
-          :animate="buttonState"
-          :transition="textTransition"
-          initial="hidden"
           @click="handleButtonClick"
         >
           <div class="case3-button case3-button-shadow"></div>
@@ -65,22 +54,18 @@
             </svg>
             <span class="case3-button-text">Open Story</span>
           </div>
-        </motion.button>
+        </button>
       </div>
 
-      
+
       <div class="case3-image-section" ref="imageContainer">
-        
-        <motion.div
+
+        <div
           class="case3-media-container"
           :style="{ backgroundImage: `url(${imageSrc})` }"
           ref="mediaContainer"
-          :variants="mediaVariants"
-          :initial="'initial'"
-          :animate="animationState"
-          :transition="smoothTransition"
         >
-          
+
           <div
             v-if="videoSrc"
             class="case3-video-container"
@@ -98,7 +83,7 @@
               ref="videoElement"
             ></video>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
     </div>
@@ -106,34 +91,27 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { motion } from "motion-v";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import CloudCorners from "./CloudCorners.vue";
+import { initAnimations, cleanupAnimations } from "./case3-gsap-animations.js";
 
 const router = useRouter();
 
-
+// Content data
 const title = "Terminal Shift Redesign";
 const company = "Mirai";
 const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
 const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url).href;
 const routeTo = "/story/three";
-const primaryColor = "#979797";
-const backgroundColor = "#B9E2F7";
 
-
+// Video positioning
 const videoPositionX = "62.5%";
 const videoPositionY = "39%";
 const videoScale = 0.33;
 
-function handleButtonClick() {
-  if (routeTo) {
-    handleStoryLinkClick();
-    router.push(routeTo);
-  }
-}
-
+// Refs
+const sectionRef = ref(null);
 const layoutElement = ref(null);
 const textSection = ref(null);
 const titleElement = ref(null);
@@ -142,184 +120,46 @@ const buttonElement = ref(null);
 const imageContainer = ref(null);
 const mediaContainer = ref(null);
 const videoElement = ref(null);
-let scrollListener = null;
-let intersectionObserver = null;
 
+// Animation instance
+let animationInstance = null;
 
-const animationState = ref("initial");
-const titleState = ref("hidden");
-const companyState = ref("hidden");
-const buttonState = ref("hidden");
-
-
-const mediaVariants = {
-  initial: {
-    opacity: 1,
-  },
-  animate: {
-    opacity: 1,
-  },
-};
-
-
-const smoothTransition = {
-  duration: 0,
-};
-
-
-const textVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
-
-const textTransition = {
-  type: "tween",
-  ease: [0.4, 0, 0.2, 1],
-  duration: 0.8,
-};
-
-function triggerTextAnimation() {
-  
-  titleState.value = "visible";
-
-  
-  setTimeout(() => {
-    companyState.value = "visible";
-
-    
-    setTimeout(() => {
-      buttonState.value = "visible";
-    }, 250);
-  }, 250);
-}
-
-function triggerFadeIn() {
-  
-  triggerTextAnimation();
-
-  
-  if (videoElement.value) {
-    videoElement.value.currentTime = 3; // Start at 3 seconds
-    videoElement.value.playbackRate = 1; // Normal speed
-
-    
-    videoElement.value.addEventListener("timeupdate", handleVideoTimeUpdate);
-
-    videoElement.value.play().catch(() => {});
-  }
-}
-
-function handleVideoTimeUpdate() {
-  if (videoElement.value) {
-    const currentTime = videoElement.value.currentTime;
-
-    
-    if (currentTime >= 8) {
-      videoElement.value.pause();
-      videoElement.value.currentTime = 8;
-      return;
-    }
-
-    
-    if (currentTime >= 7) {
-      
-      const progress = (currentTime - 7) / 1; // 1 second range
-      
-      const newSpeed = 1 - progress * 0.7; // From 1x to 0.3x
-      videoElement.value.playbackRate = Math.max(0.3, newSpeed);
-    }
-  }
-}
-
-function resetAnimations() {
-  
-  titleState.value = "hidden";
-  companyState.value = "hidden";
-  buttonState.value = "hidden";
-
-  
-  if (videoElement.value) {
-    videoElement.value.pause();
-    videoElement.value.removeEventListener("timeupdate", handleVideoTimeUpdate);
-  }
-}
-
-function updateParallax() {
-  
-  if (imageContainer.value) {
-    const rect = imageContainer.value.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-
-    
-    const scrollProgress = 1 - (rect.top + rect.height / 2) / viewportHeight;
-    const parallaxOffset = Math.max(
-      -50,
-      Math.min(50, scrollProgress * 100 - 50)
-    );
-
-    imageContainer.value.style.transform = `translateY(${parallaxOffset}px)`;
+function handleButtonClick() {
+  if (routeTo) {
+    handleStoryLinkClick();
+    router.push(routeTo);
   }
 }
 
 onMounted(() => {
-  
-  intersectionObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          triggerFadeIn();
-        } else {
-          
-          resetAnimations();
-        }
-      });
-    },
-    {
-      threshold: 0.3, // Trigger when 30% of element is visible
-    }
-  );
-
-  if (layoutElement.value) {
-    intersectionObserver.observe(layoutElement.value);
+  // Initialize GSAP animations
+  if (sectionRef.value) {
+    animationInstance = initAnimations(sectionRef.value, {
+      textSection: textSection.value,
+      titleElement: titleElement.value,
+      companyElement: companyElement.value,
+      buttonElement: buttonElement.value,
+      imageContainer: imageContainer.value,
+      videoElement: videoElement.value,
+    });
   }
-
-  scrollListener = () => {
-    requestAnimationFrame(updateParallax);
-  };
-
-  window.addEventListener("scroll", scrollListener, { passive: true });
-  updateParallax();
 });
 
 onUnmounted(() => {
-  if (scrollListener) {
-    window.removeEventListener("scroll", scrollListener);
-  }
-
-  if (videoElement.value) {
-    videoElement.value.removeEventListener("timeupdate", handleVideoTimeUpdate);
-  }
-
-  if (intersectionObserver && layoutElement.value) {
-    intersectionObserver.unobserve(layoutElement.value);
-    intersectionObserver.disconnect();
-    intersectionObserver = null;
-  }
+  cleanupAnimations(animationInstance);
+  animationInstance = null;
 });
 
 function handleEnter() {
-  
-  
-  updateParallax();
+  // Optional: handle section enter
 }
 
 function handleLeave() {
-  
+  // Optional: handle section leave
 }
 
 function handleStoryLinkClick() {
-  
+  // Optional: handle story link click
 }
 
 defineExpose({
@@ -368,6 +208,7 @@ defineExpose({
   position: relative;
   width: 100%;
   max-width: 100%;
+  opacity: 0; /* Initial state for GSAP */
 }
 
 /* Base title styling */
@@ -412,6 +253,7 @@ defineExpose({
   color: #1e426d;
   width: 100%;
   max-width: 100%;
+  opacity: 0; /* Initial state for GSAP */
 }
 
 /* Button wrapper with hard shadow effect */
@@ -425,6 +267,7 @@ defineExpose({
   cursor: pointer;
   margin-top: clamp(4px, 0.5vh, 8px);
   transition: transform 0.2s ease;
+  opacity: 0; /* Initial state for GSAP */
 }
 
 .case3-button-wrapper:hover {
