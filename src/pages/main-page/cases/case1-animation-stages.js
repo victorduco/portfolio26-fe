@@ -8,6 +8,14 @@ export const shapeTransition = {
   duration: 0.5,
 };
 
+// Transition with delay for Open Story button
+export const delayedTransition = {
+  type: "tween",
+  ease: [0.4, 0, 0.2, 1], // easeInOut
+  duration: 0.5,
+  delay: 0.75, // Delay equals main transition duration
+};
+
 // Initial states for each element
 export const initialLineAnimation = {
   scale: 0,
@@ -35,6 +43,14 @@ export const initialMaskAnimation = {
 
 export const initialButtonContentAnimation = {
   opacity: 0,
+};
+
+export const initialOpenStoryAnimation = {
+  width: "300px",
+  height: "0px",
+  opacity: 0,
+  y: "520px", // Half of video height (390px) + gap (100px) + half button (30px)
+  x: "-50%",
 };
 
 export const animationStages = [
@@ -148,46 +164,47 @@ export const animationStages = [
       },
     },
   },
-  {
-    id: "stage5-expand-to-video",
-    startProgress: 0.35,
-    endProgress: 0.5,
-    description:
-      "Line expands to video proportions (16:9), button content fades out",
-    transition: shapeTransition,
-    elements: {
-      line: {
-        scale: 1,
-        width: "71vw",
-        height: "40vw", // 16:9 aspect ratio
-        borderRadius: "26px",
-        backgroundColor: "#ffffff",
-        border: "6px solid #007AFF",
-        x: "-50%",
-        y: "-50%",
-        opacity: 1,
-      },
-      textContainer: {
-        y: "-50px",
-        opacity: 1,
-        x: "-50%",
-      },
-      buttonContent: {
-        opacity: 1,
-      },
-    },
-  },
+  // {
+  //   id: "stage5-expand-to-video",
+  //   startProgress: 0.35,
+  //   endProgress: 0.5,
+  //   description:
+  //     "Line expands to video proportions (1662:1080), button content fades out",
+  //   transition: shapeTransition,
+  //   elements: {
+  //     line: {
+  //       scale: 1,
+  //       width: "min(1200px, 85vw)",
+  //       height: "min(780px, 55.26vw)", // 1662/1080 aspect ratio
+  //       borderRadius: "26px",
+  //       backgroundColor: "#ffffff",
+  //       border: "6px solid #007AFF",
+  //       x: "-50%",
+  //       y: "-50%",
+  //       opacity: 1,
+  //     },
+  //     textContainer: {
+  //       y: "-50px",
+  //       opacity: 1,
+  //       x: "-50%",
+  //     },
+  //     buttonContent: {
+  //       opacity: 1,
+  //     },
+  //   },
+  // },
   {
     id: "stage6-text-disappears",
-    startProgress: 0.5,
-    endProgress: 0.6,
-    description: "Text fades out",
+    startProgress: 0.35,
+    endProgress: 0.5,
+    description: "Text fades out, video plays",
     transition: shapeTransition,
+    videoExpanded: true, // Control video playback
     elements: {
       line: {
         scale: 1,
-        width: "71vw",
-        height: "40vw", // 16:9 aspect ratio
+        width: "min(1200px, 85vw)",
+        height: "min(780px, 55.26vw)", // 1662/1080 aspect ratio
         borderRadius: "26px",
         backgroundColor: "#ffffff",
         border: "6px solid #DDDDDD",
@@ -202,6 +219,51 @@ export const animationStages = [
       },
       buttonContent: {
         opacity: 0,
+      },
+      openStory: {
+        width: "300px",
+        height: "0px",
+        opacity: 0,
+        y: "520px",
+        x: "-50%",
+        reverseTransition: shapeTransition, // No delay when disappearing
+      },
+    },
+  },
+  {
+    id: "stage7-open-story-appears",
+    startProgress: 0.5,
+    endProgress: 0.7,
+    description: "Open Story button appears below video",
+    transition: shapeTransition,
+    videoExpanded: true,
+    elements: {
+      line: {
+        scale: 1,
+        width: "min(1200px, 85vw)",
+        height: "min(780px, 55.26vw)",
+        borderRadius: "26px",
+        backgroundColor: "#ffffff",
+        border: "6px solid #DDDDDD",
+        x: "-50%",
+        y: "-50%",
+        opacity: 1,
+      },
+      textContainer: {
+        y: "-50px",
+        opacity: 0,
+        x: "-50%",
+      },
+      buttonContent: {
+        opacity: 0,
+      },
+      openStory: {
+        width: "300px",
+        height: "60px",
+        opacity: 1,
+        y: "490px", // Half of video height (390px) + gap (100px)
+        x: "-50%",
+        transition: delayedTransition,
       },
     },
   },

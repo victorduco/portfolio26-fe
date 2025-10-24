@@ -1,25 +1,5 @@
 <template>
-  <div class="video-wrapper" :class="{ 'video-playing': videoExpanded }">
-    <!-- Play Icon -->
-    <svg
-      class="play-icon"
-      :class="{ 'play-icon-hidden': videoExpanded }"
-      width="100"
-      height="100"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M8 5v14l11-7L8 5z"
-        fill="black"
-        stroke="black"
-        stroke-width="2"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-      />
-    </svg>
-
+  <div class="video-wrapper">
     <!-- Video Element -->
     <video
       v-if="videoSrc"
@@ -27,7 +7,6 @@
       :src="videoSrc"
       class="case-video"
       :class="{
-        'video-visible': videoExpanded,
         'video-paused-blur': !isPlaying && hasStartedPlayback,
       }"
       :muted="shouldBeMutedByDefault || isMuted"
@@ -37,27 +16,22 @@
     ></video>
 
     <!-- Pause Overlay (Play button when paused) -->
-    <motion.div
+    <div
       v-if="!isPlaying && hasStartedPlayback && videoExpanded"
       class="case-video-pause-overlay"
-      :class="{ 'is-playing': isPlaying }"
-      :initial="{ opacity: 0 }"
-      :animate="{ opacity: 1 }"
-      :exit="{ opacity: 0 }"
-      :transition="{ duration: 0.3, ease: [0.33, 1, 0.68, 1] }"
     >
       <svg
         viewBox="0 0 100 100"
         fill="currentColor"
         class="pause-play-icon"
-        @click.stop="togglePlayPause"
         aria-label="Play video"
+        @click="togglePlayPause"
       >
         <path
           d="M 32 23 L 32 77 C 32 78.5 33 79.5 34.5 79 L 73 52 C 74.5 51.2 74.5 48.8 73 48 L 34.5 21 C 33 20.5 32 21.5 32 23 Z"
         />
       </svg>
-    </motion.div>
+    </div>
 
     <!-- Video Controls -->
     <VideoControls
@@ -76,7 +50,6 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from "vue";
-import { motion } from "motion-v";
 import { useMediaQuery } from "@/composables/useMediaQuery.js";
 import { useVideoPlayer } from "@/composables/useVideoPlayer.js";
 import { useRoute } from "vue-router";
@@ -199,40 +172,15 @@ defineExpose({
 .video-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 1662 / 1080;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   box-sizing: border-box;
-  background: #ffffff;
-  border: 40px solid #000000;
-  border-radius: 80px;
-  padding: 0;
-  isolation: isolate;
+  background: transparent;
   pointer-events: none;
-  transition: border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
-    border-width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.video-wrapper.video-playing {
-  background: #ffffff;
-  border-width: 10px;
-  border-radius: 20px;
-}
-
-.play-icon {
-  width: 340px;
-  height: 340px;
-  opacity: 1;
-  transition: opacity 0.3s ease-out;
-  position: absolute;
-  z-index: 2;
-}
-
-.play-icon.play-icon-hidden {
-  opacity: 0;
-  pointer-events: none;
+  border-radius: inherit;
 }
 
 .case-video {
@@ -244,17 +192,11 @@ defineExpose({
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
-  border-radius: 40px;
-  transition: opacity 0.4s ease-in,
-    border-radius 0.6s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.3s ease;
+  opacity: 1;
   z-index: 1;
   pointer-events: none;
-}
-
-.case-video.video-visible {
-  opacity: 1;
-  border-radius: 10px;
+  border-radius: 20px;
+  transition: filter 0.3s ease;
 }
 
 .case-video.video-paused-blur {
@@ -272,33 +214,21 @@ defineExpose({
   justify-content: center;
   z-index: 100;
   pointer-events: none;
-  isolation: isolate;
-  border-radius: 3px;
+  border-radius: inherit;
 }
 
 .pause-play-icon {
-  position: relative;
-  z-index: 101;
-  width: 140px;
-  height: 140px;
+  display: block;
+  width: 60px;
+  height: 60px;
   color: #000000;
-  cursor: pointer;
-  pointer-events: auto;
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.1));
   transition: opacity 0.2s ease;
-  will-change: transform;
-  transform: translateZ(0);
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 .pause-play-icon:hover {
   opacity: 0.8;
-}
-
-@media (max-width: 899px) {
-  .video-wrapper {
-    background: transparent;
-    border-radius: 0;
-    padding: 0;
-  }
 }
 </style>

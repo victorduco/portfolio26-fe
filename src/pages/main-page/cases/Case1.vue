@@ -49,7 +49,27 @@
             </svg>
             <span class="button-text">Play Reel</span>
           </motion.div>
+
+          <!-- Video Player inside line-element -->
+          <VideoPlayer
+            v-if="currentStageIndex >= 5"
+            ref="videoPlayerRef"
+            :video-src="videoSrc"
+            :video-expanded="videoExpanded"
+            class="case1-video-player"
+          />
         </motion.div>
+
+        <!-- Open Story Button (appears on stage7) -->
+        <motion.a
+          :href="routeTo"
+          class="open-story-button"
+          :animate="currentOpenStoryAnimation"
+          :transition="currentOpenStoryTransition"
+          @click.prevent="handleStoryLinkClick"
+        >
+          <span class="open-story-text">Open Story</span>
+        </motion.a>
       </div>
 
       <div class="final-spacer"></div>
@@ -59,18 +79,22 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { motion, useScroll } from "motion-v";
+import { motion, useScroll, useTransform } from "motion-v";
+import VideoPlayer from "@/components/VideoPlayer.vue";
 import {
   animationStages,
   initialLineAnimation,
   initialTextAnimation,
   initialMaskAnimation,
   initialButtonContentAnimation,
+  initialOpenStoryAnimation,
   shapeTransition,
+  delayedTransition,
 } from "./case1-animation-stages.js";
 
 const containerRef = ref(null);
 const scrollContainerRef = ref(null);
+const videoPlayerRef = ref(null);
 const currentStageIndex = ref(0);
 const wrapperVisible = ref(false);
 const isIntersecting = ref(false);
@@ -80,12 +104,22 @@ const isActive = ref(false); // Controls CSS visibility
 const mainText = "Cross-Domain AI Solution for Account Reconcilers";
 const subText = "Apple";
 
+// Video constants
+const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url)
+  .href;
+const routeTo = "/story/one";
+
+// Video state
+const videoExpanded = ref(false);
+
 // Current animation states for each element
 const currentLineAnimation = ref({ ...initialLineAnimation });
 const currentTextAnimation = ref({ ...initialTextAnimation });
 const currentMaskAnimation = ref({ ...initialMaskAnimation });
 const currentButtonContentAnimation = ref({ ...initialButtonContentAnimation });
+const currentOpenStoryAnimation = ref({ ...initialOpenStoryAnimation });
 const currentTransition = ref(shapeTransition);
+const currentOpenStoryTransition = ref(delayedTransition);
 
 // Setup scroll tracking
 const { scrollYProgress } = useScroll({
@@ -119,8 +153,8 @@ const getElementState = (elementName, currentStageIndex) => {
   if (elementName === "line") return initialLineAnimation;
   if (elementName === "textContainer") return initialTextAnimation;
   if (elementName === "mask") return initialMaskAnimation;
-  if (elementName === "button") return initialButtonAnimation;
   if (elementName === "buttonContent") return initialButtonContentAnimation;
+  if (elementName === "openStory") return initialOpenStoryAnimation;
 
   return null;
 };
@@ -148,6 +182,19 @@ const applyStageAnimations = (stage, stageIndex) => {
       "buttonContent",
       stageIndex
     );
+
+    // Apply open story animation (with fallback)
+    const openStoryState = getElementState("openStory", stageIndex);
+    if (openStoryState.transition) {
+      currentOpenStoryTransition.value = openStoryState.transition;
+      delete openStoryState.transition; // Remove transition from animation object
+    } else if (openStoryState.reverseTransition) {
+      currentOpenStoryTransition.value = openStoryState.reverseTransition;
+      delete openStoryState.reverseTransition; // Remove reverseTransition from animation object
+    } else {
+      currentOpenStoryTransition.value = delayedTransition; // Default for openStory
+    }
+    currentOpenStoryAnimation.value = openStoryState;
   } else if (stage.animation) {
     // Backward compatibility: old format with animation property
     currentLineAnimation.value = stage.animation;
@@ -155,6 +202,7 @@ const applyStageAnimations = (stage, stageIndex) => {
     currentTextAnimation.value = initialTextAnimation;
     currentMaskAnimation.value = initialMaskAnimation;
     currentButtonContentAnimation.value = initialButtonContentAnimation;
+    currentOpenStoryAnimation.value = initialOpenStoryAnimation;
   }
 };
 
@@ -260,6 +308,27 @@ onMounted(() => {
         // Apply all animations for this stage (with fallback)
         applyStageAnimations(stage, index);
         console.log("Applied stage:", stage.id, "index:", index);
+
+        // Video control logic from stage configuration
+        if (stage.videoExpanded !== undefined) {
+          const shouldExpand = stage.videoExpanded;
+          videoExpanded.value = shouldExpand;
+          if (videoPlayerRef.value) {
+            if (shouldExpand) {
+              videoPlayerRef.value.attemptPlay();
+            } else {
+              videoPlayerRef.value.pauseVideo();
+            }
+          }
+        } else {
+          // If stage doesn't have videoExpanded, pause video
+          if (videoExpanded.value) {
+            videoExpanded.value = false;
+            if (videoPlayerRef.value) {
+              videoPlayerRef.value.pauseVideo();
+            }
+          }
+        }
       } else {
         // Before first stage - keep initial state (hidden)
         isActive.value = false; // Hide via CSS
@@ -270,6 +339,7 @@ onMounted(() => {
           ...initialButtonContentAnimation,
         };
         currentTransition.value = shapeTransition;
+        videoExpanded.value = false;
         console.log("No stage found, using initial animations");
       }
     } else {
@@ -281,6 +351,7 @@ onMounted(() => {
       currentButtonContentAnimation.value = {
         ...initialButtonContentAnimation,
       };
+      videoExpanded.value = false;
     }
   });
 });
@@ -300,11 +371,18 @@ onUnmounted(() => {
   }
 });
 
-// Expose methods if needed
-const handleStoryLinkClick = () => {};
+// Handle story link click
+const handleStoryLinkClick = (event) => {
+  if (videoPlayerRef.value) {
+    videoPlayerRef.value.saveState();
+  }
+  if (event && event.currentTarget && event.currentTarget.href) {
+    window.location.href = event.currentTarget.href;
+  }
+};
 
 defineExpose({
-  handleStoryLinkClick,
+  videoPlayerRef,
 });
 </script>
 
@@ -330,6 +408,7 @@ defineExpose({
   pointer-events: none;
   z-index: 100;
   transition: opacity 0.3s ease-out;
+  overflow: hidden;
 }
 
 .animation-stage-wrapper.hidden {
@@ -368,6 +447,8 @@ defineExpose({
   flex-direction: column;
   gap: 12px;
   align-items: center;
+  max-width: 90vw;
+  overflow: hidden;
 }
 
 .main-text {
@@ -403,6 +484,48 @@ defineExpose({
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
   font-weight: 400;
   font-size: clamp(16px, 2vw, 28px);
+  line-height: 1.4;
+  color: #007aff;
+  white-space: nowrap;
+}
+
+.case1-video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.open-story-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #007aff;
+  border-radius: 40px;
+  overflow: hidden;
+  text-decoration: none;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  z-index: 4;
+}
+
+.open-story-button:hover {
+  border: 4px solid #007bffde;
+}
+
+.open-story-text {
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
   line-height: 1.4;
   color: #007aff;
   white-space: nowrap;
