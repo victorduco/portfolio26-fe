@@ -1,15 +1,8 @@
 import { gsap } from "gsap";
+import { initGSAP } from "./gsap-utils";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger);
-
-// CRITICAL FIX: Force GSAP to use 'transform' matrix instead of individual CSS properties
-// Individual properties (translate, rotate, scale) override 'transform' in modern CSS
-gsap.config({
-  nullTargetWarn: false,
-  force3D: true,
-});
+initGSAP();
 
 /**
  * Animation Stages Configuration
@@ -172,23 +165,12 @@ export const animationStages = [
   },
 ];
 
-/**
- * Creates and initializes all animation stages with ScrollTrigger
- * @param {HTMLElement} trigger - The section element that triggers scroll and gets pinned
- * @returns {Object} - Timeline and ScrollTrigger instance for cleanup
- */
 export function initAnimations(trigger) {
   // Clean up any previous ScrollTriggers
   ScrollTrigger.getAll().forEach((st) => st.kill());
 
   // Clear any GSAP inline styles from previous runs
   gsap.set(trigger, { clearProps: "all" });
-
-  // Set initial state for text container (visible and positioned below)
-  gsap.set(".text-container", { opacity: 1, y: 100 });
-
-  // Set initial state for open story button (hidden initially)
-  gsap.set(".open-story-button", { opacity: 0, height: "60px" });
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -232,20 +214,4 @@ export function initAnimations(trigger) {
     timeline: tl,
     scrollTrigger: tl.scrollTrigger,
   };
-}
-
-/**
- * Cleanup function to kill all ScrollTriggers and timelines
- * @param {Object} animationInstance - The instance returned from initAnimations
- */
-export function cleanupAnimations(animationInstance) {
-  if (animationInstance) {
-    if (animationInstance.scrollTrigger) {
-      animationInstance.scrollTrigger.kill();
-    }
-    if (animationInstance.timeline) {
-      animationInstance.timeline.kill();
-    }
-  }
-  ScrollTrigger.getAll().forEach((st) => st.kill());
 }

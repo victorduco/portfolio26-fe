@@ -45,7 +45,8 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { initAnimations, cleanupAnimations } from "./case1-gsap-animations.js";
+import { initAnimations } from "./case1-gsap-animations.js";
+import { cleanupAnimations } from "./gsap-utils.js";
 
 const sectionRef = ref(null);
 let animationInstance = null;
@@ -99,10 +100,9 @@ defineExpose({
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 50px);
   text-align: center;
   z-index: 1;
-  opacity: 0;
 }
 
 .main-text {
