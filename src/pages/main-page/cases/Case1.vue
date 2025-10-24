@@ -140,21 +140,29 @@ defineExpose({
   scale: 1 !important;
 }
 
-/* Line Element (z-index: 3) */
-.line-element {
+/* Common button styles */
+.line-element,
+.open-story-button {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #007aff;
-  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 4px solid #007aff;
+  border-radius: 40px;
   overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Line Element (z-index: 3) */
+.line-element {
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  z-index: 3;
+  background-color: #007aff;
 }
 
 .play-icon {
@@ -172,23 +180,11 @@ defineExpose({
 
 /* Open Story Button (z-index: 4) */
 .open-story-button {
-  position: absolute;
-  top: 50%;
-  left: 50%;
   transform: translate(-50%, 520px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 300px;
   height: 0px;
-  border: 4px solid #007aff;
-  border-radius: 40px;
-  background-color: transparent;
-  text-decoration: none;
-  cursor: pointer;
   z-index: 4;
-  opacity: 0;
-  overflow: hidden;
+  background-color: #ffffff;
 }
 
 .open-story-button:hover {
