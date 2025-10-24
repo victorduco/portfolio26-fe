@@ -89,12 +89,19 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
-
+// Expose refs to parent component
 const cloudContainer = ref(null);
 const topLeftCloud = ref(null);
 const topRightCloud = ref(null);
 const bottomLeftCloud = ref(null);
 const bottomRightCloud = ref(null);
+
+defineExpose({
+  topLeftCloud,
+  topRightCloud,
+  bottomLeftCloud,
+  bottomRightCloud,
+});
 
 let scrollListener = null;
 

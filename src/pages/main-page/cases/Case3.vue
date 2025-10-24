@@ -7,7 +7,7 @@
   >
     <div class="case3-unique-layout" ref="layoutElement">
 
-    <CloudCorners />
+    <CloudCorners ref="cloudCornersRef" />
 
 
     <div class="case3-container">
@@ -120,6 +120,7 @@ const buttonElement = ref(null);
 const imageContainer = ref(null);
 const mediaContainer = ref(null);
 const videoElement = ref(null);
+const cloudCornersRef = ref(null);
 
 // Animation instance
 let animationInstance = null;
@@ -141,6 +142,7 @@ onMounted(() => {
       buttonElement: buttonElement.value,
       imageContainer: imageContainer.value,
       videoElement: videoElement.value,
+      cloudCorners: cloudCornersRef.value,
     });
   }
 });
@@ -337,6 +339,8 @@ defineExpose({
   position: relative;
   will-change: transform;
   transition: transform 0.1s ease-out;
+  opacity: 0; /* Initial state for GSAP animation */
+  transform: translateY(100px); /* Initial offset - increased for more movement */
 }
 
 /* Media container - holds both image and video */
