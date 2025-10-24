@@ -7,58 +7,45 @@
     <div class="case2-split-layout" ref="containerRef">
       <div
         ref="contentWrapperRef"
-        :class="['content-wrapper', { pinned: pinned, unpinned: unpinned }]"
-        :style="{
-          ...(unpinned ? { top: `${unpinTopOffset}px` } : {}),
-          ...(pinned
-            ? { transform: `translate(-50%, -50%) scale(${currentScale})` }
-            : { transform: `scale(${currentScale})` }),
-        }"
+        class="content-wrapper"
       >
-        <div
-          class="case2-content"
-          :style="{ transform: `translateY(${contentParallaxY}vh)` }"
-        >
+        <div class="case2-content">
           <div class="case2-content-wrapper">
-            <div
-              class="case2-card-background"
-              :style="{ opacity: getCardOpacity() }"
-            ></div>
+            <div class="case2-card-background"></div>
 
             <div class="case2-content-inner">
               <h2 class="case2-title">
-                <motion.span
+                <span
                   v-for="(word, index) in titlePart1Words"
                   :key="'title1-' + index"
-                  :style="{ opacity: getTitlePart1WordOpacity(index) }"
+                  :data-word-part1="index"
                   class="word"
                 >
                   {{ word }}
-                </motion.span>
-                <motion.span
+                </span>
+                <span
                   v-for="(word, index) in titlePart2Words"
                   :key="'title2-' + index"
-                  :style="{ opacity: getTitlePart2WordOpacity(index) }"
+                  :data-word-part2="index"
                   class="word"
                 >
                   {{ word }}
-                </motion.span>
+                </span>
               </h2>
               <p class="case2-description">
-                <motion.span
+                <span
                   v-for="(word, index) in descriptionWords"
                   :key="'desc-' + index"
-                  :style="{ opacity: getDescriptionWordOpacity(index) }"
+                  :data-word-desc="index"
                   class="word"
                 >
                   {{ word }}
-                </motion.span>
+                </span>
               </p>
 
               <button
                 class="case2-open-story"
                 @click="handleStoryLinkClick"
-                :style="{ opacity: getButtonOpacity() }"
               >
                 <img src="@/assets/icons/case2.svg" alt="" class="case2-icon" />
                 Open Story
@@ -71,7 +58,6 @@
           <div
             class="case2-image-wrapper"
             ref="imageWrapper"
-            :style="{ transform: `translateY(${parallaxY}%)` }"
           >
             <img
               :src="imageSrc"
@@ -80,21 +66,17 @@
               ref="imageElement"
             />
 
-            <motion.video
+            <video
               v-if="showVideo"
               ref="videoElement"
               class="case2-video"
               :src="videoSrc"
-              :animate="videoState"
-              :variants="videoVariants"
-              :transition="videoTransition"
-              :initial="'visible'"
               muted
               playsinline
               preload="auto"
             >
               <source :src="videoSrc" type="video/mp4" />
-            </motion.video>
+            </video>
           </div>
         </div>
       </div>
@@ -106,7 +88,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
-import { motion, useScroll } from "motion-v";
+import {
+  initCase2Animations,
+  cleanupCase2Animations,
+} from "./case2-gsap-animations.js";
 
 const description =
   "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
@@ -117,150 +102,30 @@ const imageSrc = new URL("@/assets/images/p2-3@2x.png", import.meta.url).href;
 
 const containerRef = ref(null);
 const contentWrapperRef = ref(null);
-const scrollContainerRef = ref(null);
 const videoElement = ref(null);
-
-const { scrollYProgress } = useScroll({
-  target: containerRef,
-  container: scrollContainerRef,
-  offset: ["start end", "end end"],
-});
-
-const pinned = ref(false);
-const unpinned = ref(false);
-const unpinTopOffset = ref(0);
 
 const showVideo = computed(() => !!videoSrc);
 const titlePart1Words = computed(() => ["Redesigning", "the"]);
 const titlePart2Words = computed(() => ["Communications", "App"]);
 const descriptionWords = computed(() => description.split(" "));
-const currentScrollProgress = ref(0);
 
-const videoVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
-const videoTransition = {
-  type: "tween",
-  ease: [0.4, 0, 0.2, 1],
-  duration: 0.5,
-};
-const videoState = ref("hidden");
-
-const getOpacity = (startProgress, endProgress) => {
-  if (currentScrollProgress.value < startProgress) return 0;
-  if (currentScrollProgress.value > endProgress) return 1;
-  return (
-    (currentScrollProgress.value - startProgress) /
-    (endProgress - startProgress)
-  );
-};
-
-const getTitlePart1WordOpacity = (wordIndex) => {
-  const totalWords = titlePart1Words.value.length;
-  const wordProgress = wordIndex / totalWords;
-  const startProgress = wordProgress * 0.15;
-  const endProgress = startProgress + 0.15 / totalWords;
-  return getOpacity(startProgress, endProgress);
-};
-
-const getTitlePart2WordOpacity = (wordIndex) => {
-  const totalWords = titlePart2Words.value.length;
-  const wordProgress = wordIndex / totalWords;
-  const startProgress = 0.15 + wordProgress * 0.15;
-  const endProgress = startProgress + 0.15 / totalWords;
-  return getOpacity(startProgress, endProgress);
-};
-
-const getDescriptionWordOpacity = (wordIndex) => {
-  const totalWords = descriptionWords.value.length;
-  const wordProgress = wordIndex / totalWords;
-  const startProgress = 0.5 + wordProgress * 0.15;
-  const endProgress = startProgress + 0.15 / totalWords;
-  return getOpacity(startProgress, endProgress);
-};
-
-const getCardOpacity = () => getOpacity(0.45, 0.5);
-const getButtonOpacity = () => getOpacity(0.65, 0.75);
-
-const currentScale = ref(0.5);
-
-const parallaxY = ref(0);
-
-const contentParallaxY = ref(0);
-
-let scrollUnsubscribe = null;
+let animationInstance = null;
 
 onMounted(() => {
-  scrollUnsubscribe = scrollYProgress.on?.("change", (rawProgress) => {
-    const progress = rawProgress;
-    const scaleEndThreshold = 0.4;
-
-    currentScale.value =
-      progress <= scaleEndThreshold
-        ? 0.5 + (progress / scaleEndThreshold) * 0.5
-        : 1;
-
-    const textProgress =
-      progress <= scaleEndThreshold
-        ? 0
-        : (progress - scaleEndThreshold) / (1 - scaleEndThreshold);
-    currentScrollProgress.value = textProgress;
-
-    parallaxY.value = (0.5 - textProgress) * 20;
-
-    if (textProgress < 0.7) {
-      contentParallaxY.value = -(textProgress / 0.7) * 3;
-    } else {
-      const laterProgress = (textProgress - 0.7) / 0.3;
-      const easeInCubic = laterProgress * laterProgress * laterProgress;
-      contentParallaxY.value = -3 + easeInCubic * (-120 + 3);
-    }
-
-    if (videoElement.value && videoSrc) {
-      const video = videoElement.value.$el || videoElement.value;
-      if (video?.duration && !isNaN(video.duration)) {
-        const targetTime = progress * video.duration;
-        if (Math.abs(video.currentTime - targetTime) > 0.05) {
-          video.currentTime = targetTime;
-        }
-      }
-    }
-
-    videoState.value = progress > 0.1 ? "visible" : "hidden";
-
-    const pinStartThreshold = 0.4;
-    const shouldPin = progress >= pinStartThreshold && progress < 1;
-    const shouldUnpin = progress >= 1 || progress < pinStartThreshold;
-
-    if (shouldPin !== pinned.value) {
-      if (
-        shouldPin &&
-        unpinned.value &&
-        containerRef.value &&
-        contentWrapperRef.value
-      ) {
-        const containerRect = containerRef.value.getBoundingClientRect();
-        const wrapperRect = contentWrapperRef.value.getBoundingClientRect();
-        unpinTopOffset.value = wrapperRect.top - containerRect.top;
-      }
-      if (shouldPin && unpinned.value) unpinned.value = false;
-      pinned.value = shouldPin;
-    }
-
-    if (shouldUnpin !== unpinned.value) {
-      if (shouldUnpin && containerRef.value && contentWrapperRef.value) {
-        const containerRect = containerRef.value.getBoundingClientRect();
-        const wrapperRect = contentWrapperRef.value.getBoundingClientRect();
-        unpinTopOffset.value = wrapperRect.top - containerRect.top;
-      }
-      unpinned.value = shouldUnpin;
-    }
-  });
+  // Initialize GSAP animations with ScrollTrigger
+  if (containerRef.value && contentWrapperRef.value) {
+    const videoEl = videoElement.value?.$el || videoElement.value;
+    animationInstance = initCase2Animations(
+      containerRef.value,
+      contentWrapperRef.value,
+      videoEl
+    );
+  }
 });
 
 onUnmounted(() => {
-  if (scrollUnsubscribe) {
-    scrollUnsubscribe();
-    scrollUnsubscribe = null;
-  }
+  cleanupCase2Animations(animationInstance);
+  animationInstance = null;
 });
 
 const handleEnter = () => {};
@@ -292,26 +157,7 @@ defineExpose({
   z-index: 1;
   overflow: visible;
   pointer-events: auto;
-}
-
-.content-wrapper.pinned {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100vh;
-  z-index: 200;
-  pointer-events: none;
-}
-
-.content-wrapper.unpinned {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
-  min-height: 100vh;
-  pointer-events: auto;
+  will-change: transform;
 }
 
 .final-spacer {
