@@ -12,16 +12,16 @@ gsap.config({
 
 /**
  * Initialize Case2 GSAP animations with ScrollTrigger
- * This component features:
- * - Scale animation (0.5 to 1.0) with pin
- * - Text reveal by words (title part 1, title part 2, description)
- * - Card background fade in
- * - Button fade in
- * - Data-speed based parallax effects
- * - Video scrubbing synchronized with scroll
+ * Sequential animation order:
+ * 1. Image/video wrapper slides in
+ * 2. Title words fade in sequentially
+ * 3. Card background fades in
+ * 4. Description words fade in
+ * 5. Button fades in
+ * 6. Video scrubs throughout entire scroll
  *
  * @param {HTMLElement} containerRef - Main container element
- * @param {HTMLElement} contentWrapperRef - Content wrapper for scale animation and pinning
+ * @param {HTMLElement} contentWrapperRef - Content wrapper (image container)
  * @param {HTMLElement} videoElement - Video element for scrubbing
  * @returns {Object} - Timeline and ScrollTrigger instances for cleanup
  */
@@ -42,131 +42,131 @@ export function initCase2Animations(
     gsap.set(contentWrapperRef, { clearProps: "all" });
   }
 
-  const timelines = [];
-  const scrollTriggers = [];
+  const animations = {
+    mainTimeline: null,
+    videoTrigger: null,
+  };
 
-  // Create main timeline for all animations
-  const mainTimeline = gsap.timeline({
+  // Create main timeline with ScrollTrigger
+  animations.mainTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: containerRef,
-      start: "top top", // Start when section reaches top
-      end: "bottom bottom",
+      start: "top top",
+      end: "+=400%", // Same length as Case1 and Case3
+      pin: true,
+      pinSpacing: true,
       scrub: 1,
       id: "case2-main",
     },
   });
 
-  // Phase 1: Scale animation removed - no longer needed without pinning
+  // Stage 1: Image/video wrapper slides in (slow)
+  animations.mainTimeline.fromTo(
+    contentWrapperRef,
+    {
+      opacity: 0,
+      y: 100, // Start from below
+    },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      ease: "power2.out",
+    },
+    0
+  );
 
-  // Phase 2: Text animations (0% -> 100%)
-  const textStartTime = 0;
-
-  // Title part 1 words (40% -> 55%)
+  // Stage 2: Title part 1 words fade in (after image animation starts)
   const titlePart1Elements = document.querySelectorAll(
     ".case2-title .word[data-word-part1]"
   );
   if (titlePart1Elements.length > 0) {
-    mainTimeline.fromTo(
+    animations.mainTimeline.fromTo(
       titlePart1Elements,
       { opacity: 0 },
       {
         opacity: 1,
-        duration: 0.15,
-        stagger: 0.15 / titlePart1Elements.length,
+        duration: 0.4,
+        stagger: 0.1,
         ease: "power2.out",
       },
-      textStartTime
+      1.2 // Start during image animation
     );
   }
 
-  // Title part 2 words (55% -> 70%)
+  // Stage 3: Title part 2 words fade in
   const titlePart2Elements = document.querySelectorAll(
     ".case2-title .word[data-word-part2]"
   );
   if (titlePart2Elements.length > 0) {
-    mainTimeline.fromTo(
+    animations.mainTimeline.fromTo(
       titlePart2Elements,
       { opacity: 0 },
       {
         opacity: 1,
-        duration: 0.15,
-        stagger: 0.15 / titlePart2Elements.length,
+        duration: 0.4,
+        stagger: 0.1,
         ease: "power2.out",
       },
-      textStartTime + 0.15
+      1.6 // Sequential after title part 1
     );
   }
 
-  // Card background (85% -> 90%)
+  // Stage 4: Card background fades in
   const cardBackground = document.querySelector(".case2-card-background");
   if (cardBackground) {
-    mainTimeline.fromTo(
+    animations.mainTimeline.fromTo(
       cardBackground,
       { opacity: 0 },
       {
         opacity: 1,
-        duration: 0.05,
+        duration: 0.5,
         ease: "power2.out",
       },
-      textStartTime + 0.45
+      2.0 // After title completes
     );
   }
 
-  // Description words (90% -> 105%)
+  // Stage 5: Description words fade in
   const descriptionElements = document.querySelectorAll(
     ".case2-description .word[data-word-desc]"
   );
   if (descriptionElements.length > 0) {
-    mainTimeline.fromTo(
+    animations.mainTimeline.fromTo(
       descriptionElements,
       { opacity: 0 },
       {
         opacity: 1,
-        duration: 0.15,
-        stagger: 0.15 / descriptionElements.length,
+        duration: 0.8,
+        stagger: 0.02, // Quick stagger for many words
         ease: "power2.out",
       },
-      textStartTime + 0.5
+      2.2 // Start with card background
     );
   }
 
-  // Button (105% -> 115%)
+  // Stage 6: Button fades in
   const button = document.querySelector(".case2-open-story");
   if (button) {
-    mainTimeline.fromTo(
+    animations.mainTimeline.fromTo(
       button,
       { opacity: 0 },
       {
         opacity: 1,
-        duration: 0.1,
+        duration: 0.6,
         ease: "power2.out",
       },
-      textStartTime + 0.65
+      3.0 // After description starts
     );
   }
 
-  // Video opacity - visible from the start
+  // Video scrubbing (independent timeline, synced to entire scroll)
   if (videoElement) {
-    mainTimeline.fromTo(
-      videoElement,
-      { opacity: 1 },
-      {
-        opacity: 1,
-        duration: 0.01,
-      },
-      0
-    );
-  }
-
-  timelines.push(mainTimeline);
-
-  // Video scrubbing without pinning
-  if (videoElement) {
-    ScrollTrigger.create({
+    animations.videoTrigger = ScrollTrigger.create({
       trigger: containerRef,
       start: "top top",
-      end: "bottom bottom",
-      scrub: 1,
+      end: "+=400%", // Same length as main timeline
+      scrub: true,
       id: "case2-video-scrub",
       onUpdate: (self) => {
         if (videoElement.duration && !isNaN(videoElement.duration)) {
@@ -179,107 +179,7 @@ export function initCase2Animations(
     });
   }
 
-  return {
-    timelines,
-    scrollTriggers,
-  };
-}
-
-/**
- * Animate title part 1 words (Redesigning, the)
- */
-function animateTitlePart1Words(textProgress) {
-  const words = ["Redesigning", "the"];
-  words.forEach((word, index) => {
-    const totalWords = words.length;
-    const wordProgress = index / totalWords;
-    const startProgress = wordProgress * 0.15;
-    const endProgress = startProgress + 0.15 / totalWords;
-    const opacity = getOpacity(textProgress, startProgress, endProgress);
-
-    const element = document.querySelector(
-      `.case2-title .word[data-word-part1="${index}"]`
-    );
-    if (element) {
-      gsap.set(element, { opacity });
-    }
-  });
-}
-
-/**
- * Animate title part 2 words (Communications, App)
- */
-function animateTitlePart2Words(textProgress) {
-  const words = ["Communications", "App"];
-  words.forEach((word, index) => {
-    const totalWords = words.length;
-    const wordProgress = index / totalWords;
-    const startProgress = 0.15 + wordProgress * 0.15;
-    const endProgress = startProgress + 0.15 / totalWords;
-    const opacity = getOpacity(textProgress, startProgress, endProgress);
-
-    const element = document.querySelector(
-      `.case2-title .word[data-word-part2="${index}"]`
-    );
-    if (element) {
-      gsap.set(element, { opacity });
-    }
-  });
-}
-
-/**
- * Animate description words
- */
-function animateDescriptionWords(textProgress) {
-  const description =
-    "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
-  const words = description.split(" ");
-
-  words.forEach((word, index) => {
-    const totalWords = words.length;
-    const wordProgress = index / totalWords;
-    const startProgress = 0.5 + wordProgress * 0.15;
-    const endProgress = startProgress + 0.15 / totalWords;
-    const opacity = getOpacity(textProgress, startProgress, endProgress);
-
-    const element = document.querySelector(
-      `.case2-description .word[data-word-desc="${index}"]`
-    );
-    if (element) {
-      gsap.set(element, { opacity });
-    }
-  });
-}
-
-/**
- * Animate card background
- */
-function animateCardBackground(textProgress) {
-  const opacity = getOpacity(textProgress, 0.45, 0.5);
-  const element = document.querySelector(".case2-card-background");
-  if (element) {
-    gsap.set(element, { opacity });
-  }
-}
-
-/**
- * Animate button
- */
-function animateButton(textProgress) {
-  const opacity = getOpacity(textProgress, 0.65, 0.75);
-  const element = document.querySelector(".case2-open-story");
-  if (element) {
-    gsap.set(element, { opacity });
-  }
-}
-
-/**
- * Calculate opacity based on progress range
- */
-function getOpacity(progress, startProgress, endProgress) {
-  if (progress < startProgress) return 0;
-  if (progress > endProgress) return 1;
-  return (progress - startProgress) / (endProgress - startProgress);
+  return animations;
 }
 
 /**
@@ -287,18 +187,19 @@ function getOpacity(progress, startProgress, endProgress) {
  * @param {Object} animationInstance - The instance returned from initCase2Animations
  */
 export function cleanupCase2Animations(animationInstance) {
-  if (animationInstance) {
-    if (animationInstance.scrollTriggers) {
-      animationInstance.scrollTriggers.forEach((st) => st.kill());
-    }
-    if (animationInstance.timelines) {
-      animationInstance.timelines.forEach((tl) => tl.kill());
-    }
+  if (!animationInstance) return;
+
+  if (animationInstance.mainTimeline) {
+    animationInstance.mainTimeline.kill();
   }
 
-  // Kill all case2-related ScrollTriggers
+  if (animationInstance.videoTrigger) {
+    animationInstance.videoTrigger.kill();
+  }
+
+  // Clean up any remaining case2 ScrollTriggers
   ScrollTrigger.getAll().forEach((st) => {
-    if (st.vars.id === "case2-main") {
+    if (st.vars.id?.startsWith("case2-")) {
       st.kill();
     }
   });

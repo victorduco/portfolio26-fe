@@ -378,8 +378,8 @@ defineExpose({
 }
 
 #case2.case-section.item {
-  height: 250vh;
-  min-height: 250vh;
-  max-height: 250vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
 }
 </style>
