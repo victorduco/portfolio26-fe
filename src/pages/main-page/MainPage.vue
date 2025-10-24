@@ -6,20 +6,17 @@
       @animation-complete="handleNavAnimationComplete"
       @active-section-change="handleActiveSectionChange"
     />
-    <VueScrollSnap :fullscreen="true">
-      <Intro ref="introRef" />
-      <Case1 />
-      <Case2 />
-      <Case3 />
-      <AiPlay :dark-mode="isDarkMode" />
-      <Contacts :dark-mode="isDarkMode" />
-    </VueScrollSnap>
+    <Intro ref="introRef" />
+    <Case1 />
+    <Case2 />
+    <Case3 />
+    <AiPlay :dark-mode="isDarkMode" />
+    <Contacts :dark-mode="isDarkMode" />
   </div>
 </template>
 
 <script setup>
 import { nextTick, ref, watch } from "vue";
-import VueScrollSnap from "vue-scroll-snap";
 import Intro from "./intro/Intro.vue";
 import Case1 from "./cases/Case1.vue";
 import Case2 from "./cases/Case2.vue";
@@ -52,23 +49,7 @@ watch(
     if (scrollTop != null && typeof window !== "undefined") {
       nextTick().then(() => {
         requestAnimationFrame(() => {
-          if (!scrollContainerRef.value) {
-            scrollContainerRef.value = document.querySelector(
-              ".scroll-snap-container.fullscreen"
-            );
-          }
-
-          const container = scrollContainerRef.value;
-          if (container) {
-            const previousBehavior = container.style.scrollBehavior;
-            container.style.scrollBehavior = "auto";
-            container.scrollTop = scrollTop;
-            requestAnimationFrame(() => {
-              container.style.scrollBehavior = previousBehavior;
-            });
-          } else {
-            window.scrollTo({ top: scrollTop, behavior: "auto" });
-          }
+          window.scrollTo({ top: scrollTop, behavior: "auto" });
         });
       });
     }
@@ -96,5 +77,9 @@ function handleActiveSectionChange(sectionId) {
   width: 100%;
   min-height: 100vh;
   background-color: #171717; /* Default dark background */
+}
+
+.scroll-container {
+  width: 100%;
 }
 </style>

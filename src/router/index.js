@@ -33,8 +33,7 @@ const scrollPositions = new Map();
 
 const getScrollTop = () => {
   if (typeof window === "undefined") return 0;
-  const container = document.querySelector(".scroll-snap-container.fullscreen");
-  return container ? container.scrollTop : window.scrollY || window.pageYOffset;
+  return window.scrollY || window.pageYOffset;
 };
 
 const router = createRouter({

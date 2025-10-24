@@ -151,26 +151,12 @@ onMounted(() => {
   };
 
   window.addEventListener("scroll", scrollListener, { passive: true });
-
-  
-  const scrollContainer = document.querySelector(".scroll-snap-container");
-  if (scrollContainer) {
-    scrollContainer.addEventListener("scroll", scrollListener, {
-      passive: true,
-    });
-  }
-
-  
   updateCloudParallax();
 });
 
 onUnmounted(() => {
   if (scrollListener) {
     window.removeEventListener("scroll", scrollListener);
-    const scrollContainer = document.querySelector(".scroll-snap-container");
-    if (scrollContainer) {
-      scrollContainer.removeEventListener("scroll", scrollListener);
-    }
   }
 });
 

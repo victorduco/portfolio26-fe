@@ -189,9 +189,6 @@ const contentParallaxY = ref(0);
 let scrollUnsubscribe = null;
 
 onMounted(() => {
-  const scrollContainer = document.querySelector(".scroll-snap-container");
-  if (scrollContainer) scrollContainerRef.value = scrollContainer;
-
   scrollUnsubscribe = scrollYProgress.on?.("change", (rawProgress) => {
     const progress = rawProgress;
     const scaleEndThreshold = 0.4;

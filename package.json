@@ -27,8 +27,7 @@
     "motion-v": "^1.7.3",
     "serve": "^14.2.4",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1",
-    "vue-scroll-snap": "^0.1.11"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.1",

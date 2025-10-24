@@ -1,0 +1,232 @@
+<template>
+  <section
+    id="case1-gsap"
+    class="case-section item"
+    style="background-color: #ffffff"
+    ref="sectionRef"
+  >
+    <div class="animation-container" ref="containerRef">
+      <!-- Text Container (z-index: 1) -->
+      <div class="text-container">
+        <h2 class="main-text">Cross-Domain AI Solution for Account Reconcilers</h2>
+        <p class="sub-text">Apple</p>
+      </div>
+
+      <!-- Mask Element (z-index: 2) -->
+      <div class="mask-element"></div>
+
+      <!-- Line Element (z-index: 3) -->
+      <div class="line-element">
+        <div class="button-content-wrapper">
+          <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M8 5v14l11-7L8 5z" fill="#007AFF" />
+          </svg>
+          <span class="button-text">Play Reel</span>
+        </div>
+
+        <!-- VideoPlayer will be added here later -->
+      </div>
+
+      <!-- Open Story Button (z-index: 4) -->
+      <a
+        href="/story/one"
+        class="open-story-button"
+        @click.prevent="handleStoryLinkClick"
+      >
+        <span class="open-story-text">Open Story</span>
+      </a>
+    </div>
+  </section>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue";
+import { initAnimations, cleanupAnimations } from "./case1-gsap-animations.js";
+
+const sectionRef = ref(null);
+const containerRef = ref(null);
+let animationInstance = null;
+
+onMounted(() => {
+  // Initialize GSAP animations with ScrollTrigger
+  if (sectionRef.value) {
+    animationInstance = initAnimations(sectionRef.value);
+  }
+});
+
+onUnmounted(() => {
+  cleanupAnimations(animationInstance);
+  animationInstance = null;
+});
+
+// Handle story link click
+const handleStoryLinkClick = (event) => {
+  if (event && event.currentTarget && event.currentTarget.href) {
+    window.location.href = event.currentTarget.href;
+  }
+};
+
+defineExpose({
+  handleStoryLinkClick,
+});
+</script>
+
+<style scoped>
+.case-section.item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  height: 100vh;
+}
+
+#case1-gsap.case-section.item {
+  height: 100vh; /* Viewport height - will be pinned */
+  min-height: 100vh;
+  position: relative;
+  z-index: 100; /* Higher than other sections */
+}
+
+.animation-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+/* Text Container (z-index: 1) */
+.text-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1;
+  opacity: 0;
+  /* GSAP overrides */
+  translate: 0 0 !important;
+  rotate: 0deg !important;
+  scale: 1 !important;
+}
+
+.main-text {
+  margin: 0;
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 48px);
+  line-height: 1.2;
+  color: #000000;
+}
+
+.sub-text {
+  margin: 12px 0 0 0;
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 400;
+  font-size: clamp(16px, 2vw, 28px);
+  line-height: 1.4;
+  color: #000000;
+}
+
+/* Mask Element (z-index: 2) */
+.mask-element {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 100vw;
+  height: 50vh;
+  background-color: #ffffff;
+  z-index: 2;
+  opacity: 1;
+  /* GSAP overrides */
+  translate: 0 0 !important;
+  rotate: 0deg !important;
+  scale: 1 !important;
+}
+
+/* Line Element (z-index: 3) */
+.line-element {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #007AFF;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  /* GSAP overrides */
+  translate: 0 0 !important;
+  rotate: 0deg !important;
+  scale: 1 !important;
+}
+
+.button-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+}
+
+.play-icon {
+  flex-shrink: 0;
+}
+
+.button-text {
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 400;
+  font-size: clamp(16px, 2vw, 28px);
+  line-height: 1.4;
+  color: #007AFF;
+  white-space: nowrap;
+}
+
+/* Open Story Button (z-index: 4) */
+.open-story-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 520px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 0px;
+  border: 4px solid #007AFF;
+  border-radius: 40px;
+  background-color: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 4;
+  opacity: 0;
+  overflow: hidden;
+  /* GSAP overrides */
+  translate: 0 0 !important;
+  rotate: 0deg !important;
+  scale: 1 !important;
+}
+
+.open-story-button:hover {
+  border-color: #007bffde;
+}
+
+.open-story-text {
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #007AFF;
+  white-space: nowrap;
+}
+
+</style>

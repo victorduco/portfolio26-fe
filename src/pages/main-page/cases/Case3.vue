@@ -289,29 +289,14 @@ onMounted(() => {
   };
 
   window.addEventListener("scroll", scrollListener, { passive: true });
-
-  
-  const scrollContainer = document.querySelector(".scroll-snap-container");
-  if (scrollContainer) {
-    scrollContainer.addEventListener("scroll", scrollListener, {
-      passive: true,
-    });
-  }
-
-  
   updateParallax();
 });
 
 onUnmounted(() => {
   if (scrollListener) {
     window.removeEventListener("scroll", scrollListener);
-    const scrollContainer = document.querySelector(".scroll-snap-container");
-    if (scrollContainer) {
-      scrollContainer.removeEventListener("scroll", scrollListener);
-    }
   }
 
-  
   if (videoElement.value) {
     videoElement.value.removeEventListener("timeupdate", handleVideoTimeUpdate);
   }
