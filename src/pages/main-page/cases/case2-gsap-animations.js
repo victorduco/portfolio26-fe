@@ -21,7 +21,7 @@ gsap.config({
  * - Video scrubbing synchronized with scroll
  *
  * @param {HTMLElement} containerRef - Main container element
- * @param {HTMLElement} contentWrapperRef - Content wrapper to be pinned
+ * @param {HTMLElement} contentWrapperRef - Content wrapper for scale animation and pinning
  * @param {HTMLElement} videoElement - Video element for scrubbing
  * @returns {Object} - Timeline and ScrollTrigger instances for cleanup
  */
@@ -49,34 +49,17 @@ export function initCase2Animations(
   const mainTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: containerRef,
-      start: "top bottom", // Start when section enters viewport
+      start: "top top", // Start when section reaches top
       end: "bottom bottom",
       scrub: 1,
-      pin: contentWrapperRef,
-      pinSpacing: false,
       id: "case2-main",
-      anticipatePin: 1,
     },
   });
 
-  // Phase 1: Scale animation (0 -> 20%) - from entering viewport to center
-  mainTimeline.fromTo(
-    contentWrapperRef,
-    {
-      scale: 0.5,
-      transformOrigin: "center center",
-    },
-    {
-      scale: 1,
-      duration: 0.2,
-      ease: "power2.out",
-      force3D: true,
-    },
-    0
-  );
+  // Phase 1: Scale animation removed - no longer needed without pinning
 
-  // Phase 2: Text animations (20% -> 100%)
-  const textStartTime = 0.2;
+  // Phase 2: Text animations (0% -> 100%)
+  const textStartTime = 0;
 
   // Title part 1 words (40% -> 55%)
   const titlePart1Elements = document.querySelectorAll(
@@ -177,27 +160,11 @@ export function initCase2Animations(
 
   timelines.push(mainTimeline);
 
-  // Data-speed based parallax for content (more dramatic movement)
-  const content = document.querySelector(".case2-content");
-  if (content) {
-    gsap.to(content, {
-      y: "-120vh",
-      ease: "power3.in",
-      scrollTrigger: {
-        trigger: containerRef,
-        start: "top bottom",
-        end: "bottom bottom",
-        scrub: 1,
-        id: "case2-parallax-content",
-      },
-    });
-  }
-
-  // Video scrubbing
+  // Video scrubbing without pinning
   if (videoElement) {
     ScrollTrigger.create({
       trigger: containerRef,
-      start: "top bottom",
+      start: "top top",
       end: "bottom bottom",
       scrub: 1,
       id: "case2-video-scrub",

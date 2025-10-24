@@ -5,70 +5,65 @@
     style="background-color: #ffffff"
   >
     <div class="case2-split-layout" ref="containerRef">
-      <div ref="contentWrapperRef" class="content-wrapper">
-        <div class="case2-content">
-          <div class="case2-content-wrapper">
-            <div class="case2-card-background"></div>
+      <div class="case2-content">
+        <div class="case2-content-wrapper">
+          <div class="case2-card-background"></div>
 
-            <div class="case2-content-inner">
-              <h2 class="case2-title">
-                <span
-                  v-for="(word, index) in titlePart1Words"
-                  :key="'title1-' + index"
-                  :data-word-part1="index"
-                  class="word"
-                >
-                  {{ word }}
-                </span>
-                <span
-                  v-for="(word, index) in titlePart2Words"
-                  :key="'title2-' + index"
-                  :data-word-part2="index"
-                  class="word"
-                >
-                  {{ word }}
-                </span>
-              </h2>
-              <p class="case2-description">
-                <span
-                  v-for="(word, index) in descriptionWords"
-                  :key="'desc-' + index"
-                  :data-word-desc="index"
-                  class="word"
-                >
-                  {{ word }}
-                </span>
-              </p>
+          <div class="case2-content-inner">
+            <h2 class="case2-title">
+              <span
+                v-for="(word, index) in titlePart1Words"
+                :key="'title1-' + index"
+                :data-word-part1="index"
+                class="word"
+              >
+                {{ word }}
+              </span>
+              <span
+                v-for="(word, index) in titlePart2Words"
+                :key="'title2-' + index"
+                :data-word-part2="index"
+                class="word"
+              >
+                {{ word }}
+              </span>
+            </h2>
+            <p class="case2-description">
+              <span
+                v-for="(word, index) in descriptionWords"
+                :key="'desc-' + index"
+                :data-word-desc="index"
+                class="word"
+              >
+                {{ word }}
+              </span>
+            </p>
 
-              <button class="case2-open-story" @click="handleStoryLinkClick">
-                <img src="@/assets/icons/case2.svg" alt="" class="case2-icon" />
-                Open Story
-              </button>
-            </div>
+            <button class="case2-open-story" @click="handleStoryLinkClick">
+              <img src="@/assets/icons/case2.svg" alt="" class="case2-icon" />
+              Open Story
+            </button>
           </div>
         </div>
+      </div>
 
-        <div class="case2-image-container" ref="imageContainer">
-          <div class="case2-image-wrapper" ref="imageWrapper">
-            <img
-              :src="imageSrc"
-              :alt="title"
-              class="case2-image case2-background"
-              ref="imageElement"
-            />
+      <div class="case2-image-container" ref="contentWrapperRef">
+        <div class="case2-image-wrapper" ref="imageWrapper">
+          <img
+            :src="imageSrc"
+            :alt="title"
+            class="case2-image case2-background"
+            ref="imageElement"
+          />
 
-            <video
-              v-if="showVideo"
-              ref="videoElement"
-              class="case2-video"
-              :src="videoSrc"
-              muted
-              playsinline
-              preload="auto"
-            >
-              <source :src="videoSrc" type="video/mp4" />
-            </video>
-          </div>
+          <video
+            ref="videoElement"
+            class="case2-video"
+            :src="videoSrc"
+            muted
+            playsinline
+            preload="auto"
+          ></video>
         </div>
       </div>
     </div>
@@ -85,15 +80,16 @@ import {
 const description =
   "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
 const title = "Redesigning the Communications App";
-const videoSrc = new URL(
-  "@/assets/case-videos/case2-3-reversed.mp4",
-  import.meta.url
-).href;
+const videoSrc = new URL("@/assets/case-videos/case2-4.mp4", import.meta.url)
+  .href;
 const imageSrc = new URL("@/assets/images/p2-3@2x.png", import.meta.url).href;
 
 const containerRef = ref(null);
 const contentWrapperRef = ref(null);
 const videoElement = ref(null);
+const imageContainer = ref(null);
+const imageWrapper = ref(null);
+const imageElement = ref(null);
 
 const showVideo = computed(() => !!videoSrc);
 const titlePart1Words = computed(() => ["Redesigning", "the"]);
@@ -104,12 +100,20 @@ let animationInstance = null;
 
 onMounted(() => {
   // Initialize GSAP animations with ScrollTrigger
+  console.log("Case2 mounted:", {
+    containerRef: containerRef.value,
+    contentWrapperRef: contentWrapperRef.value,
+    imageContainer: imageContainer.value,
+    videoElement: videoElement.value,
+    showVideo: showVideo.value,
+    videoSrc: videoSrc,
+  });
+
   if (containerRef.value && contentWrapperRef.value) {
-    const videoEl = videoElement.value?.$el || videoElement.value;
     animationInstance = initCase2Animations(
       containerRef.value,
       contentWrapperRef.value,
-      videoEl
+      videoElement.value
     );
   }
 });
@@ -139,24 +143,13 @@ defineExpose({
   overflow: hidden;
 }
 
-.content-wrapper {
-  width: 100%;
-  height: 100vh;
-  min-height: 100vh;
-  display: flex;
-  z-index: 1;
-  overflow: visible;
-  pointer-events: auto;
-}
-
-
 .case2-content {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -208,6 +201,7 @@ defineExpose({
 .case2-title .word {
   display: inline-block;
   margin-right: 0.25em;
+  opacity: 1;
 }
 
 .case2-description {
@@ -253,7 +247,10 @@ defineExpose({
 
 .case2-image-container {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
   z-index: 1;
   overflow: hidden;
   display: flex;
@@ -264,24 +261,19 @@ defineExpose({
 
 .case2-image-wrapper {
   width: 100%;
-  height: 120%;
+  height: 100%;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
 }
 
 .case2-image,
 .case2-video {
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .case2-background {
@@ -290,6 +282,7 @@ defineExpose({
 
 .case2-video {
   z-index: 2;
+  opacity: 1;
 }
 
 @media (max-width: 899px) {
