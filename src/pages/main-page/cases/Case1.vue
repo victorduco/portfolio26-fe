@@ -8,7 +8,9 @@
     <div class="animation-container" ref="containerRef">
       <!-- Text Container (z-index: 1) -->
       <div class="text-container">
-        <h2 class="main-text">Cross-Domain AI Solution for Account Reconcilers</h2>
+        <h2 class="main-text">
+          Cross-Domain AI Solution for Account Reconcilers
+        </h2>
         <p class="sub-text">Apple</p>
       </div>
 
@@ -18,7 +20,13 @@
       <!-- Line Element (z-index: 3) -->
       <div class="line-element">
         <div class="button-content-wrapper">
-          <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <svg
+            class="play-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
             <path d="M8 5v14l11-7L8 5z" fill="#007AFF" />
           </svg>
           <span class="button-text">Play Reel</span>
@@ -83,12 +91,10 @@ defineExpose({
 #case1-gsap.case-section.item {
   height: 100vh; /* Viewport height - will be pinned */
   min-height: 100vh;
-  position: relative;
   z-index: 100; /* Higher than other sections */
 }
 
 .animation-container {
-  position: relative;
   width: 100%;
   height: 100vh;
   display: flex;
@@ -107,10 +113,6 @@ defineExpose({
   text-align: center;
   z-index: 1;
   opacity: 0;
-  /* GSAP overrides */
-  translate: 0 0 !important;
-  rotate: 0deg !important;
-  scale: 1 !important;
 }
 
 .main-text {
@@ -157,17 +159,12 @@ defineExpose({
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #007AFF;
+  background-color: #007aff;
   z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  opacity: 0;
-  /* GSAP overrides */
-  translate: 0 0 !important;
-  rotate: 0deg !important;
-  scale: 1 !important;
 }
 
 .button-content-wrapper {
@@ -187,7 +184,7 @@ defineExpose({
   font-weight: 400;
   font-size: clamp(16px, 2vw, 28px);
   line-height: 1.4;
-  color: #007AFF;
+  color: #007aff;
   white-space: nowrap;
 }
 
@@ -202,7 +199,7 @@ defineExpose({
   justify-content: center;
   width: 300px;
   height: 0px;
-  border: 4px solid #007AFF;
+  border: 4px solid #007aff;
   border-radius: 40px;
   background-color: transparent;
   text-decoration: none;
@@ -225,8 +222,7 @@ defineExpose({
   font-weight: 500;
   font-size: 20px;
   line-height: 1.4;
-  color: #007AFF;
+  color: #007aff;
   white-space: nowrap;
 }
-
 </style>

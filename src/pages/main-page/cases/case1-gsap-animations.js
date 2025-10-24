@@ -60,7 +60,7 @@ export const animationStages = [
         target: ".line-element",
         to: {
           width: "50vw",
-          duration: 0.5,
+          duration: 4,
           ease: "power2.inOut",
         },
       },
@@ -75,7 +75,7 @@ export const animationStages = [
       {
         target: ".line-element",
         to: {
-          y: "55px",
+          y: "100px",
           duration: 0.5,
           ease: "power2.inOut",
         },
@@ -91,7 +91,7 @@ export const animationStages = [
       {
         target: ".mask-element",
         to: {
-          y: "55px",
+          y: "100px",
           duration: 0.5,
           ease: "power2.inOut",
         },
