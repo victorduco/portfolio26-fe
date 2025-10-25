@@ -1,48 +1,60 @@
 <template>
-  <section
-    id="case1"
-    class="case-section item"
-    style="background-color: #ffffff"
-    ref="sectionRef"
-  >
-    <!-- Text Container (z-index: 1) -->
-    <div class="text-container">
-      <h2 class="main-text">
-        Cross-Domain AI Solution for Account Reconcilers
-      </h2>
-      <p class="sub-text">Apple</p>
+  <!-- scroll-container: внешний контейнер для скролла -->
+  <div id="case1" class="scroll-container" ref="scrollContainerRef">
+    <!-- pin-container: pinned элемент на 200vh -->
+    <div class="pin-container" ref="pinContainerRef">
+      <!-- section-1: триггер для timeline #1 (scrub) -->
+      <div class="section-1">
+        <span class="label section-1-label">Section 1: Growing Line</span>
+
+        <!-- circle: все анимируемые объекты -->
+        <div class="circle">
+          <!-- Text Container (z-index: 1) -->
+          <div class="text-container">
+            <h2 class="main-text">
+              Cross-Domain AI Solution for Account Reconcilers
+            </h2>
+            <p class="sub-text">Apple</p>
+          </div>
+
+          <!-- Mask Element (z-index: 2) -->
+          <div class="mask-element"></div>
+
+          <!-- Line Element (z-index: 3) -->
+          <div class="line-element">
+            <span class="button-text">
+              <svg
+                class="play-icon"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path d="M8 5v14l11-7L8 5z" fill="#007AFF" />
+              </svg>
+              Play Reel
+            </span>
+
+            <!-- VideoPlayer will be added here later -->
+          </div>
+
+          <!-- Open Story Button (z-index: 4) -->
+          <a
+            href="/story/one"
+            class="open-story-button"
+            @click.prevent="handleStoryLinkClick"
+          >
+            <span class="open-story-text">Open Story</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- section-2: триггер для timeline #2 (auto-play) -->
+      <div class="section-2">
+        <span class="label section-2-label">Section 2: Video Transform</span>
+      </div>
     </div>
-
-    <!-- Mask Element (z-index: 2) -->
-    <div class="mask-element"></div>
-
-    <!-- Line Element (z-index: 3) -->
-    <div class="line-element">
-      <span class="button-text">
-        <svg
-          class="play-icon"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <path d="M8 5v14l11-7L8 5z" fill="#007AFF" />
-        </svg>
-        Play Reel
-      </span>
-
-      <!-- VideoPlayer will be added here later -->
-    </div>
-
-    <!-- Open Story Button (z-index: 4) -->
-    <a
-      href="/story/one"
-      class="open-story-button"
-      @click.prevent="handleStoryLinkClick"
-    >
-      <span class="open-story-text">Open Story</span>
-    </a>
-  </section>
+  </div>
 </template>
 
 <script setup>
@@ -50,13 +62,14 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { initAnimations } from "./case1-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
 
-const sectionRef = ref(null);
+const scrollContainerRef = ref(null);
+const pinContainerRef = ref(null);
 let animationInstance = null;
 
 onMounted(() => {
   // Initialize GSAP animations with ScrollTrigger
-  if (sectionRef.value) {
-    animationInstance = initAnimations(sectionRef.value);
+  if (pinContainerRef.value) {
+    animationInstance = initAnimations(pinContainerRef.value);
   }
 });
 
@@ -78,23 +91,74 @@ defineExpose({
 </script>
 
 <style scoped>
-.case-section.item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  height: 100vh;
+/* ========================================
+   scroll-container: внешний контейнер
+   ======================================== */
+.scroll-container {
+  width: 100%;
+  background-color: #ffffff;
+  position: relative;
 }
 
-#case1.case-section.item {
+/* ========================================
+   pin-container: pinned элемент (200vh)
+   ======================================== */
+.pin-container {
+  width: 100%;
+  height: 200vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========================================
+   section-1, section-2: триггеры (по 100vh каждый)
+   ======================================== */
+.section-1,
+.section-2 {
   width: 100%;
   height: 100vh;
-  z-index: 100; /* Higher than other sections */
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffffff;
-  overflow: hidden;
+}
+
+.section-1 {
+  z-index: 1;
+}
+
+.section-2 {
+  z-index: 0;
+}
+
+/* Debug labels для секций */
+.label {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-size: 14px;
+  color: #999;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ========================================
+   circle: контейнер для всех анимируемых объектов
+   ======================================== */
+.circle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.circle > * {
+  pointer-events: auto;
 }
 
 /* Text Container (z-index: 1) */
@@ -156,11 +220,11 @@ defineExpose({
   overflow: hidden;
   cursor: pointer;
   text-decoration: none;
+  transform: translate(-50%, -50%);
 }
 
 /* Line Element (z-index: 3) */
 .line-element {
-  transform: translate(-50%, -50%);
   width: 40px;
   height: 40px;
   z-index: 3;
@@ -182,7 +246,6 @@ defineExpose({
 
 /* Open Story Button (z-index: 4) */
 .open-story-button {
-  transform: translate(-50%, -50%);
   width: 300px;
   height: 0px;
   z-index: 4;

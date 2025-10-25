@@ -3,8 +3,23 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export function initAnimations(trigger) {
-  // Timeline 1: Line growth with scrub
+export function initAnimations(pinContainer) {
+  // ========================================
+  // ScrollTrigger #1 - Общий Pin (200vh)
+  // ========================================
+  const mainPinST = ScrollTrigger.create({
+    trigger: pinContainer,
+    start: "top top",
+    end: "bottom bottom",
+    pin: true,
+    pinSpacing: true,
+    id: "case1-main-pin",
+    markers: true,
+  });
+
+  // ========================================
+  // Timeline #1 - Scroll-driven (0-100vh)
+  // ========================================
   const tl1 = gsap.timeline({
     defaults: {
       duration: 0.5,
@@ -12,13 +27,12 @@ export function initAnimations(trigger) {
       force3D: true,
     },
     scrollTrigger: {
-      trigger: trigger,
+      trigger: ".section-1",
       start: "top top",
-      end: "+=300%",
-      pin: true,
-      pinSpacing: false, // Important: disable pinSpacing for first timeline
-      scrub: true,
+      end: "bottom top",
+      scrub: 1,
       id: "case1-timeline1",
+      markers: true,
     },
   });
 
@@ -65,57 +79,49 @@ export function initAnimations(trigger) {
     ">"
   );
 
-  //
-  // Move line down, Text moves up, Mask moves down
-  tl1.to(
-    ".line-element",
-    {
-      y: "150px",
-      duration: 1,
-      delay: 1,
-    },
-    "almost-full-line"
-  );
-  tl1.to(
-    ".text-container",
-    {
-      y: "-100px",
-      duration: 1,
-      delay: 1,
-    },
-    "almost-full-line"
-  );
-  tl1.to(
-    ".mask-element",
-    {
-      y: "150px",
-      duration: 1,
-      delay: 1,
-    },
-    "almost-full-line"
-  );
-
   tl1.addLabel("timeline1-end");
 
-  // Timeline 2: Circle to video transformation without scrub
+  // ========================================
+  // Timeline #2 - Scroll-triggered (100-200vh)
+  // ========================================
   const tl2 = gsap.timeline({
     defaults: {
       ease: "power1.inOut",
       force3D: true,
     },
     scrollTrigger: {
-      trigger: trigger,
-      start: "top -300%", // Start right after timeline 1 ends (300% offset)
-      end: "+=100%",
-      pin: true,
-      pinSpacing: true,
-      scrub: false,
+      trigger: ".section-2",
+      start: "top top",
+      end: "bottom top",
+      toggleActions: "play reverse play reverse",
       id: "case1-timeline2",
+      markers: true,
     },
   });
 
   // TIMELINE 2 animations start here
-  //
+  // Move line down, Text moves up, Mask moves down
+  tl2.to(".line-element", {
+    y: "150px",
+    duration: 1,
+  });
+  tl2.to(
+    ".text-container",
+    {
+      y: "-100px",
+      duration: 1,
+    },
+    "<"
+  );
+  tl2.to(
+    ".mask-element",
+    {
+      y: "150px",
+      duration: 1,
+    },
+    "<"
+  );
+
   // Transform line back to 30px circle at bottom
   tl2.to(".line-element", {
     width: "30px",
@@ -195,6 +201,7 @@ export function initAnimations(trigger) {
   );
 
   return {
+    mainPin: mainPinST,
     timeline1: tl1,
     timeline2: tl2,
     scrollTrigger1: tl1.scrollTrigger,
