@@ -1,81 +1,63 @@
 <template>
-  <section
-    id="case2"
-    class="case-section item"
-    style="background-color: #ffffff"
-  >
-    <div class="case2-split-layout" ref="containerRef">
-      <div class="case2-content">
-        <div class="case2-content-wrapper">
-          <div class="case2-card-background"></div>
+  <section id="case2" class="case2" ref="containerRef">
+    <div class="case2-content">
+      <div class="case2-card-background"></div>
 
-          <div class="case2-content-inner">
-            <h2 class="case2-title">
-              <span
-                v-for="(word, index) in titlePart1Words"
-                :key="'title1-' + index"
-                :data-word-part1="index"
-                class="word"
-              >
-                {{ word }}
-              </span>
-              <span
-                v-for="(word, index) in titlePart2Words"
-                :key="'title2-' + index"
-                :data-word-part2="index"
-                class="word"
-              >
-                {{ word }}
-              </span>
-            </h2>
-            <p class="case2-description">
-              <span
-                v-for="(word, index) in descriptionWords"
-                :key="'desc-' + index"
-                :data-word-desc="index"
-                class="word"
-              >
-                {{ word }}
-              </span>
-            </p>
+      <div class="case2-content-inner">
+        <h2 class="case2-title">
+          <span
+            v-for="(word, index) in titlePart1Words"
+            :key="'title1-' + index"
+            :data-word-part1="index"
+            class="word"
+          >
+            {{ word }}
+          </span>
+          <span
+            v-for="(word, index) in titlePart2Words"
+            :key="'title2-' + index"
+            :data-word-part2="index"
+            class="word"
+          >
+            {{ word }}
+          </span>
+        </h2>
+        <p class="case2-description">
+          <span
+            v-for="(word, index) in descriptionWords"
+            :key="'desc-' + index"
+            :data-word-desc="index"
+            class="word"
+          >
+            {{ word }}
+          </span>
+        </p>
 
-            <button class="case2-open-story" @click="handleStoryLinkClick">
-              <img src="@/assets/icons/case2.svg" alt="" class="case2-icon" />
-              Open Story
-            </button>
-          </div>
-        </div>
+        <button class="case2-open-story">
+          <img src="@/assets/icons/case2.svg" alt="" class="case2-icon" />
+          Open Story
+        </button>
       </div>
+    </div>
 
-      <div class="case2-image-container" ref="contentWrapperRef">
-        <div class="case2-image-wrapper" ref="imageWrapper">
-          <img
-            :src="imageSrc"
-            :alt="title"
-            class="case2-image case2-background"
-            ref="imageElement"
-          />
+    <div class="case2-image-container">
+      <img :src="imageSrc" :alt="title" class="case2-image case2-background" />
 
-          <video
-            ref="videoElement"
-            class="case2-video"
-            :src="videoSrc"
-            muted
-            playsinline
-            preload="auto"
-          ></video>
-        </div>
-      </div>
+      <video
+        class="case2-video"
+        :src="videoSrc"
+        muted
+        playsinline
+        preload="auto"
+      ></video>
     </div>
   </section>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
-import {
-  initCase2Animations,
-  cleanupCase2Animations,
-} from "./case2-gsap-animations.js";
+import { initAnimations } from "./case2-gsap-animations.js";
+import { cleanupAnimations } from "./gsap-utils.js";
 
 const description =
   "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
@@ -85,13 +67,7 @@ const videoSrc = new URL("@/assets/case-videos/case2-4.mp4", import.meta.url)
 const imageSrc = new URL("@/assets/images/p2-3@2x.png", import.meta.url).href;
 
 const containerRef = ref(null);
-const contentWrapperRef = ref(null);
-const videoElement = ref(null);
-const imageContainer = ref(null);
-const imageWrapper = ref(null);
-const imageElement = ref(null);
 
-const showVideo = computed(() => !!videoSrc);
 const titlePart1Words = computed(() => ["Redesigning", "the"]);
 const titlePart2Words = computed(() => ["Communications", "App"]);
 const descriptionWords = computed(() => description.split(" "));
@@ -99,46 +75,24 @@ const descriptionWords = computed(() => description.split(" "));
 let animationInstance = null;
 
 onMounted(() => {
-  // Initialize GSAP animations with ScrollTrigger
-  console.log("Case2 mounted:", {
-    containerRef: containerRef.value,
-    contentWrapperRef: contentWrapperRef.value,
-    imageContainer: imageContainer.value,
-    videoElement: videoElement.value,
-    showVideo: showVideo.value,
-    videoSrc: videoSrc,
-  });
-
-  if (containerRef.value && contentWrapperRef.value) {
-    animationInstance = initCase2Animations(
-      containerRef.value,
-      contentWrapperRef.value,
-      videoElement.value
-    );
+  if (containerRef.value) {
+    animationInstance = initAnimations(containerRef.value);
   }
 });
 
 onUnmounted(() => {
-  cleanupCase2Animations(animationInstance);
+  cleanupAnimations(animationInstance);
   animationInstance = null;
-});
-
-const handleEnter = () => {};
-const handleLeave = () => {};
-const handleStoryLinkClick = () => {};
-
-defineExpose({
-  handleEnter,
-  handleLeave,
-  handleStoryLinkClick,
 });
 </script>
 
 <style scoped>
-.case2-split-layout {
+.case2 {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
   background-color: #ffffff;
   overflow: hidden;
 }
@@ -147,21 +101,11 @@ defineExpose({
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: clamp(60px, 10vh, 120px) 20px 20px 20px;
-  box-sizing: border-box;
-  pointer-events: none;
-}
-
-.case2-content-wrapper {
-  position: relative;
-  display: inline-flex;
   max-width: min(30vw, 550px);
+  padding: clamp(60px, 10vh, 120px) 20px 20px 20px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(100px);
 }
 
 .case2-card-background {
@@ -171,6 +115,7 @@ defineExpose({
   backdrop-filter: blur(12px);
   border-radius: 16px;
   pointer-events: none;
+  opacity: 0;
 }
 
 .case2-content-inner {
@@ -201,7 +146,7 @@ defineExpose({
 .case2-title .word {
   display: inline-block;
   margin-right: 0.25em;
-  opacity: 1;
+  opacity: 0;
 }
 
 .case2-description {
@@ -218,6 +163,7 @@ defineExpose({
 .case2-description .word {
   display: inline-block;
   margin-right: 0.25em;
+  opacity: 0;
 }
 
 .case2-open-story {
@@ -233,6 +179,7 @@ defineExpose({
   cursor: pointer;
   padding: 0;
   gap: 10px;
+  opacity: 0;
 }
 
 .case2-open-story:hover {
@@ -253,16 +200,6 @@ defineExpose({
   height: 100vh;
   z-index: 1;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-}
-
-.case2-image-wrapper {
-  width: 100%;
-  height: 100%;
-  position: relative;
 }
 
 .case2-image,
@@ -282,19 +219,17 @@ defineExpose({
 
 .case2-video {
   z-index: 2;
-  opacity: 1;
 }
 
 @media (max-width: 899px) {
-  .case2-split-layout {
-    flex-direction: column;
+  .case2 {
     height: auto;
     min-height: 100dvh;
   }
 
   .case2-content {
-    flex: none;
     padding: clamp(32px, 8vh, 64px) clamp(24px, 6vw, 48px);
+    max-width: 100%;
   }
 
   .case2-content-inner {
@@ -315,11 +250,6 @@ defineExpose({
     font-size: clamp(14px, 3.5vw, 16px);
   }
 
-  .case2-content-wrapper {
-    max-width: 100%;
-    width: 100%;
-  }
-
   .case2-open-story {
     font-size: 20px;
   }
@@ -330,7 +260,6 @@ defineExpose({
   }
 
   .case2-image-container {
-    flex: 1;
     min-height: 50vh;
   }
 
@@ -369,17 +298,4 @@ defineExpose({
   }
 }
 
-.case-section.item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100dvh;
-  height: 100dvh;
-}
-
-#case2.case-section.item {
-  height: 100dvh;
-  min-height: 100dvh;
-  max-height: 100dvh;
-}
 </style>
