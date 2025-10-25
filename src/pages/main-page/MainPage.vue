@@ -1,11 +1,13 @@
 <template>
-  <div class="main-page">
+  <Teleport to="#page-navigation-mount">
     <PageNavigation
       :sections="navigationSections"
       :dark-mode="isDarkMode"
       @animation-complete="handleNavAnimationComplete"
       @active-section-change="handleActiveSectionChange"
     />
+  </Teleport>
+  <div class="main-page">
     <Intro ref="introRef" />
     <Case1 />
     <Case2 />
