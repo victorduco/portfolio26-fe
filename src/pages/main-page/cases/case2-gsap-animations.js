@@ -1,8 +1,5 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { initGSAP } from "./gsap-utils";
-
-initGSAP();
 
 export function initAnimations(trigger) {
   const videoElement = document.querySelector(".case2-video");

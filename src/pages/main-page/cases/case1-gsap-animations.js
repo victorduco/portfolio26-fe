@@ -1,7 +1,4 @@
 import { gsap } from "gsap";
-import { initGSAP } from "./gsap-utils";
-
-initGSAP();
 
 export function initAnimations(trigger) {
   const tl = gsap.timeline({
@@ -16,10 +13,10 @@ export function initAnimations(trigger) {
       end: "+=400%",
       pin: true,
       pinSpacing: true,
-      scrub: 2, // TODO adjust scrub later
+      scrub: true, // TODO adjust scrub later
       snap: {
         snapTo: "labels",
-        duration: { min: 0.2, max: 0.4 },
+        duration: { min: 0.1, max: 3 },
         delay: 0,
         ease: "circ.in",
       },

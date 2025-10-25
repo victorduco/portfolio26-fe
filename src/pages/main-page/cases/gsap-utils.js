@@ -1,26 +1,41 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 
-/**
- * Initialize GSAP with plugins and configuration
- * Must be called before using any GSAP animations
- */
+let smoother = null;
+
 export function initGSAP() {
   // Register GSAP plugins
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-  // CRITICAL FIX: Force GSAP to use 'transform' matrix instead of individual CSS properties
-  // Individual properties (translate, rotate, scale) override 'transform' in modern CSS
   gsap.config({
     nullTargetWarn: false,
     force3D: true,
   });
 }
 
+export function initScrollSmoother(options = {}) {
+  if (smoother) {
+    smoother.kill();
+  }
+
+  smoother = ScrollSmoother.create({
+    smooth: 1,
+    effects: true,
+    ...options,
+  });
+
+  return smoother;
+}
+
 /**
- * Cleanup function to kill all ScrollTriggers and timelines
- * @param {Object} animationInstance - The instance returned from initAnimations
+ * Get the current ScrollSmoother instance
+ * @returns {ScrollSmoother|null}
  */
+export function getScrollSmoother() {
+  return smoother;
+}
+
 export function cleanupAnimations(animationInstance) {
   if (animationInstance) {
     if (animationInstance.scrollTrigger) {

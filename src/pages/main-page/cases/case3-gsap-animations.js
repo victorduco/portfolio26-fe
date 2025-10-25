@@ -1,15 +1,6 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger);
-
-// Force GSAP to use 'transform' matrix instead of individual CSS properties
-gsap.config({
-  nullTargetWarn: false,
-  force3D: true,
-});
-
 /**
  * Initialize GSAP animations for Case3
  * Sequential animation order:

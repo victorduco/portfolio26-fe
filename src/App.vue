@@ -4,12 +4,14 @@ import { RouterView } from "vue-router";
 import Keypad from "./components/keypad/Keypad.vue";
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
+import { initScrollSmoother } from "./pages/main-page/cases/gsap-utils.js";
 
 const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
 
 onMounted(() => {
   checkAuth();
+  initScrollSmoother();
 });
 
 const handleUnlock = async () => {
