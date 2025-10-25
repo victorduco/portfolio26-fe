@@ -41,8 +41,6 @@
     </div>
 
     <div class="case2-image-container">
-      <img :src="imageSrc" :alt="title" class="case2-image case2-background" />
-
       <video
         class="case2-video"
         :src="videoSrc"
@@ -61,10 +59,10 @@ import { cleanupAnimations } from "./gsap-utils.js";
 
 const description =
   "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
-const title = "Redesigning the Communications App";
-const videoSrc = new URL("@/assets/case-videos/case2-4.mp4", import.meta.url)
-  .href;
-const imageSrc = new URL("@/assets/images/p2-3@2x.png", import.meta.url).href;
+const videoSrc = new URL(
+  "@/assets/case-videos/case2-4-reverse.mp4",
+  import.meta.url
+).href;
 
 const containerRef = ref(null);
 
@@ -195,30 +193,18 @@ onUnmounted(() => {
 .case2-image-container {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: 50%;
   height: 100vh;
   z-index: 1;
   overflow: hidden;
 }
 
-.case2-image,
 .case2-video {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-}
-
-.case2-background {
-  z-index: 1;
-}
-
-.case2-video {
-  z-index: 2;
 }
 
 @media (max-width: 899px) {
@@ -263,7 +249,6 @@ onUnmounted(() => {
     min-height: 50vh;
   }
 
-  .case2-image,
   .case2-video {
     object-fit: contain;
   }

@@ -78,16 +78,17 @@ export function initAnimations(trigger) {
   );
 
   if (videoElement) {
+    // Video scrubbing based on scroll with 4 snap points
     ScrollTrigger.create({
       trigger: trigger,
       start: "top top",
-      end: "+=400%",
+      end: "+=200%",
       scrub: true,
       id: "case2-video-scrub",
       onUpdate: (self) => {
         if (videoElement.duration && !isNaN(videoElement.duration)) {
           const targetTime = self.progress * videoElement.duration;
-          if (Math.abs(videoElement.currentTime - targetTime) > 0.05) {
+          if (Math.abs(videoElement.currentTime - targetTime) > 0.01) {
             videoElement.currentTime = targetTime;
           }
         }
