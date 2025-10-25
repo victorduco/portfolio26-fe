@@ -17,12 +17,12 @@ export function initAnimations(trigger) {
       end: "+=400%",
       pin: true,
       pinSpacing: true,
-      scrub: 1,
+      scrub: 2, // TODO adjust scrub later
       snap: {
         snapTo: "labels",
-        duration: 0.5,
+        duration: { min: 0.2, max: 0.4 },
         delay: 0,
-        ease: "power2.inOut",
+        ease: "circ.in",
       },
       markers: true,
       id: "case1-main",
@@ -47,6 +47,8 @@ export function initAnimations(trigger) {
     "<50%"
   );
 
+  tl.addLabel("small-line");
+
   // Expand to half screen
   tl.to(
     ".line-element",
@@ -56,6 +58,8 @@ export function initAnimations(trigger) {
     },
     ">"
   );
+
+  tl.addLabel("larger-line");
 
   // Move line down
   tl.to(
@@ -93,6 +97,8 @@ export function initAnimations(trigger) {
     "<"
   );
 
+  tl.addLabel("before-button");
+
   // Transform to button
   tl.to(
     ".line-element",
@@ -101,8 +107,12 @@ export function initAnimations(trigger) {
       height: "96px",
       borderRadius: "48px",
     },
-    "<100%"
+    ">"
   );
+
+  //////
+  //  Snap
+  tl.addLabel("button");
 
   // Show button content
   tl.to(
@@ -159,6 +169,10 @@ export function initAnimations(trigger) {
     },
     ">+=0.5"
   );
+
+  //////
+  //  Snap
+  tl.addLabel("video-expanded");
 
   return {
     timeline: tl,
