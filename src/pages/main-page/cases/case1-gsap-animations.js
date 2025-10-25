@@ -5,12 +5,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function initAnimations(pinContainer) {
   // ========================================
-  // ScrollTrigger #1 - Общий Pin (200vh)
+  // ScrollTrigger #1 - Общий Pin (400vh)
   // ========================================
   const mainPinST = ScrollTrigger.create({
     trigger: pinContainer,
     start: "top top",
-    end: "bottom bottom",
+    end: "+=500%",
     pin: true,
     pinSpacing: true,
     id: "case1-main-pin",
@@ -93,7 +93,7 @@ export function initAnimations(pinContainer) {
       trigger: ".section-2",
       start: "top top",
       end: "bottom top",
-      toggleActions: "play reverse play reverse",
+      toggleActions: "play none none reverse",
       id: "case1-timeline2",
       markers: true,
     },

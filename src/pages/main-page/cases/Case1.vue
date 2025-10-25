@@ -101,11 +101,11 @@ defineExpose({
 }
 
 /* ========================================
-   pin-container: pinned элемент (200vh)
+   pin-container: pinned элемент (400vh)
    ======================================== */
 .pin-container {
   width: 100%;
-  height: 200vh;
+  height: 400vh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -113,9 +113,18 @@ defineExpose({
 }
 
 /* ========================================
-   section-1, section-2: триггеры (по 100vh каждый)
+   section-1, section-2: триггеры
    ======================================== */
-.section-1,
+.section-1 {
+  width: 100%;
+  height: 300vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
 .section-2 {
   width: 100%;
   height: 100vh;
@@ -123,13 +132,6 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.section-1 {
-  z-index: 1;
-}
-
-.section-2 {
   z-index: 0;
 }
 
@@ -153,7 +155,7 @@ defineExpose({
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   pointer-events: none;
 }
 
