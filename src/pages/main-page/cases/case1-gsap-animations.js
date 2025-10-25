@@ -1,6 +1,5 @@
 import { gsap } from "gsap";
 import { initGSAP } from "./gsap-utils";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 initGSAP();
 
