@@ -101,7 +101,6 @@ export function initAnimations(trigger) {
     ".line-element",
     {
       backgroundColor: "#ffffff",
-      force3D: true,
     },
     "<"
   );
@@ -137,7 +136,7 @@ export function initAnimations(trigger) {
     ".line-element",
     {
       width: "75vw",
-      height: "45vw",
+      height: "35vw",
       borderRadius: "26px",
       border: "6px solid #DDDDDD",
       y: "0px",
@@ -150,12 +149,23 @@ export function initAnimations(trigger) {
 
   // Hide button content
   tl.to(
-    ".button-content-wrapper",
+    ".button-text",
     {
       opacity: 0,
       duration: 0.5,
       ease: "power2.out",
       force3D: true,
+    },
+    "<"
+  );
+
+  // prep story button
+  tl.set(
+    ".open-story-button",
+    {
+      opacity: 0,
+      height: "0",
+      y: "20.5vw",
     },
     "<"
   );
@@ -167,10 +177,11 @@ export function initAnimations(trigger) {
       height: "60px",
       opacity: 1,
       duration: 0.5,
+      y: "20.5vw",
       ease: "power2.out",
       force3D: true,
     },
-    ">"
+    ">+=0.5"
   );
 
   return {

@@ -18,16 +18,18 @@
 
     <!-- Line Element (z-index: 3) -->
     <div class="line-element">
-      <svg
-        class="play-icon"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path d="M8 5v14l11-7L8 5z" fill="#007AFF" />
-      </svg>
-      <span class="button-text">Play Reel</span>
+      <span class="button-text">
+        <svg
+          class="play-icon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path d="M8 5v14l11-7L8 5z" fill="#007AFF" />
+        </svg>
+        Play Reel
+      </span>
 
       <!-- VideoPlayer will be added here later -->
     </div>
@@ -180,11 +182,12 @@ defineExpose({
 
 /* Open Story Button (z-index: 4) */
 .open-story-button {
-  transform: translate(-50%, 520px);
+  transform: translate(-50%, -50%);
   width: 300px;
   height: 0px;
   z-index: 4;
   background-color: #ffffff;
+  opacity: 0;
 }
 
 .open-story-button:hover {
