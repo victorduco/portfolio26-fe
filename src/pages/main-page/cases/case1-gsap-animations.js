@@ -6,6 +6,11 @@ initGSAP();
 
 export function initAnimations(trigger) {
   const tl = gsap.timeline({
+    defaults: {
+      duration: 0.5,
+      ease: "power2.inOut",
+      force3D: true,
+    },
     scrollTrigger: {
       trigger: trigger,
       start: "top top",
@@ -31,9 +36,6 @@ export function initAnimations(trigger) {
     height: "6px",
     borderRadius: "3px",
     opacity: 1,
-    duration: 0.5,
-    ease: "power2.inOut",
-    force3D: true,
   });
 
   // Grow to 100px
@@ -41,9 +43,6 @@ export function initAnimations(trigger) {
     ".line-element",
     {
       width: "100px",
-      duration: 0.5,
-      ease: "power2.inOut",
-      force3D: true,
     },
     "<50%"
   );
@@ -54,8 +53,6 @@ export function initAnimations(trigger) {
     {
       width: "50vw",
       duration: 4,
-      ease: "power2.inOut",
-      force3D: true,
     },
     ">"
   );
@@ -65,9 +62,6 @@ export function initAnimations(trigger) {
     ".line-element",
     {
       y: "150px",
-      duration: 0.5,
-      ease: "power2.inOut",
-      force3D: true,
     },
     ">"
   );
@@ -77,9 +71,6 @@ export function initAnimations(trigger) {
     ".text-container",
     {
       y: "-100px",
-      duration: 0.5,
-      ease: "power2.inOut",
-      force3D: true,
     },
     "<"
   );
@@ -89,9 +80,6 @@ export function initAnimations(trigger) {
     ".mask-element",
     {
       y: "150px",
-      duration: 0.5,
-      ease: "power2.inOut",
-      force3D: true,
     },
     "<"
   );
@@ -112,9 +100,6 @@ export function initAnimations(trigger) {
       width: "50vw",
       height: "96px",
       borderRadius: "48px",
-      duration: 0.5,
-      ease: "power2.inOut",
-      force3D: true,
     },
     "<100%"
   );
@@ -124,9 +109,7 @@ export function initAnimations(trigger) {
     ".button-content-wrapper",
     {
       opacity: 1,
-      duration: 0.5,
       ease: "power2.out",
-      force3D: true,
     },
     "<"
   );
@@ -140,9 +123,6 @@ export function initAnimations(trigger) {
       borderRadius: "26px",
       border: "6px solid #DDDDDD",
       y: "0px",
-      duration: 0.5,
-      ease: "power2.inOut",
-      force3D: true,
     },
     ">"
   );
@@ -152,9 +132,7 @@ export function initAnimations(trigger) {
     ".button-text",
     {
       opacity: 0,
-      duration: 0.5,
       ease: "power2.out",
-      force3D: true,
     },
     "<"
   );
@@ -176,10 +154,8 @@ export function initAnimations(trigger) {
     {
       height: "60px",
       opacity: 1,
-      duration: 0.5,
       y: "20.5vw",
       ease: "power2.out",
-      force3D: true,
     },
     ">+=0.5"
   );
