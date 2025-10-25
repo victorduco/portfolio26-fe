@@ -467,6 +467,7 @@ function scrollToNextSection() {
 .intro-section {
   opacity: 0;
   transition: opacity 0.5s ease-out;
+  position: relative;
 }
 
 .intro-section.intro-visible {
