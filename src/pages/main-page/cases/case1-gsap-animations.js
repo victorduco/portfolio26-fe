@@ -28,13 +28,6 @@ export function initAnimations(pinContainer) {
       start: "top top",
       end: "bottom bottom",
       scrub: 1,
-      snap: {
-        snapTo: [0, 1], // snap к началу (0) или концу (1) анимации
-        duration: { min: 0.3, max: 1 },
-        delay: 0,
-        ease: "power1.inOut",
-        inertia: false,
-      },
       id: "TL1",
       invalidateOnRefresh: true,
     },
@@ -73,14 +66,16 @@ export function initAnimations(pinContainer) {
     duration: 1.4,
   });
 
-  // 2) NON-SCRUB timeline: срабатывает когда линия выросла
+  // 2) SCRUB timeline: срабатывает когда линия выросла
   const tl2 = gsap.timeline({
     defaults: { ease: "power1.inOut", force3D: true },
     scrollTrigger: {
       trigger: section2,
       start: "top center",
-      toggleActions: "play none none reverse",
+      end: "bottom bottom",
+      scrub: 1,
       id: "TL2",
+      invalidateOnRefresh: true,
     },
   });
 

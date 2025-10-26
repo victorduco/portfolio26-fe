@@ -232,14 +232,17 @@ export function calculateZonePosition(elementId, percent) {
  */
 export function getActiveNoSnapZones() {
   const breakpoint = getCurrentBreakpoint();
-  const responsiveOverrides = snapConfig.responsiveZones[breakpoint]?.noSnapZones || [];
+  const responsiveOverrides =
+    snapConfig.responsiveZones[breakpoint]?.noSnapZones || [];
 
   // Merge base zones with responsive overrides
   const zones = [...snapConfig.noSnapZones];
 
   // Apply responsive overrides
   responsiveOverrides.forEach((override) => {
-    const zoneIndex = zones.findIndex((z) => z.elementId === override.elementId);
+    const zoneIndex = zones.findIndex(
+      (z) => z.elementId === override.elementId
+    );
     if (zoneIndex !== -1) {
       zones[zoneIndex] = { ...zones[zoneIndex], ...override };
     }

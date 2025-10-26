@@ -114,7 +114,7 @@ defineExpose({
    ======================================== */
 .section-1 {
   width: 100%;
-  height: 1200vh;
+  height: 300vh;
   position: relative;
   display: flex;
   align-items: center;
@@ -124,7 +124,7 @@ defineExpose({
 
 .section-2 {
   width: 100%;
-  height: 100vh;
+  height: 200vh;
   position: relative;
   display: flex;
   align-items: center;
