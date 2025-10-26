@@ -115,12 +115,8 @@ export function useLenis() {
     // Keep casesSnapInstance as alias to same instance (for backwards compatibility)
     casesSnapInstance = snapInstance;
 
-    // Create mandatory snap instance for elements requiring mandatory behavior
-    mandatorySnapInstance = new Snap(lenisInstance, {
-      type: 'mandatory',
-      distanceThreshold: '30%',
-      debounce: 100,
-    });
+    // Use same instance for mandatory snaps (type is already 'mandatory' in global config)
+    mandatorySnapInstance = snapInstance;
 
     return lenisInstance;
   }
@@ -144,26 +140,15 @@ export function useLenis() {
     enabledAnchors.forEach((anchor) => {
       const element = document.getElementById(anchor.id);
       if (element) {
-        // Check if this element has mandatory snaps
+        // Check if this element has mandatory snaps defined in mandatorySnaps config
         const elementMandatorySnaps = mandatorySnaps.filter(snap => snap.elementId === anchor.id);
         const hasMandatorySnaps = elementMandatorySnaps.length > 0;
 
         if (hasMandatorySnaps) {
-          // For mandatory snaps, register only element-based positions (not trigger-based)
-          const positions = elementMandatorySnaps
-            .filter(snap => !snap.type || (!snap.type.startsWith('trigger')))
-            .map(snap => snap.position);
-
-          if (positions.length > 0) {
-            // Register with positions
-            mandatorySnapInstance.addElement(element, {
-              align: positions.length > 1 ? positions : positions[0]
-            });
-            registeredCount++;
-            console.log(`✅ Mandatory Snap: ${anchor.id} (${positions.join(', ')})`);
-          }
+          // Skip - will be registered in registerMandatoryTriggerSnaps() with exact positions
+          console.log(`⏭️  Skipping ${anchor.id} - using custom mandatory snaps`);
         } else {
-          // Regular proximity snap
+          // Regular snap using element alignment
           snapInstance.addElement(element, { align: anchor.align });
           registeredCount++;
           console.log(`✅ Snap: ${anchor.id} (${Array.isArray(anchor.align) ? anchor.align.join(', ') : anchor.align})`);
@@ -307,42 +292,60 @@ export function useLenis() {
    * Call this AFTER all GSAP animations are initialized
    */
   function registerMandatoryTriggerSnaps() {
-    if (!mandatorySnapInstance) {
-      console.warn("Mandatory snap instance not initialized.");
+    if (!snapInstance) {
+      console.warn("Snap instance not initialized.");
       return;
     }
 
     const mandatorySnaps = getEnabledMandatorySnaps();
-    const triggerBasedSnaps = mandatorySnaps.filter(snap =>
-      snap.type === 'trigger-end' || snap.type === 'trigger-progress'
-    );
+
+    // Register ALL mandatory snaps (element-based and trigger-based) as position points
     let registeredCount = 0;
 
-    triggerBasedSnaps.forEach((snap) => {
-      const trigger = ScrollTrigger.getById(snap.scrollTriggerId);
-      if (trigger) {
-        let snapPosition;
+    mandatorySnaps.forEach((snap) => {
+      let snapPosition;
 
-        if (snap.type === 'trigger-end') {
-          // Add snap at the end of the ScrollTrigger
-          snapPosition = trigger.end;
-        } else if (snap.type === 'trigger-progress') {
-          // Add snap at specific progress point
-          const scrollStart = trigger.start;
-          const scrollEnd = trigger.end;
-          snapPosition = scrollStart + (scrollEnd - scrollStart) * snap.progress;
+      if (snap.type === 'trigger-end' || snap.type === 'trigger-progress') {
+        // Trigger-based snaps
+        const trigger = ScrollTrigger.getById(snap.scrollTriggerId);
+        if (trigger) {
+          if (snap.type === 'trigger-end') {
+            snapPosition = trigger.end;
+          } else if (snap.type === 'trigger-progress') {
+            const scrollStart = trigger.start;
+            const scrollEnd = trigger.end;
+            snapPosition = scrollStart + (scrollEnd - scrollStart) * snap.progress;
+          }
+
+          snapInstance.add(snapPosition);
+          registeredCount++;
+          console.log(`✅ Mandatory Snap (${snap.type}): ${snap.name} at ${Math.round(snapPosition)}px`);
+        } else {
+          console.warn(`⚠️ ScrollTrigger not found for mandatory snap: ${snap.scrollTriggerId}`);
         }
+      } else if (snap.elementId && snap.position) {
+        // Element-based snaps - calculate position
+        const element = document.getElementById(snap.elementId);
+        if (element) {
+          const elementTop = element.offsetTop;
 
-        mandatorySnapInstance.add(snapPosition);
-        registeredCount++;
-        console.log(`✅ Mandatory Snap (${snap.type}): ${snap.name} at ${Math.round(snapPosition)}px`);
-      } else {
-        console.warn(`⚠️ ScrollTrigger not found for mandatory snap: ${snap.scrollTriggerId}`);
+          if (snap.position === 'start') {
+            snapPosition = elementTop;
+          } else if (snap.position === 'end') {
+            snapPosition = elementTop + element.offsetHeight - window.innerHeight;
+          }
+
+          snapInstance.add(snapPosition);
+          registeredCount++;
+          console.log(`✅ Mandatory Snap (element): ${snap.name} at ${Math.round(snapPosition)}px`);
+        } else {
+          console.warn(`⚠️ Element not found for mandatory snap: ${snap.elementId}`);
+        }
       }
     });
 
     if (registeredCount > 0) {
-      console.log(`🎯 Registered ${registeredCount} trigger-based mandatory snaps`);
+      console.log(`🎯 Registered ${registeredCount} mandatory snap points`);
     }
   }
 

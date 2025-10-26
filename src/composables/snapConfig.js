@@ -6,7 +6,7 @@
 export const snapConfig = {
   // Global snap settings
   global: {
-    type: "proximity", // 'mandatory', 'proximity', 'lock'
+    type: "mandatory", // 'mandatory', 'proximity', 'lock'
     distanceThreshold: "50%", // Snap zone distance
     debounce: 200, // Delay before snapping (ms)
   },
@@ -48,11 +48,11 @@ export const snapConfig = {
   // No-snap zones - areas where snap should be disabled
   noSnapZones: [
     {
-      name: "Case1 middle animation",
+      name: "Case1 first 60% animation",
       elementId: "case1",
       // Zone defined as percentage of element height (0-1)
-      startPercent: 0.1, // Start at 10% of element
-      endPercent: 0.9, // End at 90% of element
+      startPercent: 0.0, // Start at 0% of element
+      endPercent: 0.6, // End at 60% of element
       enabled: true,
     },
     {
@@ -127,21 +127,42 @@ export const snapConfig = {
   // Mandatory snap points - these will always snap
   mandatorySnaps: [
     {
-      name: "Case2 - Start",
+      name: "Case2 - Start (0%)",
       elementId: "case2",
-      position: "start", // 'start' or 'end'
+      position: "start",
       enabled: true,
     },
     {
-      name: "Case2 - Middle (50%)",
+      name: "Case2 - 20%",
       scrollTriggerId: "case2-main",
       type: "trigger-progress",
-      progress: 0.5, // 50% of the ScrollTrigger
+      progress: 0.2,
       enabled: true,
     },
     {
-      name: "Case2 - End (ScrollTrigger based)",
-      scrollTriggerId: "case2-main", // Use ScrollTrigger end position
+      name: "Case2 - 40%",
+      scrollTriggerId: "case2-main",
+      type: "trigger-progress",
+      progress: 0.4,
+      enabled: true,
+    },
+    {
+      name: "Case2 - 60%",
+      scrollTriggerId: "case2-main",
+      type: "trigger-progress",
+      progress: 0.6,
+      enabled: true,
+    },
+    {
+      name: "Case2 - 80%",
+      scrollTriggerId: "case2-main",
+      type: "trigger-progress",
+      progress: 0.8,
+      enabled: true,
+    },
+    {
+      name: "Case2 - End (100%)",
+      scrollTriggerId: "case2-main",
       type: "trigger-end",
       enabled: true,
     },
