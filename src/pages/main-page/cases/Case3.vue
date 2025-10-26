@@ -259,7 +259,7 @@ defineExpose({
 /* Base title styling */
 .case3-title {
   margin: 0;
-  font-family: "Inter", "SF Pro", "SF Pro Display", sans-serif;
+  font-family: var(--font-family-base);
   font-style: normal;
   font-weight: 600;
   font-size: clamp(36px, 3.8vw, 61px);
@@ -289,7 +289,7 @@ defineExpose({
 /* Company/Subtitle Styling from Figma */
 .case3-company {
   margin: 0;
-  font-family: "Inter", "SF Pro", "SF Pro Display", sans-serif;
+  font-family: var(--font-family-base);
   font-style: normal;
   font-weight: 600;
   font-size: clamp(20px, 1.9vw, 31px);
@@ -332,7 +332,7 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Inter", "SF Pro", "SF Pro Display", sans-serif;
+  font-family: var(--font-family-base);
   font-style: normal;
   font-weight: 600;
   font-size: clamp(16px, 1.3vw, 21px);

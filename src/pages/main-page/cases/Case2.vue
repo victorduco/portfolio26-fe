@@ -121,7 +121,7 @@ onUnmounted(() => {
 
 .case2-title {
   margin: 0;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 400;
   font-size: clamp(20px, 6vw, 42px);
   line-height: 1.2;
@@ -138,7 +138,7 @@ onUnmounted(() => {
 
 .case2-paragraph {
   margin: 0;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 400;
   font-size: clamp(12px, 1.3vw, 15px);
   line-height: 1.5;
@@ -151,7 +151,7 @@ onUnmounted(() => {
 .case2-open-story {
   background: none;
   border: none;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
+  font-family: var(--font-family-base);
   font-weight: 500;
   font-size: 22px;
   display: flex;
