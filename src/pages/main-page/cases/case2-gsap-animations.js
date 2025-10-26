@@ -27,15 +27,48 @@ export function initAnimations(trigger) {
   const contentElement = document.querySelector(".case2-content");
   const titleElement = document.querySelector(".case2-title");
 
-  // Set initial state - title roughly centered
+  // Set initial state - content starts with opacity 0 (before scroll trigger)
   gsap.set(".case2-content", {
-    opacity: 1,
+    opacity: 0,
     y: () => {
       // Position so title is roughly centered at start
       const titleHeight = titleElement ? titleElement.offsetHeight : 0;
       return (window.innerHeight / 2) - (titleHeight / 2) - 50; // Slightly above center
     },
   });
+
+  // -0.3 to -0.1 - Fade in content as user approaches the trigger (earlier)
+  tl.fromTo(".case2-content",
+    {
+      opacity: 0,
+    },
+    {
+      opacity: 1,
+      duration: 0.2,
+    },
+    -0.3
+  );
+
+  // -0.25 to -0.15 - Title words appear before reaching top top (earlier)
+  tl.to(
+    ".case2-title .word[data-word-part1]",
+    {
+      opacity: 1,
+      duration: 0.05,
+      stagger: 0.01,
+    },
+    -0.25
+  );
+
+  tl.to(
+    ".case2-title .word[data-word-part2]",
+    {
+      opacity: 1,
+      duration: 0.05,
+      stagger: 0.01,
+    },
+    -0.2
+  );
 
   // 0-100% - Container moves to center full content at the end
   tl.to(".case2-content", {
@@ -47,26 +80,6 @@ export function initAnimations(trigger) {
     duration: 1.0, // Full timeline duration
     ease: "none", // Linear movement
   }, 0);
-
-  tl.to(
-    ".case2-title .word[data-word-part1]",
-    {
-      opacity: 1,
-      duration: 0.1,
-      stagger: 0.02,
-    },
-    0
-  );
-
-  tl.to(
-    ".case2-title .word[data-word-part2]",
-    {
-      opacity: 1,
-      duration: 0.1,
-      stagger: 0.02,
-    },
-    0.05
-  );
 
   // 20% - Paragraph 1 appears
   tl.to(
@@ -119,11 +132,17 @@ export function initAnimations(trigger) {
   );
 
   if (videoElement) {
-    // Video scrubbing based on scroll - synced with full timeline (0-100%)
+    // Video scrubbing based on scroll - starts when video enters viewport
+    const videoContainer = document.querySelector(".case2-image-container");
+
     ScrollTrigger.create({
-      trigger: trigger,
-      start: "top top",
-      end: "+=400%",
+      trigger: videoContainer,
+      start: "top bottom", // Start when video container enters viewport
+      end: () => {
+        // Calculate end point to match the main timeline end
+        const mainTrigger = ScrollTrigger.getById("case2-main");
+        return mainTrigger ? `+=${mainTrigger.end - mainTrigger.start}` : "+=400%";
+      },
       scrub: true,
       id: "case2-video-scrub",
       onUpdate: (self) => {
