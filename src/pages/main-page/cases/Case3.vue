@@ -187,7 +187,7 @@ defineExpose({
    ======================================== */
 .section-1 {
   width: 100%;
-  height: 400vh;
+  height: 800vh;
   position: relative;
   display: flex;
   align-items: center;
@@ -383,7 +383,7 @@ defineExpose({
   will-change: transform;
   transition: transform 0.1s ease-out;
   opacity: 0; /* Initial state for GSAP animation */
-  transform: translateY(100px); /* Initial offset - increased for more movement */
+  transform: translateY(50vh); /* Start from bottom of screen */
 }
 
 /* Media container - holds both image and video */

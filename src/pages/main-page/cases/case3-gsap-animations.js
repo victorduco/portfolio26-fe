@@ -36,23 +36,31 @@ export function initAnimations(pinContainer, refs) {
       start: "top top",
       end: "bottom bottom",
       scrub: 1,
+      snap: {
+        snapTo: [0, 1], // snap к началу (0) или концу (1) анимации
+        duration: { min: 0.3, max: 1 },
+        delay: 0,
+        ease: "power1.inOut",
+        inertia: false,
+      },
       id: "TL1-CASE3",
       invalidateOnRefresh: true,
     },
   });
 
-  // Stage 1: Image/video wrapper slides in (slow)
+  // Stage 1: Image/video wrapper slides from bottom to layout position (slow parallax)
   tl1.to(
     imageContainer,
     {
       opacity: 1,
       y: 0,
-      duration: 1.5,
+      duration: 6.0,
+      ease: "none",
     },
     0
   );
 
-  // Stage 2: Clouds appear from sides (near the end of image animation)
+  // Stage 2: Clouds appear from sides (after parallax starts)
   if (cloudCorners) {
     const { topLeftCloud, topRightCloud, bottomLeftCloud, bottomRightCloud } =
       cloudCorners;
@@ -73,7 +81,7 @@ export function initAnimations(pinContainer, refs) {
           y: 0,
           duration: 0.8,
         },
-        1.2
+        4.0
       );
     }
 
@@ -88,7 +96,7 @@ export function initAnimations(pinContainer, refs) {
           y: 0,
           duration: 0.8,
         },
-        1.2
+        4.0
       );
     }
 
@@ -103,7 +111,7 @@ export function initAnimations(pinContainer, refs) {
           y: 0,
           duration: 0.8,
         },
-        1.2
+        4.0
       );
     }
 
@@ -118,7 +126,7 @@ export function initAnimations(pinContainer, refs) {
           y: 0,
           duration: 0.8,
         },
-        1.2
+        4.0
       );
     }
   }
@@ -130,7 +138,7 @@ export function initAnimations(pinContainer, refs) {
       opacity: 1,
       duration: 0.6,
     },
-    2.0
+    5.0
   );
 
   // Stage 4: Company/subtitle fades in
@@ -140,7 +148,7 @@ export function initAnimations(pinContainer, refs) {
       opacity: 1,
       duration: 0.6,
     },
-    2.4
+    5.4
   );
 
   // Stage 5: Button fades in
@@ -150,7 +158,7 @@ export function initAnimations(pinContainer, refs) {
       opacity: 1,
       duration: 0.6,
     },
-    2.8
+    5.8
   );
 
   // Video playback control scrubbed to scroll (independent timeline)
