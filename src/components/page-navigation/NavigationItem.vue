@@ -393,6 +393,7 @@ function handleClick(event) {
 /* Removed filter: invert(1) - colors are now handled by variants.js */
 
 .nav-item-label {
+  font-family: var(--font-family-base);
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
