@@ -28,6 +28,13 @@ export function initAnimations(pinContainer) {
       start: "top top",
       end: "bottom bottom",
       scrub: 1,
+      snap: {
+        snapTo: [0, 1], // snap к началу (0) или концу (1) анимации
+        duration: { min: 0.3, max: 1 },
+        delay: 0,
+        ease: "power1.inOut",
+        inertia: false,
+      },
       id: "TL1",
       invalidateOnRefresh: true,
     },
@@ -45,7 +52,7 @@ export function initAnimations(pinContainer) {
     {
       height: "6px",
       borderRadius: "3px",
-      duration: 0.3,
+      duration: 0.6,
     }
   );
 
@@ -54,7 +61,7 @@ export function initAnimations(pinContainer) {
     ".line-element",
     {
       width: "10vw",
-      duration: 0.3,
+      duration: 0.6,
     },
     "<"
   );
@@ -63,7 +70,7 @@ export function initAnimations(pinContainer) {
   tl1.to(".line-element", {
     width: "60vw",
     borderRadius: "3px",
-    duration: 0.7,
+    duration: 1.4,
   });
 
   // 2) NON-SCRUB timeline: срабатывает когда линия выросла
