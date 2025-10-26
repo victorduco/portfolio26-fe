@@ -48,6 +48,11 @@
         playsinline
         preload="auto"
       ></video>
+      <img
+        class="case2-final-image"
+        :src="finalImageSrc"
+        alt="Final frame"
+      />
     </div>
   </section>
 </template>
@@ -59,6 +64,11 @@ import { cleanupAnimations } from "./gsap-utils.js";
 
 const videoSrc = new URL(
   "@/assets/case-videos/case2-4-reverse.mp4",
+  import.meta.url
+).href;
+
+const finalImageSrc = new URL(
+  "@/assets/images/p2-3@2x.png",
   import.meta.url
 ).href;
 
@@ -101,8 +111,11 @@ onUnmounted(() => {
   position: absolute;
   left: 0;
   top: 0;
-  max-width: min(40vw, 750px);
+  width: 50%;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .case2-content-inner {
@@ -112,7 +125,7 @@ onUnmounted(() => {
   align-items: flex-start;
   justify-content: flex-start;
   gap: clamp(16px, 2vh, 24px);
-  max-width: 900px;
+  max-width: min(40vw, 600px);
   width: 100%;
   pointer-events: auto;
   padding: clamp(24px, 3vw, 40px) clamp(28px, 3.5vw, 48px);
@@ -182,6 +195,7 @@ onUnmounted(() => {
   height: 100vh;
   z-index: 1;
   overflow: hidden;
+  padding: 16px;
 }
 
 .case2-video {
@@ -189,6 +203,22 @@ onUnmounted(() => {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  border-radius: 12px;
+}
+
+.case2-final-image {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  z-index: 2;
+  border-radius: 12px;
 }
 
 @media (max-width: 899px) {
@@ -234,6 +264,10 @@ onUnmounted(() => {
   }
 
   .case2-video {
+    object-fit: contain;
+  }
+
+  .case2-final-image {
     object-fit: contain;
   }
 }

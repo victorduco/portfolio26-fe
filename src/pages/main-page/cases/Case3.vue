@@ -382,7 +382,7 @@ defineExpose({
   position: relative;
   will-change: transform;
   transition: transform 0.1s ease-out;
-  opacity: 0; /* Initial state for GSAP animation */
+  opacity: 1; /* Always visible */
   transform: translateY(50vh); /* Start from bottom of screen */
 }
 

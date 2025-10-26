@@ -53,7 +53,6 @@ export function initAnimations(pinContainer, refs) {
   tl1.to(
     imageContainer,
     {
-      opacity: 1,
       y: 0,
       duration: 6.0,
       ease: "none",

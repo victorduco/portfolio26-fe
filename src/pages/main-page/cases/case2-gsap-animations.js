@@ -108,7 +108,15 @@ export function initAnimations(trigger) {
     0.8
   );
 
-  // 100% - nothing (hold final state)
+  // 95-100% - Final image fades in, replacing video
+  tl.to(
+    ".case2-final-image",
+    {
+      opacity: 1,
+      duration: 0.05,
+    },
+    0.95
+  );
 
   if (videoElement) {
     // Video scrubbing based on scroll - synced with full timeline (0-100%)

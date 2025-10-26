@@ -58,15 +58,15 @@ export const snapConfig = {
     {
       name: "Case2 middle animation",
       elementId: "case2",
-      startPercent: 0.1,
-      endPercent: 0.9,
-      enabled: false,
+      startPercent: 0.0,
+      endPercent: 0.5,
+      enabled: true,
     },
     {
       name: "Case3 start to middle animation",
       elementId: "case3",
       startPercent: 0.0, // Start from beginning
-      endPercent: 0.5, // Until middle (50%)
+      endPercent: 0.4, // Until 60% (same as Case1)
       enabled: true,
     },
   ],
@@ -130,48 +130,55 @@ export const snapConfig = {
       name: "Case2 - Start (0%)",
       elementId: "case2",
       position: "start",
-      enabled: true,
+      enabled: false, // Disabled - only snap to 10% and end
+    },
+    {
+      name: "Case2 - 10%",
+      scrollTriggerId: "case2-main",
+      type: "trigger-progress",
+      progress: 0.1,
+      enabled: true, // First snap point at 10%
     },
     {
       name: "Case2 - 20%",
       scrollTriggerId: "case2-main",
       type: "trigger-progress",
       progress: 0.2,
-      enabled: true,
+      enabled: false,
     },
     {
       name: "Case2 - 40%",
       scrollTriggerId: "case2-main",
       type: "trigger-progress",
       progress: 0.4,
-      enabled: true,
+      enabled: false,
     },
     {
       name: "Case2 - 60%",
       scrollTriggerId: "case2-main",
       type: "trigger-progress",
       progress: 0.6,
-      enabled: true,
+      enabled: false,
     },
     {
       name: "Case2 - 80%",
       scrollTriggerId: "case2-main",
       type: "trigger-progress",
       progress: 0.8,
-      enabled: true,
+      enabled: false,
     },
     {
       name: "Case2 - End (100%)",
       scrollTriggerId: "case2-main",
       type: "trigger-end",
-      enabled: true,
+      enabled: true, // Second snap point at end
     },
     {
       name: "Case3 - Middle (50%)",
       scrollTriggerId: "MAIN-PIN-CASE3",
       type: "trigger-progress",
       progress: 0.5, // 50% of the ScrollTrigger - right after no-snap zone
-      enabled: true,
+      enabled: false, // Disabled - only snap to start and end
     },
     {
       name: "Case3 - End (ScrollTrigger based)",
