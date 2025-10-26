@@ -10,8 +10,8 @@
   <div class="main-page">
     <Intro ref="introRef" />
     <Case1 />
-    <!-- <Case2 /> -->
-    <!-- <Case3 /> -->
+    <Case2 />
+    <Case3 />
     <AiPlay :dark-mode="isDarkMode" />
     <Contacts :dark-mode="isDarkMode" />
   </div>
@@ -21,8 +21,8 @@
 import { nextTick, ref, watch } from "vue";
 import Intro from "./intro/Intro.vue";
 import Case1 from "./cases/Case1.vue";
-// import Case2 from "./cases/Case2.vue";
-// import Case3 from "./cases/Case3.vue";
+import Case2 from "./cases/Case2.vue";
+import Case3 from "./cases/Case3.vue";
 import AiPlay from "./ai-play/AiPlay.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
@@ -32,8 +32,8 @@ import { useMeta } from "../../composables/useMeta.js";
 const navigationSections = [
   { id: "intro", label: "Intro" },
   { id: "case1", label: "Story One" },
-  // { id: "case2", label: "Story Two" },
-  // { id: "case3", label: "Story Three" },
+  { id: "case2", label: "Story Two" },
+  { id: "case3", label: "Story Three" },
   { id: "ai-play", label: "AI Play" },
   { id: "contacts", label: "Contact" },
 ];
