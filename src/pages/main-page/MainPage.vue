@@ -42,7 +42,7 @@ const navigationSections = [
 useMeta("home");
 const route = useRoute();
 const introRef = ref(null);
-const { registerSnapPoints } = useLenis();
+const { registerSnapPoints, registerMandatoryTriggerSnaps } = useLenis();
 
 const isDarkMode = ref(true);
 
@@ -50,6 +50,12 @@ const isDarkMode = ref(true);
 onMounted(() => {
   nextTick(() => {
     registerSnapPoints();
+
+    // Register trigger-based mandatory snaps after a short delay
+    // to ensure all GSAP ScrollTriggers are initialized
+    setTimeout(() => {
+      registerMandatoryTriggerSnaps();
+    }, 100);
   });
 });
 

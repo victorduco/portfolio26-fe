@@ -42,6 +42,7 @@ export function initAnimations(pinContainer, refs) {
         delay: 0,
         ease: "power1.inOut",
         inertia: false,
+        directional: false, // Allow snapping in both directions (forward and backward)
       },
       id: "TL1-CASE3",
       invalidateOnRefresh: true,

@@ -60,13 +60,13 @@ export const snapConfig = {
       elementId: "case2",
       startPercent: 0.1,
       endPercent: 0.9,
-      enabled: true,
+      enabled: false,
     },
     {
-      name: "Case3 middle animation",
+      name: "Case3 start to middle animation",
       elementId: "case3",
-      startPercent: 0.1,
-      endPercent: 0.9,
+      startPercent: 0.0, // Start from beginning
+      endPercent: 0.5, // Until middle (50%)
       enabled: true,
     },
   ],
@@ -121,6 +121,42 @@ export const snapConfig = {
       triggerType: "end",
       align: "bottom bottom",
       enabled: false,
+    },
+  ],
+
+  // Mandatory snap points - these will always snap
+  mandatorySnaps: [
+    {
+      name: "Case2 - Start",
+      elementId: "case2",
+      position: "start", // 'start' or 'end'
+      enabled: true,
+    },
+    {
+      name: "Case2 - Middle (50%)",
+      scrollTriggerId: "case2-main",
+      type: "trigger-progress",
+      progress: 0.5, // 50% of the ScrollTrigger
+      enabled: true,
+    },
+    {
+      name: "Case2 - End (ScrollTrigger based)",
+      scrollTriggerId: "case2-main", // Use ScrollTrigger end position
+      type: "trigger-end",
+      enabled: true,
+    },
+    {
+      name: "Case3 - Middle (50%)",
+      scrollTriggerId: "MAIN-PIN-CASE3",
+      type: "trigger-progress",
+      progress: 0.5, // 50% of the ScrollTrigger - right after no-snap zone
+      enabled: true,
+    },
+    {
+      name: "Case3 - End (ScrollTrigger based)",
+      scrollTriggerId: "MAIN-PIN-CASE3",
+      type: "trigger-end",
+      enabled: true,
     },
   ],
 
@@ -210,4 +246,11 @@ export function getEnabledProgressSnaps() {
  */
 export function getEnabledTriggerSnaps() {
   return snapConfig.triggerSnaps.filter((snap) => snap.enabled);
+}
+
+/**
+ * Get enabled mandatory snaps
+ */
+export function getEnabledMandatorySnaps() {
+  return snapConfig.mandatorySnaps.filter((snap) => snap.enabled);
 }

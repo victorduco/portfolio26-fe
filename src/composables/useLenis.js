@@ -8,6 +8,7 @@ import {
   getActiveNoSnapZones,
   getEnabledAnchors,
   getEnabledProgressSnaps,
+  getEnabledMandatorySnaps,
   calculateZonePosition,
 } from "./snapConfig.js";
 
@@ -18,6 +19,7 @@ gsap.registerPlugin(ScrollTrigger);
 let lenisInstance = null;
 let snapInstance = null;
 let casesSnapInstance = null; // Separate snap instance for cases with medium strictness
+let mandatorySnapInstance = null; // Mandatory snap instance for specific elements
 
 /**
  * Vue composable for Lenis smooth scroll with snap functionality
@@ -59,20 +61,6 @@ export function useLenis() {
     // Integrate Lenis with GSAP ScrollTrigger
     lenisInstance.on("scroll", ScrollTrigger.update);
 
-    // Track scroll direction for enhanced directional snap behavior
-    let lastScrollY = 0;
-    lenisInstance.on("scroll", (e) => {
-      const currentScrollY = e.scroll;
-      const scrollDirection = currentScrollY > lastScrollY ? "down" : "up";
-
-      // Store direction for potential use in snap calculations
-      if (lenisInstance) {
-        lenisInstance.scrollDirection = scrollDirection;
-      }
-
-      lastScrollY = currentScrollY;
-    });
-
     // Disable snap in "no-snap zones" using configuration
     // This allows GSAP ScrollTrigger to work freely in defined zones
     lenisInstance.on("scroll", (e) => {
@@ -98,12 +86,12 @@ export function useLenis() {
       });
 
       // Dynamically enable/disable snap based on zone
-      if (snapInstance) {
-        if (inNoSnapZone) {
-          snapInstance.stop();
-        } else {
-          snapInstance.start();
-        }
+      if (inNoSnapZone) {
+        snapInstance?.stop();
+        mandatorySnapInstance?.stop();
+      } else {
+        snapInstance?.start();
+        mandatorySnapInstance?.start();
       }
     });
 
@@ -127,6 +115,13 @@ export function useLenis() {
     // Keep casesSnapInstance as alias to same instance (for backwards compatibility)
     casesSnapInstance = snapInstance;
 
+    // Create mandatory snap instance for elements requiring mandatory behavior
+    mandatorySnapInstance = new Snap(lenisInstance, {
+      type: 'mandatory',
+      distanceThreshold: '30%',
+      debounce: 100,
+    });
+
     return lenisInstance;
   }
 
@@ -143,18 +138,43 @@ export function useLenis() {
     }
 
     const enabledAnchors = getEnabledAnchors();
+    const mandatorySnaps = getEnabledMandatorySnaps();
     let registeredCount = 0;
 
     enabledAnchors.forEach((anchor) => {
       const element = document.getElementById(anchor.id);
       if (element) {
-        snapInstance.addElement(element, { align: anchor.align });
-        registeredCount++;
-        console.log(`✅ Snap: ${anchor.id} (${Array.isArray(anchor.align) ? anchor.align.join(', ') : anchor.align})`);
+        // Check if this element has mandatory snaps
+        const elementMandatorySnaps = mandatorySnaps.filter(snap => snap.elementId === anchor.id);
+        const hasMandatorySnaps = elementMandatorySnaps.length > 0;
+
+        if (hasMandatorySnaps) {
+          // For mandatory snaps, register only element-based positions (not trigger-based)
+          const positions = elementMandatorySnaps
+            .filter(snap => !snap.type || (!snap.type.startsWith('trigger')))
+            .map(snap => snap.position);
+
+          if (positions.length > 0) {
+            // Register with positions
+            mandatorySnapInstance.addElement(element, {
+              align: positions.length > 1 ? positions : positions[0]
+            });
+            registeredCount++;
+            console.log(`✅ Mandatory Snap: ${anchor.id} (${positions.join(', ')})`);
+          }
+        } else {
+          // Regular proximity snap
+          snapInstance.addElement(element, { align: anchor.align });
+          registeredCount++;
+          console.log(`✅ Snap: ${anchor.id} (${Array.isArray(anchor.align) ? anchor.align.join(', ') : anchor.align})`);
+        }
       } else {
         console.warn(`⚠️ Snap anchor not found: ${anchor.id}`);
       }
     });
+
+    // Note: trigger-based mandatory snaps are registered separately
+    // via registerMandatoryTriggerSnaps() after GSAP animations are ready
 
     // Log active no-snap zones
     const activeZones = getActiveNoSnapZones();
@@ -172,6 +192,7 @@ export function useLenis() {
     lenisInstance?.start();
     snapInstance?.start();
     casesSnapInstance?.start();
+    mandatorySnapInstance?.start();
   }
 
   /**
@@ -181,6 +202,7 @@ export function useLenis() {
     lenisInstance?.stop();
     snapInstance?.stop();
     casesSnapInstance?.stop();
+    mandatorySnapInstance?.stop();
   }
 
   /**
@@ -209,6 +231,9 @@ export function useLenis() {
     if (casesSnapInstance) {
       casesSnapInstance.resize();
     }
+    if (mandatorySnapInstance) {
+      mandatorySnapInstance.resize();
+    }
   }
 
   /**
@@ -224,11 +249,13 @@ export function useLenis() {
       // Destroy instances
       snapInstance?.stop();
       casesSnapInstance?.stop();
+      mandatorySnapInstance?.stop();
       lenisInstance.destroy();
 
       lenisInstance = null;
       snapInstance = null;
       casesSnapInstance = null;
+      mandatorySnapInstance = null;
       lenis.value = null;
       snap.value = null;
     }
@@ -275,12 +302,57 @@ export function useLenis() {
     }
   }
 
+  /**
+   * Register mandatory snaps that depend on ScrollTriggers
+   * Call this AFTER all GSAP animations are initialized
+   */
+  function registerMandatoryTriggerSnaps() {
+    if (!mandatorySnapInstance) {
+      console.warn("Mandatory snap instance not initialized.");
+      return;
+    }
+
+    const mandatorySnaps = getEnabledMandatorySnaps();
+    const triggerBasedSnaps = mandatorySnaps.filter(snap =>
+      snap.type === 'trigger-end' || snap.type === 'trigger-progress'
+    );
+    let registeredCount = 0;
+
+    triggerBasedSnaps.forEach((snap) => {
+      const trigger = ScrollTrigger.getById(snap.scrollTriggerId);
+      if (trigger) {
+        let snapPosition;
+
+        if (snap.type === 'trigger-end') {
+          // Add snap at the end of the ScrollTrigger
+          snapPosition = trigger.end;
+        } else if (snap.type === 'trigger-progress') {
+          // Add snap at specific progress point
+          const scrollStart = trigger.start;
+          const scrollEnd = trigger.end;
+          snapPosition = scrollStart + (scrollEnd - scrollStart) * snap.progress;
+        }
+
+        mandatorySnapInstance.add(snapPosition);
+        registeredCount++;
+        console.log(`✅ Mandatory Snap (${snap.type}): ${snap.name} at ${Math.round(snapPosition)}px`);
+      } else {
+        console.warn(`⚠️ ScrollTrigger not found for mandatory snap: ${snap.scrollTriggerId}`);
+      }
+    });
+
+    if (registeredCount > 0) {
+      console.log(`🎯 Registered ${registeredCount} trigger-based mandatory snaps`);
+    }
+  }
+
   return {
     lenis,
     snap,
     setupLenis,
     registerSnapPoints,
     registerProgressSnaps,
+    registerMandatoryTriggerSnaps,
     start,
     stop,
     scrollTo,
