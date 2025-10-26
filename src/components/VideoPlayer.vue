@@ -13,6 +13,7 @@
       playsinline
       @ended="handleVideoEnded"
       @timeupdate="handleTimeUpdate"
+      @click="togglePlayPause"
     ></video>
 
     <!-- Pause Overlay (Play button when paused) -->
@@ -198,9 +199,10 @@ defineExpose({
   object-fit: cover;
   opacity: 1;
   z-index: 1;
-  pointer-events: none;
+  pointer-events: auto;
   border-radius: 20px;
   transition: filter 0.3s ease;
+  cursor: pointer;
 }
 
 .case-video.video-paused-blur {

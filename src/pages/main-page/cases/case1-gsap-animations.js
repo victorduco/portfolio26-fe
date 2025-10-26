@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-export function initAnimations(pinContainer) {
+export function initAnimations(pinContainer, videoPlayerRef, videoExpanded) {
   // Find sections inside pinContainer
   const section1 = pinContainer.querySelector(".section-1");
   const section2 = pinContainer.querySelector(".section-2");
@@ -76,6 +76,35 @@ export function initAnimations(pinContainer) {
       scrub: 1,
       id: "TL2",
       invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        // Video control logic based on progress
+        // When line transforms to rectangle (around 70% progress), try to play video
+        if (self.progress >= 0.7) {
+          if (videoExpanded && !videoExpanded.value) {
+            videoExpanded.value = true;
+            if (videoPlayerRef && videoPlayerRef.value) {
+              videoPlayerRef.value.attemptPlay();
+            }
+          }
+        } else {
+          // Before rectangle formation, pause video
+          if (videoExpanded && videoExpanded.value) {
+            videoExpanded.value = false;
+            if (videoPlayerRef && videoPlayerRef.value) {
+              videoPlayerRef.value.pauseVideo();
+            }
+          }
+        }
+      },
+      onLeave: () => {
+        // Pause video when leaving the section
+        if (videoExpanded && videoExpanded.value) {
+          videoExpanded.value = false;
+          if (videoPlayerRef && videoPlayerRef.value) {
+            videoPlayerRef.value.pauseVideo();
+          }
+        }
+      },
     },
   });
 
@@ -114,28 +143,27 @@ export function initAnimations(pinContainer) {
     "<"
   );
 
-  // Трансформация круга в прямоугольник
+  // Трансформация круга в прямоугольник (используем пропорции видео 1662:1080 ≈ 1.539)
   tl2.to(
     ".line-element",
     {
-      width: "75vw",
-      height: "35vw",
+      width: "min(1200px, 85vw)",
+      height: "min(780px, 55.26vw)", // 85vw / 1.539 ≈ 55.26vw
       borderRadius: "30px",
       duration: 0.5,
     },
     "<50%"
   );
 
-  // Анимация кнопки
+  // Анимация кнопки Open Story
   tl2.set(".open-story-button", {
     opacity: 1,
     width: "300px",
     height: "0px",
     borderRadius: "30px",
-    y: "20.5vw",
+    y: "calc(min(390px, 27.63vw) + 100px)", // Half of video height + gap
   });
-  tl2.to(".button-text", { opacity: 0, duration: 0.5 }, ">");
-  tl2.to(".open-story-button", { height: "60px", duration: 0.25 }, "<25%");
+  tl2.to(".open-story-button", { height: "60px", duration: 0.25 });
 
   // Refresh после загрузки
   setTimeout(() => ScrollTrigger.refresh(), 0);
