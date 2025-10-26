@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from "vue";
+import { nextTick, ref, watch, onMounted } from "vue";
 import Intro from "./intro/Intro.vue";
 import Case1 from "./cases/Case1.vue";
 import Case2 from "./cases/Case2.vue";
@@ -28,6 +28,7 @@ import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import { useRoute } from "vue-router";
 import { useMeta } from "../../composables/useMeta.js";
+import { useLenis } from "../../composables/useLenis.js";
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
@@ -41,8 +42,16 @@ const navigationSections = [
 useMeta("home");
 const route = useRoute();
 const introRef = ref(null);
+const { registerSnapPoints } = useLenis();
 
 const isDarkMode = ref(true);
+
+// Register snap points after all sections are mounted
+onMounted(() => {
+  nextTick(() => {
+    registerSnapPoints();
+  });
+});
 
 watch(
   () => route.meta?.restoreScrollTop,

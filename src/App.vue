@@ -1,17 +1,25 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { RouterView } from "vue-router";
 import Keypad from "./components/keypad/Keypad.vue";
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
-import { initScrollSmoother } from "./pages/main-page/cases/gsap-utils.js";
+import { useLenis } from "./composables/useLenis.js";
 
 const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
+const { setupLenis, destroy } = useLenis();
 
 onMounted(() => {
   checkAuth();
-  initScrollSmoother();
+
+  // Initialize Lenis smooth scroll with snap
+  setupLenis();
+});
+
+onUnmounted(() => {
+  // Cleanup Lenis on unmount
+  destroy();
 });
 
 const handleUnlock = async () => {
