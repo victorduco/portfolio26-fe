@@ -18,6 +18,7 @@
     "docs:preview": "vitepress preview docs",
     "screenshots": "npx playwright test tests/visual/screenshots.spec.js",
     "test:fonts": "node scripts/test-fonts.mjs",
+    "test:fonts:adobe": "node scripts/test-adobe-fonts.mjs",
     "prepare": "husky"
   },
   "dependencies": {

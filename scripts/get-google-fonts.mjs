@@ -5,8 +5,8 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 
-// Получаем топ N популярных шрифтов
-const TOP_FONTS_COUNT = 20;
+// Получаем топ N популярных шрифтов (0 = все шрифты)
+const TOP_FONTS_COUNT = 0; // 0 means all fonts
 
 // Публичный эндпоинт (работает без ключа, но с ограничениями)
 // Альтернатива: можно парсить список с сайта fonts.google.com
@@ -48,21 +48,24 @@ async function main() {
       return;
     }
 
-    // Фильтруем только Sans Serif шрифты и сортируем по популярности
-    const sansSerifFonts = data.familyMetadataList
-      .filter(font => font.category === 'Sans Serif')
+    // Сортируем все шрифты по популярности
+    const allFonts = data.familyMetadataList
       .sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
 
-    // Берем топ N
-    const topFonts = sansSerifFonts.slice(0, TOP_FONTS_COUNT);
+    // Берем топ N (или все если 0)
+    const topFonts = TOP_FONTS_COUNT > 0
+      ? allFonts.slice(0, TOP_FONTS_COUNT)
+      : allFonts;
 
-    console.log(`Top ${TOP_FONTS_COUNT} Google Fonts (by popularity):\n`);
+    const count = TOP_FONTS_COUNT > 0 ? TOP_FONTS_COUNT : topFonts.length;
+    console.log(`${count} Google Fonts (ALL categories):\n`);
     console.log('For test-fonts.mjs:\n');
 
     // Форматируем для вставки в test-fonts.mjs
     const fontConfigs = topFonts.map(font => {
       const name = font.family.replace(/\s+/g, '-');
-      return `  { name: '${name}', value: '"${font.family}", sans-serif' },`;
+      const googleFont = font.family.replace(/\s+/g, '+') + ':wght@100..900';
+      return `  { name: '${name}', value: '"${font.family}", sans-serif', googleFont: '${googleFont}' },`;
     });
 
     console.log('const FONTS_TO_TEST = [');

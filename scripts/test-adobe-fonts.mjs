@@ -2,17 +2,24 @@ import { chromium } from 'playwright';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { FONTS_TO_TEST as FONTS_TO_TEST_ALL } from '../all-google-fonts.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Test with 100 fonts (skip Playwrite handwriting fonts)
-const FONTS_TO_TEST = FONTS_TO_TEST_ALL
-  .filter(font => !font.name.includes('Playwrite'))
-  .slice(0, 100);
+// Load Adobe Fonts (first 2350 added to project)
+const adobeFontsData = JSON.parse(fs.readFileSync('adobe-fonts-list.json', 'utf-8'));
+const FONTS_TO_TEST = adobeFontsData.fonts.slice(0, 2350).map(font => {
+  // Adobe Fonts use slug format: lowercase with dashes
+  const slug = font.name.toLowerCase().replace(/\s+/g, '-');
+  return {
+    name: font.name.replace(/\s+/g, '-'),
+    value: `"${slug}", sans-serif`,
+    adobeFontId: font.id,
+  };
+});
 
-const SCREENSHOTS_DIR = path.join(process.cwd(), 'font-test-screenshots');
+const SCREENSHOTS_DIR = path.join(process.cwd(), 'adobe-fonts-screenshots');
+const ADOBE_PROJECT_ID = 'nme2qkx';
 const VIEWPORT = { width: 1920, height: 1080 };
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -57,55 +64,34 @@ const setupAuthStubs = async (page) => {
   });
 };
 
-// Load Google Font dynamically and wait for it to actually load
-async function loadFontInPage(page, fontConfig) {
-  await page.evaluate(async ({ googleFont, fontValue }) => {
-    // Add Google Fonts link if not exists
-    const linkId = 'dynamic-google-font';
-    let link = document.getElementById(linkId);
-
-    if (!link) {
-      link = document.createElement('link');
-      link.id = linkId;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }
-
-    link.href = `https://fonts.googleapis.com/css2?family=${googleFont}&display=swap`;
-
-    // Wait for stylesheet to load
-    await new Promise((resolve) => {
-      link.onload = resolve;
-      // Fallback timeout
-      setTimeout(resolve, 2000);
-    });
-
+// Change font dynamically and wait for it to load
+async function changeFontInPage(page, fontConfig) {
+  await page.evaluate(async ({ fontValue }) => {
     // Update CSS variable
     document.documentElement.style.setProperty('--font-family-base', fontValue);
 
-    // Extract font family name
+    // Extract font family name (remove quotes and fallbacks)
     const fontFamily = fontValue.split(',')[0].replace(/['"]/g, '').trim();
 
-    // Force load the font using Font Loading API
+    // Wait for font to load using Font Loading API
     try {
       await document.fonts.load(`16px "${fontFamily}"`);
       await document.fonts.load(`400 16px "${fontFamily}"`);
       await document.fonts.load(`600 16px "${fontFamily}"`);
     } catch (e) {
-      // Font might not load, continue anyway
+      // Font might not exist or already loaded
+      console.log(`Font load attempted: ${fontFamily}`);
     }
-
-    // Force reflow to apply font
-    document.body.offsetHeight;
-  }, { googleFont: fontConfig.googleFont, fontValue: fontConfig.value });
+  }, { fontValue: fontConfig.value });
 
   // Additional wait for rendering
   await wait(2000);
 }
 
 async function main() {
-  console.log('Fast Font Screenshot Test Script');
-  console.log('==================================\n');
+  console.log('Adobe Fonts Screenshot Test Script');
+  console.log('====================================\n');
+  console.log(`Testing ${FONTS_TO_TEST.length} Adobe Fonts...\n`);
 
   // Create screenshots directory
   if (!fs.existsSync(SCREENSHOTS_DIR)) {
@@ -125,10 +111,27 @@ async function main() {
   await setupAuthStubs(page);
 
   try {
-    // Load page once
+    // Load page first
     console.log('Loading main page...');
     await page.goto('http://localhost:5173/', { waitUntil: 'domcontentloaded' });
     await wait(3000);
+
+    // Inject Adobe Fonts CSS link in head
+    console.log('Loading Adobe Fonts project...');
+    await page.evaluate((projectId) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = `https://use.typekit.net/${projectId}.css`;
+      document.head.appendChild(link);
+    }, ADOBE_PROJECT_ID);
+
+    // Wait for Adobe Fonts CSS to load and fonts to become available
+    await page.waitForFunction(() => {
+      return document.fonts.size > 0;
+    }, { timeout: 10000 });
+
+    await wait(3000);
+    console.log('Adobe Fonts CSS loaded!');
 
     console.log('Taking keypad screenshots for all fonts...\n');
 
@@ -140,14 +143,14 @@ async function main() {
 
     for (const fontConfig of FONTS_TO_TEST) {
       console.log(`  - ${fontConfig.name} (keypad)...`);
-      await loadFontInPage(page, fontConfig);
+      await changeFontInPage(page, fontConfig);
       await page.screenshot({
         path: path.join(keypadDir, `${fontConfig.name}.png`),
         fullPage: false,
       });
     }
 
-    // Enter code 1234 (do this once)
+    // Enter code 1234
     console.log('\nEntering code 1234...');
     await page.keyboard.press('1');
     await wait(300);
@@ -197,14 +200,14 @@ async function main() {
 
     for (const fontConfig of FONTS_TO_TEST) {
       console.log(`  - ${fontConfig.name} (intro)...`);
-      await loadFontInPage(page, fontConfig);
+      await changeFontInPage(page, fontConfig);
       await page.screenshot({
         path: path.join(introDir, `${fontConfig.name}.png`),
         fullPage: false,
       });
     }
 
-    // Click first rectangle (do this once)
+    // Click first rectangle
     console.log('\nClicking first rectangle...');
     const firstSquare = page.locator('.intro-square').first();
     if (await firstSquare.isVisible()) {
@@ -222,15 +225,15 @@ async function main() {
 
     for (const fontConfig of FONTS_TO_TEST) {
       console.log(`  - ${fontConfig.name} (intro-opened)...`);
-      await loadFontInPage(page, fontConfig);
+      await changeFontInPage(page, fontConfig);
       await page.screenshot({
         path: path.join(introOpenedDir, `${fontConfig.name}.png`),
         fullPage: false,
       });
     }
 
-    console.log('\n==================================');
-    console.log('✓ All font tests complete!');
+    console.log('\n====================================');
+    console.log('✓ All Adobe Fonts tests complete!');
     console.log(`  Screenshots saved to: ${SCREENSHOTS_DIR}`);
 
   } catch (error) {
