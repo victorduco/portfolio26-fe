@@ -85,7 +85,11 @@ export function initAnimations(pinContainer) {
   });
 
   // Движение элементов вниз
-  tl2.to(".line-element", { y: "150px", duration: 0.5 });
+  tl2.to(".line-element", {
+    y: "150px",
+    borderRadius: "3px",
+    duration: 0.5
+  });
   tl2.to(".text-container", { y: "-100px", duration: 0.5 }, "<");
   tl2.to(".mask-element", { y: "150px", duration: 0.5 }, "<");
 
@@ -93,19 +97,23 @@ export function initAnimations(pinContainer) {
   tl2.to(".line-element", {
     width: "25px",
     height: "25px",
-    borderRadius: "100px",
+    borderRadius: "12.5px",
     border: "15px solid #2563eb",
     backgroundColor: "#ffffff",
     duration: 0.5,
   });
 
   // Подъем шарика вверх и увеличение (пока еще круг)
-  tl2.to(".line-element", { y: "0px", duration: 0.5 });
+  tl2.to(".line-element", {
+    y: "0px",
+    borderRadius: "12.5px",
+    duration: 0.5
+  });
   tl2.to(
     ".line-element",
     {
       border: "6px solid #DDDDDD",
-
+      borderRadius: "12.5px",
       duration: 0.5,
     },
     "<"
