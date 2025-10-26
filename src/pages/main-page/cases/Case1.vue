@@ -5,8 +5,6 @@
     <div class="pin-container" ref="pinContainerRef">
       <!-- section-1: триггер для timeline #1 (scrub) -->
       <div class="section-1">
-        <span class="label section-1-label">Section 1: Growing Line</span>
-
         <!-- circle: все анимируемые объекты -->
         <div class="circle">
           <!-- Text Container (z-index: 1) -->
@@ -50,9 +48,10 @@
       </div>
 
       <!-- section-2: триггер для timeline #2 (auto-play) -->
-      <div class="section-2">
-        <span class="label section-2-label">Section 2: Video Transform</span>
-      </div>
+      <div class="section-2"></div>
+
+      <!-- section-3: буфер для дополнительного пространства после анимации -->
+      <div class="section-3"></div>
     </div>
   </div>
 </template>
@@ -111,7 +110,7 @@ defineExpose({
 }
 
 /* ========================================
-   section-1, section-2: триггеры
+   section-1, section-2, section-3: триггеры
    ======================================== */
 .section-1 {
   width: 100%;
@@ -126,6 +125,16 @@ defineExpose({
 .section-2 {
   width: 100%;
   height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+
+.section-3 {
+  width: 100%;
+  height: 50vh;
   position: relative;
   display: flex;
   align-items: center;
@@ -196,7 +205,7 @@ defineExpose({
   left: 50%;
   transform: translate(-50%, 0);
   width: 100vw;
-  height: 50vh;
+  height: 25vh;
   background-color: #ffffff;
   z-index: 2;
   opacity: 1;

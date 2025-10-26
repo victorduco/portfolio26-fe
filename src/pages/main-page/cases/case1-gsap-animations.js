@@ -7,12 +7,13 @@ export function initAnimations(pinContainer) {
   // Find sections inside pinContainer
   const section1 = pinContainer.querySelector(".section-1");
   const section2 = pinContainer.querySelector(".section-2");
+  const section3 = pinContainer.querySelector(".section-3");
 
-  // Main pin: пинит .circle на всё время прохождения обеих секций + 50vh
+  // Main pin: пинит .circle на всё время прохождения всех трех секций
   ScrollTrigger.create({
     trigger: section1,
     start: "top top",
-    endTrigger: section2,
+    endTrigger: section3,
     end: "bottom bottom",
     pin: ".circle",
     id: "MAIN-PIN",
@@ -32,7 +33,7 @@ export function initAnimations(pinContainer) {
     },
   });
 
-  // Анимация роста линии
+  // Анимация роста линии: сначала уменьшение по высоте, потом расширение
   tl1.fromTo(
     ".line-element",
     {
@@ -42,10 +43,28 @@ export function initAnimations(pinContainer) {
       opacity: 1,
     },
     {
-      width: "60vw",
-      duration: 1,
+      height: "6px",
+      borderRadius: "3px",
+      duration: 0.3,
     }
   );
+
+  // Одновременно с уменьшением высоты расширяется до 10vw
+  tl1.to(
+    ".line-element",
+    {
+      width: "10vw",
+      duration: 0.3,
+    },
+    "<"
+  );
+
+  // Затем продолжает расширяться до 60vw
+  tl1.to(".line-element", {
+    width: "60vw",
+    borderRadius: "3px",
+    duration: 0.7,
+  });
 
   // 2) NON-SCRUB timeline: срабатывает когда линия выросла
   const tl2 = gsap.timeline({
@@ -58,53 +77,55 @@ export function initAnimations(pinContainer) {
     },
   });
 
-  // Движение элементов
-  tl2.to(".line-element", { y: "150px", duration: 1 });
-  tl2.to(".text-container", { y: "-100px", duration: 1 }, "<");
-  tl2.to(".mask-element", { y: "150px", duration: 1 }, "<");
+  // Движение элементов вниз
+  tl2.to(".line-element", { y: "150px", duration: 0.5 });
+  tl2.to(".text-container", { y: "-100px", duration: 0.5 }, "<");
+  tl2.to(".mask-element", { y: "150px", duration: 0.5 }, "<");
 
-  // Трансформация линии в прямоугольник
+  // Трансформация линии в шарик (пока внизу)
   tl2.to(".line-element", {
-    width: "30px",
-    height: "30px",
-    borderRadius: "15px",
+    width: "25px",
+    height: "25px",
+    borderRadius: "100px",
     border: "15px solid #2563eb",
     backgroundColor: "#ffffff",
-    duration: 1,
+    duration: 0.5,
   });
 
-  tl2.to(".line-element", { y: "0px", duration: 1 }, "-=0.5");
+  // Подъем шарика вверх и увеличение (пока еще круг)
+  tl2.to(".line-element", { y: "0px", duration: 0.5 });
+  tl2.to(
+    ".line-element",
+    {
+      border: "6px solid #DDDDDD",
+
+      duration: 0.5,
+    },
+    "<"
+  );
+
+  // Трансформация круга в прямоугольник
   tl2.to(
     ".line-element",
     {
       width: "75vw",
       height: "35vw",
       borderRadius: "30px",
-      border: "6px solid #DDDDDD",
-      duration: 1,
+      duration: 0.5,
     },
-    "-=0.5"
+    "<50%"
   );
 
   // Анимация кнопки
-  tl2.set(
-    ".open-story-button",
-    {
-      opacity: 0,
-      width: "30px",
-      height: "30px",
-      borderRadius: "15px",
-      y: "20.5vw",
-    },
-    0
-  );
-  tl2.to(".button-text", { opacity: 0, duration: 0.5 }, 0);
-  tl2.to(".open-story-button", { opacity: 1, duration: 0.3 }, "+=0.5");
-  tl2.to(
-    ".open-story-button",
-    { width: "300px", height: "60px", borderRadius: "30px", duration: 0.5 },
-    "+=0.3"
-  );
+  tl2.set(".open-story-button", {
+    opacity: 1,
+    width: "300px",
+    height: "0px",
+    borderRadius: "30px",
+    y: "20.5vw",
+  });
+  tl2.to(".button-text", { opacity: 0, duration: 0.5 }, ">");
+  tl2.to(".open-story-button", { height: "60px", duration: 0.25 }, "<25%");
 
   // Refresh после загрузки
   setTimeout(() => ScrollTrigger.refresh(), 0);
