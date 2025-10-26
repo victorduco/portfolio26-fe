@@ -1,8 +1,6 @@
 <template>
   <section id="case2" class="case2" ref="containerRef">
     <div class="case2-content">
-      <div class="case2-card-background"></div>
-
       <div class="case2-content-inner">
         <h2 class="case2-title">
           <span
@@ -22,15 +20,17 @@
             {{ word }}
           </span>
         </h2>
-        <p class="case2-description">
-          <span
-            v-for="(word, index) in descriptionWords"
-            :key="'desc-' + index"
-            :data-word-desc="index"
-            class="word"
-          >
-            {{ word }}
-          </span>
+
+        <p class="case2-paragraph case2-paragraph-1" data-paragraph="1">
+          {{ paragraph1 }}
+        </p>
+
+        <p class="case2-paragraph case2-paragraph-2" data-paragraph="2">
+          {{ paragraph2 }}
+        </p>
+
+        <p class="case2-paragraph case2-paragraph-3" data-paragraph="3">
+          {{ paragraph3 }}
         </p>
 
         <button class="case2-open-story">
@@ -57,8 +57,6 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 import { initAnimations } from "./case2-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
 
-const description =
-  "Communication platform for teams. Streamlining internal communications with intuitive design and powerful features. Empowering organizations to connect, collaborate, and share knowledge effectively across all departments and locations.";
 const videoSrc = new URL(
   "@/assets/case-videos/case2-4-reverse.mp4",
   import.meta.url
@@ -68,7 +66,11 @@ const containerRef = ref(null);
 
 const titlePart1Words = computed(() => ["Redesigning", "the"]);
 const titlePart2Words = computed(() => ["Communications", "App"]);
-const descriptionWords = computed(() => description.split(" "));
+
+// 3 paragraphs, each 2 lines
+const paragraph1 = "Communication platform for teams. Streamlining internal communications with intuitive design.";
+const paragraph2 = "Powerful features that empower organizations. Connect and collaborate across departments.";
+const paragraph3 = "Share knowledge effectively at scale. Building better workplace connections.";
 
 let animationInstance = null;
 
@@ -99,21 +101,8 @@ onUnmounted(() => {
   position: absolute;
   left: 0;
   top: 0;
-  max-width: min(30vw, 550px);
-  padding: clamp(60px, 10vh, 120px) 20px 20px 20px;
+  max-width: min(40vw, 750px);
   pointer-events: none;
-  opacity: 0;
-  transform: translateY(100px);
-}
-
-.case2-card-background {
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
-  pointer-events: none;
-  opacity: 0;
 }
 
 .case2-content-inner {
@@ -133,8 +122,8 @@ onUnmounted(() => {
 .case2-title {
   margin: 0;
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-weight: 600;
-  font-size: clamp(20px, 3vw, 38px);
+  font-weight: 400;
+  font-size: clamp(20px, 6vw, 42px);
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: #000000;
@@ -147,7 +136,7 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-.case2-description {
+.case2-paragraph {
   margin: 0;
   font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
   font-weight: 400;
@@ -156,11 +145,6 @@ onUnmounted(() => {
   color: rgba(0, 0, 0, 0.7);
   text-align: left;
   max-width: 500px;
-}
-
-.case2-description .word {
-  display: inline-block;
-  margin-right: 0.25em;
   opacity: 0;
 }
 
@@ -231,7 +215,7 @@ onUnmounted(() => {
     font-size: clamp(28px, 6vw, 40px);
   }
 
-  .case2-description {
+  .case2-paragraph {
     text-align: center;
     font-size: clamp(14px, 3.5vw, 16px);
   }
@@ -268,7 +252,7 @@ onUnmounted(() => {
     font-size: clamp(24px, 5vw, 32px);
   }
 
-  .case2-description {
+  .case2-paragraph {
     font-size: 14px;
   }
 

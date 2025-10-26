@@ -20,66 +20,102 @@ export function initAnimations(trigger) {
     },
   });
 
-  tl.to(".case2-content", {
+  // Sync with Lenis snap points: 0%, 20%, 40%, 60%, 80%, 100%
+  // Timeline is normalized 0-1, so snap points are at: 0, 0.2, 0.4, 0.6, 0.8, 1.0
+
+  // Calculate vertical center position
+  const contentElement = document.querySelector(".case2-content");
+  const titleElement = document.querySelector(".case2-title");
+
+  // Set initial state - title roughly centered
+  gsap.set(".case2-content", {
     opacity: 1,
-    y: 0,
-    duration: 1.5,
+    y: () => {
+      // Position so title is roughly centered at start
+      const titleHeight = titleElement ? titleElement.offsetHeight : 0;
+      return (window.innerHeight / 2) - (titleHeight / 2) - 50; // Slightly above center
+    },
   });
+
+  // 0-100% - Container moves to center full content at the end
+  tl.to(".case2-content", {
+    y: () => {
+      // Calculate center: 50vh - half of full content height
+      const contentHeight = contentElement ? contentElement.offsetHeight : 0;
+      return (window.innerHeight / 2) - (contentHeight / 2);
+    },
+    duration: 1.0, // Full timeline duration
+    ease: "none", // Linear movement
+  }, 0);
 
   tl.to(
     ".case2-title .word[data-word-part1]",
     {
       opacity: 1,
-      duration: 0.4,
-      stagger: 0.1,
+      duration: 0.1,
+      stagger: 0.02,
     },
-    1.2
+    0
   );
 
   tl.to(
     ".case2-title .word[data-word-part2]",
     {
       opacity: 1,
-      duration: 0.4,
-      stagger: 0.1,
-    },
-    1.6
-  );
-
-  tl.to(
-    ".case2-card-background",
-    {
-      opacity: 1,
-      duration: 0.5,
-    },
-    2.0
-  );
-
-  tl.to(
-    ".case2-description .word[data-word-desc]",
-    {
-      opacity: 1,
-      duration: 0.8,
+      duration: 0.1,
       stagger: 0.02,
     },
-    2.2
+    0.05
   );
 
+  // 20% - Paragraph 1 appears
+  tl.to(
+    ".case2-paragraph-1",
+    {
+      opacity: 1,
+      duration: 0.15,
+    },
+    0.2
+  );
+
+  // 40% - Paragraph 2 appears
+  tl.to(
+    ".case2-paragraph-2",
+    {
+      opacity: 1,
+      duration: 0.15,
+    },
+    0.4
+  );
+
+  // 60% - Paragraph 3 appears
+  tl.to(
+    ".case2-paragraph-3",
+    {
+      opacity: 1,
+      duration: 0.15,
+    },
+    0.6
+  );
+
+  // 80% - Button appears
   tl.to(
     ".case2-open-story",
     {
       opacity: 1,
-      duration: 0.6,
+      duration: 0.15,
     },
-    3.0
+    0.8
   );
 
+  // 100% - nothing (hold final state)
+
   if (videoElement) {
-    // Video scrubbing based on scroll with 4 snap points
+    // Video scrubbing based on scroll - synced with full timeline (0-100%)
     ScrollTrigger.create({
       trigger: trigger,
       start: "top top",
-      end: "+=200%",
+      end: "+=400%",
       scrub: true,
       id: "case2-video-scrub",
       onUpdate: (self) => {
