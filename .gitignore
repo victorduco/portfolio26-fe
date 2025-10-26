@@ -25,6 +25,7 @@ public/keypad-backgrounds/*
 
 # Test screenshots and reports
 test-screenshots/
+font-test-screenshots/
 playwright-report/
 test-results/
 

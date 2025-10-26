@@ -1,0 +1,813 @@
+{
+  "topFonts": [
+    {
+      "family": "Noto Sans Kharoshthi",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 91472,
+      "subsets": [
+        "menu",
+        "kharoshthi",
+        "latin",
+        "latin-ext"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.37
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-04",
+      "dateAdded": "2020-11-19",
+      "popularity": 2011,
+      "trending": 442,
+      "defaultSort": 1885,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Khar",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Meroitic",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 88336,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "meroitic",
+        "meroitic-cursive",
+        "meroitic-hieroglyphs"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.343
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-04",
+      "dateAdded": "2020-11-19",
+      "popularity": 2009,
+      "trending": 574,
+      "defaultSort": 1881,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Mero",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Manichaean",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 95008,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "manichaean"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.13
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-10",
+      "dateAdded": "2020-11-19",
+      "popularity": 2005,
+      "trending": 728,
+      "defaultSort": 1884,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Mani",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Soyombo",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 132532,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "soyombo"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.596
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-16",
+      "dateAdded": "2020-11-19",
+      "popularity": 2004,
+      "trending": 1932,
+      "defaultSort": 1883,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Soyo",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Siddham",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 231580,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "siddham"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 2.03
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-10",
+      "dateAdded": "2020-11-19",
+      "popularity": 2003,
+      "trending": 459,
+      "defaultSort": 1882,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Sidd",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Ogham",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 47540,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "ogham"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-04",
+      "dateAdded": "2020-11-19",
+      "popularity": 2001,
+      "trending": 265,
+      "defaultSort": 1880,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Ogam",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Mende Kikakui",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 94212,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "mende-kikakui"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.267
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-16",
+      "dateAdded": "2020-11-19",
+      "popularity": 2000,
+      "trending": 677,
+      "defaultSort": 1879,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Old Permic",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 52264,
+      "subsets": [
+        "menu",
+        "cyrillic-ext",
+        "latin",
+        "latin-ext",
+        "old-permic"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-10",
+      "dateAdded": "2020-11-19",
+      "popularity": 1999,
+      "trending": 2077,
+      "defaultSort": 1878,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Perm",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Nushu",
+      "displayName": "Noto Sans Nüshu",
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 187204,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "nushu"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.39
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-16",
+      "dateAdded": "2020-11-19",
+      "popularity": 1996,
+      "trending": 583,
+      "defaultSort": 1877,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Lepcha",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 76440,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "lepcha"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.519
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-08",
+      "dateAdded": "2020-11-19",
+      "popularity": 1995,
+      "trending": 1447,
+      "defaultSort": 1876,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Lepc",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Pau Cin Hau",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 56924,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "pau-cin-hau"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-04",
+      "dateAdded": "2020-11-19",
+      "popularity": 1994,
+      "trending": 460,
+      "defaultSort": 1875,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Saurashtra",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 74668,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "saurashtra"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-16",
+      "dateAdded": "2020-11-19",
+      "popularity": 1991,
+      "trending": 2125,
+      "defaultSort": 1874,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Saur",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Kayah Li",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 52440,
+      "subsets": [
+        "menu",
+        "kayah-li",
+        "latin",
+        "latin-ext"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        },
+        "500": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        },
+        "600": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        },
+        "700": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [
+        {
+          "tag": "wght",
+          "min": 400,
+          "max": 700,
+          "defaultValue": 400
+        }
+      ],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-16",
+      "dateAdded": "2020-11-19",
+      "popularity": 1989,
+      "trending": 424,
+      "defaultSort": 1873,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Kali",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Limbu",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 59192,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "limbu"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-04",
+      "dateAdded": "2020-11-19",
+      "popularity": 1988,
+      "trending": 1732,
+      "defaultSort": 1872,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Limb",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Tamil Supplement",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 67716,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "tamil-supplement"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.24
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-17",
+      "dateAdded": "2020-11-19",
+      "popularity": 1987,
+      "trending": 455,
+      "defaultSort": 1871,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Taml",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Lycian",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 4488,
+      "subsets": [
+        "menu",
+        "lycian"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-08",
+      "dateAdded": "2020-11-19",
+      "popularity": 1984,
+      "trending": 417,
+      "defaultSort": 1890,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Chorasmian",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 68212,
+      "subsets": [
+        "menu",
+        "chorasmian",
+        "latin",
+        "latin-ext",
+        "math",
+        "symbols"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.362
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2024-01-25",
+      "dateAdded": "2023-05-23",
+      "popularity": 1983,
+      "trending": 2180,
+      "defaultSort": 1864,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Chrs",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Ugaritic",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 53244,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "ugaritic"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.124
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-16",
+      "dateAdded": "2020-11-19",
+      "popularity": 1981,
+      "trending": 652,
+      "defaultSort": 1870,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Ugar",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans Modi",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 108332,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "modi"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.354
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-10",
+      "dateAdded": "2020-11-19",
+      "popularity": 1980,
+      "trending": 314,
+      "defaultSort": 1869,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "Modi",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    },
+    {
+      "family": "Noto Sans SignWriting",
+      "displayName": null,
+      "category": "Sans Serif",
+      "stroke": "Sans Serif",
+      "classifications": [],
+      "size": 7881488,
+      "subsets": [
+        "menu",
+        "latin",
+        "latin-ext",
+        "signwriting"
+      ],
+      "fonts": {
+        "400": {
+          "thickness": null,
+          "slant": null,
+          "width": null,
+          "lineHeight": 1.002
+        }
+      },
+      "axes": [],
+      "designers": [
+        "Google"
+      ],
+      "lastModified": "2025-09-02",
+      "dateAdded": "2022-10-30",
+      "popularity": 1979,
+      "trending": 396,
+      "defaultSort": 1868,
+      "androidFragment": null,
+      "isNoto": true,
+      "colorCapabilities": [],
+      "primaryScript": "",
+      "primaryLanguage": "",
+      "isOpenSource": true,
+      "isBrandFont": true,
+      "languages": []
+    }
+  ],
+  "total": 1890
+}
