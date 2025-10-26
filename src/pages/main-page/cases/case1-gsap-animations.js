@@ -1,128 +1,69 @@
+// case1-gsap-animations.js
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 gsap.registerPlugin(ScrollTrigger);
 
 export function initAnimations(pinContainer) {
-  // ========================================
-  // ScrollTrigger #1 - Общий Pin (400vh)
-  // ========================================
-  const mainPinST = ScrollTrigger.create({
-    trigger: pinContainer,
+  // Find sections inside pinContainer
+  const section1 = pinContainer.querySelector(".section-1");
+  const section2 = pinContainer.querySelector(".section-2");
+
+  // Main pin: пинит .circle на всё время прохождения обеих секций + 50vh
+  ScrollTrigger.create({
+    trigger: section1,
     start: "top top",
-    end: "+=500%",
-    pin: true,
-    pinSpacing: true,
-    id: "case1-main-pin",
-    markers: true,
+    endTrigger: section2,
+    end: "bottom bottom",
+    pin: ".circle",
+    id: "MAIN-PIN",
+    invalidateOnRefresh: true,
   });
 
-  // ========================================
-  // Timeline #1 - Scroll-driven (0-100vh)
-  // ========================================
+  // 1) SCRUB timeline: анимация линии
   const tl1 = gsap.timeline({
-    defaults: {
-      duration: 0.5,
-      ease: "power1.inOut",
-      force3D: true,
-    },
+    defaults: { ease: "power1.inOut", force3D: true },
     scrollTrigger: {
-      trigger: ".section-1",
+      trigger: section1,
       start: "top top",
-      end: "bottom top",
+      end: "bottom bottom",
       scrub: 1,
-      id: "case1-timeline1",
-      markers: true,
+      id: "TL1",
+      invalidateOnRefresh: true,
     },
   });
 
-  // TIMELINE 1: Line growth with scrub
-  // Small circle appears
-  tl1.to(".line-element", {
-    scale: 1,
-    width: "6px",
-    height: "6px",
-    borderRadius: "30px",
-    opacity: 1,
-  });
-
-  // Grow to 100px
-  tl1.to(
+  // Анимация роста линии
+  tl1.fromTo(
     ".line-element",
     {
-      width: "100px",
+      width: "40px",
+      height: "40px",
+      borderRadius: "20px",
+      opacity: 1,
     },
-    "<50%"
-  );
-
-  tl1.addLabel("small-line");
-
-  // Expand to half screen
-  tl1.to(
-    ".line-element",
-    {
-      width: "50vw",
-      duration: 6,
-    },
-    ">"
-  );
-
-  tl1.addLabel("almost-full-line");
-
-  // Expand to full
-  tl1.to(
-    ".line-element",
     {
       width: "60vw",
       duration: 1,
-    },
-    ">"
+    }
   );
 
-  tl1.addLabel("timeline1-end");
-
-  // ========================================
-  // Timeline #2 - Scroll-triggered (100-200vh)
-  // ========================================
+  // 2) NON-SCRUB timeline: срабатывает когда линия выросла
   const tl2 = gsap.timeline({
-    defaults: {
-      ease: "power1.inOut",
-      force3D: true,
-    },
+    defaults: { ease: "power1.inOut", force3D: true },
     scrollTrigger: {
-      trigger: ".section-2",
-      start: "top top",
-      end: "bottom top",
+      trigger: section2,
+      start: "top center",
       toggleActions: "play none none reverse",
-      id: "case1-timeline2",
-      markers: true,
+      id: "TL2",
     },
   });
 
-  // TIMELINE 2 animations start here
-  // Move line down, Text moves up, Mask moves down
-  tl2.to(".line-element", {
-    y: "150px",
-    duration: 1,
-  });
-  tl2.to(
-    ".text-container",
-    {
-      y: "-100px",
-      duration: 1,
-    },
-    "<"
-  );
-  tl2.to(
-    ".mask-element",
-    {
-      y: "150px",
-      duration: 1,
-    },
-    "<"
-  );
+  // Движение элементов
+  tl2.to(".line-element", { y: "150px", duration: 1 });
+  tl2.to(".text-container", { y: "-100px", duration: 1 }, "<");
+  tl2.to(".mask-element", { y: "150px", duration: 1 }, "<");
 
-  // Transform line back to 30px circle at bottom
+  // Трансформация линии в прямоугольник
   tl2.to(".line-element", {
     width: "30px",
     height: "30px",
@@ -132,17 +73,7 @@ export function initAnimations(pinContainer) {
     duration: 1,
   });
 
-  // Move 30px circle to center
-  tl2.to(
-    ".line-element",
-    {
-      y: "0px",
-      duration: 1,
-    },
-    "-=0.5"
-  );
-
-  // Expand to video size (starts in the middle of moving to center)
+  tl2.to(".line-element", { y: "0px", duration: 1 }, "-=0.5");
   tl2.to(
     ".line-element",
     {
@@ -155,17 +86,7 @@ export function initAnimations(pinContainer) {
     "-=0.5"
   );
 
-  // Hide button content
-  tl2.to(
-    ".button-text",
-    {
-      opacity: 0,
-      duration: 0.5,
-    },
-    0
-  );
-
-  // prep story button - start as a small dot
+  // Анимация кнопки
   tl2.set(
     ".open-story-button",
     {
@@ -177,34 +98,23 @@ export function initAnimations(pinContainer) {
     },
     0
   );
-
-  // Show story button as dot
+  tl2.to(".button-text", { opacity: 0, duration: 0.5 }, 0);
+  tl2.to(".open-story-button", { opacity: 1, duration: 0.3 }, "+=0.5");
   tl2.to(
     ".open-story-button",
-    {
-      opacity: 1,
-      duration: 0.3,
-    },
-    "+=0.5"
-  );
-
-  // Expand to full button size
-  tl2.to(
-    ".open-story-button",
-    {
-      width: "300px",
-      height: "60px",
-      borderRadius: "30px",
-      duration: 0.5,
-    },
+    { width: "300px", height: "60px", borderRadius: "30px", duration: 0.5 },
     "+=0.3"
   );
+
+  // Refresh после загрузки
+  setTimeout(() => ScrollTrigger.refresh(), 0);
+
+  // Возвращаем все ScrollTrigger'ы для cleanup
+  const mainPinST = ScrollTrigger.getById("MAIN-PIN");
 
   return {
     mainPin: mainPinST,
     timeline1: tl1,
     timeline2: tl2,
-    scrollTrigger1: tl1.scrollTrigger,
-    scrollTrigger2: tl2.scrollTrigger,
   };
 }

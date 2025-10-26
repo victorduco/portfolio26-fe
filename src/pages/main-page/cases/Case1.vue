@@ -101,15 +101,13 @@ defineExpose({
 }
 
 /* ========================================
-   pin-container: pinned элемент (400vh)
+   pin-container: контейнер для всех секций
    ======================================== */
 .pin-container {
   width: 100%;
-  height: 400vh;
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 /* ========================================
@@ -202,10 +200,6 @@ defineExpose({
   background-color: #ffffff;
   z-index: 2;
   opacity: 1;
-  /* GSAP overrides */
-  translate: 0 0 !important;
-  rotate: 0deg !important;
-  scale: 1 !important;
 }
 
 /* Common button styles */
