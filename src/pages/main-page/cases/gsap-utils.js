@@ -22,7 +22,7 @@ export function initScrollSmoother(options = {}) {
   smoother = ScrollSmoother.create({
     wrapper: "#smooth-wrapper",
     content: "#smooth-content",
-    smooth: 0.01,
+    smooth: 2,
     effects: true,
     ...options,
   });
@@ -74,6 +74,11 @@ export function cleanupAnimations(animationInstance) {
     }
     if (animationInstance.scrollTrigger2) {
       animationInstance.scrollTrigger2.kill();
+    }
+
+    // Handle video trigger (Case3)
+    if (animationInstance.videoTrigger) {
+      animationInstance.videoTrigger.kill();
     }
   }
   ScrollTrigger.getAll().forEach((st) => st.kill());
