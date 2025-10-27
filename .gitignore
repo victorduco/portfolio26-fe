@@ -28,6 +28,7 @@ test-screenshots/
 font-test-screenshots/
 font-test-screenshots-*/
 all fonts/
+all fonts b/
 playwright-report/
 test-results/
 
