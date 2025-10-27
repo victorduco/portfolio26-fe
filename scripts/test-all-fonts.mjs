@@ -32,7 +32,7 @@ const __dirname = path.dirname(__filename);
 
 // Configuration
 const ADOBE_API_TOKEN = '01c487c410f58d24edd08cda2440d4be022ca3cd';
-const ADOBE_PROJECT_ID = 'zdl4ird';
+const ADOBE_PROJECT_ID = 'vga7nuu';
 const SCREENSHOTS_DIR = path.join(process.cwd(), 'font-test-screenshots');
 const TYPOGRAPHY_CSS = path.join(process.cwd(), 'src/styles/typography.css');
 const INDEX_HTML = path.join(process.cwd(), 'index.html');

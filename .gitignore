@@ -27,6 +27,7 @@ public/keypad-backgrounds/*
 test-screenshots/
 font-test-screenshots/
 font-test-screenshots-*/
+all fonts/
 playwright-report/
 test-results/
 
