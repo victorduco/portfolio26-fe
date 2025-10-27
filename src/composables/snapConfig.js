@@ -55,13 +55,13 @@ export const snapConfig = {
       endPercent: 0.6, // End at 60% of element
       enabled: true,
     },
-    {
-      name: "Case2 middle animation",
-      elementId: "case2",
-      startPercent: 0.0,
-      endPercent: 0.5,
-      enabled: true,
-    },
+    // {
+    //   name: "Case2 middle animation",
+    //   elementId: "case2",
+    //   startPercent: 0.0,
+    //   endPercent: 0.5,
+    //   enabled: true,
+    // },
     {
       name: "Case3 start to middle animation",
       elementId: "case3",
@@ -127,45 +127,11 @@ export const snapConfig = {
   // Mandatory snap points - these will always snap
   mandatorySnaps: [
     {
-      name: "Case2 - Start (0%)",
-      elementId: "case2",
-      position: "start",
-      enabled: false, // Disabled - only snap to 10% and end
-    },
-    {
       name: "Case2 - 10%",
       scrollTriggerId: "case2-main",
       type: "trigger-progress",
       progress: 0.1,
       enabled: true, // First snap point at 10%
-    },
-    {
-      name: "Case2 - 20%",
-      scrollTriggerId: "case2-main",
-      type: "trigger-progress",
-      progress: 0.2,
-      enabled: false,
-    },
-    {
-      name: "Case2 - 40%",
-      scrollTriggerId: "case2-main",
-      type: "trigger-progress",
-      progress: 0.4,
-      enabled: false,
-    },
-    {
-      name: "Case2 - 60%",
-      scrollTriggerId: "case2-main",
-      type: "trigger-progress",
-      progress: 0.6,
-      enabled: false,
-    },
-    {
-      name: "Case2 - 80%",
-      scrollTriggerId: "case2-main",
-      type: "trigger-progress",
-      progress: 0.8,
-      enabled: false,
     },
     {
       name: "Case2 - End (100%)",

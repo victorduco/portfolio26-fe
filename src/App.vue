@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted } from "vue";
 import { RouterView } from "vue-router";
 import Keypad from "./components/keypad/Keypad.vue";
+import FontSwitcher from "./components/__temp-font-switcher/FontSwitcher.vue"; // TEMP: Remove when done
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
 import { useLenis } from "./composables/useLenis.js";
@@ -33,6 +34,9 @@ const handleUnlock = async () => {
 </script>
 
 <template>
+  <!-- TEMP: Font Switcher Tool (Remove when done) -->
+  <FontSwitcher />
+
   <div v-if="isLoading" class="auth-loading"></div>
 
   <Keypad v-else-if="!isAuthenticated" @unlock="handleUnlock" />
