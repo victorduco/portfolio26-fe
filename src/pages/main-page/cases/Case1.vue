@@ -53,6 +53,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { initAnimations } from "./case1-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
+import { getLenisInstance } from "@/composables/useLenis.js";
 import VideoPlayer from "@/components/VideoPlayer.vue";
 
 const scrollContainerRef = ref(null);
@@ -69,10 +70,12 @@ const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url)
 onMounted(() => {
   // Initialize GSAP animations with ScrollTrigger
   if (pinContainerRef.value) {
+    const lenis = getLenisInstance();
     animationInstance = initAnimations(
       pinContainerRef.value,
       videoPlayerRef,
-      videoExpanded
+      videoExpanded,
+      lenis
     );
   }
 });

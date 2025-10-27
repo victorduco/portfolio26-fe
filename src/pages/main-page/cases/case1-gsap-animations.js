@@ -3,12 +3,19 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-export function initAnimations(pinContainer, videoPlayerRef, videoExpanded) {
+export function initAnimations(
+  pinContainer,
+  videoPlayerRef,
+  videoExpanded,
+  lenis
+) {
   // Find sections inside pinContainer
   const section1 = pinContainer.querySelector(".section-1");
   const section3 = pinContainer.querySelector(".section-3");
 
   // Main pin: пинит .circle на всё время прохождения всех трех секций
+  let triggered = false;
+
   ScrollTrigger.create({
     trigger: section1,
     start: "top top",
@@ -17,6 +24,24 @@ export function initAnimations(pinContainer, videoPlayerRef, videoExpanded) {
     pin: ".circle",
     id: "MAIN-PIN",
     invalidateOnRefresh: true,
+
+    onUpdate(self) {
+      if (!lenis || triggered) return;
+      const p = self.progress;
+
+      if (p >= 0.99) {
+        triggered = true; // 🔹 больше не сработает повторно
+        console.log("STOOOP", p);
+
+        lenis.stop();
+        lenis.scrollTo(window.scrollY, { immediate: true });
+
+        setTimeout(() => {
+          console.log("Goooo");
+          lenis.start();
+        }, 1000);
+      }
+    },
   });
 
   // Unified timeline: одна анимация для всего скролла
@@ -132,9 +157,9 @@ export function initAnimations(pinContainer, videoPlayerRef, videoExpanded) {
     ".line-element",
     {
       width: "min(1200px, 85vw)",
-      height: "min(780px, 55.26vw)", // 85vw / 1.539 ≈ 55.26vw
+      height: "min(780px, 55.26vw)",
       borderRadius: "30px",
-      duration: 5,
+      duration: 2,
     },
     ">"
   );
@@ -157,20 +182,24 @@ export function initAnimations(pinContainer, videoPlayerRef, videoExpanded) {
     },
     {
       opacity: 1,
-      duration: 25,
+      duration: 2,
     },
     "<"
   );
 
   // ФАЗА 6: Появление кнопки Open Story
-  mainTimeline.set(".open-story-button", {
-    opacity: 1,
-    width: "300px",
-    height: "0px",
-    borderRadius: "30px",
-    top: "calc(50% + min(390px, 27.63vw) + 50px)",
-  });
-  mainTimeline.to(".open-story-button", { height: "60px", duration: 2.5 });
+  mainTimeline.set(
+    ".open-story-button",
+    {
+      opacity: 1,
+      width: "300px",
+      height: "0px",
+      borderRadius: "30px",
+      top: "calc(50% + min(390px, 27.63vw) + 50px)",
+    },
+    "<"
+  );
+  mainTimeline.to(".open-story-button", { height: "60px", duration: 2.5 }, "<");
 
   // Refresh после загрузки
   setTimeout(() => ScrollTrigger.refresh(), 0);

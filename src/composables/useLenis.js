@@ -61,6 +61,17 @@ export function useLenis() {
     // Integrate Lenis with GSAP ScrollTrigger
     lenisInstance.on("scroll", ScrollTrigger.update);
 
+    // Debug scroll information
+    lenisInstance.on("scroll", (e) => {
+      console.log('📊 Scroll Info:', {
+        position: Math.round(e.scroll),
+        velocity: e.velocity.toFixed(2),
+        isScrolling: lenisInstance.isScrolling,
+        isStopped: lenisInstance.isStopped,
+        direction: e.direction > 0 ? '↓ down' : '↑ up'
+      });
+    });
+
     // Disable snap in "no-snap zones" using configuration
     // This allows GSAP ScrollTrigger to work freely in defined zones
     lenisInstance.on("scroll", (e) => {
@@ -146,28 +157,13 @@ export function useLenis() {
 
         if (hasMandatorySnaps) {
           // Skip - will be registered in registerMandatoryTriggerSnaps() with exact positions
-          console.log(`⏭️  Skipping ${anchor.id} - using custom mandatory snaps`);
         } else {
           // Regular snap using element alignment
           snapInstance.addElement(element, { align: anchor.align });
           registeredCount++;
-          console.log(`✅ Snap: ${anchor.id} (${Array.isArray(anchor.align) ? anchor.align.join(', ') : anchor.align})`);
         }
-      } else {
-        console.warn(`⚠️ Snap anchor not found: ${anchor.id}`);
       }
     });
-
-    // Note: trigger-based mandatory snaps are registered separately
-    // via registerMandatoryTriggerSnaps() after GSAP animations are ready
-
-    // Log active no-snap zones
-    const activeZones = getActiveNoSnapZones();
-    if (activeZones.length > 0) {
-      console.log(`🚫 No-snap zones: ${activeZones.map(z => z.name).join(', ')}`);
-    }
-
-    console.log(`🎯 Total snap points: ${registeredCount} | No-snap zones: ${activeZones.length}`);
   }
 
   /**
@@ -273,18 +269,8 @@ export function useLenis() {
         // Add fixed position snap point
         snapInstance.add(snapPosition);
         registeredCount++;
-
-        console.log(
-          `✅ Progress snap: ${progressSnap.name} at ${Math.round(progressSnap.progress * 100)}% (${Math.round(snapPosition)}px)`
-        );
-      } else {
-        console.warn(`⚠️ ScrollTrigger not found: ${progressSnap.scrollTriggerId}`);
       }
     });
-
-    if (registeredCount > 0) {
-      console.log(`🎯 Registered ${registeredCount} progress-based snap points`);
-    }
   }
 
   /**
@@ -319,9 +305,6 @@ export function useLenis() {
 
           snapInstance.add(snapPosition);
           registeredCount++;
-          console.log(`✅ Mandatory Snap (${snap.type}): ${snap.name} at ${Math.round(snapPosition)}px`);
-        } else {
-          console.warn(`⚠️ ScrollTrigger not found for mandatory snap: ${snap.scrollTriggerId}`);
         }
       } else if (snap.elementId && snap.position) {
         // Element-based snaps - calculate position
@@ -337,16 +320,9 @@ export function useLenis() {
 
           snapInstance.add(snapPosition);
           registeredCount++;
-          console.log(`✅ Mandatory Snap (element): ${snap.name} at ${Math.round(snapPosition)}px`);
-        } else {
-          console.warn(`⚠️ Element not found for mandatory snap: ${snap.elementId}`);
         }
       }
     });
-
-    if (registeredCount > 0) {
-      console.log(`🎯 Registered ${registeredCount} mandatory snap points`);
-    }
   }
 
   return {
