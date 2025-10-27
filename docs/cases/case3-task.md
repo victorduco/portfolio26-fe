@@ -125,3 +125,5 @@ Testing: Manual QA only
 - ✅ Personalization engine
 - ✅ 99.9% uptime SLA
 - ✅ Feature development cycle < 2 weeks
+
+![fullscreen](https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop)

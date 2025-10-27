@@ -67,3 +67,5 @@ defineProps({
 ## Results & Learnings
 
 The project delivered exceptional results and provided valuable insights for future projects.
+
+![fullscreen](https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&h=900&fit=crop)

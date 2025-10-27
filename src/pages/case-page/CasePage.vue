@@ -16,6 +16,7 @@
       to="/"
       direction="back"
       aria-label="Back to home"
+      :dark-mode="caseConfig.darkMode"
     />
     <PageNavigation
       :sections="navigationSections"
@@ -78,6 +79,7 @@ const caseConfigs = {
     secondary: null, // optional
     font: null, // optional, uses global font if null
     theme: "light", // light or dark
+    summaryImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop",
   },
   2: {
     title: "Redesigning the Communications App",
@@ -86,6 +88,7 @@ const caseConfigs = {
     secondary: null,
     font: null,
     theme: "light",
+    summaryImage: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
   },
   3: {
     title: "Terminal Shift Redesign",
@@ -94,6 +97,7 @@ const caseConfigs = {
     secondary: null,
     font: null,
     theme: "light",
+    summaryImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
   },
 };
 
@@ -119,9 +123,10 @@ const navigationSections = computed(() => [
 .case1-page,
 .case2-page,
 .case3-page {
-  width: 100vw;
+  width: 100%;
   position: relative;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .case-page-back {

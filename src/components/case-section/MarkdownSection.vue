@@ -38,6 +38,8 @@ onMounted(async () => {
 
 function renderMarkdown(md) {
   return md
+    // Fullscreen images: ![fullscreen](url) - use unique placeholder
+    .replace(/!\[fullscreen\]\((.*?)\)/gim, '___FULLSCREEN_IMAGE___$1___END___')
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
@@ -59,8 +61,19 @@ function renderMarkdown(md) {
     .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
     .replace(/---$/gm, '<hr>')
     .replace(/\n\n/g, '</p><p>')
-    .replace(/^(?!<[hult]|<pre|<blockquote|<hr)/gm, '<p>')
-    .replace(/(?![hult]>|pre>|blockquote>|hr>)$/gm, '</p>');
+    .replace(/^(?!<[hult]|<pre|<blockquote|<hr|___)/gm, '<p>')
+    .replace(/(?![hult]>|pre>|blockquote>|hr>|___)$/gm, '</p>')
+    // Replace placeholder with actual image after paragraph processing
+    .replace(/___FULLSCREEN_IMAGE___(.*?)___END___/gim, '<div class="fullscreen-image-wrapper"><img src="$1" alt="Fullscreen image" class="fullscreen-image-md" loading="lazy" /></div>')
+    // Clean up empty paragraphs and paragraphs around images
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p>(<div class="fullscreen-image-wrapper">.*?<\/div>)<\/p>/g, '$1')
+    // Clean up orphaned </p> and <p> around block elements
+    .replace(/<\/p><p>(<div class="fullscreen-image-wrapper">)/g, '$1')
+    .replace(/(<\/div>)<\/p><p>/g, '$1')
+    // Clean up orphaned tags at the start/end
+    .replace(/^<\/p>/, '')
+    .replace(/<p>$/g, '');
 }
 </script>
 
@@ -68,9 +81,10 @@ function renderMarkdown(md) {
 .case-task,
 .case-process,
 .case-results {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   padding: 80px 48px 48px;
+  overflow-x: hidden;
 }
 
 .markdown-content {
@@ -193,6 +207,39 @@ function renderMarkdown(md) {
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   margin: 48px 0;
+}
+
+/* Fullscreen images in markdown */
+.markdown-content :deep(.fullscreen-image-wrapper) {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
+  padding: 16px;
+  box-sizing: border-box;
+  margin-top: 48px;
+  margin-bottom: 48px;
+  display: block;
+}
+
+/* If wrapper ends up inside a paragraph, fix it */
+.markdown-content :deep(p .fullscreen-image-wrapper) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-content :deep(p:has(.fullscreen-image-wrapper)) {
+  margin: 0;
+  padding: 0;
+}
+
+.markdown-content :deep(.fullscreen-image-md) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
 }
 
 @media (max-width: 768px) {

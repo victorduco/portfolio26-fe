@@ -52,3 +52,5 @@ Multiple rounds of user testing led to significant improvements in the user expe
 - 85% task completion rate
 - Average time-on-task reduced by 40%
 - User satisfaction score: 4.7/5
+
+![fullscreen](https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&h=900&fit=crop)

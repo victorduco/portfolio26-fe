@@ -92,3 +92,5 @@ Must comply with:
 - **Data privacy** - GDPR, CCPA compliance
 
 These requirements cannot be bypassed, but can be designed more elegantly.
+
+![fullscreen](https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1600&h=900&fit=crop)

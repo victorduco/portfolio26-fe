@@ -3,10 +3,17 @@
     <div class="summary-content">
       <h1 class="summary-title">{{ caseConfig.title }}</h1>
     </div>
+    <FullscreenImage
+      v-if="caseConfig.summaryImage"
+      :image-src="caseConfig.summaryImage"
+      :alt="`${caseConfig.title} preview`"
+    />
   </section>
 </template>
 
 <script setup>
+import FullscreenImage from './FullscreenImage.vue';
+
 const props = defineProps({
   caseId: {
     type: String,
@@ -21,17 +28,19 @@ const props = defineProps({
 
 <style scoped>
 .case-summary {
-  width: 100vw;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-content {
+  width: 100%;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.summary-content {
-  max-width: 1200px;
   padding: 0 48px;
-  text-align: center;
+  box-sizing: border-box;
 }
 
 .summary-title {
@@ -41,6 +50,8 @@ const props = defineProps({
   font-size: clamp(32px, 6vw, 64px);
   line-height: 1.2;
   color: inherit;
+  text-align: center;
+  max-width: 1200px;
 }
 
 @media (max-width: 768px) {

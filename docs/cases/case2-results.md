@@ -237,3 +237,5 @@ Moved from **#12 to #4** in fintech app rankings (App Annie)
 3. **Education converts** - Helping users understand investing made them confident to act
 4. **Speed matters** - Reducing friction by hours (not minutes) changed behavior
 5. **Personalization scales** - Different user segments need different experiences
+
+![fullscreen](https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=1600&h=900&fit=crop)

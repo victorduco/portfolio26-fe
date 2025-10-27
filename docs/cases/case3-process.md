@@ -87,3 +87,5 @@ export function useCounter() {
 
 ### Qualitative Feedback
 Users praised the improved navigation and overall experience. NPS score increased from 42 to 68.
+
+![fullscreen](https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=900&fit=crop)

@@ -147,3 +147,5 @@ Accessibility: 68 → 98
 3. **Design systems scale** - The upfront investment in components accelerated everything
 4. **Accessibility is usability** - WCAG compliance made the product better for everyone
 5. **Metrics drive decisions** - Tracking everything allowed for rapid optimization
+
+![fullscreen](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
