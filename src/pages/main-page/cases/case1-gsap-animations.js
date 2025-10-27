@@ -162,6 +162,19 @@ export function initAnimations(pinContainer, videoPlayerRef, videoExpanded) {
     "<"
   );
 
+  // Анимация появления видео контента (opacity 0 -> 1)
+  tl2.fromTo(
+    ".case1-video-player",
+    {
+      opacity: 0,
+    },
+    {
+      opacity: 1,
+      duration: 5.0,
+    },
+    "<"
+  );
+
   // Анимация кнопки Open Story
   tl2.set(".open-story-button", {
     opacity: 1,
