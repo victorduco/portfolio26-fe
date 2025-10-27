@@ -26,10 +26,10 @@
     <section :id="`case${caseId}-summary`">
       <CaseSummary :case-id="caseId" :case-config="caseConfig" />
     </section>
-    <section :id="`case${caseId}-task`">
+    <section :id="`case${caseId}-background`">
       <MarkdownSection
         :case-id="caseId"
-        section-type="task"
+        section-type="background"
         :case-config="caseConfig"
       />
     </section>
@@ -79,7 +79,8 @@ const caseConfigs = {
     secondary: null, // optional
     font: null, // optional, uses global font if null
     theme: "light", // light or dark
-    summaryImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop",
+    summaryImage:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop",
   },
   2: {
     title: "Redesigning the Communications App",
@@ -88,7 +89,8 @@ const caseConfigs = {
     secondary: null,
     font: null,
     theme: "light",
-    summaryImage: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+    summaryImage:
+      "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
   },
   3: {
     title: "Terminal Shift Redesign",
@@ -97,7 +99,8 @@ const caseConfigs = {
     secondary: null,
     font: null,
     theme: "light",
-    summaryImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
+    summaryImage:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
   },
 };
 
@@ -113,7 +116,7 @@ const caseConfig = computed(() => {
 
 const navigationSections = computed(() => [
   { id: `case${props.caseId}-summary`, label: "Summary" },
-  { id: `case${props.caseId}-task`, label: "Task" },
+  { id: `case${props.caseId}-background`, label: "Background" },
   { id: `case${props.caseId}-process`, label: "Process" },
   { id: `case${props.caseId}-results`, label: "Results" },
 ]);
