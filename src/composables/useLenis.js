@@ -11,6 +11,10 @@ import {
   getEnabledMandatorySnaps,
   calculateZonePosition,
 } from "./snapConfig.js";
+import {
+  setupScrollDirectionTracking,
+  createDirectionalSnapCallback,
+} from "./directionalSnap.js";
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -61,16 +65,8 @@ export function useLenis() {
     // Integrate Lenis with GSAP ScrollTrigger
     lenisInstance.on("scroll", ScrollTrigger.update);
 
-    // Debug scroll information
-    lenisInstance.on("scroll", (e) => {
-      console.log('📊 Scroll Info:', {
-        position: Math.round(e.scroll),
-        velocity: e.velocity.toFixed(2),
-        isScrolling: lenisInstance.isScrolling,
-        isStopped: lenisInstance.isStopped,
-        direction: e.direction > 0 ? '↓ down' : '↑ up'
-      });
-    });
+    // Setup scroll direction tracking for directional snapping
+    const scrollState = setupScrollDirectionTracking(lenisInstance);
 
     // Disable snap in "no-snap zones" using configuration
     // This allows GSAP ScrollTrigger to work freely in defined zones
@@ -120,6 +116,47 @@ export function useLenis() {
       ...snapOptions,
     };
 
+    // Add directional snap behavior if enabled (via config)
+    // TODO: Lenis directional snap - temporarily disabled, using GSAP directional snap for case3
+    // if (snapConfig.behavior?.directionalSnap) {
+    //   defaultSnapOptions.onSnapStart = (snap) => {
+    //     const currentPosition = lenisInstance.scroll;
+    //     const scrollDirection = scrollState.direction;
+    //     const targetPosition = snap?.value ?? snap;
+
+    //     // If snapping backwards against scroll direction, prevent it
+    //     const shouldBlock =
+    //       (scrollDirection > 0 && targetPosition < currentPosition) ||
+    //       (scrollDirection < 0 && targetPosition > currentPosition);
+
+    //     if (shouldBlock) {
+    //       console.log('🚫 Blocking snap - staying at current position:', {
+    //         direction: scrollDirection > 0 ? 'down' : 'up',
+    //         current: Math.round(currentPosition),
+    //         target: Math.round(targetPosition)
+    //       });
+
+    //       // Stay at current position - cancel the snap
+    //       lenisInstance.scrollTo(currentPosition, {
+    //         immediate: true,
+    //         force: true,
+    //         lock: true
+    //       });
+
+    //       return snap;
+    //     }
+
+    //     console.log('✅ Allowing snap:', {
+    //       direction: scrollDirection > 0 ? 'down' : 'up',
+    //       from: Math.round(currentPosition),
+    //       to: Math.round(targetPosition)
+    //     });
+
+    //     return snap;
+    //   };
+    // }
+
+    // Create snap instance with config including callback
     snapInstance = new Snap(lenisInstance, defaultSnapOptions);
     snap.value = snapInstance;
 

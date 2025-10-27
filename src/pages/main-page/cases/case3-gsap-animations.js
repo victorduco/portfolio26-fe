@@ -37,12 +37,12 @@ export function initAnimations(pinContainer, refs) {
       end: "bottom bottom",
       scrub: 1,
       snap: {
-        snapTo: [0, 1], // snap к началу (0) или концу (1) анимации
+        snapTo: [0, 1],
         duration: { min: 0.3, max: 1 },
-        delay: 0,
+        delay: 0.15,
         ease: "power1.inOut",
         inertia: false,
-        directional: false, // Allow snapping in both directions (forward and backward)
+        directional: true,
       },
       id: "TL1-CASE3",
       invalidateOnRefresh: true,

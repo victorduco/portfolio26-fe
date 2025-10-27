@@ -9,6 +9,12 @@ export const snapConfig = {
     type: "mandatory", // 'mandatory', 'proximity', 'lock'
     distanceThreshold: "50%", // Snap zone distance
     debounce: 200, // Delay before snapping (ms)
+    // Note: directional snapping is implemented via custom logic in useLenis.js
+  },
+
+  // Custom behavior flags
+  behavior: {
+    directionalSnap: true, // Only snap in scroll direction (custom implementation)
   },
 
   // Anchor points - main sections to snap to
@@ -58,10 +64,10 @@ export const snapConfig = {
     //   enabled: true,
     // },
     {
-      name: "Case3 start to middle animation",
+      name: "Case3 full animation - no snap throughout",
       elementId: "case3",
       startPercent: 0.0, // Start from beginning
-      endPercent: 0.4, // Until 60% (same as Case1)
+      endPercent: 1.0, // Until end (100%)
       enabled: true,
     },
   ],
