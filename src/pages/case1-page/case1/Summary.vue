@@ -11,6 +11,5 @@
 .case1-summary {
   width: 100vw;
   height: 100vh;
-  background: #171717;
 }
 </style>

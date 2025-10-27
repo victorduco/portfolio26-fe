@@ -49,7 +49,6 @@ function renderMarkdown(md) {
 .case2-task {
   width: 100vw;
   min-height: 100vh;
-  background: #171717;
   padding: 80px 48px 48px;
 }
 

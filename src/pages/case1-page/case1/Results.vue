@@ -50,7 +50,6 @@ function renderMarkdown(md) {
 .case1-results {
   width: 100vw;
   min-height: 100vh;
-  background: #171717;
   padding: 80px 48px 48px;
 }
 

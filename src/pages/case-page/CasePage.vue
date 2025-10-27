@@ -2,9 +2,12 @@
   <div
     :class="`case${caseId}-page`"
     :style="{
-      backgroundColor: currentBackgroundColor,
-      color: currentTextColor,
+      backgroundColor: caseConfig.background,
+      color: caseConfig.textColor,
       transition: 'background-color 0.5s ease, color 0.5s ease',
+      fontFamily: caseConfig.font || 'var(--font-family-base)',
+      '--case-primary-color': caseConfig.primary,
+      '--case-secondary-color': caseConfig.secondary || caseConfig.primary,
     }"
   >
     <NavigationChevron
@@ -17,26 +20,26 @@
     <PageNavigation
       :sections="navigationSections"
       :enable-intro-animation="false"
-      :dark-mode="isDarkMode"
+      :dark-mode="caseConfig.darkMode"
     />
     <section :id="`case${caseId}-summary`">
-      <component :is="SummaryComponent" />
+      <component :is="SummaryComponent" :case-config="caseConfig" />
     </section>
     <section :id="`case${caseId}-task`">
-      <component :is="TaskComponent" />
+      <component :is="TaskComponent" :case-config="caseConfig" />
     </section>
     <section :id="`case${caseId}-process`">
-      <component :is="ProcessComponent" />
+      <component :is="ProcessComponent" :case-config="caseConfig" />
     </section>
     <section :id="`case${caseId}-results`">
-      <component :is="ResultsComponent" />
+      <component :is="ResultsComponent" :case-config="caseConfig" />
     </section>
     <AppFooter />
   </div>
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, ref } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import AppFooter from "@/components/app-footer/AppFooter.vue";
@@ -52,10 +55,26 @@ const props = defineProps({
 
 useMeta(`case${props.caseId}`);
 
-const caseColors = {
-  1: "#ffffff", // White for case 1
-  2: "#f2668b", // Pink for case 2
-  3: "#171717", // Dark for case 3
+// Configuration for each case
+const caseConfigs = {
+  1: {
+    background: "#ffffff",
+    primary: "#007aff",
+    secondary: null, // optional
+    font: null, // optional, uses global font if null
+  },
+  2: {
+    background: "#ffffff",
+    primary: "#000000",
+    secondary: null,
+    font: null,
+  },
+  3: {
+    background: "#B9E2F7",
+    primary: "#ca4034",
+    secondary: null,
+    font: null,
+  },
 };
 
 function getContrastTextColor(backgroundColor) {
@@ -69,11 +88,14 @@ function getContrastTextColor(backgroundColor) {
   return luminance > 0.5 ? "#000000" : "#ffffff";
 }
 
-const currentBackgroundColor = ref(caseColors[props.caseId]);
-const currentTextColor = ref(getContrastTextColor(caseColors[props.caseId]));
-const isDarkMode = ref(
-  getContrastTextColor(caseColors[props.caseId]) === "#ffffff"
-);
+const caseConfig = computed(() => {
+  const config = caseConfigs[props.caseId];
+  return {
+    ...config,
+    textColor: getContrastTextColor(config.background),
+    darkMode: getContrastTextColor(config.background) === "#ffffff",
+  };
+});
 
 const SummaryComponent = defineAsyncComponent(() =>
   import(`../case${props.caseId}-page/case${props.caseId}/Summary.vue`)
@@ -101,8 +123,8 @@ const navigationSections = computed(() => [
 .case2-page,
 .case3-page {
   width: 100vw;
-  background: #171717;
   position: relative;
+  min-height: 100vh;
 }
 
 .case-page-back {
