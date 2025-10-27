@@ -63,12 +63,17 @@ const videoExpanded = ref(false);
 let animationInstance = null;
 
 // Video constants
-const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url).href;
+const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url)
+  .href;
 
 onMounted(() => {
   // Initialize GSAP animations with ScrollTrigger
   if (pinContainerRef.value) {
-    animationInstance = initAnimations(pinContainerRef.value, videoPlayerRef, videoExpanded);
+    animationInstance = initAnimations(
+      pinContainerRef.value,
+      videoPlayerRef,
+      videoExpanded
+    );
   }
 });
 
@@ -232,11 +237,12 @@ defineExpose({
   align-items: center;
   justify-content: center;
   border: 4px solid #007aff;
-  border-radius: 40px;
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
   text-decoration: none;
   transform: translate(-50%, -50%);
+  box-sizing: border-box;
 }
 
 /* Line Element (z-index: 3) */
@@ -244,8 +250,8 @@ defineExpose({
   width: 40px;
   height: 40px;
   z-index: 3;
-  background-color: #007aff;
-  border: none;
+  background-color: transparent;
+  border: 50px solid #007aff;
 }
 
 /* Video Player */
