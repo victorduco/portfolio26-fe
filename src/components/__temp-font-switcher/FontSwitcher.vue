@@ -1,8 +1,8 @@
 <template>
-  <div v-if="isOpen" class="font-switcher-overlay" @click="close">
-    <div class="font-switcher-panel" @click.stop>
+  <Transition name="slide">
+    <div v-if="isOpen" class="font-switcher-panel" @wheel.stop @touchmove.stop>
       <div class="font-switcher-header">
-        <h3>Font Switcher (Temp Tool)</h3>
+        <h3>Font Switcher</h3>
         <button @click="close" class="close-btn">×</button>
       </div>
       <div class="font-list">
@@ -17,26 +17,78 @@
         </button>
       </div>
       <div class="hint">
-        Press Cmd+Shift+F (Mac) or Ctrl+Shift+F (Win) to toggle
+        Cmd+Shift+F (Mac) or Ctrl+Shift+F (Win)
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 
 const isOpen = ref(false);
 const currentFont = ref("zedou");
 
 const fonts = [
-  { label: "Zedou (Current)", value: "zedou", preview: "zedou" },
-  { label: "Inter", value: "Inter", preview: "Inter, sans-serif" },
-  {
-    label: "Shadows Into Light",
-    value: "Shadows Into Light",
-    preview: '"Shadows Into Light", cursive',
-  },
+  { label: "Zedou (Current)", value: "zedou", provider: "current", preview: "zedou" },
+  { label: "Albert Sans", value: "Albert+Sans", provider: "google", preview: "Albert Sans, sans-serif" },
+  { label: "Andika", value: "Andika", provider: "google", preview: "Andika, sans-serif" },
+  { label: "Average Sans", value: "Average+Sans", provider: "google", preview: "Average Sans, sans-serif" },
+  { label: "Be Vietnam Pro", value: "Be+Vietnam+Pro", provider: "google", preview: "Be Vietnam Pro, sans-serif" },
+  { label: "Biryani", value: "Biryani", provider: "google", preview: "Biryani, sans-serif" },
+  { label: "Cabin", value: "Cabin", provider: "google", preview: "Cabin, sans-serif" },
+  { label: "Carlito", value: "Carlito", provider: "google", preview: "Carlito, sans-serif" },
+  { label: "Commissioner", value: "Commissioner", provider: "google", preview: "Commissioner, sans-serif" },
+  { label: "Figtree", value: "Figtree", provider: "google", preview: "Figtree, sans-serif" },
+  { label: "Gantari", value: "Gantari", provider: "google", preview: "Gantari, sans-serif" },
+  { label: "Hanken Grotesk", value: "Hanken+Grotesk", provider: "google", preview: "Hanken Grotesk, sans-serif" },
+  { label: "Hind Mysuru", value: "Hind+Mysuru", provider: "google", preview: "Hind Mysuru, sans-serif" },
+  { label: "Instrument Sans", value: "Instrument+Sans", provider: "google", preview: "Instrument Sans, sans-serif" },
+  { label: "Jaldi", value: "Jaldi", provider: "google", preview: "Jaldi, sans-serif" },
+  { label: "Khula", value: "Khula", provider: "google", preview: "Khula, sans-serif" },
+  { label: "Kumbh Sans", value: "Kumbh+Sans", provider: "google", preview: "Kumbh Sans, sans-serif" },
+  { label: "League Spartan", value: "League+Spartan", provider: "google", preview: "League Spartan, sans-serif" },
+  { label: "Merriweather Sans", value: "Merriweather+Sans", provider: "google", preview: "Merriweather Sans, sans-serif" },
+  { label: "Mukta Mahee", value: "Mukta+Mahee", provider: "google", preview: "Mukta Mahee, sans-serif" },
+  { label: "Mukta", value: "Mukta", provider: "google", preview: "Mukta, sans-serif" },
+  { label: "Mulish", value: "Mulish", provider: "google", preview: "Mulish, sans-serif" },
+  { label: "Nokora", value: "Nokora", provider: "google", preview: "Nokora, sans-serif" },
+  { label: "Noto Sans Display", value: "Noto+Sans+Display", provider: "google", preview: "Noto Sans Display, sans-serif" },
+  { label: "Noto Sans", value: "Noto+Sans", provider: "google", preview: "Noto Sans, sans-serif" },
+  { label: "PT Sans Caption", value: "PT+Sans+Caption", provider: "google", preview: "PT Sans Caption, sans-serif" },
+  { label: "Sarabun", value: "Sarabun", provider: "google", preview: "Sarabun, sans-serif" },
+  { label: "Sarala", value: "Sarala", provider: "google", preview: "Sarala, sans-serif" },
+  { label: "Teachers", value: "Teachers", provider: "google", preview: "Teachers, sans-serif" },
+  { label: "Tenor Sans", value: "Tenor+Sans", provider: "google", preview: "Tenor Sans, sans-serif" },
+  { label: "Urbanist", value: "Urbanist", provider: "google", preview: "Urbanist, sans-serif" },
+  { label: "Yantramanav", value: "Yantramanav", provider: "google", preview: "Yantramanav, sans-serif" },
+  { label: "Adapter PE Variable", value: "mdsx", provider: "adobe", cssName: "adapter-pe-variable", preview: "adapter-pe-variable, sans-serif" },
+  { label: "Avenir", value: "jdgv", provider: "adobe", cssName: "avenir-lt-pro", preview: "avenir-lt-pro, sans-serif" },
+  { label: "Avenir Next", value: "rskz", provider: "adobe", cssName: "avenir-next-lt-pro", preview: "avenir-next-lt-pro, sans-serif" },
+  { label: "Brisbane", value: "xnrb", provider: "adobe", cssName: "brisbane", preview: "brisbane, sans-serif" },
+  { label: "Darkmode CC", value: "wkss", provider: "adobe", cssName: "darkmode-off-cc", preview: "darkmode-off-cc, sans-serif" },
+  { label: "DM Sans", value: "kmkm", provider: "adobe", cssName: "dm-sans", preview: "dm-sans, sans-serif" },
+  { label: "Guyot Sans", value: "nlxq", provider: "adobe", cssName: "guyot-sans", preview: "guyot-sans, sans-serif" },
+  { label: "Hanken Grotesk (Adobe)", value: "zgmm", provider: "adobe", cssName: "hanken-grotesk", preview: "hanken-grotesk, sans-serif" },
+  { label: "Highgate Variable", value: "jqhf", provider: "adobe", cssName: "highgate-variable", preview: "highgate-variable, sans-serif" },
+  { label: "Hind Mysuru (Adobe)", value: "zfpl", provider: "adobe", cssName: "hind-mysuru", preview: "hind-mysuru, sans-serif" },
+  { label: "Hind Vadodara", value: "dwfw", provider: "adobe", cssName: "hind-vadodara", preview: "hind-vadodara, sans-serif" },
+  { label: "Indivisible Variable", value: "wgbm", provider: "adobe", cssName: "indivisible-variable", preview: "indivisible-variable, sans-serif" },
+  { label: "Instrument Sans Variable", value: "ktqq", provider: "adobe", cssName: "instrument-sans-variable", preview: "instrument-sans-variable, sans-serif" },
+  { label: "Ivyepic Variable", value: "yyps", provider: "adobe", cssName: "ivyepic-variable", preview: "ivyepic-variable, sans-serif" },
+  { label: "K2D", value: "vjtw", provider: "adobe", cssName: "k2d", preview: "k2d, sans-serif" },
+  { label: "Koddiud Ongothic", value: "tdyv", provider: "adobe", cssName: "koddiud-ongothic", preview: "koddiud-ongothic, sans-serif" },
+  { label: "Mulish Variable", value: "mlrd", provider: "adobe", cssName: "mulish-variable", preview: "mulish-variable, sans-serif" },
+  { label: "MVB Salis", value: "czbt", provider: "adobe", cssName: "salis-mvb", preview: "salis-mvb, sans-serif" },
+  { label: "Myriad Variable", value: "pflp", provider: "adobe", cssName: "myriad-variable", preview: "myriad-variable, sans-serif" },
+  { label: "Neue Frutiger World", value: "yswy", provider: "adobe", cssName: "neue-frutiger-world", preview: "neue-frutiger-world, sans-serif" },
+  { label: "Neulis Sans", value: "qmfx", provider: "adobe", cssName: "neulis-sans", preview: "neulis-sans, sans-serif" },
+  { label: "New Hero", value: "ywnr", provider: "adobe", cssName: "new-hero", preview: "new-hero, sans-serif" },
+  { label: "Nexus Sans", value: "gmjl", provider: "adobe", cssName: "ff-nexus-sans", preview: "ff-nexus-sans, sans-serif" },
+  { label: "Polymath", value: "slkb", provider: "adobe", cssName: "polymath", preview: "polymath, sans-serif" },
+  { label: "Proxima Nova Devanagari", value: "bwwl", provider: "adobe", cssName: "proxima-nova-devanagari", preview: "proxima-nova-devanagari, sans-serif" },
+  { label: "Pureunjeonnam", value: "zbxr", provider: "adobe", cssName: "pureunjeonnam", preview: "pureunjeonnam, sans-serif" },
+  { label: "Sarvatrik Latin Variable", value: "jlyf", provider: "adobe", cssName: "sarvatrik-latin-variable", preview: "sarvatrik-latin-variable, sans-serif" },
 ];
 
 const toggle = () => {
@@ -49,15 +101,25 @@ const close = () => {
 
 const selectFont = async (fontValue) => {
   try {
+    const font = fonts.find(f => f.value === fontValue);
+    if (!font) {
+      console.error("❌ Font not found:", fontValue);
+      return;
+    }
+
     const response = await fetch("/__temp_change_font", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ font: fontValue }),
+      body: JSON.stringify({
+        font: fontValue,
+        provider: font.provider,
+        cssName: font.cssName
+      }),
     });
 
     if (response.ok) {
       currentFont.value = fontValue;
-      console.log("✅ Font changed to:", fontValue);
+      console.log("✅ Font changed to:", font.label, `(${font.provider})`);
     } else {
       console.error("❌ Failed to change font");
     }
@@ -67,7 +129,7 @@ const selectFont = async (fontValue) => {
 };
 
 const handleKeydown = (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "F") {
+  if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === "F" || e.key === "f")) {
     e.preventDefault();
     toggle();
   }
@@ -76,70 +138,52 @@ const handleKeydown = (e) => {
   }
 };
 
+// Watch for isOpen changes to manage body scroll
+watch(isOpen, (newValue) => {
+  if (newValue) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+});
+
 onMounted(() => {
   window.addEventListener("keydown", handleKeydown);
-
-  // Load Google Font
-  if (!document.querySelector("#temp-google-fonts")) {
-    const link = document.createElement("link");
-    link.id = "temp-google-fonts";
-    link.rel = "stylesheet";
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Shadows+Into+Light&family=Inter:wght@300;400;500;600;700&display=swap";
-    document.head.appendChild(link);
-  }
 });
 
 onUnmounted(() => {
   window.removeEventListener("keydown", handleKeydown);
+  document.body.style.overflow = '';
 });
 </script>
 
 <style scoped>
-.font-switcher-overlay {
+.font-switcher-panel {
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  height: 100vh;
+  width: 400px;
+  background: #1a1a1a;
+  border-left: 1px solid #333;
+  padding: 24px;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
   z-index: 999999;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.2s ease;
+  flex-direction: column;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
 }
 
-.font-switcher-panel {
-  background: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 12px;
-  padding: 24px;
-  min-width: 400px;
-  max-width: 500px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.2s ease;
+.slide-enter-from {
+  transform: translateX(100%);
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.slide-leave-to {
+  transform: translateX(100%);
 }
 
 .font-switcher-header {
@@ -184,7 +228,29 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
   margin-bottom: 16px;
+}
+
+.font-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.font-list::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.font-list::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.font-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .font-item {
