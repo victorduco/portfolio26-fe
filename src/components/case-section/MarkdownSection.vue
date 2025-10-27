@@ -1,5 +1,5 @@
 <template>
-  <section class="case2-results">
+  <section :class="`case-${sectionType}`">
     <div class="markdown-content" v-html="markdownContent"></div>
   </section>
 </template>
@@ -7,14 +7,31 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
+const props = defineProps({
+  caseId: {
+    type: String,
+    required: true,
+  },
+  sectionType: {
+    type: String,
+    required: true,
+    validator: (value) => ['task', 'process', 'results'].includes(value),
+  },
+  caseConfig: {
+    type: Object,
+    default: () => ({}),
+  },
+});
+
 const markdownContent = ref('');
 
 onMounted(async () => {
   try {
-    const response = await fetch('/docs/cases/case2-results.md');
+    const response = await fetch(`/docs/cases/case${props.caseId}-${props.sectionType}.md`);
     const markdown = await response.text();
     markdownContent.value = renderMarkdown(markdown);
   } catch (error) {
+    console.error(`Error loading ${props.sectionType} content:`, error);
     markdownContent.value = '<p>Error loading content</p>';
   }
 });
@@ -48,7 +65,9 @@ function renderMarkdown(md) {
 </script>
 
 <style scoped>
-.case2-results {
+.case-task,
+.case-process,
+.case-results {
   width: 100vw;
   min-height: 100vh;
   padding: 80px 48px 48px;
@@ -57,7 +76,7 @@ function renderMarkdown(md) {
 .markdown-content {
   max-width: 900px;
   margin: 0 auto;
-  color: #ffffff;
+  color: inherit;
   --font-size-h1: clamp(32px, 6vw, 48px);
   --font-size-h2: clamp(24px, 4vw, 32px);
   --font-size-h3: clamp(20px, 3vw, 24px);
@@ -65,26 +84,28 @@ function renderMarkdown(md) {
 
 .markdown-content :deep(h1) {
   margin-bottom: 32px;
-  color: #ffffff;
+  color: inherit;
 }
 
 .markdown-content :deep(h2) {
   margin-top: 48px;
   margin-bottom: 24px;
-  color: #ffffff;
+  color: inherit;
 }
 
 .markdown-content :deep(h3) {
   margin-top: 32px;
   margin-bottom: 16px;
-  color: #e5e5e5;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .markdown-content :deep(p) {
   font-size: 16px;
   line-height: 1.8;
   margin-bottom: 16px;
-  color: #e5e5e5;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .markdown-content :deep(ul),
@@ -97,20 +118,22 @@ function renderMarkdown(md) {
   font-size: 16px;
   line-height: 1.8;
   margin-bottom: 8px;
-  color: #e5e5e5;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .markdown-content :deep(code) {
-  background: #262626;
+  background: rgba(0, 0, 0, 0.05);
   padding: 2px 8px;
   border-radius: 4px;
   font-family: 'Monaco', 'Courier New', monospace;
   font-size: 14px;
-  color: #a3a3a3;
+  color: inherit;
+  opacity: 0.7;
 }
 
 .markdown-content :deep(pre) {
-  background: #262626;
+  background: rgba(0, 0, 0, 0.05);
   padding: 16px;
   border-radius: 8px;
   overflow-x: auto;
@@ -120,12 +143,13 @@ function renderMarkdown(md) {
 .markdown-content :deep(pre code) {
   background: transparent;
   padding: 0;
-  color: #e5e5e5;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .markdown-content :deep(strong) {
   font-weight: 600;
-  color: #ffffff;
+  color: inherit;
 }
 
 .markdown-content :deep(em) {
@@ -142,35 +166,39 @@ function renderMarkdown(md) {
 .markdown-content :deep(td) {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #404040;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .markdown-content :deep(th) {
   font-weight: 600;
-  color: #ffffff;
-  background: #262626;
+  color: inherit;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .markdown-content :deep(td) {
-  color: #e5e5e5;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .markdown-content :deep(blockquote) {
-  border-left: 4px solid #404040;
+  border-left: 4px solid rgba(0, 0, 0, 0.2);
   padding-left: 16px;
   margin: 24px 0;
   font-style: italic;
-  color: #a3a3a3;
+  color: inherit;
+  opacity: 0.7;
 }
 
 .markdown-content :deep(hr) {
   border: none;
-  border-top: 1px solid #404040;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   margin: 48px 0;
 }
 
 @media (max-width: 768px) {
-  .case2-results {
+  .case-task,
+  .case-process,
+  .case-results {
     padding: 60px 24px 24px;
   }
 

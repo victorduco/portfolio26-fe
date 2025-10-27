@@ -23,26 +23,40 @@
       :dark-mode="caseConfig.darkMode"
     />
     <section :id="`case${caseId}-summary`">
-      <component :is="SummaryComponent" :case-config="caseConfig" />
+      <CaseSummary :case-id="caseId" :case-config="caseConfig" />
     </section>
     <section :id="`case${caseId}-task`">
-      <component :is="TaskComponent" :case-config="caseConfig" />
+      <MarkdownSection
+        :case-id="caseId"
+        section-type="task"
+        :case-config="caseConfig"
+      />
     </section>
     <section :id="`case${caseId}-process`">
-      <component :is="ProcessComponent" :case-config="caseConfig" />
+      <MarkdownSection
+        :case-id="caseId"
+        section-type="process"
+        :case-config="caseConfig"
+      />
     </section>
     <section :id="`case${caseId}-results`">
-      <component :is="ResultsComponent" :case-config="caseConfig" />
+      <MarkdownSection
+        :case-id="caseId"
+        section-type="results"
+        :case-config="caseConfig"
+      />
     </section>
     <AppFooter />
   </div>
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent } from "vue";
+import { computed } from "vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import AppFooter from "@/components/app-footer/AppFooter.vue";
+import MarkdownSection from "@/components/case-section/MarkdownSection.vue";
+import CaseSummary from "@/components/case-section/CaseSummary.vue";
 import { useMeta } from "@/composables/useMeta.js";
 
 const props = defineProps({
@@ -58,57 +72,40 @@ useMeta(`case${props.caseId}`);
 // Configuration for each case
 const caseConfigs = {
   1: {
+    title: "Cross-Domain AI Solution for Account Reconcilers",
     background: "#ffffff",
     primary: "#007aff",
     secondary: null, // optional
     font: null, // optional, uses global font if null
+    theme: "light", // light or dark
   },
   2: {
+    title: "Redesigning the Communications App",
     background: "#ffffff",
     primary: "#000000",
     secondary: null,
     font: null,
+    theme: "light",
   },
   3: {
+    title: "Terminal Shift Redesign",
     background: "#B9E2F7",
     primary: "#ca4034",
     secondary: null,
     font: null,
+    theme: "light",
   },
 };
 
-function getContrastTextColor(backgroundColor) {
-  const hex = backgroundColor.replace("#", "");
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
-
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-  return luminance > 0.5 ? "#000000" : "#ffffff";
-}
-
 const caseConfig = computed(() => {
   const config = caseConfigs[props.caseId];
+  const isLightTheme = config.theme === "light";
   return {
     ...config,
-    textColor: getContrastTextColor(config.background),
-    darkMode: getContrastTextColor(config.background) === "#ffffff",
+    textColor: isLightTheme ? "#000000" : "#ffffff",
+    darkMode: !isLightTheme,
   };
 });
-
-const SummaryComponent = defineAsyncComponent(() =>
-  import(`../case${props.caseId}-page/case${props.caseId}/Summary.vue`)
-);
-const TaskComponent = defineAsyncComponent(() =>
-  import(`../case${props.caseId}-page/case${props.caseId}/Task.vue`)
-);
-const ProcessComponent = defineAsyncComponent(() =>
-  import(`../case${props.caseId}-page/case${props.caseId}/Process.vue`)
-);
-const ResultsComponent = defineAsyncComponent(() =>
-  import(`../case${props.caseId}-page/case${props.caseId}/Results.vue`)
-);
 
 const navigationSections = computed(() => [
   { id: `case${props.caseId}-summary`, label: "Summary" },
