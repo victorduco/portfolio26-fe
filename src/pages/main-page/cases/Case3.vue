@@ -383,7 +383,7 @@ defineExpose({
   will-change: transform;
   transition: transform 0.1s ease-out;
   opacity: 1; /* Always visible */
-  transform: translateY(50vh); /* Start from bottom of screen */
+  transform: translateY(30vh); /* Start from bottom of screen */
 }
 
 /* Media container - holds both image and video */

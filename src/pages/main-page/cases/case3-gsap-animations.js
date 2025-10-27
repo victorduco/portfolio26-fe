@@ -54,10 +54,25 @@ export function initAnimations(pinContainer, refs) {
     imageContainer,
     {
       y: 0,
-      duration: 6.0,
+      duration: 4.0,
       ease: "none",
     },
     0
+  );
+
+  // Stage 3: Title fades in and slides down (after clouds finish)
+  tl1.fromTo(
+    titleElement,
+    {
+      opacity: 0,
+      y: 100,
+    },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 3,
+    },
+    "<50%"
   );
 
   // Stage 2: Clouds appear from sides (after parallax starts)
@@ -65,100 +80,85 @@ export function initAnimations(pinContainer, refs) {
     const { topLeftCloud, topRightCloud, bottomLeftCloud, bottomRightCloud } =
       cloudCorners;
 
-    // Set initial state - clouds off screen
-    gsap.set([topLeftCloud, topRightCloud, bottomLeftCloud, bottomRightCloud], {
-      opacity: 0,
-    });
-
     // Top left cloud - slides from left
     if (topLeftCloud) {
-      gsap.set(topLeftCloud, { x: -100, y: -100 });
+      gsap.set(topLeftCloud, { opacity: 0, x: -50, y: -50 });
       tl1.to(
         topLeftCloud,
         {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.8,
+          duration: 2,
         },
-        4.0
+        "<75%"
       );
     }
 
-    // Top right cloud - slides from right
+    // Top right cloud - slides from right (same time as top left)
     if (topRightCloud) {
-      gsap.set(topRightCloud, { x: 100, y: -100 });
+      gsap.set(topRightCloud, { opacity: 0, x: 50, y: -50 });
       tl1.to(
         topRightCloud,
         {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.8,
+          duration: 2,
         },
-        4.0
+        "<"
       );
     }
 
-    // Bottom left cloud - slides from left
+    // Bottom left cloud - slides from left (same time)
     if (bottomLeftCloud) {
-      gsap.set(bottomLeftCloud, { x: -100, y: 100 });
+      gsap.set(bottomLeftCloud, { opacity: 0, x: -50, y: 50 });
       tl1.to(
         bottomLeftCloud,
         {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.8,
+          duration: 2,
         },
-        4.0
+        "<"
       );
     }
 
-    // Bottom right cloud - slides from right
+    // Bottom right cloud - slides from right (same time)
     if (bottomRightCloud) {
-      gsap.set(bottomRightCloud, { x: 100, y: 100 });
+      gsap.set(bottomRightCloud, { opacity: 0, x: 50, y: 50 });
       tl1.to(
         bottomRightCloud,
         {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.8,
+          duration: 2,
         },
-        4.0
+        "<"
       );
     }
   }
 
-  // Stage 3: Title fades in
-  tl1.to(
-    titleElement,
-    {
-      opacity: 1,
-      duration: 0.6,
-    },
-    5.0
-  );
-
-  // Stage 4: Company/subtitle fades in
+  // Stage 4: Company/subtitle fades in (shortly after title starts)
   tl1.to(
     companyElement,
     {
       opacity: 1,
-      duration: 0.6,
+      duration: 4,
     },
-    5.4
+    ">-0.2"
   );
 
-  // Stage 5: Button fades in
+  // Stage 5: Button fades in (shortly after company starts)
   tl1.to(
     buttonElement,
     {
       opacity: 1,
-      duration: 0.6,
+      duration: 4,
     },
-    5.8
+    ">-0.2"
   );
 
   // Video playback control scrubbed to scroll (independent timeline)

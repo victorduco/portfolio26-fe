@@ -103,68 +103,13 @@ defineExpose({
   bottomRightCloud,
 });
 
-let scrollListener = null;
-
-
-const parallaxSpeeds = {
-  topLeft: { x: 0, y: 0.3 },
-  topRight: { x: 0, y: 0.4 },
-  bottomLeft: { x: 0, y: 0.35 },
-  bottomRight: { x: 0, y: 0.25 },
-};
-
-function updateCloudParallax() {
-  if (!cloudContainer.value) return;
-
-  const rect = cloudContainer.value.getBoundingClientRect();
-  const viewportHeight = window.innerHeight;
-
-  
-  const scrollProgress = 1 - (rect.top + rect.height / 2) / viewportHeight;
-  const parallaxOffset = Math.max(
-    -100,
-    Math.min(100, scrollProgress * 200 - 100)
-  );
-
-  
-  if (topLeftCloud.value) {
-    const x = parallaxOffset * parallaxSpeeds.topLeft.x;
-    const y = parallaxOffset * parallaxSpeeds.topLeft.y;
-    topLeftCloud.value.style.transform = `translate(${x}px, ${y}px)`;
-  }
-
-  if (topRightCloud.value) {
-    const x = parallaxOffset * parallaxSpeeds.topRight.x;
-    const y = parallaxOffset * parallaxSpeeds.topRight.y;
-    topRightCloud.value.style.transform = `translate(${x}px, ${y}px)`;
-  }
-
-  if (bottomLeftCloud.value) {
-    const x = parallaxOffset * parallaxSpeeds.bottomLeft.x;
-    const y = parallaxOffset * parallaxSpeeds.bottomLeft.y;
-    bottomLeftCloud.value.style.transform = `translate(${x}px, ${y}px)`;
-  }
-
-  if (bottomRightCloud.value) {
-    const x = parallaxOffset * parallaxSpeeds.bottomRight.x;
-    const y = parallaxOffset * parallaxSpeeds.bottomRight.y;
-    bottomRightCloud.value.style.transform = `translate(${x}px, ${y}px)`;
-  }
-}
-
+// Parallax removed - GSAP handles cloud animations
 onMounted(() => {
-  scrollListener = () => {
-    requestAnimationFrame(updateCloudParallax);
-  };
-
-  window.addEventListener("scroll", scrollListener, { passive: true });
-  updateCloudParallax();
+  // No scroll listener needed
 });
 
 onUnmounted(() => {
-  if (scrollListener) {
-    window.removeEventListener("scroll", scrollListener);
-  }
+  // Cleanup if needed
 });
 
 
@@ -364,7 +309,6 @@ const getCircleStyle = (circle, corner) => {
 
 .cloud-group {
   position: absolute;
-  transition: transform 0.1s ease-out;
   will-change: transform;
 }
 

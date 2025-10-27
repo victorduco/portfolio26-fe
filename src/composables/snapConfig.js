@@ -24,11 +24,6 @@ export const snapConfig = {
       enabled: true,
     },
     {
-      id: "case2",
-      align: ["start", "end"],
-      enabled: true,
-    },
-    {
       id: "case3",
       align: ["start", "end"],
       enabled: true,
