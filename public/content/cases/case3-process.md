@@ -1,91 +1,11 @@
-# Case 3: Process
+# Process
 
-## Discovery & Strategy
-
-### Business Goals
-Understanding the client's vision and translating it into actionable objectives.
-
-- Increase user engagement by 50%
-- Reduce bounce rate by 30%
-- Improve conversion rate by 25%
-
-### Competitive Landscape
-Analyzed 10 direct competitors to identify opportunities for differentiation.
-
-## User Experience Design
-
-### Information Architecture
-Restructured the entire site architecture for better navigation and discoverability.
-
-```
-Homepage
-├── Products
-│   ├── Category A
-│   └── Category B
-├── Solutions
-│   ├── Industry 1
-│   └── Industry 2
-└── Resources
-    ├── Blog
-    └── Documentation
-```
-
-### Interaction Design
-Focused on creating delightful micro-interactions that enhance the user experience.
-
-## Technical Implementation
-
-### Architecture Decisions
-- Chose Vue 3 for reactivity and composition
-- Implemented SSG for optimal performance
-- Integrated headless CMS for content management
-
-### Code Quality
-```javascript
-// Example of composable pattern
-import { ref, computed } from 'vue'
-
-export function useCounter() {
-  const count = ref(0)
-  const doubled = computed(() => count.value * 2)
-
-  function increment() {
-    count.value++
-  }
-
-  return {
-    count,
-    doubled,
-    increment
-  }
-}
-```
-
-### Performance Optimizations
-- Lazy loading of images and components
-- Code splitting by route
-- Asset optimization (WebP, compression)
-
-## Deployment & Monitoring
-
-### CI/CD Pipeline
-- Automated testing on every commit
-- Staging environment for QA
-- Zero-downtime deployments
-
-### Analytics & Monitoring
-- Real-time error tracking with Sentry
-- Performance monitoring with Web Vitals
-- User behavior analysis with custom events
-
-## Outcomes
-
-### Quantitative Results
-- **+65%** increase in user engagement (exceeded goal)
-- **-42%** reduction in bounce rate (exceeded goal)
-- **+31%** improvement in conversion rate (exceeded goal)
-
-### Qualitative Feedback
-Users praised the improved navigation and overall experience. NPS score increased from 42 to 68.
+Gradual migration allowed business continuity while rebuilding. We audited 47 page templates, prioritized revenue-driving pages, and set targets: 75% faster loads, 100% mobile conversion increase, Lighthouse scores above 95.
 
 ![fullscreen](https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=900&fit=crop)
+
+A design system with 142 components provided consistency. Navigation restructured through user testing reduced clicks-to-product from 4.2 to 2.1. Mobile got touch-optimized interactions and streamlined checkout. A/B tests validated every decision.
+
+![fullscreen](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+
+Vue 3 with SSG, aggressive caching, and code splitting optimized performance. API-first architecture separated frontend from backend. 87% test coverage ensured stability. Rollout took 16 weeks, maintaining SEO and 100% feature parity.

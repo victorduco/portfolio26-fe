@@ -47,18 +47,19 @@
         :case-config="caseConfig"
       />
     </section>
-    <AppFooter />
+    <AppFooter :dark-mode="caseConfig.darkMode" />
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import AppFooter from "@/components/app-footer/AppFooter.vue";
 import MarkdownSection from "@/components/case-section/MarkdownSection.vue";
 import CaseSummary from "@/components/case-section/CaseSummary.vue";
 import { useMeta } from "@/composables/useMeta.js";
+import { getSnapInstance } from "@/composables/useLenis.js";
 
 const props = defineProps({
   caseId: {
@@ -120,6 +121,24 @@ const navigationSections = computed(() => [
   { id: `case${props.caseId}-process`, label: "Process" },
   { id: `case${props.caseId}-results`, label: "Results" },
 ]);
+
+// Disable snap scrolling on case detail pages
+onMounted(() => {
+  const snapInstance = getSnapInstance();
+  if (snapInstance) {
+    snapInstance.stop();
+    console.log("🚫 Snap disabled on case detail page");
+  }
+});
+
+// Re-enable snap when leaving the page
+onUnmounted(() => {
+  const snapInstance = getSnapInstance();
+  if (snapInstance) {
+    snapInstance.start();
+    console.log("✅ Snap re-enabled");
+  }
+});
 </script>
 
 <style scoped>

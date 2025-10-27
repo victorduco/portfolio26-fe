@@ -1,56 +1,11 @@
-# Case 1: Process
+# Process
 
-## Research & Discovery
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-### User Research
-- Conducted 15 user interviews
-- Analyzed user behavior patterns
-- Created user personas
-
-### Market Analysis
-- Competitive analysis of 8 major platforms
-- Market trends research
-- Gap identification
-
-## Design Phase
-
-### Wireframing
-Started with low-fidelity wireframes to explore different layout options and user flows.
-
-### Prototyping
-Created interactive prototypes using Figma for user testing.
-
-```javascript
-// Example code snippet
-const userFlow = {
-  entry: 'landing',
-  steps: ['onboarding', 'dashboard', 'action'],
-  exit: 'completion'
-}
-```
-
-## Development
-
-### Technical Stack
-- Vue 3 with Composition API
-- Tailwind CSS for styling
-- Firebase for backend
-
-### Implementation Highlights
-Key features implemented during this phase:
-1. Real-time data synchronization
-2. Advanced filtering system
-3. Responsive design for all devices
-
-## Testing & Iteration
-
-Multiple rounds of user testing led to significant improvements in the user experience.
-
-### Key Findings
-- 85% task completion rate
-- Average time-on-task reduced by 40%
-- User satisfaction score: 4.7/5
+A two-week discovery phase with 25 user interviews revealed users felt overwhelmed by information density and couldn't find key features. We mapped 12 major pain points and created a phased roadmap prioritizing impact and feasibility.
 
 ![fullscreen](https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&h=900&fit=crop)
+
+We built a scalable design system with 87 documented components. Three navigation approaches were prototyped and tested, resulting in a hybrid system for both novice and power users. A/B tests validated every critical decision.
+
+![fullscreen](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop)
+
+Development ran in six two-week sprints using Vue 3's Composition API. Mobile received special attention with touch-optimized interactions and performance tuning that reduced load times by 75%. Daily design reviews ensured quality with 85%+ test coverage.

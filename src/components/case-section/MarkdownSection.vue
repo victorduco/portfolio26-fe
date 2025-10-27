@@ -114,7 +114,8 @@ function renderMarkdown(md) {
 }
 
 .markdown-content :deep(h1) {
-  margin-bottom: 32px;
+  font-size: clamp(24px, 4vw, 32px);
+  margin-bottom: 24px;
   color: inherit;
 }
 
@@ -134,9 +135,19 @@ function renderMarkdown(md) {
 .markdown-content :deep(p) {
   font-size: 16px;
   line-height: 1.8;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   color: inherit;
   opacity: 0.8;
+}
+
+/* Группировка: абзац + fullscreen картинка */
+.markdown-content :deep(p + .fullscreen-image-wrapper) {
+  margin-top: -8px;
+}
+
+/* Больший отступ между группами */
+.markdown-content :deep(.fullscreen-image-wrapper + p) {
+  margin-top: 64px;
 }
 
 .markdown-content :deep(ul),
