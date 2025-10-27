@@ -159,6 +159,7 @@ export function initAnimations(
       width: "min(1200px, 85vw)",
       height: "min(780px, 55.26vw)",
       borderRadius: "30px",
+      y: "-50px",
       duration: 2,
     },
     ">"
@@ -195,7 +196,7 @@ export function initAnimations(
       width: "300px",
       height: "0px",
       borderRadius: "30px",
-      top: "calc(50% + min(390px, 27.63vw) + 50px)",
+      top: "calc(50% + min(390px, 27.63vw) + 0px)",
     },
     "<"
   );
