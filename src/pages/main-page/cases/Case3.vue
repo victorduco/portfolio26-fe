@@ -11,10 +11,7 @@
 
           <div class="case3-container">
             <div class="case3-text-section" ref="textSection">
-              <div
-                class="case3-title-wrapper"
-                ref="titleElement"
-              >
+              <div class="case3-title-wrapper" ref="titleElement">
                 <h2 class="case3-title case3-title-shadow">
                   {{ title }}
                 </h2>
@@ -22,10 +19,7 @@
                   {{ title }}
                 </h2>
               </div>
-              <p
-                class="case3-company"
-                ref="companyElement"
-              >
+              <p class="case3-company" ref="companyElement">
                 {{ company }}
               </p>
               <button
@@ -103,7 +97,8 @@ const router = useRouter();
 const title = "Terminal Shift Redesign";
 const company = "Mirai";
 const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
-const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url).href;
+const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url)
+  .href;
 const routeTo = "/story/three";
 
 // Video positioning
@@ -168,7 +163,7 @@ defineExpose({
    ======================================== */
 .scroll-container {
   width: 100%;
-  background-color: #B9E2F7;
+  background-color: #b9e2f7;
   position: relative;
 }
 
@@ -187,7 +182,7 @@ defineExpose({
    ======================================== */
 .section-1 {
   width: 100%;
-  height: 800vh;
+  height: 300vh;
   position: relative;
   display: flex;
   align-items: center;

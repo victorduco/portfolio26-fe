@@ -54,25 +54,25 @@ export function initAnimations(pinContainer, refs) {
     imageContainer,
     {
       scale: 1,
-      duration: 2,
+      duration: 4.0,
       ease: "none",
     },
     0
   );
 
-  // Stage 3: Title fades in and slides down (starts after 25% of scale animation)
+  // Stage 3: Title shrinks in (starts after 25% of scale animation)
   tl1.fromTo(
     titleElement,
     {
       opacity: 0,
-      y: 100,
+      scale: 1.2,
     },
     {
       opacity: 1,
-      y: 0,
-      duration: 1.13,
+      scale: 1,
+      duration: 3,
     },
-    0.5 // 25% of 2 = 0.5, ends at 1.63
+    1 // 25% of 4 = 1, ends at 4
   );
 
   // Stage 2: Clouds appear from sides (after parallax starts)
@@ -89,9 +89,9 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.75,
+          duration: 2,
         },
-        0.5
+        1
       );
     }
 
@@ -104,7 +104,7 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.75,
+          duration: 2,
         },
         "<"
       );
@@ -119,7 +119,7 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.75,
+          duration: 2,
         },
         "<"
       );
@@ -134,31 +134,41 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 0.75,
+          duration: 2,
         },
         "<"
       );
     }
   }
 
-  // Stage 4: Company/subtitle fades in (shortly after title starts)
-  tl1.to(
+  // Stage 4: Company/subtitle shrinks in (shortly after title starts)
+  tl1.fromTo(
     companyElement,
     {
-      opacity: 1,
-      duration: 0.23,
+      opacity: 0,
+      scale: 1.2,
     },
-    ">-0.08"
-  );
-
-  // Stage 5: Button fades in (shortly after company starts)
-  tl1.to(
-    buttonElement,
     {
       opacity: 1,
-      duration: 0.23,
+      scale: 1,
+      duration: 1,
     },
-    ">-0.08"
+    ">-0.2"
+  );
+
+  // Stage 5: Button shrinks in (shortly after company starts)
+  tl1.fromTo(
+    buttonElement,
+    {
+      opacity: 0,
+      scale: 1.2,
+    },
+    {
+      opacity: 1,
+      scale: 1,
+      duration: 1,
+    },
+    ">-0.2"
   );
 
   // Video playback control scrubbed to scroll (independent timeline)
