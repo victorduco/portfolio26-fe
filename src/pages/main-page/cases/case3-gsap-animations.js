@@ -49,18 +49,18 @@ export function initAnimations(pinContainer, refs) {
     },
   });
 
-  // Stage 1: Image/video wrapper slides from bottom to layout position (slow parallax)
+  // Stage 1: Image/video wrapper scales from 1.5 to 1
   tl1.to(
     imageContainer,
     {
-      y: 0,
-      duration: 4.0,
+      scale: 1,
+      duration: 2,
       ease: "none",
     },
     0
   );
 
-  // Stage 3: Title fades in and slides down (after clouds finish)
+  // Stage 3: Title fades in and slides down (starts after 25% of scale animation)
   tl1.fromTo(
     titleElement,
     {
@@ -70,9 +70,9 @@ export function initAnimations(pinContainer, refs) {
     {
       opacity: 1,
       y: 0,
-      duration: 3,
+      duration: 1.13,
     },
-    "<50%"
+    0.5 // 25% of 2 = 0.5, ends at 1.63
   );
 
   // Stage 2: Clouds appear from sides (after parallax starts)
@@ -80,7 +80,7 @@ export function initAnimations(pinContainer, refs) {
     const { topLeftCloud, topRightCloud, bottomLeftCloud, bottomRightCloud } =
       cloudCorners;
 
-    // Top left cloud - slides from left
+    // Top left cloud - slides from left (starts after 25% of scale animation)
     if (topLeftCloud) {
       gsap.set(topLeftCloud, { opacity: 0, x: -50, y: -50 });
       tl1.to(
@@ -89,9 +89,9 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 2,
+          duration: 0.75,
         },
-        "<75%"
+        0.5
       );
     }
 
@@ -104,7 +104,7 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 2,
+          duration: 0.75,
         },
         "<"
       );
@@ -119,7 +119,7 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 2,
+          duration: 0.75,
         },
         "<"
       );
@@ -134,7 +134,7 @@ export function initAnimations(pinContainer, refs) {
           opacity: 1,
           x: 0,
           y: 0,
-          duration: 2,
+          duration: 0.75,
         },
         "<"
       );
@@ -146,9 +146,9 @@ export function initAnimations(pinContainer, refs) {
     companyElement,
     {
       opacity: 1,
-      duration: 4,
+      duration: 0.23,
     },
-    ">-0.2"
+    ">-0.08"
   );
 
   // Stage 5: Button fades in (shortly after company starts)
@@ -156,9 +156,9 @@ export function initAnimations(pinContainer, refs) {
     buttonElement,
     {
       opacity: 1,
-      duration: 4,
+      duration: 0.23,
     },
-    ">-0.2"
+    ">-0.08"
   );
 
   // Video playback control scrubbed to scroll (independent timeline)
