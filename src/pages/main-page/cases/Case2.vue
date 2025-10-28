@@ -34,8 +34,8 @@
         </p>
 
         <button class="case2-open-story">
-          <img src="@/assets/icons/case2.svg" alt="" class="case2-icon" />
           Open Story
+          <img src="@/assets/icons/rocket.svg" alt="" class="case2-icon" />
         </button>
       </div>
     </div>
@@ -134,7 +134,7 @@ onUnmounted(() => {
 
 .case2-title {
   margin: 0;
-  font-family: var(--font-family-base);
+  font-family: 'Nokora', sans-serif;
   font-weight: 400;
   font-size: clamp(20px, 6vw, 42px);
   line-height: 1.2;
@@ -151,7 +151,7 @@ onUnmounted(() => {
 
 .case2-paragraph {
   margin: 0;
-  font-family: var(--font-family-base);
+  font-family: 'Nokora', sans-serif;
   font-weight: 400;
   font-size: clamp(12px, 1.3vw, 15px);
   line-height: 1.5;
@@ -164,7 +164,7 @@ onUnmounted(() => {
 .case2-open-story {
   background: none;
   border: none;
-  font-family: var(--font-family-base);
+  font-family: 'Nokora', sans-serif;
   font-weight: 500;
   font-size: 22px;
   display: flex;
@@ -182,9 +182,10 @@ onUnmounted(() => {
 }
 
 .case2-icon {
-  width: 24px;
-  height: 24px;
+  height: 23px;
+  width: auto;
   display: block;
+  transform: translateY(-1px);
 }
 
 .case2-image-container {
@@ -255,8 +256,9 @@ onUnmounted(() => {
   }
 
   .case2-icon {
-    width: 28px;
-    height: 28px;
+    height: 23px;
+    width: auto;
+    transform: translateY(-1px);
   }
 
   .case2-image-container {
@@ -296,8 +298,9 @@ onUnmounted(() => {
   }
 
   .case2-icon {
-    width: 24px;
-    height: 24px;
+    height: 23px;
+    width: auto;
+    transform: translateY(-1px);
   }
 }
 
