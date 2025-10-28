@@ -59,7 +59,7 @@ import AppFooter from "@/components/app-footer/AppFooter.vue";
 import MarkdownSection from "@/components/case-section/MarkdownSection.vue";
 import CaseSummary from "@/components/case-section/CaseSummary.vue";
 import { useMeta } from "@/composables/useMeta.js";
-import { getSnapInstance } from "@/composables/useLenis.js";
+// import { getSnapInstance } from "@/composables/useLenis.js";
 
 const props = defineProps({
   caseId: {
@@ -123,22 +123,22 @@ const navigationSections = computed(() => [
 ]);
 
 // Disable snap scrolling on case detail pages
-onMounted(() => {
-  const snapInstance = getSnapInstance();
-  if (snapInstance) {
-    snapInstance.stop();
-    console.log("🚫 Snap disabled on case detail page");
-  }
-});
+// onMounted(() => {
+//   const snapInstance = getSnapInstance();
+//   if (snapInstance) {
+//     snapInstance.stop();
+//     console.log("🚫 Snap disabled on case detail page");
+//   }
+// });
 
 // Re-enable snap when leaving the page
-onUnmounted(() => {
-  const snapInstance = getSnapInstance();
-  if (snapInstance) {
-    snapInstance.start();
-    console.log("✅ Snap re-enabled");
-  }
-});
+// onUnmounted(() => {
+//   const snapInstance = getSnapInstance();
+//   if (snapInstance) {
+//     snapInstance.start();
+//     console.log("✅ Snap re-enabled");
+//   }
+// });
 </script>
 
 <style scoped>
