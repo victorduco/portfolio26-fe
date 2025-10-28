@@ -12,9 +12,9 @@ export function initAnimations(trigger) {
     scrollTrigger: {
       trigger: trigger,
       start: "top top",
-      end: "+=400%",
+      end: "bottom bottom",
       pin: true,
-      pinSpacing: true,
+      pinSpacing: false,
       scrub: 1,
       id: "case2-main",
     },
@@ -132,17 +132,11 @@ export function initAnimations(trigger) {
   );
 
   if (videoElement) {
-    // Video scrubbing based on scroll - starts when video enters viewport
-    const videoContainer = document.querySelector(".case2-image-container");
-
+    // Video scrubbing based on scroll - synced with main timeline
     ScrollTrigger.create({
-      trigger: videoContainer,
-      start: "top bottom", // Start when video container enters viewport
-      end: () => {
-        // Calculate end point to match the main timeline end
-        const mainTrigger = ScrollTrigger.getById("case2-main");
-        return mainTrigger ? `+=${mainTrigger.end - mainTrigger.start}` : "+=400%";
-      },
+      trigger: trigger,
+      start: "top top",
+      end: "bottom bottom",
       scrub: true,
       id: "case2-video-scrub",
       onUpdate: (self) => {

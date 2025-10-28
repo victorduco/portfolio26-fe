@@ -101,8 +101,6 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 300vh;
-  min-height: 300vh;
-  max-height: 300vh;
   background-color: #ffffff;
   overflow: hidden;
 }
