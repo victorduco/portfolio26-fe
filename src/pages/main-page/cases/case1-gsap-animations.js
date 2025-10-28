@@ -3,119 +3,65 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-export function initAnimations(
-  pinContainer,
-  videoPlayerRef,
-  videoExpanded,
-  lenis
-) {
-  // Find sections inside pinContainer
+export function initAnimations(pinContainer) {
+  // Find section inside pinContainer
   const section1 = pinContainer.querySelector(".section-1");
-  const section3 = pinContainer.querySelector(".section-3");
 
-  // Main pin: пинит .circle на всё время прохождения всех трех секций
-  let triggered = false;
-
+  // Main pin: pins .circle for the duration of section1
   ScrollTrigger.create({
     trigger: section1,
     start: "top top",
-    endTrigger: section3,
     end: "bottom bottom",
     pin: ".circle",
     id: "MAIN-PIN",
     invalidateOnRefresh: true,
-
-    onUpdate(self) {
-      if (!lenis || triggered) return;
-      const p = self.progress;
-
-      if (p >= 0.99) {
-        triggered = true; // 🔹 больше не сработает повторно
-        console.log("STOOOP", p);
-
-        lenis.stop();
-        lenis.scrollTo(window.scrollY, { immediate: true });
-
-        setTimeout(() => {
-          console.log("Goooo");
-          lenis.start();
-        }, 1000);
-      }
-    },
   });
 
-  // Unified timeline: одна анимация для всего скролла
+  // Main timeline: simplified animation for line to button transformation
   const mainTimeline = gsap.timeline({
     defaults: { ease: "power1.inOut", force3D: true },
     scrollTrigger: {
       trigger: section1,
       start: "top top",
-      endTrigger: section3,
       end: "bottom bottom",
       scrub: 1,
       id: "MAIN-TIMELINE",
       invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        // Video control logic - запускаем видео когда анимация достигает фазы прямоугольника
-        // Это примерно 85-90% всего timeline
-        if (self.progress >= 0.85) {
-          if (videoExpanded && !videoExpanded.value) {
-            videoExpanded.value = true;
-            if (videoPlayerRef && videoPlayerRef.value) {
-              videoPlayerRef.value.attemptPlay();
-            }
-          }
-        } else {
-          if (videoExpanded && videoExpanded.value) {
-            videoExpanded.value = false;
-            if (videoPlayerRef && videoPlayerRef.value) {
-              videoPlayerRef.value.pauseVideo();
-            }
-          }
-        }
-      },
-      onLeave: () => {
-        if (videoExpanded && videoExpanded.value) {
-          videoExpanded.value = false;
-          if (videoPlayerRef && videoPlayerRef.value) {
-            videoPlayerRef.value.pauseVideo();
-          }
-        }
-      },
     },
   });
 
-  // ФАЗА 1: Рост линии (примерно 20% всего timeline)
-  // Анимация роста линии: сначала уменьшение по высоте, потом расширение
+  // PHASE 1: Line grows horizontally (30% of timeline)
+  // First, quickly flatten the circle into a thin line
   mainTimeline.fromTo(
     ".line-element",
     {
       width: "40px",
       height: "40px",
       borderRadius: "20px",
-      border: "20px solid #007aff",
       backgroundColor: "#007aff",
-      opacity: 1,
+      border: "4px solid #007aff",
     },
     {
-      height: "4px",
+      height: "6px",
       width: "5vw",
       border: "4px solid #007aff",
       borderRadius: "20px",
+      backgroundColor: "#007aff",
       duration: 3,
-      backgroundColor: "transparent",
     }
   );
 
-  // Затем продолжает расширяться до 60vw
-  mainTimeline.to(".line-element", {
-    width: "60vw",
-    height: "6px",
-    borderRadius: "20px",
-    duration: 7,
-  });
+  // Then, expand the line horizontally
+  mainTimeline.to(
+    ".line-element",
+    {
+      width: "60vw",
+      duration: 7,
+    },
+    "<25%"
+  );
 
-  // ФАЗА 2: Движение элементов (примерно 10% timeline)
+  // PHASE 2: Move elements vertically (20% of timeline)
   mainTimeline.to(
     ".line-element",
     {
@@ -128,84 +74,44 @@ export function initAnimations(
   mainTimeline.to(".text-container", { y: "-100px", duration: 5 }, "<");
   mainTimeline.to(".mask-element", { y: "150px", duration: 5 }, "<");
 
-  // ФАЗА 3: Трансформация в шарик (примерно 30% timeline)
+  // PHASE 3: Transform line into button (50% of timeline)
+  // First, shrink the width and change background to white
   mainTimeline.to(
     ".line-element",
     {
-      width: "25px",
-      height: "25px",
-      border: "15px solid #2563eb",
+      width: "280px",
       borderRadius: "30px",
       backgroundColor: "#ffffff",
-      duration: 15,
+      duration: 8,
     },
     "+=5"
   );
 
-  // ФАЗА 4: Подъем шарика вверх (примерно 20% timeline)
+  // Then, increase height
   mainTimeline.to(
     ".line-element",
     {
-      y: "0px",
-      duration: 10,
+      height: "60px",
+      border: "4px solid #007aff",
+      duration: 7,
     },
     "<50%"
   );
 
-  // ФАЗА 5: Трансформация в прямоугольник с видео (примерно 20% timeline)
+  // PHASE 4: Show button text (final 10% of timeline)
   mainTimeline.to(
-    ".line-element",
-    {
-      width: "min(1200px, 85vw)",
-      height: "min(780px, 55.26vw)",
-      borderRadius: "30px",
-      y: "-50px",
-      duration: 2,
-    },
-    ">"
-  );
-
-  // Уменьшаем границу одновременно с расширением
-  mainTimeline.to(
-    ".line-element",
-    {
-      border: "6px solid #DDDDDD",
-      duration: 2,
-    },
-    "<"
-  );
-
-  // Анимация появления видео контента (opacity 0 -> 1)
-  mainTimeline.fromTo(
-    ".case1-video-player",
-    {
-      opacity: 0,
-    },
+    ".open-story-text",
     {
       opacity: 1,
-      duration: 2,
+      duration: 3,
     },
-    "<"
+    ">-3"
   );
 
-  // ФАЗА 6: Появление кнопки Open Story
-  mainTimeline.set(
-    ".open-story-button",
-    {
-      opacity: 1,
-      width: "300px",
-      height: "0px",
-      borderRadius: "30px",
-      top: "calc(50% + min(390px, 27.63vw) + 0px)",
-    },
-    "<"
-  );
-  mainTimeline.to(".open-story-button", { height: "60px", duration: 2.5 }, "<");
-
-  // Refresh после загрузки
+  // Refresh after loading
   setTimeout(() => ScrollTrigger.refresh(), 0);
 
-  // Возвращаем все ScrollTrigger'ы для cleanup
+  // Return ScrollTriggers for cleanup
   const mainPinST = ScrollTrigger.getById("MAIN-PIN");
 
   return {

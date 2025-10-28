@@ -3,9 +3,9 @@
   <div id="case1" class="scroll-container" ref="scrollContainerRef">
     <!-- pin-container: pinned элемент на 200vh -->
     <div class="pin-container" ref="pinContainerRef">
-      <!-- section-1: триггер для timeline #1 (scrub) -->
+      <!-- section-1: animation trigger -->
       <div class="section-1">
-        <!-- circle: все анимируемые объекты -->
+        <!-- circle: animated elements container -->
         <div class="circle">
           <!-- Text Container (z-index: 1) -->
           <div class="text-container">
@@ -18,33 +18,16 @@
           <!-- Mask Element (z-index: 2) -->
           <div class="mask-element"></div>
 
-          <!-- Line Element (z-index: 3) -->
-          <div class="line-element">
-            <!-- Video Player -->
-            <VideoPlayer
-              ref="videoPlayerRef"
-              :video-src="videoSrc"
-              :video-expanded="videoExpanded"
-              class="case1-video-player"
-            />
-          </div>
-
-          <!-- Open Story Button (z-index: 4) -->
+          <!-- Line Element (z-index: 3) - transforms into button -->
           <a
             href="/story/one"
-            class="open-story-button"
+            class="line-element"
             @click.prevent="handleStoryLinkClick"
           >
             <span class="open-story-text">Open Story</span>
           </a>
         </div>
       </div>
-
-      <!-- section-2: триггер для timeline #2 (auto-play) -->
-      <div class="section-2"></div>
-
-      <!-- section-3: буфер для дополнительного пространства после анимации -->
-      <div class="section-3"></div>
     </div>
   </div>
 </template>
@@ -53,50 +36,26 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { initAnimations } from "./case1-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
-import { getLenisInstance } from "@/composables/useLenis.js";
-import VideoPlayer from "@/components/VideoPlayer.vue";
 
 const scrollContainerRef = ref(null);
 const pinContainerRef = ref(null);
-const videoPlayerRef = ref(null);
-const videoExpanded = ref(false);
 
 let animationInstance = null;
-
-// Video constants
-const videoSrc = new URL("@/assets/case-videos/case1.mp4", import.meta.url)
-  .href;
 
 onMounted(() => {
   // Initialize GSAP animations with ScrollTrigger
   if (pinContainerRef.value) {
-    const lenis = getLenisInstance();
-    animationInstance = initAnimations(
-      pinContainerRef.value,
-      videoPlayerRef,
-      videoExpanded,
-      lenis
-    );
+    animationInstance = initAnimations(pinContainerRef.value);
   }
 });
 
 onUnmounted(() => {
-  // Pause video when component is unmounted
-  if (videoPlayerRef.value) {
-    videoPlayerRef.value.pauseVideo();
-  }
-
   cleanupAnimations(animationInstance);
   animationInstance = null;
 });
 
 // Handle story link click
 const handleStoryLinkClick = (event) => {
-  // Save video state before navigating
-  if (videoPlayerRef.value) {
-    videoPlayerRef.value.saveState();
-  }
-
   if (event && event.currentTarget && event.currentTarget.href) {
     window.location.href = event.currentTarget.href;
   }
@@ -104,7 +63,6 @@ const handleStoryLinkClick = (event) => {
 
 defineExpose({
   handleStoryLinkClick,
-  videoPlayerRef,
 });
 </script>
 
@@ -129,7 +87,7 @@ defineExpose({
 }
 
 /* ========================================
-   section-1, section-2, section-3: триггеры
+   section-1: animation trigger
    ======================================== */
 .section-1 {
   width: 100%;
@@ -139,38 +97,6 @@ defineExpose({
   align-items: center;
   justify-content: center;
   z-index: 1;
-}
-
-.section-2 {
-  width: 100%;
-  height: 200vh;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
-}
-
-.section-3 {
-  width: 100%;
-  height: 50vh;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
-}
-
-/* Debug labels для секций */
-.label {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font-family: "SF Pro", "SF Pro Display", "Inter", sans-serif;
-  font-size: 14px;
-  color: #999;
-  pointer-events: none;
-  opacity: 0.5;
 }
 
 /* ========================================
@@ -230,9 +156,8 @@ defineExpose({
   opacity: 1;
 }
 
-/* Common button styles */
-.line-element,
-.open-story-button {
+/* Line Element (z-index: 3) - transforms into button */
+.line-element {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -246,39 +171,13 @@ defineExpose({
   text-decoration: none;
   transform: translate(-50%, -50%);
   box-sizing: border-box;
-}
-
-/* Line Element (z-index: 3) */
-.line-element {
   width: 40px;
   height: 40px;
   z-index: 3;
-  background-color: transparent;
-  border: 50px solid #007aff;
+  background-color: #007aff;
 }
 
-/* Video Player */
-.case1-video-player {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  pointer-events: auto;
-  z-index: 1;
-}
-
-/* Open Story Button (z-index: 4) */
-.open-story-button {
-  width: 300px;
-  height: 0px;
-  z-index: 4;
-  background-color: #ffffff;
-  opacity: 0;
-}
-
-.open-story-button:hover {
+.line-element:hover {
   border-color: #007bffde;
 }
 
@@ -289,5 +188,6 @@ defineExpose({
   line-height: 1.4;
   color: #007aff;
   white-space: nowrap;
+  opacity: 0;
 }
 </style>
