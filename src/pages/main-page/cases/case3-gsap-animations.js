@@ -6,7 +6,7 @@ gsap.registerPlugin(ScrollTrigger);
 export function initAnimations(pinContainer, refs) {
   const {
     titleElement,
-    companyElement,
+    descriptionElement,
     buttonElement,
     imageContainer,
     videoElement,
@@ -141,9 +141,9 @@ export function initAnimations(pinContainer, refs) {
     }
   }
 
-  // Stage 4: Company/subtitle shrinks in (shortly after title starts)
+  // Stage 4: Description shrinks in (shortly after title starts)
   tl1.fromTo(
-    companyElement,
+    descriptionElement,
     {
       opacity: 0,
       scale: 1.2,
@@ -156,7 +156,7 @@ export function initAnimations(pinContainer, refs) {
     ">-0.2"
   );
 
-  // Stage 5: Button shrinks in (shortly after company starts)
+  // Stage 5: Button shrinks in (shortly after description starts)
   tl1.fromTo(
     buttonElement,
     {

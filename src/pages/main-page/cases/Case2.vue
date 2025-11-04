@@ -31,6 +31,7 @@
 
         <button class="case2-open-story">
           Open Story
+          <img src="@/assets/icons/rocket.svg" alt="" class="case2-icon" />
         </button>
       </div>
     </div>
@@ -205,30 +206,31 @@ onUnmounted(() => {
   background: #F7E7E7;
   border: none;
   font-family: 'Hanken Grotesk', sans-serif;
-  font-weight: 500;
-  font-size: 24px;
+  font-weight: 600;
+  font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #000000;
+  color: #9b382d;
   cursor: pointer;
-  padding: 0 24px;
+  padding: 0 24px 0 29px;
   gap: 10px;
   opacity: 0;
   width: 95%;
   height: 72px;
   border-radius: 8px;
+  transition: background 0.3s ease;
 }
 
 .case2-open-story:hover {
-  background: #edd7d7;
+  background: rgba(247, 231, 231, 0.8);
 }
 
 .case2-icon {
   height: 23px;
   width: auto;
   display: block;
-  transform: translateY(-1px);
+  transform: translateY(0px);
 }
 
 .case2-image-container {

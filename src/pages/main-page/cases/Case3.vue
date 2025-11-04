@@ -11,17 +11,19 @@
 
           <div class="case3-container">
             <div class="case3-text-section" ref="textSection">
-              <div class="case3-title-wrapper" ref="titleElement">
-                <h2 class="case3-title case3-title-shadow">
-                  {{ title }}
-                </h2>
-                <h2 class="case3-title case3-title-main" aria-hidden="true">
-                  {{ title }}
-                </h2>
+              <div class="case3-company-title-group">
+                <div class="case3-title-wrapper" ref="titleElement">
+                  <h2 class="case3-title case3-title-shadow">
+                    {{ title }}
+                  </h2>
+                  <h2 class="case3-title case3-title-main" aria-hidden="true">
+                    {{ title }}
+                  </h2>
+                </div>
+                <p class="case3-description" ref="descriptionElement">
+                  {{ description }}
+                </p>
               </div>
-              <p class="case3-company" ref="companyElement">
-                {{ company }}
-              </p>
               <button
                 class="case3-button-wrapper"
                 ref="buttonElement"
@@ -95,7 +97,7 @@ const router = useRouter();
 
 // Content data
 const title = "Terminal Shift Redesign";
-const company = "Mirai";
+const description = "Enterprise tool for enhanced employee engagement, satisfaction, and overall workplace productivity.";
 const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
 const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url)
   .href;
@@ -111,7 +113,7 @@ const scrollContainerRef = ref(null);
 const pinContainerRef = ref(null);
 const textSection = ref(null);
 const titleElement = ref(null);
-const companyElement = ref(null);
+const descriptionElement = ref(null);
 const buttonElement = ref(null);
 const imageContainer = ref(null);
 const mediaContainer = ref(null);
@@ -133,7 +135,7 @@ onMounted(() => {
   if (pinContainerRef.value) {
     animationInstance = initAnimations(pinContainerRef.value, {
       titleElement: titleElement.value,
-      companyElement: companyElement.value,
+      descriptionElement: descriptionElement.value,
       buttonElement: buttonElement.value,
       imageContainer: imageContainer.value,
       videoElement: videoElement.value,
@@ -211,7 +213,7 @@ defineExpose({
   height: 100vh;
   pointer-events: none;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   overflow: hidden;
 }
@@ -222,13 +224,14 @@ defineExpose({
 
 /* Container with 80% width */
 .case3-container {
-  width: 60%;
+  width: 48%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 12vh 0 0;
+  gap: 0;
 }
 
 /* Text Section: 60% height */
@@ -239,8 +242,17 @@ defineExpose({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(7px, 1vh, 15px);
-  padding-bottom: 2vh;
+  gap: clamp(28px, 3.5vh, 45px);
+  padding-bottom: 0;
+}
+
+/* Company and Title Group Container */
+.case3-company-title-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3px, 0.4vh, 6px);
 }
 
 /* Title wrapper with hard shadow effect */
@@ -287,10 +299,25 @@ defineExpose({
   font-family: var(--font-family-base);
   font-style: normal;
   font-weight: 600;
-  font-size: clamp(20px, 1.9vw, 31px);
+  font-size: clamp(14px, 1.2vw, 19px);
+  line-height: 1;
+  text-align: center;
+  color: rgba(30, 66, 109, 0.75);
+  width: 100%;
+  max-width: 100%;
+  opacity: 0; /* Initial state for GSAP */
+}
+
+/* Description Styling */
+.case3-description {
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-style: normal;
+  font-weight: 600;
+  font-size: clamp(15px, 1.3vw, 21px);
   line-height: 1.23;
   text-align: center;
-  color: #1e426d;
+  color: rgb(53, 89, 129);
   width: 100%;
   max-width: 100%;
   opacity: 0; /* Initial state for GSAP */
@@ -299,13 +326,13 @@ defineExpose({
 /* Button wrapper with hard shadow effect */
 .case3-button-wrapper {
   position: relative;
-  width: clamp(280px, 23vw, 370px);
-  height: clamp(58px, 4.8vw, 77px);
+  width: clamp(290px, 24vw, 380px);
+  height: clamp(48px, 4vw, 67px);
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
-  margin-top: clamp(4px, 0.5vh, 8px);
+  margin-top: 0;
   transition: transform 0.2s ease;
   opacity: 0; /* Initial state for GSAP */
 }
@@ -371,7 +398,7 @@ defineExpose({
   width: 100%;
   flex: 1 1 auto;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   overflow: visible;
   position: relative;
@@ -379,6 +406,8 @@ defineExpose({
   transition: transform 0.1s ease-out;
   opacity: 1; /* Always visible */
   transform: scale(1.5); /* Start with scale 1.5 */
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Media container - holds both image and video */
@@ -388,9 +417,9 @@ defineExpose({
   aspect-ratio: 2550 / 1912; /* Match image dimensions */
   background-size: contain;
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: center bottom;
   opacity: 1;
-  transform-origin: center center;
+  transform-origin: center bottom;
   will-change: transform;
   border-radius: 15px;
   overflow: hidden;
@@ -442,12 +471,16 @@ defineExpose({
   }
 
   .case3-company {
-    font-size: clamp(31px, 2vw, 36px);
+    font-size: clamp(19px, 1.3vw, 22px);
+  }
+
+  .case3-description {
+    font-size: clamp(21px, 1.4vw, 25px);
   }
 
   .case3-button-wrapper {
-    width: clamp(370px, 24vw, 425px);
-    height: clamp(77px, 5vw, 88px);
+    width: clamp(380px, 25vw, 435px);
+    height: clamp(67px, 4.2vw, 78px);
   }
 
   .case3-button {
@@ -491,12 +524,16 @@ defineExpose({
   }
 
   .case3-company {
-    font-size: clamp(18px, 3.5vw, 24px);
+    font-size: clamp(12px, 2.5vw, 16px);
+  }
+
+  .case3-description {
+    font-size: clamp(13px, 2.6vw, 18px);
   }
 
   .case3-button-wrapper {
-    width: clamp(240px, 70vw, 320px);
-    height: clamp(52px, 12vw, 68px);
+    width: clamp(250px, 72vw, 330px);
+    height: clamp(42px, 10vw, 58px);
   }
 
   .case3-button {
@@ -527,13 +564,17 @@ defineExpose({
   }
 
   .case3-company {
-    font-size: clamp(16px, 3vw, 20px);
+    font-size: clamp(11px, 2vw, 14px);
+  }
+
+  .case3-description {
+    font-size: clamp(12px, 2.2vw, 16px);
   }
 
   .case3-button-wrapper {
     width: 90%;
-    max-width: 280px;
-    height: clamp(48px, 11vw, 60px);
+    max-width: 290px;
+    height: clamp(38px, 9vw, 50px);
   }
 
   .case3-button {

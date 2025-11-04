@@ -135,16 +135,19 @@ export function initAnimations(trigger) {
   tl.to({}, { duration: 1 });
 
   if (videoElement) {
-    // Video scrubbing based on scroll - synced with main timeline
+    // Video scrubbing based on scroll - starts when entering viewport, ends at 95%
     ScrollTrigger.create({
       trigger: trigger,
-      start: "top top",
+      start: "top bottom", // Start playing when section enters viewport
       end: "bottom bottom",
       scrub: true,
       id: "case2-video-scrub",
       onUpdate: (self) => {
         if (videoElement.duration && !isNaN(videoElement.duration)) {
-          const targetTime = self.progress * videoElement.duration;
+          // Map scroll progress (0-1) to video progress (0-0.95)
+          // Video should be at 100% when scroll reaches 95% (when final image appears)
+          const videoProgress = Math.min(self.progress / 0.95, 1);
+          const targetTime = videoProgress * videoElement.duration;
           if (Math.abs(videoElement.currentTime - targetTime) > 0.01) {
             videoElement.currentTime = targetTime;
           }

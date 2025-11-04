@@ -9,10 +9,15 @@
         <div class="circle">
           <!-- Text Container (z-index: 1) -->
           <div class="text-container">
+            <p class="company-text">Apple</p>
             <h2 class="main-text">
               Cross-Domain AI Solution for Account Reconcilers
             </h2>
-            <p class="sub-text">Apple</p>
+            <div class="tags-container">
+              <span class="tag">AI Solution</span>
+              <span class="tag">Enterprise</span>
+              <span class="tag">Automation</span>
+            </div>
           </div>
 
           <!-- Mask Element (z-index: 2) -->
@@ -125,22 +130,38 @@ defineExpose({
   z-index: 1;
 }
 
+.company-text {
+  margin: 0 0 12px 0;
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 2vw, 28px);
+  line-height: 1.4;
+  color: #007aff;
+}
+
 .main-text {
   margin: 0;
-  font-family: var(--font-family-base);
+  font-family: 'Noto Sans', sans-serif;
   font-weight: 600;
   font-size: clamp(24px, 3vw, 48px);
   line-height: 1.2;
   color: #000000;
 }
 
-.sub-text {
+.tags-container {
   margin: 12px 0 0 0;
-  font-family: var(--font-family-base);
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: center;
+}
+
+.tag {
+  font-family: 'Noto Sans', sans-serif;
   font-weight: 400;
   font-size: clamp(16px, 2vw, 28px);
   line-height: 1.4;
-  color: #000000;
+  color: #666666;
 }
 
 /* Mask Element (z-index: 2) */
@@ -182,8 +203,8 @@ defineExpose({
 }
 
 .open-story-text {
-  font-family: var(--font-family-base);
-  font-weight: 500;
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 700;
   font-size: 20px;
   line-height: 1.4;
   color: #007aff;
