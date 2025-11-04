@@ -49,6 +49,16 @@ export function initAnimations(trigger) {
     -0.3
   );
 
+  // -0.3 - Company name appears
+  tl.to(
+    ".case2-company",
+    {
+      opacity: 1,
+      duration: 0.1,
+    },
+    -0.3
+  );
+
   // -0.25 to -0.15 - Title words appear before reaching top top (earlier)
   tl.to(
     ".case2-title .word[data-word-part1]",
@@ -81,19 +91,9 @@ export function initAnimations(trigger) {
     ease: "none", // Linear movement
   }, 0);
 
-  // 20% - Paragraph 1 appears
+  // 40% - Paragraph part 1 appears (text + logos)
   tl.to(
-    ".case2-paragraph-1",
-    {
-      opacity: 1,
-      duration: 0.15,
-    },
-    0.2
-  );
-
-  // 40% - Paragraph 2 appears
-  tl.to(
-    ".case2-paragraph-2",
+    ".case2-paragraph-part1",
     {
       opacity: 1,
       duration: 0.15,
@@ -101,9 +101,9 @@ export function initAnimations(trigger) {
     0.4
   );
 
-  // 60% - Paragraph 3 appears
+  // 60% - Paragraph part 2 appears (text + badges)
   tl.to(
-    ".case2-paragraph-3",
+    ".case2-paragraph-part2",
     {
       opacity: 1,
       duration: 0.15,

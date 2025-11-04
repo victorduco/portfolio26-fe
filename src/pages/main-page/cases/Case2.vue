@@ -2,6 +2,8 @@
   <section id="case2" class="case2" ref="containerRef">
     <div class="case2-content">
       <div class="case2-content-inner">
+        <div class="case2-company">Smarp</div>
+
         <h2 class="case2-title">
           <span
             v-for="(word, index) in titlePart1Words"
@@ -21,17 +23,11 @@
           </span>
         </h2>
 
-        <p class="case2-paragraph case2-paragraph-1" data-paragraph="1">
-          {{ paragraph1 }}
-        </p>
-
-        <p class="case2-paragraph case2-paragraph-2" data-paragraph="2">
-          {{ paragraph2 }}
-        </p>
-
-        <p class="case2-paragraph case2-paragraph-3" data-paragraph="3">
-          {{ paragraph3 }}
-        </p>
+        <div class="case2-paragraph">
+          <span class="case2-paragraph-part1">
+            {{ descriptionPart1 }}<img :src="googleLogo" alt="Google" class="client-logo client-logo-google" /><img :src="cocaColaLogo" alt="Coca-Cola" class="client-logo" /><img :src="lorealLogo" alt="L'Oreal" class="client-logo client-logo-loreal" />
+          </span><span class="case2-paragraph-part2">{{ descriptionPart2 }}<img :src="g2Badge" alt="G2 Awards" class="awards-badge" />{{ descriptionPart3 }}.</span>
+        </div>
 
         <button class="case2-open-story">
           Open Story
@@ -74,13 +70,17 @@ const finalImageSrc = new URL(
 
 const containerRef = ref(null);
 
-const titlePart1Words = computed(() => ["Redesigning", "the"]);
+const titlePart1Words = computed(() => ["Redesigning", "the", "employee"]);
 const titlePart2Words = computed(() => ["Communications", "App"]);
 
-// 3 paragraphs, each 2 lines
-const paragraph1 = "Communication platform for teams. Streamlining internal communications with intuitive design.";
-const paragraph2 = "Powerful features that empower organizations. Connect and collaborate across departments.";
-const paragraph3 = "Share knowledge effectively at scale. Building better workplace connections.";
+const descriptionPart1 = "Streamlining internal communications for customers including ";
+const descriptionPart2 = ", empowering organizations to connect and collaborate with recognized excellence ";
+const descriptionPart3 = " in design";
+
+const googleLogo = new URL("@/assets/images/google.svg", import.meta.url).href;
+const cocaColaLogo = new URL("@/assets/images/coca-cola.svg", import.meta.url).href;
+const lorealLogo = new URL("@/assets/images/loreal.svg", import.meta.url).href;
+const g2Badge = new URL("@/assets/images/g2.png", import.meta.url).href;
 
 let animationInstance = null;
 
@@ -123,18 +123,28 @@ onUnmounted(() => {
   align-items: flex-start;
   justify-content: flex-start;
   gap: clamp(16px, 2vh, 24px);
-  max-width: min(40vw, 600px);
+  max-width: min(48vw, 800px);
   width: 100%;
   pointer-events: auto;
   padding: clamp(24px, 3vw, 40px) clamp(28px, 3.5vw, 48px);
   z-index: 1;
 }
 
+.case2-company {
+  font-style: normal;
+  font-weight: 590;
+  font-size: 21px;
+  line-height: 25px;
+  color: #C22B2B;
+  margin: 0;
+  opacity: 0;
+}
+
 .case2-title {
   margin: 0;
   font-family: 'Nokora', sans-serif;
   font-weight: 400;
-  font-size: clamp(20px, 6vw, 42px);
+  font-size: 45px;
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: #000000;
@@ -151,16 +161,43 @@ onUnmounted(() => {
   margin: 0;
   font-family: 'Nokora', sans-serif;
   font-weight: 400;
-  font-size: clamp(12px, 1.3vw, 15px);
+  font-size: 26px;
   line-height: 1.5;
   color: rgba(0, 0, 0, 0.7);
   text-align: left;
-  max-width: 500px;
+}
+
+.case2-paragraph-part1,
+.case2-paragraph-part2 {
   opacity: 0;
 }
 
+.client-logo {
+  height: 32px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 6px;
+}
+
+.client-logo-google {
+  transform: translateY(3px);
+}
+
+.client-logo-loreal {
+  height: 26px;
+}
+
+.awards-badge {
+  height: 64px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
 .case2-open-story {
-  background: none;
+  background: #DDDDDD;
   border: none;
   font-family: 'Nokora', sans-serif;
   font-weight: 500;
@@ -170,9 +207,11 @@ onUnmounted(() => {
   justify-content: center;
   color: #000000;
   cursor: pointer;
-  padding: 0;
+  padding: 12px 24px;
   gap: 10px;
   opacity: 0;
+  width: 100%;
+  border-radius: 8px;
 }
 
 .case2-open-story:hover {
