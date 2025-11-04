@@ -31,7 +31,6 @@
 
         <button class="case2-open-story">
           Open Story
-          <img src="@/assets/icons/rocket.svg" alt="" class="case2-icon" />
         </button>
       </div>
     </div>
@@ -73,8 +72,8 @@ const containerRef = ref(null);
 const titlePart1Words = computed(() => ["Redesigning", "the", "employee"]);
 const titlePart2Words = computed(() => ["Communications", "App"]);
 
-const descriptionPart1 = "Streamlining internal communications for customers including ";
-const descriptionPart2 = ", empowering organizations to connect and collaborate with recognized excellence ";
+const descriptionPart1 = "Streamlining internal communications for leading customers like ";
+const descriptionPart2 = " and empowering organizations to connect and collaborate with recognized excellence ";
 const descriptionPart3 = " in design";
 
 const googleLogo = new URL("@/assets/images/google.svg", import.meta.url).href;
@@ -131,20 +130,22 @@ onUnmounted(() => {
 }
 
 .case2-company {
+  font-family: 'Hanken Grotesk', sans-serif;
   font-style: normal;
   font-weight: 590;
   font-size: 21px;
   line-height: 25px;
-  color: #C22B2B;
+  color: #B39999;
   margin: 0;
+  margin-bottom: -18px;
   opacity: 0;
 }
 
 .case2-title {
   margin: 0;
-  font-family: 'Nokora', sans-serif;
-  font-weight: 400;
-  font-size: 45px;
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 56px;
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: #000000;
@@ -159,10 +160,11 @@ onUnmounted(() => {
 
 .case2-paragraph {
   margin: 0;
-  font-family: 'Nokora', sans-serif;
+  margin-top: clamp(7px, 2vh, 23px);
+  margin-bottom: clamp(17px, 3vh, 33px);
   font-weight: 400;
   font-size: 26px;
-  line-height: 1.5;
+  line-height: 2;
   color: rgba(0, 0, 0, 0.7);
   text-align: left;
 }
@@ -177,45 +179,49 @@ onUnmounted(() => {
   width: auto;
   display: inline-block;
   vertical-align: middle;
-  margin: 0 6px;
+  margin: 0 8px;
+  transform: translateY(-2px);
 }
 
 .client-logo-google {
-  transform: translateY(3px);
+  height: 36px;
+  transform: translateY(1px);
 }
 
 .client-logo-loreal {
   height: 26px;
+  transform: translateY(-2px);
 }
 
 .awards-badge {
-  height: 64px;
+  height: 70px;
   width: auto;
   display: inline-block;
   vertical-align: middle;
-  margin-left: 6px;
+  margin-left: 0;
 }
 
 .case2-open-story {
-  background: #DDDDDD;
+  background: #F7E7E7;
   border: none;
-  font-family: 'Nokora', sans-serif;
+  font-family: 'Hanken Grotesk', sans-serif;
   font-weight: 500;
-  font-size: 22px;
+  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #000000;
   cursor: pointer;
-  padding: 12px 24px;
+  padding: 0 24px;
   gap: 10px;
   opacity: 0;
-  width: 100%;
+  width: 95%;
+  height: 72px;
   border-radius: 8px;
 }
 
 .case2-open-story:hover {
-  opacity: 0.7;
+  background: #edd7d7;
 }
 
 .case2-icon {
