@@ -242,25 +242,16 @@ function startIntroAnimation() {
 onMounted(() => {
   setupIntersectionObserver();
 
-  const shouldRunIntro = shouldPlayIntroAnimation.value && !isMobile.value;
+  // Intro animation disabled - skip directly to finished state
+  introHighlightIndex.value = -1;
+  introGreenIndex.value = -1;
+  introFadeOutIndex.value = -1;
+  activeSection.value = props.sections[0]?.id || "";
+  introFinished.value = true;
 
-  if (shouldRunIntro) {
-    
-    setTimeout(() => {
-      startIntroAnimation();
-    }, 250);
-  } else {
-    
-    introHighlightIndex.value = -1;
-    introGreenIndex.value = -1;
-    introFadeOutIndex.value = -1;
-    activeSection.value = props.sections[0]?.id || "";
-    introFinished.value = true;
-
-    setTimeout(() => {
-      emit("animationComplete");
-    }, 0);
-  }
+  setTimeout(() => {
+    emit("animationComplete");
+  }, 0);
 });
 
 onUnmounted(() => {

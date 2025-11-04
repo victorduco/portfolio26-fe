@@ -452,7 +452,6 @@ function handleHover(index, isHovering) {
   font-weight: 400;
   position: relative;
   display: inline-block;
-  padding-right: 32px;
 }
 
 .ai-play__link:hover {
@@ -462,7 +461,7 @@ function handleHover(index, isHovering) {
 .ai-play__link::after {
   content: "";
   position: absolute;
-  right: 0;
+  left: calc(100% + 8px);
   top: 50%;
   transform: translateY(calc(-50% + 1px));
   width: 24px;

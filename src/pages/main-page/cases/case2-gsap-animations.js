@@ -33,12 +33,13 @@ export function initAnimations(trigger) {
     y: () => {
       // Position so title is roughly centered at start
       const titleHeight = titleElement ? titleElement.offsetHeight : 0;
-      return (window.innerHeight / 2) - (titleHeight / 2) - 50; // Slightly above center
+      return window.innerHeight / 2 - titleHeight / 2 - 50; // Slightly above center
     },
   });
 
   // -0.3 to -0.1 - Fade in content as user approaches the trigger (earlier)
-  tl.fromTo(".case2-content",
+  tl.fromTo(
+    ".case2-content",
     {
       opacity: 0,
     },
@@ -81,61 +82,65 @@ export function initAnimations(trigger) {
   );
 
   // 0-100% - Container moves to center full content at the end
-  tl.to(".case2-content", {
-    y: () => {
-      // Calculate center: 50vh - half of full content height
-      const contentHeight = contentElement ? contentElement.offsetHeight : 0;
-      return (window.innerHeight / 2) - (contentHeight / 2);
+  tl.to(
+    ".case2-content",
+    {
+      y: () => {
+        // Calculate center: 50vh - half of full content height
+        const contentHeight = contentElement ? contentElement.offsetHeight : 0;
+        return window.innerHeight / 2 - contentHeight / 2;
+      },
+      duration: 1.0, // Full timeline duration
+      ease: "none", // Linear movement
     },
-    duration: 1.0, // Full timeline duration
-    ease: "none", // Linear movement
-  }, 0);
+    0
+  );
 
-  // 40% - Paragraph part 1 appears (text + logos)
+  // 45% - Paragraph part 1 appears (text + logos)
   tl.to(
     ".case2-paragraph-part1",
     {
       opacity: 1,
       duration: 0.15,
     },
-    0.4
+    0.45
   );
 
-  // 60% - Paragraph part 2 appears (text + badges)
+  // 67.5% - Paragraph part 2 appears (text + badges)
   tl.to(
     ".case2-paragraph-part2",
     {
       opacity: 1,
       duration: 0.15,
     },
-    0.6
+    0.675
   );
 
-  // 80% - Button appears
+  // 90% - Button appears
   tl.to(
     ".case2-open-story",
     {
       opacity: 1,
       duration: 0.15,
     },
-    0.8
+    0.9
   );
 
-  // 95-100% - Final image fades in, replacing video
+  // 75% - Final image fades in, replacing video (when video completes)
   tl.to(
     ".case2-final-image",
     {
       opacity: 1,
       duration: 0.05,
     },
-    0.95
+    0.8
   );
 
   // Add 1 second pause at the end
   tl.to({}, { duration: 1 });
 
   if (videoElement) {
-    // Video scrubbing based on scroll - starts when entering viewport, ends at 95%
+    // Video scrubbing based on scroll - completes at 75% scroll progress
     ScrollTrigger.create({
       trigger: trigger,
       start: "top bottom", // Start playing when section enters viewport
@@ -144,9 +149,9 @@ export function initAnimations(trigger) {
       id: "case2-video-scrub",
       onUpdate: (self) => {
         if (videoElement.duration && !isNaN(videoElement.duration)) {
-          // Map scroll progress (0-1) to video progress (0-0.95)
-          // Video should be at 100% when scroll reaches 95% (when final image appears)
-          const videoProgress = Math.min(self.progress / 0.95, 1);
+          // Map 0-75% scroll to 0-100% video
+          // Video completes when scroll reaches 75%
+          const videoProgress = Math.min(self.progress / 0.6, 1);
           const targetTime = videoProgress * videoElement.duration;
           if (Math.abs(videoElement.currentTime - targetTime) > 0.01) {
             videoElement.currentTime = targetTime;
