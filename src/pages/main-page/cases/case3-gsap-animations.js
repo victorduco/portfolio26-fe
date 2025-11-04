@@ -161,12 +161,12 @@ export function initAnimations(pinContainer, refs) {
     buttonElement,
     {
       opacity: 0,
-      scale: 1.2,
+      scale: 1.1,
     },
     {
       opacity: 1,
       scale: 1,
-      duration: 1,
+      duration: 0.6,
     },
     ">-0.2"
   );

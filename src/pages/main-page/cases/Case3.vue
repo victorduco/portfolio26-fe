@@ -97,7 +97,8 @@ const router = useRouter();
 
 // Content data
 const title = "Terminal Shift Redesign";
-const description = "Enterprise tool for enhanced employee engagement, satisfaction, and overall workplace productivity.";
+const description =
+  "Enterprise tool for enhanced employee engagement, satisfaction, and overall workplace productivity.";
 const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
 const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url)
   .href;
@@ -105,7 +106,7 @@ const routeTo = "/story/three";
 
 // Video positioning
 const videoPositionX = "62.5%";
-const videoPositionY = "39%";
+const videoPositionY = "calc(39% + 145px)";
 const videoScale = 0.33;
 
 // Refs
@@ -230,14 +231,14 @@ defineExpose({
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 12vh 0 0;
+  padding: 0;
   gap: 0;
 }
 
 /* Text Section: 60% height */
 .case3-text-section {
   width: 100%;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -396,7 +397,8 @@ defineExpose({
 /* Image Section: 40% height */
 .case3-image-section {
   width: 100%;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
+  max-height: 50vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -421,7 +423,7 @@ defineExpose({
   opacity: 1;
   transform-origin: center bottom;
   will-change: transform;
-  border-radius: 15px;
+  border-radius: 15px 15px 0 0;
   overflow: hidden;
 }
 
