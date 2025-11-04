@@ -108,6 +108,9 @@ export function initAnimations(pinContainer) {
     ">-3"
   );
 
+  // Add 1 second pause at the end
+  mainTimeline.to({}, { duration: 1 });
+
   // Refresh after loading
   setTimeout(() => ScrollTrigger.refresh(), 0);
 

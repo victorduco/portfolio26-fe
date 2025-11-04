@@ -171,6 +171,9 @@ export function initAnimations(pinContainer, refs) {
     ">-0.2"
   );
 
+  // Add 1 second pause at the end
+  tl1.to({}, { duration: 1 });
+
   // Video playback control scrubbed to scroll (independent timeline)
   let videoTrigger = null;
   if (videoElement) {
