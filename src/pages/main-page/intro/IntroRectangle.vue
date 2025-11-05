@@ -257,13 +257,14 @@ function handleMobileCloseRequest() {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  overflow: hidden;
 }
 
 .intro-square::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: inherit;
+  border-radius: 0;
   background: linear-gradient(
     -25deg,
     color-mix(in srgb, var(--glow-color) 50%, transparent),
