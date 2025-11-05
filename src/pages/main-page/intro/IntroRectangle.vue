@@ -36,6 +36,7 @@
         :transition="{
           default: spring,
           '--text-shadow-offset': textShadowSpring,
+          '--text-shadow-blur': textShadowSpring,
         }"
       ></motion.i>
     </motion.div>
@@ -234,6 +235,7 @@ function handleMobileCloseRequest() {
   --border-color: #222;
   --text-glow-color: transparent;
   --text-shadow-offset: 0px;
+  --text-shadow-blur: 0px;
   --border-radius: 26px;
 
   position: relative;
@@ -301,10 +303,10 @@ function handleMobileCloseRequest() {
   line-height: 1;
   user-select: none;
   text-shadow: calc(-1 * var(--text-shadow-offset)) var(--text-shadow-offset)
-      calc(var(--text-shadow-offset) - 5px) var(--text-glow-color),
+      var(--text-shadow-blur) var(--text-glow-color),
     var(--text-shadow-offset) var(--text-shadow-offset)
-      calc(var(--text-shadow-offset) - 5px) var(--text-glow-color),
-    0px 0px calc(var(--text-shadow-offset) - 5px) var(--text-glow-color);
+      var(--text-shadow-blur) var(--text-glow-color),
+    0px 0px var(--text-shadow-blur) var(--text-glow-color);
 }
 
 .intro-content-icon::before {

@@ -330,15 +330,17 @@ export const squareContentVariants = {
       rotate: 0,
       color: "#DDDDDD",
       "--text-glow-color": "rgba(255,255,255,0)",
-      "--text-shadow-offset": "0px",
+      "--text-shadow-offset": "70px",
+      "--text-shadow-blur": "100px",
     }),
     hover: (index) => {
       return {
         opacity: 1,
         scale: 2.9,
         rotate: -15,
-        "--text-glow-color": getColorWithAlpha(index, 0.4),
-        "--text-shadow-offset": "20px",
+        "--text-glow-color": getColorWithAlpha(index, 0.08),
+        "--text-shadow-offset": "0px",
+        "--text-shadow-blur": "10px",
         color: getColorWithAlpha(index, 1),
       };
     },
@@ -349,6 +351,7 @@ export const squareContentVariants = {
       color: "rgba(255,255,255,0)",
       "--text-glow-color": "rgba(255,255,255,0)",
       "--text-shadow-offset": "0px",
+      "--text-shadow-blur": "0px",
     }),
   },
 };
