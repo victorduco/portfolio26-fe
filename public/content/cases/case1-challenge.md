@@ -1,8 +1,8 @@
-# Background
+# Challenge
 
 A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.
 
-![fullscreen](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop)
+![fullscreen](/src/assets/images/domain_tree.png)
 
 User research revealed an overwhelming interface with unclear navigation. Different teams had built components in isolation, creating a fragmented experience that prevented effective onboarding and retention.
 

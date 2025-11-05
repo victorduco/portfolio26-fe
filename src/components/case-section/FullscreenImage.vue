@@ -1,5 +1,5 @@
 <template>
-  <div class="fullscreen-image">
+  <div class="fullscreen-image" :style="{ backgroundColor: backgroundColor }">
     <img
       :src="imageSrc"
       :alt="alt"
@@ -19,6 +19,10 @@ const props = defineProps({
     type: String,
     default: 'Case image',
   },
+  backgroundColor: {
+    type: String,
+    default: 'transparent',
+  },
 });
 </script>
 
@@ -33,7 +37,7 @@ const props = defineProps({
 .fullscreen-image__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 12px;
   display: block;
 }

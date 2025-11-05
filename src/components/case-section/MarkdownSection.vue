@@ -15,7 +15,7 @@ const props = defineProps({
   sectionType: {
     type: String,
     required: true,
-    validator: (value) => ["background", "process", "results"].includes(value),
+    validator: (value) => ["background", "challenge", "process", "results"].includes(value),
   },
   caseConfig: {
     type: Object,
@@ -39,12 +39,15 @@ onMounted(async () => {
 });
 
 function renderMarkdown(md) {
+  // Get background color from case config (same as video background for case 1)
+  const bgColor = props.caseConfig?.videoBackground || 'transparent';
+
   return (
     md
       // Fullscreen images: ![fullscreen](url) - use unique placeholder
       .replace(
         /!\[fullscreen\]\((.*?)\)/gim,
-        "___FULLSCREEN_IMAGE___$1___END___"
+        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___END___`
       )
       .replace(/^### (.*$)/gim, "<h3>$1</h3>")
       .replace(/^## (.*$)/gim, "<h2>$1</h2>")
@@ -75,17 +78,17 @@ function renderMarkdown(md) {
       .replace(/(?![hult]>|pre>|blockquote>|hr>|___)$/gm, "</p>")
       // Replace placeholder with actual image after paragraph processing
       .replace(
-        /___FULLSCREEN_IMAGE___(.*?)___END___/gim,
-        '<div class="fullscreen-image-wrapper"><img src="$1" alt="Fullscreen image" class="fullscreen-image-md" loading="lazy" /></div>'
+        /___FULLSCREEN_IMAGE___(.*?)___BG_(.*?)___END___/gim,
+        '<div class="fullscreen-image-wrapper" style="background-color: $2;"><img src="$1" alt="Fullscreen image" class="fullscreen-image-md" loading="lazy" /></div>'
       )
       // Clean up empty paragraphs and paragraphs around images
       .replace(/<p><\/p>/g, "")
       .replace(
-        /<p>(<div class="fullscreen-image-wrapper">.*?<\/div>)<\/p>/g,
+        /<p>(<div class="fullscreen-image-wrapper".*?<\/div>)<\/p>/g,
         "$1"
       )
       // Clean up orphaned </p> and <p> around block elements
-      .replace(/<\/p><p>(<div class="fullscreen-image-wrapper">)/g, "$1")
+      .replace(/<\/p><p>(<div class="fullscreen-image-wrapper")/g, "$1")
       .replace(/(<\/div>)<\/p><p>/g, "$1")
       // Clean up orphaned tags at the start/end
       .replace(/^<\/p>/, "")
@@ -271,7 +274,7 @@ function renderMarkdown(md) {
 .markdown-content :deep(.fullscreen-image-md) {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 12px;
   display: block;
 }
