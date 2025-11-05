@@ -395,7 +395,7 @@ function handleClick(event) {
 .nav-item-label {
   font-family: var(--font-family-base);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   white-space: nowrap;
   pointer-events: none;
   user-select: none;

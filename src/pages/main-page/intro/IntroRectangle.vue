@@ -251,7 +251,7 @@ function handleMobileCloseRequest() {
   inset: 0;
   border-radius: var(--border-radius);
   transform-origin: 50% 50%;
-  border: 2px solid var(--border-color);
+  border: 3px solid var(--border-color);
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   -webkit-user-select: none;

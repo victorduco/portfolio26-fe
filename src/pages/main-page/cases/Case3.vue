@@ -359,12 +359,12 @@ defineExpose({
   z-index: 10; /* Ensure it's on top */
 }
 
-.case3-button-wrapper:hover {
-  transform: translateY(-2px);
+.case3-button-wrapper:hover .case3-button-main {
+  transform: translate(2px, 2.5px);
 }
 
-.case3-button-wrapper:active {
-  transform: translateY(0);
+.case3-button-wrapper:active .case3-button-main {
+  transform: translate(4px, 5px);
 }
 
 /* Base button styling */
@@ -400,6 +400,7 @@ defineExpose({
   color: white;
   z-index: 1;
   position: relative;
+  transition: transform 0.25s ease;
 }
 
 /* Button icon */

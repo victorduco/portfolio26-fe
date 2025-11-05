@@ -202,7 +202,12 @@ defineExpose({
 }
 
 .line-element:hover {
-  border-color: #007bffde;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 122, 255, 0.8);
+}
+
+.line-element:hover .open-story-text {
+  color: rgba(0, 122, 255, 0.8);
 }
 
 .open-story-text {

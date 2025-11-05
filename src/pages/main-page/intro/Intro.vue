@@ -282,7 +282,7 @@ watch(isMobileLayout, (isMobile) => {
 }
 
 .intro-hero__title {
-  max-width: 900px;
+  max-width: 1050px;
   display: grid;
   gap: 24px;
   position: relative;

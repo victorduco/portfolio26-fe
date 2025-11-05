@@ -87,6 +87,24 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
     1 // 25% of 4 = 1, ends at 4
   );
 
+  // Animate title shadow from 0 to final position
+  const titleShadow = titleElement.querySelector('.case3-title-shadow');
+  if (titleShadow) {
+    tl1.fromTo(
+      titleShadow,
+      {
+        top: 0,
+        left: 0,
+      },
+      {
+        top: '4px',
+        left: '5px',
+        duration: 3,
+      },
+      1 // Same timing as title
+    );
+  }
+
   // Stage 2: Clouds appear from sides (after parallax starts)
   if (cloudCorners) {
     const { topLeftCloud, topRightCloud, bottomLeftCloud, bottomRightCloud } =

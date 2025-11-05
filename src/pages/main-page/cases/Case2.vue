@@ -230,8 +230,8 @@ const handleStoryLinkClick = (event) => {
   gap: 10px;
   opacity: 0;
   width: 95%;
-  height: 72px;
-  border-radius: 8px;
+  height: 82px;
+  border-radius: 16px;
   transition: background 0.3s ease;
   text-decoration: none;
 }
