@@ -96,17 +96,20 @@ function renderMarkdown(md) {
 
 <style scoped>
 .case-background,
+.case-challenge,
 .case-process,
 .case-results {
   width: 100%;
   min-height: 100vh;
-  padding: 80px 48px 48px;
+  padding: 80px 16px 48px;
   overflow-x: hidden;
+  display: flex;
+  justify-content: center;
 }
 
 .markdown-content {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
   color: inherit;
   --font-size-h1: clamp(32px, 6vw, 48px);
   --font-size-h2: clamp(24px, 4vw, 32px);
@@ -275,9 +278,10 @@ function renderMarkdown(md) {
 
 @media (max-width: 768px) {
   .case-background,
+  .case-challenge,
   .case-process,
   .case-results {
-    padding: 60px 24px 24px;
+    padding: 60px 16px 24px;
   }
 
   .markdown-content {

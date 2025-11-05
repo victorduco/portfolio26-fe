@@ -52,7 +52,9 @@
     <FullscreenVideo
       v-if="caseConfig.summaryVideo"
       :video-src="caseConfig.summaryVideo"
-      :background-color="caseConfig.primary"
+      :background-color="caseConfig.videoBackground || caseConfig.primary"
+      :autoplay-threshold="caseConfig.autoplayThreshold || 0.75"
+      :video-label="caseConfig.videoLabel || ''"
     />
   </section>
 </template>
@@ -121,13 +123,16 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 150px 48px 135px 192px;
+  align-items: center;
+  padding: 150px 16px 135px;
   box-sizing: border-box;
   gap: 64px;
 }
 
 /* Part 1: Header */
 .summary-header {
+  width: 100%;
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -155,6 +160,8 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 /* Part 2: All details wrapper */
 .summary-details-wrapper {
+  width: 100%;
+  max-width: 1200px;
   display: flex;
   flex-wrap: wrap;
   gap: 32px 128px;
@@ -192,7 +199,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 @media (max-width: 900px) {
   .summary-content {
-    padding: 100px 32px 60px;
+    padding: 100px 16px 60px;
     gap: 48px;
   }
 
@@ -203,7 +210,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 @media (max-width: 600px) {
   .summary-content {
-    padding: 80px 24px 48px;
+    padding: 80px 16px 48px;
     gap: 40px;
   }
 

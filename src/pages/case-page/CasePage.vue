@@ -26,24 +26,14 @@
     <section :id="`case${caseId}-summary`">
       <CaseSummary :case-id="caseId" :case-config="caseConfig" />
     </section>
-    <section :id="`case${caseId}-background`">
+    <section
+      v-for="section in caseConfig.sections"
+      :key="section.type"
+      :id="`case${caseId}-${section.type}`"
+    >
       <MarkdownSection
         :case-id="caseId"
-        section-type="background"
-        :case-config="caseConfig"
-      />
-    </section>
-    <section :id="`case${caseId}-process`">
-      <MarkdownSection
-        :case-id="caseId"
-        section-type="process"
-        :case-config="caseConfig"
-      />
-    </section>
-    <section :id="`case${caseId}-results`">
-      <MarkdownSection
-        :case-id="caseId"
-        section-type="results"
+        :section-type="section.type"
         :case-config="caseConfig"
       />
     </section>
@@ -107,6 +97,14 @@ const caseConfigs = {
     font: null, // optional, uses global font if null
     theme: "light", // light or dark
     summaryVideo: "/videos/case1-summary.mp4",
+    videoBackground: "#f5f5f7", // Apple gray background
+    autoplayThreshold: 0.75, // 75% visibility to trigger autoplay
+    videoLabel: "Video Overview", // Label above video
+    sections: [
+      { type: "challenge", label: "Challenge" },
+      { type: "process", label: "Process" },
+      { type: "results", label: "Results" },
+    ],
   },
   2: {
     title: "Redesigning the Communications App",
@@ -117,6 +115,11 @@ const caseConfigs = {
     theme: "light",
     summaryImage:
       "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+    sections: [
+      { type: "background", label: "Background" },
+      { type: "process", label: "Process" },
+      { type: "results", label: "Results" },
+    ],
   },
   3: {
     title: "Terminal Shift Redesign",
@@ -127,6 +130,11 @@ const caseConfigs = {
     theme: "light",
     summaryImage:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
+    sections: [
+      { type: "background", label: "Background" },
+      { type: "process", label: "Process" },
+      { type: "results", label: "Results" },
+    ],
   },
 };
 
@@ -140,12 +148,16 @@ const caseConfig = computed(() => {
   };
 });
 
-const navigationSections = computed(() => [
-  { id: `case${props.caseId}-summary`, label: "Summary" },
-  { id: `case${props.caseId}-background`, label: "Background" },
-  { id: `case${props.caseId}-process`, label: "Process" },
-  { id: `case${props.caseId}-results`, label: "Results" },
-]);
+const navigationSections = computed(() => {
+  const sections = caseConfig.value.sections || [];
+  return [
+    { id: `case${props.caseId}-summary`, label: "Summary" },
+    ...sections.map(section => ({
+      id: `case${props.caseId}-${section.type}`,
+      label: section.label
+    }))
+  ];
+});
 
 // Disable snap scrolling on case detail pages
 // onMounted(() => {

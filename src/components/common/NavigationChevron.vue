@@ -33,7 +33,6 @@
     @click="handleButtonClick"
   >
     <div class="nav-chevron__inner" aria-hidden="true">
-      
       <svg
         v-if="direction === 'back' || direction === 'forward'"
         class="nav-chevron__icon"
@@ -48,7 +47,7 @@
           fill="currentColor"
         />
       </svg>
-      
+
       <svg
         v-else-if="direction === 'menu'"
         class="nav-chevron__icon nav-chevron__icon--menu"
@@ -62,7 +61,7 @@
         <rect y="6" width="18" height="2" rx="1" fill="currentColor" />
         <rect y="12" width="18" height="2" rx="1" fill="currentColor" />
       </svg>
-      
+
       <svg
         v-else-if="direction === 'close'"
         class="nav-chevron__icon nav-chevron__icon--close"
@@ -152,8 +151,6 @@ const computedAriaLabel = computed(() => {
   return "Open link";
 });
 
-
-
 function handleButtonClick(event) {
   if (props.type === "back") {
     event.preventDefault();
@@ -196,14 +193,18 @@ function handleButtonClick(event) {
 
 /* Dark mode - dark background with light border */
 .nav-chevron--dark .nav-chevron__inner {
-  background: #212121;
-  border: 1px solid rgba(109, 109, 109, 0.52);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Light mode - light background with dark border */
 .nav-chevron--light .nav-chevron__inner {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .nav-chevron__icon {
@@ -227,7 +228,7 @@ function handleButtonClick(event) {
 }
 
 .nav-chevron--back .nav-chevron__icon {
-  transform: rotate(180deg) translateX(2px);
+  transform: rotate(180deg) translate(-2px, 2px);
 }
 
 .nav-chevron--menu .nav-chevron__icon,

@@ -1,6 +1,9 @@
 <template>
-  <div class="fullscreen-video" :style="{ backgroundColor: backgroundColor }">
-    <div class="video-wrapper">
+  <div class="fullscreen-video-wrapper">
+    <h3 v-if="videoLabel" class="video-label">{{ videoLabel }}</h3>
+    <div class="fullscreen-video" ref="videoContainerRef">
+      <div class="background-container" :style="{ backgroundColor: backgroundColor }">
+      <div class="video-wrapper">
       <!-- Video Element -->
       <video
         ref="videoElement"
@@ -46,6 +49,8 @@
         @restart="restartVideo"
         @toggle-fullscreen="toggleFullscreen"
       />
+      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -65,9 +70,19 @@ const props = defineProps({
     type: String,
     default: '#000000',
   },
+  autoplayThreshold: {
+    type: Number,
+    default: 0.75,
+    validator: (value) => value >= 0 && value <= 1,
+  },
+  videoLabel: {
+    type: String,
+    default: '',
+  },
 });
 
 const videoElement = ref(null);
+const videoContainerRef = ref(null);
 const isSmallScreen = useMediaQuery('(max-width: 600px)');
 
 const {
@@ -76,6 +91,7 @@ const {
   hasStartedPlayback,
   isFullscreen,
   shouldBeMutedByDefault,
+  userPaused,
   attemptPlay,
   togglePlayPause,
   toggleMute,
@@ -86,6 +102,9 @@ const {
   handleUserInteraction,
   pauseVideo,
 } = useVideoPlayer(props.videoSrc, videoElement);
+
+// Intersection Observer for scroll-based play/pause
+let observer = null;
 
 // Setup on mount
 onMounted(() => {
@@ -100,10 +119,38 @@ onMounted(() => {
   document.addEventListener('fullscreenchange', handleFullscreenChange);
   document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
-  // Auto-play video when component mounts
-  setTimeout(() => {
-    attemptPlay();
-  }, 500);
+  // Setup Intersection Observer for scroll-based autoplay
+  if (videoContainerRef.value) {
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Video is visible - play it only if user didn't manually pause
+            if (!userPaused.value) {
+              console.log('📺 Video is visible, attempting autoplay');
+              setTimeout(() => {
+                attemptPlay();
+              }, 300);
+            } else {
+              console.log('⏸️ Video is visible but user paused it manually, skipping autoplay');
+            }
+          } else {
+            // Video is not visible - pause it only if it wasn't manually paused
+            if (!userPaused.value) {
+              console.log('⏸️ Video is not visible, pausing');
+              pauseVideo();
+            }
+          }
+        });
+      },
+      {
+        threshold: props.autoplayThreshold,
+        rootMargin: '0px',
+      }
+    );
+
+    observer.observe(videoContainerRef.value);
+  }
 });
 
 // Cleanup on unmount
@@ -114,16 +161,50 @@ onUnmounted(() => {
   document.removeEventListener('fullscreenchange', handleFullscreenChange);
   document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
 
+  // Disconnect Intersection Observer
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+  }
+
   pauseVideo();
 });
 </script>
 
 <style scoped>
+.fullscreen-video-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.video-label {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 0 -8px 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 1.2;
+  color: inherit;
+  opacity: 0.5;
+}
+
 .fullscreen-video {
   width: 100%;
   height: 100vh;
   padding: 16px;
   box-sizing: border-box;
+}
+
+.background-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,37 +212,24 @@ onUnmounted(() => {
 
 .video-wrapper {
   position: relative;
-  width: 100%;
   max-width: 1200px;
-  aspect-ratio: 16 / 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  box-sizing: border-box;
-  background: transparent;
   border-radius: 12px;
+  border: 1px solid #cccccc;
+  line-height: 0;
 }
 
 .case-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 1;
-  z-index: 1;
-  pointer-events: auto;
-  border-radius: 12px;
+  height: auto;
+  display: block;
   transition: filter 0.3s ease;
   cursor: pointer;
 }
 
 .case-video.video-paused-blur {
   filter: blur(10px);
+  transform: scale(1.05);
 }
 
 .case-video-pause-overlay {
@@ -176,6 +244,7 @@ onUnmounted(() => {
   z-index: 100;
   pointer-events: none;
   border-radius: inherit;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .pause-play-icon {
