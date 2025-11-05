@@ -29,43 +29,32 @@ const routes = [
   },
 ];
 
+// Store scroll position when navigating from home page
 const scrollPositions = new Map();
-
-const getScrollTop = () => {
-  if (typeof window === "undefined") return 0;
-  return window.scrollY || window.pageYOffset;
-};
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    // Always scroll to top for story pages, ignore browser's saved position
+    // Always scroll to top for story pages
     if (to.path.startsWith("/story")) {
-      return new Promise((resolve) => {
-        // Use multiple methods to ensure scroll to top
-        window.scrollTo(0, 0);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          resolve({ top: 0, behavior: "instant" });
-        }, 0);
-      });
+      return { top: 0, behavior: "instant" };
     }
 
-    // Restore scroll position when returning to home from story
-    if (to.path === "/" && from.path.startsWith("/story")) {
+    // Restore saved scroll position when returning to home from story
+    if (to.path === "/" && from.path?.startsWith("/story")) {
       const savedScroll = scrollPositions.get("/");
       if (savedScroll !== undefined) {
+        console.log('📍 Restoring scroll position:', savedScroll);
         return new Promise((resolve) => {
-          setTimeout(
-            () => resolve({ top: savedScroll, behavior: "instant" }),
-            50
-          );
+          setTimeout(() => {
+            resolve({ top: savedScroll, behavior: "instant" });
+          }, 50);
         });
       }
     }
 
-    // Use browser's saved position for back/forward navigation (but not for story pages)
+    // Use browser's saved position for other back/forward navigation
     if (savedPosition) {
       return savedPosition;
     }
@@ -76,27 +65,24 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  // Сохраняем позицию скролла только при переходе между страницами
-  if (from.path === "/") {
-    scrollPositions.set("/", getScrollTop());
+  // Save scroll position when leaving home page to story
+  if (from.path === "/" && to.path.startsWith("/story")) {
+    const scrollTop = window.scrollY || window.pageYOffset;
+    scrollPositions.set("/", scrollTop);
+    console.log('💾 Saved scroll position:', scrollTop);
   }
 
-  // Мета для навигации и скролла
+  // Set meta for skipping intro animation when returning from story
   if (to.path === "/") {
-    // Проверяем, что переход был именно со страницы story (не перезагрузка)
     const cameFromStory = from.path?.startsWith("/story");
     to.meta.skipNavIntro = Boolean(cameFromStory);
-    to.meta.restoreScrollTop = cameFromStory
-      ? scrollPositions.get("/") ?? 0
-      : undefined;
 
-    // Если не пришли со story страницы, очищаем сохраненную позицию
+    // Clear saved position if not coming from story (e.g., page reload)
     if (!cameFromStory) {
       scrollPositions.delete("/");
     }
   } else {
     to.meta.skipNavIntro = false;
-    to.meta.restoreScrollTop = undefined;
   }
 
   next();

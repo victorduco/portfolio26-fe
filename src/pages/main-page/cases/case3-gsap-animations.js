@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-export function initAnimations(pinContainer, refs) {
+export function initAnimations(pinContainer, refs, skipAnimation = false) {
   const {
     titleElement,
     descriptionElement,
@@ -12,6 +12,18 @@ export function initAnimations(pinContainer, refs) {
     videoElement,
     cloudCorners,
   } = refs;
+
+  // If returning from story page, set all elements to final state immediately
+  if (skipAnimation) {
+    gsap.set(imageContainer, { scale: 1, clearProps: "all" });
+    gsap.set(titleElement, { opacity: 1, scale: 1, x: 0, y: 0, clearProps: "transform" });
+    gsap.set(descriptionElement, { opacity: 1, scale: 1, clearProps: "transform" });
+    gsap.set(buttonElement, { opacity: 1, scale: 1, clearProps: "transform" });
+    if (cloudCorners?.$el) {
+      gsap.set(cloudCorners.$el, { opacity: 1, clearProps: "all" });
+    }
+    console.log('⏭️ Skipped Case3 animations - set to final state');
+  }
 
   // Find sections inside pinContainer
   const section1 = pinContainer.querySelector(".section-1");

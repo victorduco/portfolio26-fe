@@ -25,16 +25,15 @@ onUnmounted(() => {
   destroy();
 });
 
-// Force scroll to top for story pages on route change and disable Lenis
+// Force scroll to top for story pages on route change
 watch(() => route.path, (newPath, oldPath) => {
   if (newPath.startsWith("/story")) {
     console.log('🔄 Navigating to story page:', newPath, 'from:', oldPath);
     console.log('📍 Current scroll before:', window.scrollY);
 
-    // Stop Lenis on story pages - it interferes with scroll
-    const { stop } = useLenis();
+    // Stop Lenis temporarily to force scroll position
+    const { stop, start } = useLenis();
     stop();
-    console.log('🛑 Lenis stopped');
 
     // Immediate scroll
     window.scrollTo(0, 0);
@@ -42,7 +41,7 @@ watch(() => route.path, (newPath, oldPath) => {
     document.body.scrollTop = 0;
 
     // Delayed scroll to override any other scroll behavior
-    const delays = [10, 50, 100, 200, 300];
+    const delays = [10, 50, 100, 200];
     delays.forEach(delay => {
       setTimeout(() => {
         console.log(`⏰ Scrolling at ${delay}ms, current: ${window.scrollY}`);
@@ -51,11 +50,12 @@ watch(() => route.path, (newPath, oldPath) => {
         document.body.scrollTop = 0;
       }, delay);
     });
-  } else {
-    // Re-enable Lenis when leaving story pages
-    const { start } = useLenis();
-    start();
-    console.log('▶️ Lenis started');
+
+    // Re-enable Lenis after scroll is set (story pages don't use it, but we enable it anyway)
+    setTimeout(() => {
+      start();
+      console.log('▶️ Lenis re-enabled');
+    }, 300);
   }
 }, { immediate: true });
 

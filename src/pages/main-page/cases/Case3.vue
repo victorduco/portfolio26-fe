@@ -88,13 +88,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { gsap } from "gsap";
 import CloudCorners from "./CloudCorners.vue";
 import { initAnimations } from "./case3-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
 
 const router = useRouter();
+const route = useRoute();
+
+// Check if we should skip animations (returning from story page)
+const shouldSkipAnimation = computed(() => route.meta?.skipNavIntro === true);
 
 // Content data
 const title = "Terminal Shift Redesign";
@@ -125,6 +130,9 @@ const cloudCornersRef = ref(null);
 let animationInstance = null;
 
 onMounted(() => {
+  console.log('🎬 Case3 mounted, shouldSkipAnimation:', shouldSkipAnimation.value);
+  console.log('📋 route.meta:', route.meta);
+
   // Initialize GSAP animations with ScrollTrigger
   if (pinContainerRef.value) {
     animationInstance = initAnimations(pinContainerRef.value, {
@@ -134,7 +142,22 @@ onMounted(() => {
       imageContainer: imageContainer.value,
       videoElement: videoElement.value,
       cloudCorners: cloudCornersRef.value,
-    });
+    }, shouldSkipAnimation.value);
+  }
+});
+
+// Watch for route changes - if returning from story, set elements to final state
+watch(() => route.meta?.skipNavIntro, (skipIntro) => {
+  console.log('👀 Watch triggered, skipNavIntro:', skipIntro);
+  if (skipIntro && buttonElement.value && imageContainer.value) {
+    console.log('⏭️ Setting Case3 elements to final state via watch');
+    gsap.set(imageContainer.value, { scale: 1 });
+    gsap.set(titleElement.value, { opacity: 1, scale: 1, x: 0, y: 0 });
+    gsap.set(descriptionElement.value, { opacity: 1, scale: 1 });
+    gsap.set(buttonElement.value, { opacity: 1, scale: 1 });
+    if (cloudCornersRef.value?.$el) {
+      gsap.set(cloudCornersRef.value.$el, { opacity: 1 });
+    }
   }
 });
 
