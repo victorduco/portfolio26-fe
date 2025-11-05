@@ -4,6 +4,12 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 // Color mappings for different states
 const COLOR_MAP = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
 const BORDER_COLOR_MAP = ["#9cd7ffff", "#FF83A2", "#00FFBC", "#FFFF78"];
+// Rotation angles for each rectangle on hover (different angles for variety)
+// eslint-disable-next-line no-unused-vars
+const HOVER_ROTATION_MAP = [8, 20, 12, 24];
+// Y-offset for each rectangle on hover (vertical positioning variety, in pixels)
+// eslint-disable-next-line no-unused-vars
+const HOVER_Y_OFFSET_MAP = [-8, 12, -15, 18];
 
 const hexToRgba = (hex, alpha) => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -221,7 +227,13 @@ const createBoxVariants = (sizes) => ({
     const defaultSize = parseInt(sizes.default);
     const hoverSize = parseInt(sizes.hover);
     const sizeIncrease = hoverSize - defaultSize;
-    const yOffset = -(sizeIncrease / 2);
+    const baseYOffset = -(sizeIncrease / 2);
+
+    // Добавляем индивидуальное смещение для каждого ректангла
+    const individualYOffset = HOVER_Y_OFFSET_MAP[index] || 0;
+    const yOffset = baseYOffset + individualYOffset;
+
+    const hoverRotation = HOVER_ROTATION_MAP[index] || 15;
 
     return {
       "--element-side-size": sizes.hover,
@@ -230,13 +242,13 @@ const createBoxVariants = (sizes) => ({
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
       y: `${yOffset}px`,
-      rotate: 15,
+      rotate: hoverRotation,
       scale: 1,
       zIndex: 10000,
       "--border-color": getBorderColorWithAlpha(index, 0.1),
       "--border-gradient": "transparent",
       "--glow-color": getBorderColorWithAlpha(index, 0.2),
-      "--border-radius": "87px",
+      "--border-radius": "45px",
     };
   },
   active: ({
@@ -334,10 +346,11 @@ export const squareContentVariants = {
       "--text-shadow-blur": "100px",
     }),
     hover: (index) => {
+      const hoverRotation = HOVER_ROTATION_MAP[index] || 45;
       return {
         opacity: 1,
         scale: 2.9,
-        rotate: -15,
+        rotate: -hoverRotation,
         "--text-glow-color": getColorWithAlpha(index, 0.08),
         "--text-shadow-offset": "0px",
         "--text-shadow-blur": "10px",
