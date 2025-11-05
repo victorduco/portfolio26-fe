@@ -30,14 +30,15 @@
       <motion.i
         class="intro-content-icon"
         :class="getIconClass(index)"
+        :style="{
+          '--text-shadow-offset': '70px',
+          '--text-shadow-blur': '100px',
+        }"
         :variants="squareContentVariants.icon"
+        :initial="'default'"
         :animate="animationState"
         :custom="index"
-        :transition="{
-          default: spring,
-          '--text-shadow-offset': textShadowSpring,
-          '--text-shadow-blur': textShadowSpring,
-        }"
+        :transition="spring"
       ></motion.i>
     </motion.div>
 
@@ -58,7 +59,6 @@ import IntroRectangleActive from "./IntroRectangleActive.vue";
 import { backdropFilter as vBackdropFilter } from "@/directives/backdrop-filter";
 import {
   spring,
-  textShadowSpring,
   contentWrapVariants,
   squareContentVariants,
   useBoxVariants,
@@ -234,8 +234,8 @@ function handleMobileCloseRequest() {
   --glow-color: transparent;
   --border-color: #222;
   --text-glow-color: transparent;
-  --text-shadow-offset: 0px;
-  --text-shadow-blur: 0px;
+  --text-shadow-offset: 70px;
+  --text-shadow-blur: 100px;
   --border-radius: 26px;
 
   position: relative;
