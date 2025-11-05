@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, onUnmounted } from "vue";
-import { RouterView } from "vue-router";
+import { onMounted, onUnmounted, watch } from "vue";
+import { RouterView, useRoute, useRouter } from "vue-router";
 import Keypad from "./components/keypad/Keypad.vue";
 import FontSwitcher from "./components/__temp-font-switcher/FontSwitcher.vue"; // TEMP: Remove when done
 import { useAuth } from "./composables/useAuth.js";
@@ -10,6 +10,8 @@ import { useLenis } from "./composables/useLenis.js";
 const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
 const { setupLenis, destroy } = useLenis();
+const route = useRoute();
+const router = useRouter();
 
 onMounted(() => {
   checkAuth();
@@ -22,6 +24,40 @@ onUnmounted(() => {
   // Cleanup Lenis on unmount
   destroy();
 });
+
+// Force scroll to top for story pages on route change and disable Lenis
+watch(() => route.path, (newPath, oldPath) => {
+  if (newPath.startsWith("/story")) {
+    console.log('🔄 Navigating to story page:', newPath, 'from:', oldPath);
+    console.log('📍 Current scroll before:', window.scrollY);
+
+    // Stop Lenis on story pages - it interferes with scroll
+    const { stop } = useLenis();
+    stop();
+    console.log('🛑 Lenis stopped');
+
+    // Immediate scroll
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    // Delayed scroll to override any other scroll behavior
+    const delays = [10, 50, 100, 200, 300];
+    delays.forEach(delay => {
+      setTimeout(() => {
+        console.log(`⏰ Scrolling at ${delay}ms, current: ${window.scrollY}`);
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, delay);
+    });
+  } else {
+    // Re-enable Lenis when leaving story pages
+    const { start } = useLenis();
+    start();
+    console.log('▶️ Lenis started');
+  }
+}, { immediate: true });
 
 const handleUnlock = async () => {
   mixpanel.track("Gate Unlocked");

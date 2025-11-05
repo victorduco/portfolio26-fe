@@ -24,10 +24,11 @@
                   {{ description }}
                 </p>
               </div>
-              <button
+              <a
+                href="/story/three"
                 class="case3-button-wrapper"
                 ref="buttonElement"
-                @click="handleButtonClick"
+                @click.prevent="handleStoryLinkClick"
               >
                 <div class="case3-button case3-button-shadow"></div>
                 <div class="case3-button case3-button-main">
@@ -48,7 +49,7 @@
                   </svg>
                   <span class="case3-button-text">Open Story</span>
                 </div>
-              </button>
+              </a>
             </div>
 
             <div class="case3-image-section" ref="imageContainer">
@@ -102,7 +103,6 @@ const description =
 const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
 const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url)
   .href;
-const routeTo = "/story/three";
 
 // Video positioning
 const videoPositionX = "62.5%";
@@ -124,13 +124,6 @@ const cloudCornersRef = ref(null);
 // Animation instance
 let animationInstance = null;
 
-function handleButtonClick() {
-  if (routeTo) {
-    handleStoryLinkClick();
-    router.push(routeTo);
-  }
-}
-
 onMounted(() => {
   // Initialize GSAP animations with ScrollTrigger
   if (pinContainerRef.value) {
@@ -151,8 +144,9 @@ onUnmounted(() => {
 });
 
 // Handle story link click
-const handleStoryLinkClick = () => {
-  // Optional: handle story link click
+const handleStoryLinkClick = (event) => {
+  event.preventDefault();
+  router.push("/story/three");
 };
 
 defineExpose({
@@ -253,7 +247,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(3px, 0.4vh, 6px);
+  gap: 32px;
 }
 
 /* Title wrapper with hard shadow effect */
@@ -315,10 +309,10 @@ defineExpose({
   font-family: var(--font-family-base);
   font-style: normal;
   font-weight: 600;
-  font-size: clamp(15px, 1.3vw, 21px);
+  font-size: clamp(16.5px, 1.43vw, 23px);
   line-height: 1.23;
   text-align: center;
-  color: rgb(53, 89, 129);
+  color: #143154;
   width: 100%;
   max-width: 100%;
   opacity: 0; /* Initial state for GSAP */
@@ -336,6 +330,10 @@ defineExpose({
   margin-top: 0;
   transition: transform 0.2s ease;
   opacity: 0; /* Initial state for GSAP */
+  text-decoration: none;
+  display: block;
+  pointer-events: auto;
+  z-index: 10; /* Ensure it's on top */
 }
 
 .case3-button-wrapper:hover {
@@ -360,6 +358,7 @@ defineExpose({
   font-weight: 600;
   font-size: clamp(16px, 1.3vw, 21px);
   line-height: 1;
+  pointer-events: none;
 }
 
 /* Shadow layer (back) */
@@ -387,11 +386,13 @@ defineExpose({
   width: clamp(18px, 1.5vw, 24px);
   height: auto;
   flex-shrink: 0;
+  pointer-events: none;
 }
 
 /* Button text */
 .case3-button-text {
   flex-shrink: 0;
+  pointer-events: none;
 }
 
 /* Image Section: 40% height */
@@ -477,7 +478,7 @@ defineExpose({
   }
 
   .case3-description {
-    font-size: clamp(21px, 1.4vw, 25px);
+    font-size: clamp(23px, 1.54vw, 27.5px);
   }
 
   .case3-button-wrapper {
@@ -530,7 +531,7 @@ defineExpose({
   }
 
   .case3-description {
-    font-size: clamp(13px, 2.6vw, 18px);
+    font-size: clamp(14.3px, 2.86vw, 19.8px);
   }
 
   .case3-button-wrapper {
@@ -570,7 +571,7 @@ defineExpose({
   }
 
   .case3-description {
-    font-size: clamp(12px, 2.2vw, 16px);
+    font-size: clamp(13.2px, 2.42vw, 17.6px);
   }
 
   .case3-button-wrapper {

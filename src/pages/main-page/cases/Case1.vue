@@ -39,8 +39,11 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import { initAnimations } from "./case1-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
+
+const router = useRouter();
 
 const scrollContainerRef = ref(null);
 const pinContainerRef = ref(null);
@@ -61,9 +64,8 @@ onUnmounted(() => {
 
 // Handle story link click
 const handleStoryLinkClick = (event) => {
-  if (event && event.currentTarget && event.currentTarget.href) {
-    window.location.href = event.currentTarget.href;
-  }
+  event.preventDefault();
+  router.push("/story/one");
 };
 
 defineExpose({
@@ -159,7 +161,7 @@ defineExpose({
 .tag {
   font-family: 'Noto Sans', sans-serif;
   font-weight: 400;
-  font-size: clamp(16px, 2vw, 28px);
+  font-size: 24px;
   line-height: 1.4;
   color: #666666;
 }

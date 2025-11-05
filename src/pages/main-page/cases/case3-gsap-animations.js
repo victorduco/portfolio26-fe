@@ -30,7 +30,7 @@ export function initAnimations(pinContainer, refs) {
 
   // SCRUB timeline: анимация появления элементов
   const tl1 = gsap.timeline({
-    defaults: { ease: "power2.out", force3D: true },
+    defaults: { ease: "power2.out" },
     scrollTrigger: {
       trigger: section1,
       start: "top top",

@@ -7,7 +7,6 @@ export function initAnimations(trigger) {
   const tl = gsap.timeline({
     defaults: {
       ease: "power2.out",
-      force3D: true,
     },
     scrollTrigger: {
       trigger: trigger,
@@ -86,9 +85,9 @@ export function initAnimations(trigger) {
     ".case2-content",
     {
       y: () => {
-        // Calculate center: 50vh - half of full content height
+        // Calculate center: 50vh - half of full content height - 50px offset
         const contentHeight = contentElement ? contentElement.offsetHeight : 0;
-        return window.innerHeight / 2 - contentHeight / 2;
+        return window.innerHeight / 2 - contentHeight / 2 - 50;
       },
       duration: 1.0, // Full timeline duration
       ease: "none", // Linear movement

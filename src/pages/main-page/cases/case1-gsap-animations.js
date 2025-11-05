@@ -19,7 +19,7 @@ export function initAnimations(pinContainer) {
 
   // Main timeline: simplified animation for line to button transformation
   const mainTimeline = gsap.timeline({
-    defaults: { ease: "power1.inOut", force3D: true },
+    defaults: { ease: "power1.inOut" },
     scrollTrigger: {
       trigger: section1,
       start: "top top",
@@ -65,14 +65,14 @@ export function initAnimations(pinContainer) {
   mainTimeline.to(
     ".line-element",
     {
-      y: "150px",
+      y: "125px",
       borderRadius: "30px",
       duration: 5,
     },
     "<75%"
   );
-  mainTimeline.to(".text-container", { y: "-100px", duration: 5 }, "<");
-  mainTimeline.to(".mask-element", { y: "150px", duration: 5 }, "<");
+  mainTimeline.to(".text-container", { y: "-125px", duration: 5 }, "<");
+  mainTimeline.to(".mask-element", { y: "125px", duration: 5 }, "<");
 
   // PHASE 3: Transform line into button (50% of timeline)
   // First, shrink the width and change background to white

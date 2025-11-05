@@ -7,33 +7,40 @@
         <p class="summary-description">{{ summaryData.description }}</p>
       </div>
 
-      <!-- Part 2: Project details horizontal -->
-      <div class="summary-details">
-        <div class="detail-item">
+      <!-- Part 2: All details in horizontal flow -->
+      <div class="summary-details-wrapper">
+        <!-- Organization -->
+        <div class="detail-group">
+          <h3 class="detail-label">{{ summaryData.organizationType }}</h3>
+          <p class="detail-value">{{ summaryData.organizationName }}</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="detail-group">
           <h3 class="detail-label">Timeline</h3>
           <p class="detail-value">{{ summaryData.timeline }}</p>
         </div>
-        <div class="detail-item">
+
+        <!-- Project Type -->
+        <div class="detail-group">
           <h3 class="detail-label">Project Type</h3>
           <p class="detail-value">{{ summaryData.projectType }}</p>
         </div>
-        <div class="detail-item">
+
+        <!-- Role -->
+        <div class="detail-group">
           <h3 class="detail-label">Role</h3>
           <p class="detail-value">{{ summaryData.role }}</p>
         </div>
-      </div>
 
-      <!-- Part 3: Contribution and Team/Company -->
-      <div class="summary-footer">
-        <div class="contribution">
-          <h3 class="footer-label">My Contribution</h3>
-          <ul class="contribution-list">
-            <li v-for="item in summaryData.contribution" :key="item">{{ item }}</li>
-          </ul>
-        </div>
-        <div class="organization">
-          <h3 class="footer-label">{{ summaryData.organizationType }}</h3>
-          <p class="organization-name">{{ summaryData.organizationName }}</p>
+        <!-- Contribution -->
+        <div class="detail-group">
+          <h3 class="detail-label">Contribution</h3>
+          <div class="detail-value">
+            <span v-for="(item, index) in summaryData.contribution" :key="item">
+              {{ item }}<span v-if="index < summaryData.contribution.length - 1"> → </span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -42,12 +49,18 @@
       :image-src="caseConfig.summaryImage"
       :alt="`${summaryData.title} preview`"
     />
+    <FullscreenVideo
+      v-if="caseConfig.summaryVideo"
+      :video-src="caseConfig.summaryVideo"
+      :background-color="caseConfig.primary"
+    />
   </section>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import FullscreenImage from './FullscreenImage.vue';
+import FullscreenVideo from './FullscreenVideo.vue';
 
 const props = defineProps({
   caseId: {
@@ -63,7 +76,7 @@ const props = defineProps({
 const summaryConfigs = {
   '1': {
     title: 'Transforming Financial Services with AI-Powered Reconciliation',
-    description: 'Building intelligent automation for enterprise financial operations from ground up.',
+    description: 'Building intelligent automation for enterprise financial operations from ground up. Designed and developed a comprehensive AI-driven reconciliation system that streamlines complex financial workflows, reduces manual processing time by 85%, and improves accuracy across multiple business units. Led the product vision from initial concept through successful enterprise deployment.',
     timeline: 'Feb 2022 - Present',
     projectType: '0-1 Product',
     role: 'Senior Product Designer & Product Manager',
@@ -73,7 +86,7 @@ const summaryConfigs = {
   },
   '2': {
     title: 'Reimagining Team Communication for the Modern Workplace',
-    description: 'Complete redesign of enterprise communication platform serving 50,000+ users.',
+    description: 'Complete redesign of enterprise communication platform serving 50,000+ users. Transformed the entire user experience by conducting extensive research, reimagining core interaction patterns, and establishing a cohesive design system that improved engagement by 40% and reduced support tickets by 60%. Created a scalable foundation for future product evolution.',
     timeline: 'Jan 2021 - Dec 2021',
     projectType: 'Redesign',
     role: 'Senior Product Designer',
@@ -83,7 +96,7 @@ const summaryConfigs = {
   },
   '3': {
     title: 'Revitalizing E-Commerce Platform Through Strategic Modernization',
-    description: 'End-to-end UX audit and complete platform redesign for 2M+ users.',
+    description: 'End-to-end UX audit and complete platform redesign for 2M+ users. Conducted comprehensive analysis of user behavior, identified critical pain points across the entire customer journey, and delivered a modernized experience that increased conversion rates by 35% and customer satisfaction scores by 45%. Established design principles and component library for sustained growth.',
     timeline: 'Mar 2020 - Aug 2020',
     projectType: 'UX Audit & Full Redesign',
     role: 'Lead UX Designer',
@@ -105,11 +118,10 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 .summary-content {
   width: 100%;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 120px 48px 80px;
+  padding: 150px 48px 135px 192px;
   box-sizing: border-box;
   gap: 64px;
 }
@@ -134,22 +146,22 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 .summary-description {
   margin: 0;
   font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
-  font-size: clamp(14px, 1.5vw, 16px);
+  font-weight: var(--font-weight-medium);
+  font-size: 16px;
   line-height: 1.5;
   color: inherit;
-  opacity: 0.65;
-  max-width: 600px;
+  max-width: 1200px;
 }
 
-/* Part 2: Details */
-.summary-details {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 48px;
+/* Part 2: All details wrapper */
+.summary-details-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 128px;
+  align-items: flex-start;
 }
 
-.detail-item {
+.detail-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -174,47 +186,8 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   color: inherit;
 }
 
-/* Part 3: Footer */
-.summary-footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-}
-
-.footer-label {
-  margin: 0 0 16px 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.5;
-  color: inherit;
+.detail-value span span {
   opacity: 0.5;
-}
-
-.contribution-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.contribution-list li {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 16px;
-  line-height: 1.5;
-  color: inherit;
-}
-
-.organization-name {
-  margin: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 16px;
-  line-height: 1.5;
-  color: inherit;
 }
 
 @media (max-width: 900px) {
@@ -223,14 +196,8 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
     gap: 48px;
   }
 
-  .summary-details {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .summary-footer {
-    grid-template-columns: 1fr;
-    gap: 48px;
+  .summary-details-wrapper {
+    gap: 24px 32px;
   }
 }
 

@@ -11,6 +11,11 @@ import directivesPlugin from "./plugins/directives.js";
 import mixpanelPlugin from "./plugins/mixpanel.js";
 import router from "./router/index.js";
 
+// Disable browser's automatic scroll restoration
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+
 const app = createApp(App);
 app.use(directivesPlugin);
 app.use(mixpanelPlugin);

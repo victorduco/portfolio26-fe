@@ -29,10 +29,14 @@
           </span><span class="case2-paragraph-part2">{{ descriptionPart2 }}<img :src="g2Badge" alt="G2 Awards" class="awards-badge" />{{ descriptionPart3 }}.</span>
         </div>
 
-        <button class="case2-open-story">
+        <a
+          href="/story/two"
+          class="case2-open-story"
+          @click.prevent="handleStoryLinkClick"
+        >
           Open Story
           <img src="@/assets/icons/rocket.svg" alt="" class="case2-icon" />
-        </button>
+        </a>
       </div>
     </div>
 
@@ -55,8 +59,11 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
+import { useRouter } from "vue-router";
 import { initAnimations } from "./case2-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
+
+const router = useRouter();
 
 const videoSrc = new URL(
   "@/assets/case-videos/case2-4-reverse.mp4",
@@ -94,6 +101,12 @@ onUnmounted(() => {
   cleanupAnimations(animationInstance);
   animationInstance = null;
 });
+
+// Handle story link click
+const handleStoryLinkClick = (event) => {
+  event.preventDefault();
+  router.push("/story/two");
+};
 </script>
 
 <style scoped>
@@ -220,6 +233,7 @@ onUnmounted(() => {
   height: 72px;
   border-radius: 8px;
   transition: background 0.3s ease;
+  text-decoration: none;
 }
 
 .case2-open-story:hover {

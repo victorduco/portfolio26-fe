@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, nextTick } from "vue";
 import NavigationChevron from "@/components/common/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import AppFooter from "@/components/app-footer/AppFooter.vue";
@@ -71,6 +71,32 @@ const props = defineProps({
 
 useMeta(`case${props.caseId}`);
 
+// Always scroll to top when case page is mounted
+onMounted(() => {
+  console.log('📄 CasePage mounted, scroll:', window.scrollY);
+
+  // Immediate scroll
+  window.scrollTo(0, 0);
+  console.log('✅ Scrolled immediately, now:', window.scrollY);
+
+  // Also scroll after Vue updates DOM
+  nextTick(() => {
+    console.log('🔄 nextTick, scroll:', window.scrollY);
+    window.scrollTo(0, 0);
+  });
+
+  // And once more after delays
+  setTimeout(() => {
+    console.log('⏰ setTimeout 0ms, scroll:', window.scrollY);
+    window.scrollTo(0, 0);
+  }, 0);
+
+  setTimeout(() => {
+    console.log('⏰ setTimeout 500ms, scroll:', window.scrollY);
+    window.scrollTo(0, 0);
+  }, 500);
+});
+
 // Configuration for each case
 const caseConfigs = {
   1: {
@@ -80,8 +106,7 @@ const caseConfigs = {
     secondary: null, // optional
     font: null, // optional, uses global font if null
     theme: "light", // light or dark
-    summaryImage:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop",
+    summaryVideo: "/videos/case1-summary.mp4",
   },
   2: {
     title: "Redesigning the Communications App",

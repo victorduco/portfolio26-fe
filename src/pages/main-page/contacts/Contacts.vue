@@ -70,7 +70,7 @@ defineProps({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #222222;
+  background-color: #111111;
 }
 
 .contacts__content {
