@@ -44,17 +44,16 @@
     </Motion>
 
     <Motion
-      v-show="showClearButton"
       tag="button"
       type="button"
-      class="keypad-clear-button"
+      :class="['keypad-clear-button', { 'is-label': !showClearButton }]"
       :variants="keypadGridVariants"
       :animate="keypadGridState"
       :transition="keypadGridTransition"
       :initial="false"
-      @click="handleClear"
+      @click="showClearButton ? handleClear() : null"
     >
-      Clear
+      {{ showClearButton ? 'Clear' : 'Enter PIN Code' }}
     </Motion>
   </div>
 </template>
@@ -719,7 +718,12 @@ onBeforeUnmount(() => {
   z-index: 20;
 }
 
-.keypad-clear-button:hover {
+.keypad-clear-button.is-label {
+  cursor: default;
+  pointer-events: none;
+}
+
+.keypad-clear-button:not(.is-label):hover {
   color: #ffffff;
 }
 

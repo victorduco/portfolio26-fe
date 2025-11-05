@@ -196,6 +196,7 @@ defineExpose({
   height: 40px;
   z-index: 3;
   background-color: #007aff;
+  pointer-events: none; /* Initially not clickable */
 }
 
 .line-element:hover {

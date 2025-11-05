@@ -98,7 +98,7 @@ export function initAnimations(pinContainer) {
     "<50%"
   );
 
-  // PHASE 4: Show button text (final 10% of timeline)
+  // PHASE 4: Show button text and enable clicking (final 10% of timeline)
   mainTimeline.to(
     ".open-story-text",
     {
@@ -108,8 +108,11 @@ export function initAnimations(pinContainer) {
     ">-3"
   );
 
-  // Add 1 second pause at the end
-  mainTimeline.to({}, { duration: 1 });
+  // Enable button clicking when text appears
+  mainTimeline.set(".line-element", { pointerEvents: "auto" }, "<");
+
+  // Add 5 second pause at the end (for testing)
+  mainTimeline.to({}, { duration: 5 });
 
   // Refresh after loading
   setTimeout(() => ScrollTrigger.refresh(), 0);

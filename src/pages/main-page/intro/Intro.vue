@@ -29,25 +29,6 @@
           management&nbsp;background.
         </Motion>
       </div>
-      <Motion
-        tag="div"
-        class="intro-scroll-hint"
-        :variants="scrollHintVariants"
-        :animate="scrollHintState"
-        :transition="scrollHintTransition"
-        :initial="'hidden'"
-        @click="scrollToNextSection"
-      >
-        <span class="intro-scroll-hint-content">
-          <img
-            :src="storyNavIcon"
-            alt=""
-            aria-hidden="true"
-            class="intro-scroll-hint-icon"
-          />
-          <span class="intro-scroll-hint-text">Scroll to Story One</span>
-        </span>
-      </Motion>
     </section>
 
     <ul class="intro-list">
@@ -75,7 +56,6 @@ import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { Motion } from "motion-v";
 import { useRoute } from "vue-router";
 import IntroRectangle from "./IntroRectangle.vue";
-import storyNavIcon from "@/assets/icons/headphones.svg";
 import {
   NAVIGATION_MOBILE,
   INTRO_MOBILE_FULLSCREEN,
@@ -142,7 +122,6 @@ const titleState = ref("hidden");
 const subtitleState = ref("hidden");
 const rectangleStates = ref([false, false, false, false]); // Индивидуальные состояния для каждого rectangle
 const showRectangles = ref(false);
-const scrollHintState = ref("hidden");
 
 const sharedVariants = {
   hidden: { opacity: 0 },
@@ -151,7 +130,6 @@ const sharedVariants = {
 
 const titleVariants = sharedVariants;
 const subtitleVariants = sharedVariants;
-const scrollHintVariants = sharedVariants;
 
 const baseTransition = {
   type: "tween",
@@ -168,11 +146,6 @@ const subtitleTransition = {
   duration: 0.5,
 };
 
-const scrollHintTransition = {
-  ...baseTransition,
-  duration: 0.4,
-};
-
 function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
@@ -185,7 +158,6 @@ watch(
       subtitleState.value = "hidden";
       rectangleStates.value = [false, false, false, false];
       showRectangles.value = false;
-      scrollHintState.value = "hidden";
       activeMobileIndex.value = -1;
       activeCount.value = 0;
       return;
@@ -216,8 +188,6 @@ watch(
               rectangleStates.value[currentStep] = true;
               currentStep++;
               setTimeout(animateRectangles, getDelay(2 + currentStep - 1));
-            } else {
-              scrollHintState.value = "visible";
             }
           };
           animateRectangles();
@@ -292,13 +262,6 @@ watch(isMobileLayout, (isMobile) => {
     forceCloseAll.value = false;
   }
 });
-
-function scrollToNextSection() {
-  const case1Section = document.getElementById("case1");
-  if (case1Section) {
-    case1Section.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-}
 </script>
 
 <style scoped>
