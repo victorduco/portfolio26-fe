@@ -114,18 +114,21 @@ function renderMarkdown(md) {
 }
 
 .markdown-content :deep(h1) {
+  font-family: var(--case-title-font, var(--font-family-base));
   font-size: clamp(24px, 4vw, 32px);
   margin-bottom: 24px;
   color: inherit;
 }
 
 .markdown-content :deep(h2) {
+  font-family: var(--case-title-font, var(--font-family-base));
   margin-top: 48px;
   margin-bottom: 24px;
   color: inherit;
 }
 
 .markdown-content :deep(h3) {
+  font-family: var(--case-title-font, var(--font-family-base));
   margin-top: 32px;
   margin-bottom: 16px;
   color: inherit;

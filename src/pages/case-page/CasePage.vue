@@ -5,7 +5,7 @@
       backgroundColor: caseConfig.background,
       color: caseConfig.textColor,
       transition: 'background-color 0.5s ease, color 0.5s ease',
-      fontFamily: caseConfig.font || 'var(--font-family-base)',
+      '--case-title-font': caseConfig.font || 'var(--font-family-base)',
       '--case-primary-color': caseConfig.primary,
       '--case-secondary-color': caseConfig.secondary || caseConfig.primary,
     }"
@@ -113,7 +113,7 @@ const caseConfigs = {
     background: "#ffffff",
     primary: "#000000",
     secondary: null,
-    font: null,
+    font: "'Hanken Grotesk', sans-serif",
     theme: "light",
     summaryImage:
       "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
@@ -123,7 +123,7 @@ const caseConfigs = {
     background: "#B9E2F7",
     primary: "#ca4034",
     secondary: null,
-    font: null,
+    font: "'Neue Haas Grotesk Display Pro', sans-serif",
     theme: "light",
     summaryImage:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",

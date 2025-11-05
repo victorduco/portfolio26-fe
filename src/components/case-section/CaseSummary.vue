@@ -135,7 +135,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 .summary-title {
   margin: 0;
-  font-family: var(--font-family-base);
+  font-family: var(--case-title-font, var(--font-family-base));
   font-weight: var(--font-weight-semibold);
   font-size: clamp(28px, 5vw, 48px);
   line-height: 1.2;
