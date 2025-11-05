@@ -284,7 +284,7 @@ defineExpose({
 /* Base title styling */
 .case3-title {
   margin: 0;
-  font-family: var(--font-family-base);
+  font-family: "Neue Haas Grotesk Display Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: clamp(36px, 3.8vw, 61px);
@@ -329,7 +329,7 @@ defineExpose({
 /* Description Styling */
 .case3-description {
   margin: 0;
-  font-family: var(--font-family-base);
+  font-family: "Neue Haas Grotesk Display Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: clamp(16.5px, 1.43vw, 23px);
@@ -376,7 +376,7 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-family-base);
+  font-family: "Neue Haas Grotesk Display Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: clamp(16px, 1.3vw, 21px);
