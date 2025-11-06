@@ -143,10 +143,25 @@ const caseConfigs = {
     theme: "light",
     summaryImage:
       "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+    videoBackground: "#F7E7E7", // Same as button color on main page
     sections: [
       { type: "background", label: "Background" },
       { type: "process", label: "Process" },
-      { type: "results", label: "Results" },
+      { type: "design", label: "Final Design" },
+    ],
+    results: [
+      {
+        title: "User Engagement Growth",
+        description: "Onboarding completion jumped from 13% to 68%—5.2x more signups weekly. Time to first deposit dropped from 3.5 days to 8.4 hours."
+      },
+      {
+        title: "Platform Performance",
+        description: "Within six months, AUM grew from $45M to $387M (760%). Monthly revenue increased 456%, and LTV:CAC improved from 3.7:1 to 26.4:1."
+      },
+      {
+        title: "Market Recognition",
+        description: "Featured in TechCrunch and #1 on Product Hunt. The user base grew from 18K to 127K in six months, with ratings jumping to 4.7 stars."
+      }
     ],
     nextProject: {
       caseId: "3",
@@ -155,17 +170,31 @@ const caseConfigs = {
   },
   3: {
     title: "Terminal Shift Redesign",
-    background: "#B9E2F7",
+    background: "#ffffff",
     primary: "#ca4034",
     secondary: null,
     font: "'Neue Haas Grotesk Display Pro', sans-serif",
     theme: "light",
     summaryImage:
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
+    videoBackground: "#B9E2F7", // Blue background for images (previously page background)
     sections: [
-      { type: "background", label: "Background" },
-      { type: "process", label: "Process" },
-      { type: "results", label: "Results" },
+      { type: "audit", label: "UX Audit" },
+      { type: "redesign", label: "App Redesign" },
+    ],
+    results: [
+      {
+        title: "Performance Improvements",
+        description: "Load times dropped 79%: desktop from 4.2s to 0.9s, mobile from 8.4s to 1.8s. Cart abandonment fell from 73% to 34%, mobile conversion rose 263%."
+      },
+      {
+        title: "Business Growth",
+        description: "Revenue increased 142% in six months ($28.4M additional annually). Recovered 4.2% market share, moving from #7 to #2 in rankings."
+      },
+      {
+        title: "Long-term Impact",
+        description: "Within 12 months: revenue up 187%, user base grew from 2M to 4.2M. Won Awwwards Site of the Day, featured in TechCrunch and Smashing Magazine."
+      }
     ],
     nextProject: {
       caseId: "1",
@@ -244,7 +273,10 @@ section:has(+ .case-next-project) :deep(.case-background),
 section:has(+ .case-next-project) :deep(.case-challenge),
 section:has(+ .case-next-project) :deep(.case-scale),
 section:has(+ .case-next-project) :deep(.case-solution),
-section:has(+ .case-next-project) :deep(.case-process) {
+section:has(+ .case-next-project) :deep(.case-process),
+section:has(+ .case-next-project) :deep(.case-design),
+section:has(+ .case-next-project) :deep(.case-audit),
+section:has(+ .case-next-project) :deep(.case-redesign) {
   padding-bottom: 180px;
 }
 
@@ -261,7 +293,10 @@ section:has(+ .case-next-project) :deep(.case-process) {
   section:has(+ .case-next-project) :deep(.case-challenge),
   section:has(+ .case-next-project) :deep(.case-scale),
   section:has(+ .case-next-project) :deep(.case-solution),
-  section:has(+ .case-next-project) :deep(.case-process) {
+  section:has(+ .case-next-project) :deep(.case-process),
+  section:has(+ .case-next-project) :deep(.case-design),
+  section:has(+ .case-next-project) :deep(.case-audit),
+  section:has(+ .case-next-project) :deep(.case-redesign) {
     padding-bottom: 120px;
   }
 }

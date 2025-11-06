@@ -48,6 +48,7 @@
       v-if="caseConfig.summaryImage"
       :image-src="caseConfig.summaryImage"
       :alt="`${summaryData.title} preview`"
+      :background-color="caseConfig.videoBackground || 'transparent'"
     />
     <FullscreenVideo
       v-if="caseConfig.summaryVideo"

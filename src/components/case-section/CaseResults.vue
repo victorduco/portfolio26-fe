@@ -50,7 +50,7 @@ const props = defineProps({
   font-family: var(--case-title-font, var(--font-family-base));
   font-size: clamp(32px, 5vw, 48px);
   font-weight: var(--font-weight-semibold);
-  margin: 0 0 48px 0;
+  margin: 0 0 24px 0;
   color: inherit;
 }
 
@@ -98,7 +98,7 @@ const props = defineProps({
   }
 
   .results-title {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
   }
 }
 </style>

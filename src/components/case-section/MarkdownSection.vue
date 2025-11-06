@@ -15,7 +15,7 @@ const props = defineProps({
   sectionType: {
     type: String,
     required: true,
-    validator: (value) => ["background", "challenge", "scale", "solution", "process", "results"].includes(value),
+    validator: (value) => ["background", "challenge", "scale", "solution", "process", "results", "design", "audit", "redesign"].includes(value),
   },
   caseConfig: {
     type: Object,
@@ -271,7 +271,10 @@ function renderMarkdown(md) {
 .case-scale,
 .case-solution,
 .case-process,
-.case-results {
+.case-results,
+.case-design,
+.case-audit,
+.case-redesign {
   width: 100%;
   padding: 80px 16px 48px;
   overflow-x: hidden;
@@ -292,7 +295,7 @@ function renderMarkdown(md) {
   font-family: var(--case-title-font, var(--font-family-base));
   font-size: clamp(32px, 5vw, 48px);
   font-weight: var(--font-weight-semibold);
-  margin-bottom: 48px;
+  margin-bottom: 24px;
   color: inherit;
 }
 
@@ -566,7 +569,10 @@ function renderMarkdown(md) {
   .case-scale,
   .case-solution,
   .case-process,
-  .case-results {
+  .case-results,
+  .case-design,
+  .case-audit,
+  .case-redesign {
     padding: 60px 16px 24px;
   }
 
@@ -574,6 +580,10 @@ function renderMarkdown(md) {
     --font-size-h1: 36px;
     --font-size-h2: 28px;
     --font-size-h3: 20px;
+  }
+
+  .markdown-content :deep(h1) {
+    margin-bottom: 16px;
   }
 }
 </style>
