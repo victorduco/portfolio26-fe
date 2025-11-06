@@ -200,20 +200,7 @@ const caseConfigs = {
     sections: [
       { type: "audit", label: "UX Audit" },
       { type: "redesign", label: "App Redesign" },
-    ],
-    results: [
-      {
-        title: "Performance Improvements",
-        description: "Load times dropped 79%: desktop from 4.2s to 0.9s, mobile from 8.4s to 1.8s. Cart abandonment fell from 73% to 34%, mobile conversion rose 263%."
-      },
-      {
-        title: "Business Growth",
-        description: "Revenue increased 142% in six months ($28.4M additional annually). Recovered 4.2% market share, moving from #7 to #2 in rankings."
-      },
-      {
-        title: "Long-term Impact",
-        description: "Within 12 months: revenue up 187%, user base grew from 2M to 4.2M. Won Awwwards Site of the Day, featured in TechCrunch and Smashing Magazine."
-      }
+      { type: "conclusion", label: "Conclusion" },
     ],
     nextProject: {
       caseId: "1",
@@ -296,7 +283,8 @@ section:has(+ .case-next-project) :deep(.case-solution),
 section:has(+ .case-next-project) :deep(.case-process),
 section:has(+ .case-next-project) :deep(.case-design),
 section:has(+ .case-next-project) :deep(.case-audit),
-section:has(+ .case-next-project) :deep(.case-redesign) {
+section:has(+ .case-next-project) :deep(.case-redesign),
+section:has(+ .case-next-project) :deep(.case-conclusion) {
   padding-bottom: 180px;
 }
 
@@ -317,7 +305,8 @@ section:has(+ .case-next-project) :deep(.case-redesign) {
   section:has(+ .case-next-project) :deep(.case-process),
   section:has(+ .case-next-project) :deep(.case-design),
   section:has(+ .case-next-project) :deep(.case-audit),
-  section:has(+ .case-next-project) :deep(.case-redesign) {
+  section:has(+ .case-next-project) :deep(.case-redesign),
+  section:has(+ .case-next-project) :deep(.case-conclusion) {
     padding-bottom: 120px;
   }
 }

@@ -202,13 +202,13 @@ defineExpose({
   overflow: hidden;
   cursor: pointer;
   text-decoration: none;
-  transform: translate(-50%, -50%);
   box-sizing: border-box;
   width: 40px;
   height: 40px;
   z-index: 3;
   background-color: #007aff;
   pointer-events: none; /* Initially not clickable */
+  /* transform will be handled by GSAP */
 }
 
 .line-element:hover {
