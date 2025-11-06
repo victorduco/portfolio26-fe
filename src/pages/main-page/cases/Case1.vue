@@ -11,12 +11,14 @@
           <div class="text-container">
             <p class="company-text">Apple</p>
             <h2 class="main-text">
-              Cross-Domain AI Solution for Account Reconcilers
+              Simplifying Finance Workflows with AI-Driven UX
             </h2>
             <div class="tags-container">
-              <span class="tag">AI Solution</span>
-              <span class="tag">Enterprise</span>
-              <span class="tag">Automation</span>
+              <span class="tag">Global User Research</span>
+              <span class="tag-separator">•</span>
+              <span class="tag">Concept-to-Launch Design</span>
+              <span class="tag-separator">•</span>
+              <span class="tag">Cross-Domain UX Alignment</span>
             </div>
           </div>
 
@@ -151,19 +153,27 @@ defineExpose({
 }
 
 .tags-container {
-  margin: 12px 0 0 0;
+  margin: 16px 0 0 0;
   display: flex;
-  gap: 40px;
+  gap: 4px;
   justify-content: center;
   align-items: center;
 }
 
 .tag {
   font-family: 'Noto Sans', sans-serif;
-  font-weight: 400;
-  font-size: 24px;
+  font-weight: 500;
+  font-size: 18px;
   line-height: 1.4;
   color: #666666;
+}
+
+.tag-separator {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 18px;
+  line-height: 1.4;
+  color: #666666;
+  opacity: 0.5;
 }
 
 /* Mask Element (z-index: 2) */

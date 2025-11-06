@@ -12,6 +12,7 @@
           <p class="result-description">{{ result.description }}</p>
         </div>
       </div>
+      <p v-if="resultsNote" class="results-note">{{ resultsNote }}</p>
     </div>
   </section>
 </template>
@@ -28,6 +29,10 @@ const props = defineProps({
         'description' in result
       );
     },
+  },
+  resultsNote: {
+    type: String,
+    default: null,
   },
 });
 </script>
@@ -83,6 +88,17 @@ const props = defineProps({
   margin: 0;
   color: inherit;
   opacity: 0.8;
+}
+
+.results-note {
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.6;
+  margin: 48px 0 0 0;
+  color: inherit;
+  opacity: 0.6;
+  text-align: center;
 }
 
 @media (max-width: 900px) {

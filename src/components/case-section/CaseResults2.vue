@@ -1,0 +1,263 @@
+<template>
+  <section class="case-results-2">
+    <div class="results-content">
+      <h1 class="results-title">Results</h1>
+      <p class="results-intro">
+        {{ introText }}
+      </p>
+      <div class="results-wrapper">
+        <div class="results-container">
+          <div class="results-grid">
+            <div
+              v-for="(result, index) in results"
+              :key="index"
+              class="result-card"
+            >
+              <div class="result-card-header">
+                <div class="result-label">{{ result.label }}</div>
+                <div v-if="result.icon" class="result-icon">{{ result.icon }}</div>
+              </div>
+              <div class="result-card-inner">
+                <div class="result-value" v-html="formatTitle(result.title)"></div>
+                <div class="result-description">{{ result.description }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p v-if="conclusionText" class="results-conclusion">
+        {{ conclusionText }}
+      </p>
+    </div>
+  </section>
+</template>
+
+<script setup>
+const props = defineProps({
+  results: {
+    type: Array,
+    required: true,
+    validator: (value) => {
+      return value.every(result =>
+        typeof result === 'object' &&
+        'title' in result &&
+        'description' in result
+      );
+    },
+  },
+  introText: {
+    type: String,
+    required: true,
+  },
+  conclusionText: {
+    type: String,
+    default: null,
+  },
+  cardBackground: {
+    type: String,
+    default: '#F7E7E7',
+  },
+});
+
+const formatTitle = (title) => {
+  return title.replace(/→/g, '<span class="arrow">➔</span>');
+};
+</script>
+
+<style scoped>
+.case-results-2 {
+  width: 100%;
+  padding: 80px 16px 48px;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.results-content {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.results-title {
+  font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 24px 0;
+  color: inherit;
+}
+
+.results-intro {
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.8;
+  margin: 0 0 48px 0;
+  color: inherit;
+  opacity: 0.8;
+}
+
+.results-conclusion {
+  font-family: var(--font-family-base);
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.8;
+  margin: 48px 0 0 0;
+  color: inherit;
+  opacity: 0.8;
+}
+
+/* Fullscreen wrapper like images */
+.results-wrapper {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.results-container {
+  width: 100%;
+  background-color: v-bind(cardBackground);
+  border-radius: 12px;
+  padding: 48px;
+  box-sizing: border-box;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.results-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 128px;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.result-card {
+  flex: 0 0 auto;
+  width: 450px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 700px;
+}
+
+.result-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px 24px;
+  margin-bottom: 0;
+  position: relative;
+}
+
+.result-card-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.result-label {
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: inherit;
+  opacity: 0.6;
+}
+
+.result-icon {
+  font-size: 32px;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.result-card-inner {
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.result-value {
+  font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  color: inherit;
+}
+
+.result-value :deep(.arrow) {
+  opacity: 0.3;
+  font-weight: var(--font-weight-regular);
+  margin: 0 6px;
+  font-size: 1.1em;
+}
+
+.result-description {
+  font-family: var(--font-family-base);
+  font-size: 20px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+  color: inherit;
+  opacity: 0.8;
+}
+
+@media (max-width: 900px) {
+  .results-grid {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .results-container {
+    padding: 32px 24px;
+    aspect-ratio: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .case-results-2 {
+    padding: 60px 16px 24px;
+  }
+
+  .results-title {
+    margin-bottom: 16px;
+  }
+
+  .results-intro {
+    margin-bottom: 32px;
+  }
+
+  .results-container {
+    padding: 24px 20px;
+  }
+
+  .result-card {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+  }
+
+  .result-description {
+    font-size: 18px;
+  }
+}
+</style>

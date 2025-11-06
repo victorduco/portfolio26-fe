@@ -38,7 +38,18 @@
       />
     </section>
     <section v-if="caseConfig.results" :id="`case${caseId}-results`">
-      <CaseResults :results="caseConfig.results" />
+      <CaseResults2
+        v-if="caseId === '2'"
+        :results="caseConfig.results"
+        :intro-text="caseConfig.resultsIntro"
+        :conclusion-text="caseConfig.resultsConclusion"
+        :card-background="caseConfig.videoBackground"
+      />
+      <CaseResults
+        v-else
+        :results="caseConfig.results"
+        :results-note="caseConfig.resultsNote"
+      />
     </section>
     <CaseNextProject
       v-if="caseConfig.nextProject"
@@ -57,6 +68,7 @@ import AppFooter from "@/components/app-footer/AppFooter.vue";
 import MarkdownSection from "@/components/case-section/MarkdownSection.vue";
 import CaseSummary from "@/components/case-section/CaseSummary.vue";
 import CaseResults from "@/components/case-section/CaseResults.vue";
+import CaseResults2 from "@/components/case-section/CaseResults2.vue";
 import CaseNextProject from "@/components/case-section/CaseNextProject.vue";
 import { useMeta } from "@/composables/useMeta.js";
 // import { getSnapInstance } from "@/composables/useLenis.js";
@@ -141,8 +153,7 @@ const caseConfigs = {
     secondary: null,
     font: "'Hanken Grotesk', sans-serif",
     theme: "light",
-    summaryImage:
-      "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+    summaryImage: new URL("@/assets/images/case2_summary.png", import.meta.url).href,
     videoBackground: "#F7E7E7", // Same as button color on main page
     sections: [
       { type: "background", label: "Background" },
@@ -151,18 +162,26 @@ const caseConfigs = {
     ],
     results: [
       {
-        title: "User Engagement Growth",
-        description: "Onboarding completion jumped from 13% to 68%—5.2x more signups weekly. Time to first deposit dropped from 3.5 days to 8.4 hours."
+        label: "App Rating",
+        icon: "★",
+        title: "3.2 → 4.6",
+        description: "Average rating in the App Store and Google Play Store."
       },
       {
-        title: "Platform Performance",
-        description: "Within six months, AUM grew from $45M to $387M (760%). Monthly revenue increased 456%, and LTV:CAC improved from 3.7:1 to 26.4:1."
+        label: "Installation Rate",
+        icon: "↗",
+        title: "4.5% → 32%",
+        description: "Percentage of users who installed the app out of the total user base."
       },
       {
-        title: "Market Recognition",
-        description: "Featured in TechCrunch and #1 on Product Hunt. The user base grew from 18K to 127K in six months, with ratings jumping to 4.7 stars."
+        label: "Active Users",
+        icon: "◆",
+        title: "0.5% → 14%",
+        description: "Percentage of users who became regular mobile app users out of the total user base."
       }
     ],
+    resultsIntro: "The results show impact 11 months post-launch. Metrics were measured and validated by the marketing team through comprehensive analytics tracking across App Store, Google Play, and internal user engagement platforms.",
+    resultsConclusion: "These improvements demonstrate the significant impact of the redesign on user engagement and satisfaction. The mobile experience transformation led to measurable business outcomes and validated our design decisions through real-world usage data.",
     nextProject: {
       caseId: "3",
       title: "Terminal Shift Redesign",
@@ -269,6 +288,7 @@ const navigationSections = computed(() => {
 
 /* Add extra padding to the last section before Next Project */
 section:has(+ .case-next-project) :deep(.case-results),
+section:has(+ .case-next-project) :deep(.case-results-2),
 section:has(+ .case-next-project) :deep(.case-background),
 section:has(+ .case-next-project) :deep(.case-challenge),
 section:has(+ .case-next-project) :deep(.case-scale),
@@ -289,6 +309,7 @@ section:has(+ .case-next-project) :deep(.case-redesign) {
 
 @media (max-width: 768px) {
   section:has(+ .case-next-project) :deep(.case-results),
+  section:has(+ .case-next-project) :deep(.case-results-2),
   section:has(+ .case-next-project) :deep(.case-background),
   section:has(+ .case-next-project) :deep(.case-challenge),
   section:has(+ .case-next-project) :deep(.case-scale),

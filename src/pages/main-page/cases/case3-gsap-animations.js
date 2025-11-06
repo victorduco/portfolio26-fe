@@ -5,6 +5,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function initAnimations(pinContainer, refs, skipAnimation = false) {
   const {
+    tagsElement,
     titleElement,
     descriptionElement,
     buttonElement,
@@ -16,6 +17,7 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
   // If returning from story page, set all elements to final state immediately
   if (skipAnimation) {
     gsap.set(imageContainer, { scale: 1, clearProps: "all" });
+    gsap.set(tagsElement, { opacity: 1, scale: 1, clearProps: "transform" });
     gsap.set(titleElement, { opacity: 1, scale: 1, x: 0, y: 0, clearProps: "transform" });
     gsap.set(descriptionElement, { opacity: 1, scale: 1, clearProps: "transform" });
     gsap.set(buttonElement, { opacity: 1, scale: 1, clearProps: "transform" });
@@ -186,7 +188,22 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
     ">-0.2"
   );
 
-  // Stage 5: Button shrinks in (shortly after description starts)
+  // Stage 5: Tags appear (after description)
+  tl1.fromTo(
+    tagsElement,
+    {
+      opacity: 0,
+      scale: 1.1,
+    },
+    {
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+    },
+    ">-0.1"
+  );
+
+  // Stage 6: Button shrinks in (after tags)
   tl1.fromTo(
     buttonElement,
     {
@@ -198,7 +215,7 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
       scale: 1,
       duration: 0.6,
     },
-    ">-0.2"
+    ">-0.1"
   );
 
   // Add 1 second pause at the end
