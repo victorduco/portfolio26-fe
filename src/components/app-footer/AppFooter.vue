@@ -135,6 +135,7 @@ defineProps({
 
 /* Dark theme */
 .app-footer.dark-mode {
+  background-color: #111111;
   color: #ffffff;
 }
 

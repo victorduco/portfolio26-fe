@@ -1,6 +1,22 @@
 <template>
   <div class="fullscreen-image-wrapper">
-    <h3 v-if="imageLabel" class="image-label">{{ imageLabel }}</h3>
+    <div v-if="imageLabel || sources.length > 0" class="image-label-wrapper">
+      <h3 v-if="imageLabel" class="image-label">
+        {{ imageLabel }}
+        <span v-if="sources.length > 0" class="image-sources-inline">
+          ({{ sources.length > 1 ? 'Sources' : 'Source' }}:
+          <template v-for="(source, index) in sources" :key="index">
+            <a :href="source.url" target="_blank" rel="noopener noreferrer" class="source-link">{{ source.name }}</a><template v-if="index < sources.length - 1">, </template>
+          </template>)
+        </span>
+      </h3>
+      <div v-else-if="sources.length > 0" class="image-sources">
+        {{ sources.length > 1 ? 'Sources' : 'Source' }}:
+        <template v-for="(source, index) in sources" :key="index">
+          <a :href="source.url" target="_blank" rel="noopener noreferrer" class="source-link">{{ source.name }}</a><template v-if="index < sources.length - 1">, </template>
+        </template>
+      </div>
+    </div>
     <div class="fullscreen-image" :style="{ backgroundColor: backgroundColor }">
       <div
         class="fullscreen-image__container"
@@ -62,6 +78,17 @@ const props = defineProps({
   imageLabel: {
     type: String,
     default: '',
+  },
+  sources: {
+    type: Array,
+    default: () => [],
+    validator: (value) => {
+      return value.every(source =>
+        typeof source === 'object' &&
+        'name' in source &&
+        'url' in source
+      );
+    },
   },
 });
 
@@ -161,10 +188,15 @@ const magnifierImageStyle = computed(() => {
   box-sizing: border-box;
 }
 
-.image-label {
+.image-label-wrapper {
   width: 100%;
   max-width: 1200px;
   margin: 0 0 -8px 0;
+  padding: 0;
+}
+
+.image-label {
+  margin: 0;
   padding: 0;
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
@@ -174,26 +206,62 @@ const magnifierImageStyle = computed(() => {
   opacity: 0.5;
 }
 
+.image-sources {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 1.2;
+  color: inherit;
+  opacity: 0.5;
+}
+
+.image-sources-inline {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 1.2;
+  color: inherit;
+  opacity: 1;
+}
+
+.source-link {
+  color: inherit;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.source-link:hover {
+  opacity: 0.7;
+}
+
 .fullscreen-image {
   width: 100%;
-  height: 100vh;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
 .fullscreen-image__container {
   width: 100%;
-  height: 100%;
   position: relative;
   border-radius: 12px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .fullscreen-image__img {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   display: block;
   cursor: none;
+  margin: auto;
 }
 
 .fullscreen-image__container:not(:hover) .fullscreen-image__img {

@@ -15,7 +15,7 @@ const props = defineProps({
   sectionType: {
     type: String,
     required: true,
-    validator: (value) => ["background", "challenge", "process", "results"].includes(value),
+    validator: (value) => ["background", "challenge", "scale", "solution", "process", "results"].includes(value),
   },
   caseConfig: {
     type: Object,
@@ -145,25 +145,45 @@ function renderMarkdown(md) {
 
   return (
     md
+      // Fullscreen images with magnifier, label and sources: ![fullscreen|magnifier|Label|sources:Name:url,Name2:url2](url)
+      .replace(
+        /!\[fullscreen\|magnifier\|(.*?)\|sources:(.*?)\]\((.*?)\)/gim,
+        `___FULLSCREEN_IMAGE___$3___BG_${bgColor}___MAG_true___LABEL_$1___SOURCES_$2___END___`
+      )
+      // Fullscreen images with label and sources: ![fullscreen|Label|sources:Name:url,Name2:url2](url)
+      .replace(
+        /!\[fullscreen\|(.*?)\|sources:(.*?)\]\((.*?)\)/gim,
+        `___FULLSCREEN_IMAGE___$3___BG_${bgColor}___MAG_false___LABEL_$1___SOURCES_$2___END___`
+      )
+      // Fullscreen images with magnifier and sources (no label): ![fullscreen|magnifier|sources:Name:url](url)
+      .replace(
+        /!\[fullscreen\|magnifier\|sources:(.*?)\]\((.*?)\)/gim,
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_true___LABEL____SOURCES_$1___END___`
+      )
+      // Fullscreen images with sources only (no label, no magnifier): ![fullscreen|sources:Name:url](url)
+      .replace(
+        /!\[fullscreen\|sources:(.*?)\]\((.*?)\)/gim,
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_false___LABEL____SOURCES_$1___END___`
+      )
       // Fullscreen images with magnifier and label: ![fullscreen|magnifier|Label](url)
       .replace(
         /!\[fullscreen\|magnifier\|(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_true___LABEL_$1___END___`
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_true___LABEL_$1___SOURCES____END___`
       )
       // Fullscreen images with magnifier: ![fullscreen|magnifier](url)
       .replace(
         /!\[fullscreen\|magnifier\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_true___LABEL____END___`
+        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_true___LABEL____SOURCES____END___`
       )
       // Fullscreen images with label: ![fullscreen|Label](url)
       .replace(
         /!\[fullscreen\|(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_false___LABEL_$1___END___`
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_false___LABEL_$1___SOURCES____END___`
       )
       // Fullscreen images: ![fullscreen](url) - use unique placeholder
       .replace(
         /!\[fullscreen\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_false___LABEL____END___`
+        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_false___LABEL____SOURCES____END___`
       )
       .replace(/^### (.*$)/gim, "<h3>$1</h3>")
       .replace(/^## (.*$)/gim, "<h2>$1</h2>")
@@ -194,10 +214,33 @@ function renderMarkdown(md) {
       .replace(/(?![hult]>|pre>|blockquote>|hr>|___)$/gm, "</p>")
       // Replace placeholder with actual image after paragraph processing
       .replace(
-        /___FULLSCREEN_IMAGE___(.*?)___BG_(.*?)___MAG_(.*?)___LABEL_(.*?)___END___/gim,
-        (match, url, bg, mag, label) => {
-          const labelHtml = label ? `<h3 class="fullscreen-image-label">${label}</h3>` : '';
-          return `<div class="fullscreen-image-wrapper-md">${labelHtml}<div class="fullscreen-image-wrapper"><div class="fullscreen-image-background" style="background-color: ${bg};"><div class="fullscreen-image-container" data-magnifier="${mag}"><img src="${url}" alt="Fullscreen image" class="fullscreen-image-md" loading="lazy" /></div></div></div></div>`;
+        /___FULLSCREEN_IMAGE___(.*?)___BG_(.*?)___MAG_(.*?)___LABEL_(.*?)___SOURCES_(.*?)___END___/gim,
+        (match, url, bg, mag, label, sources) => {
+          // Parse sources: "Name:url,Name2:url2" -> array of {name, url}
+          const sourcesArray = sources ? sources.split(',').map(s => {
+            const [name, url] = s.split(':');
+            return { name: name?.trim() || '', url: url?.trim() || '' };
+          }).filter(s => s.name && s.url) : [];
+
+          const sourcesAttr = sourcesArray.length > 0 ? ` data-sources='${JSON.stringify(sourcesArray)}'` : '';
+
+          let labelHtml = '';
+          if (label && sourcesArray.length > 0) {
+            // Label with sources in parentheses
+            const sourcesText = sourcesArray.length > 1 ? 'Sources' : 'Source';
+            const sourceLinks = sourcesArray.map(s => `<a href="${s.url}" target="_blank" rel="noopener noreferrer" class="source-link">${s.name}</a>`).join(', ');
+            labelHtml = `<h3 class="fullscreen-image-label">${label} <span class="image-sources-inline">(${sourcesText}: ${sourceLinks})</span></h3>`;
+          } else if (label) {
+            // Label only
+            labelHtml = `<h3 class="fullscreen-image-label">${label}</h3>`;
+          } else if (sourcesArray.length > 0) {
+            // Sources only (no label)
+            const sourcesText = sourcesArray.length > 1 ? 'Sources' : 'Source';
+            const sourceLinks = sourcesArray.map(s => `<a href="${s.url}" target="_blank" rel="noopener noreferrer" class="source-link">${s.name}</a>`).join(', ');
+            labelHtml = `<div class="image-sources">${sourcesText}: ${sourceLinks}</div>`;
+          }
+
+          return `<div class="fullscreen-image-wrapper-md">${labelHtml}<div class="fullscreen-image-wrapper"><div class="fullscreen-image-background" style="background-color: ${bg};"><div class="fullscreen-image-container" data-magnifier="${mag}"${sourcesAttr}><img src="${url}" alt="Fullscreen image" class="fullscreen-image-md" loading="lazy" /></div></div></div></div>`;
         }
       )
       // Clean up empty paragraphs and paragraphs around images
@@ -225,10 +268,11 @@ function renderMarkdown(md) {
 <style scoped>
 .case-background,
 .case-challenge,
+.case-scale,
+.case-solution,
 .case-process,
 .case-results {
   width: 100%;
-  min-height: 100vh;
   padding: 80px 16px 48px;
   overflow-x: hidden;
   display: flex;
@@ -246,13 +290,16 @@ function renderMarkdown(md) {
 
 .markdown-content :deep(h1) {
   font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(24px, 4vw, 32px);
-  margin-bottom: 24px;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 48px;
   color: inherit;
 }
 
 .markdown-content :deep(h2) {
   font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: var(--font-weight-semibold);
   margin-top: 48px;
   margin-bottom: 24px;
   color: inherit;
@@ -260,6 +307,8 @@ function renderMarkdown(md) {
 
 .markdown-content :deep(h3) {
   font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: var(--font-weight-medium);
   margin-top: 32px;
   margin-bottom: 16px;
   color: inherit;
@@ -391,7 +440,7 @@ function renderMarkdown(md) {
   padding: 0 16px;
   box-sizing: border-box;
   margin-top: 48px;
-  margin-bottom: 48px;
+  margin-bottom: 0;
 }
 
 .markdown-content :deep(.fullscreen-image-label) {
@@ -407,17 +456,49 @@ function renderMarkdown(md) {
   opacity: 0.5;
 }
 
+.markdown-content :deep(.image-sources) {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 0 -8px 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 1.2;
+  color: inherit;
+  opacity: 0.5;
+}
+
+.markdown-content :deep(.image-sources-inline) {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 1.2;
+  color: inherit;
+  opacity: 1;
+}
+
+.markdown-content :deep(.source-link) {
+  color: inherit;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.markdown-content :deep(.source-link:hover) {
+  opacity: 0.7;
+}
+
 /* Fullscreen images in markdown */
 .markdown-content :deep(.fullscreen-image-wrapper) {
   width: 100%;
-  height: 100vh;
   padding: 16px;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
 .markdown-content :deep(.fullscreen-image-background) {
   width: 100%;
-  height: 100%;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -427,9 +508,11 @@ function renderMarkdown(md) {
 .markdown-content :deep(.fullscreen-image-container) {
   position: relative;
   width: 100%;
-  height: 100%;
   overflow: hidden;
   border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* If wrapper ends up inside a paragraph, fix it */
@@ -444,10 +527,13 @@ function renderMarkdown(md) {
 }
 
 .markdown-content :deep(.fullscreen-image-md) {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   display: block;
+  margin: auto;
 }
 
 /* Magnifier styles for markdown images */
@@ -477,6 +563,8 @@ function renderMarkdown(md) {
 @media (max-width: 768px) {
   .case-background,
   .case-challenge,
+  .case-scale,
+  .case-solution,
   .case-process,
   .case-results {
     padding: 60px 16px 24px;

@@ -37,7 +37,15 @@
         :case-config="caseConfig"
       />
     </section>
-    <AppFooter :dark-mode="caseConfig.darkMode" />
+    <section v-if="caseConfig.results" :id="`case${caseId}-results`">
+      <CaseResults :results="caseConfig.results" />
+    </section>
+    <CaseNextProject
+      v-if="caseConfig.nextProject"
+      :case-id="caseConfig.nextProject.caseId"
+      :title="caseConfig.nextProject.title"
+    />
+    <AppFooter :dark-mode="true" />
   </div>
 </template>
 
@@ -48,6 +56,8 @@ import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import AppFooter from "@/components/app-footer/AppFooter.vue";
 import MarkdownSection from "@/components/case-section/MarkdownSection.vue";
 import CaseSummary from "@/components/case-section/CaseSummary.vue";
+import CaseResults from "@/components/case-section/CaseResults.vue";
+import CaseNextProject from "@/components/case-section/CaseNextProject.vue";
 import { useMeta } from "@/composables/useMeta.js";
 // import { getSnapInstance } from "@/composables/useLenis.js";
 
@@ -102,9 +112,27 @@ const caseConfigs = {
     videoLabel: "Video Overview", // Label above video
     sections: [
       { type: "challenge", label: "Challenge" },
-      { type: "process", label: "Process" },
-      { type: "results", label: "Results" },
+      { type: "scale", label: "Scale" },
+      { type: "solution", label: "Solution" },
     ],
+    results: [
+      {
+        title: "Time Efficiency Improvement",
+        description: "Task completion times improved significantly, with reductions in time required depending on task complexity."
+      },
+      {
+        title: "AI and Predictive Analysis",
+        description: "AI has enhanced the system's ability to identify incidents and perform predictive analysis, improving decision-making."
+      },
+      {
+        title: "Peak Time Management",
+        description: "Workload management during peak financial periods has improved, resulting in smoother operations and reduced stress for users."
+      }
+    ],
+    nextProject: {
+      caseId: "2",
+      title: "Redesigning the Communications App",
+    },
   },
   2: {
     title: "Redesigning the Communications App",
@@ -120,6 +148,10 @@ const caseConfigs = {
       { type: "process", label: "Process" },
       { type: "results", label: "Results" },
     ],
+    nextProject: {
+      caseId: "3",
+      title: "Terminal Shift Redesign",
+    },
   },
   3: {
     title: "Terminal Shift Redesign",
@@ -135,6 +167,10 @@ const caseConfigs = {
       { type: "process", label: "Process" },
       { type: "results", label: "Results" },
     ],
+    nextProject: {
+      caseId: "1",
+      title: "Cross-Domain AI Solution for Account Reconcilers",
+    },
   },
 };
 
@@ -150,13 +186,20 @@ const caseConfig = computed(() => {
 
 const navigationSections = computed(() => {
   const sections = caseConfig.value.sections || [];
-  return [
+  const navSections = [
     { id: `case${props.caseId}-summary`, label: "Summary" },
     ...sections.map(section => ({
       id: `case${props.caseId}-${section.type}`,
       label: section.label
     }))
   ];
+
+  // Add Results if it exists
+  if (caseConfig.value.results) {
+    navSections.push({ id: `case${props.caseId}-results`, label: "Results" });
+  }
+
+  return navSections;
 });
 
 // Disable snap scrolling on case detail pages
@@ -195,10 +238,31 @@ const navigationSections = computed(() => {
   z-index: 1001;
 }
 
+/* Add extra padding to the last section before Next Project */
+section:has(+ .case-next-project) :deep(.case-results),
+section:has(+ .case-next-project) :deep(.case-background),
+section:has(+ .case-next-project) :deep(.case-challenge),
+section:has(+ .case-next-project) :deep(.case-scale),
+section:has(+ .case-next-project) :deep(.case-solution),
+section:has(+ .case-next-project) :deep(.case-process) {
+  padding-bottom: 180px;
+}
+
 @media (max-width: 899px) {
   .case-page-back {
     top: 24px;
     left: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  section:has(+ .case-next-project) :deep(.case-results),
+  section:has(+ .case-next-project) :deep(.case-background),
+  section:has(+ .case-next-project) :deep(.case-challenge),
+  section:has(+ .case-next-project) :deep(.case-scale),
+  section:has(+ .case-next-project) :deep(.case-solution),
+  section:has(+ .case-next-project) :deep(.case-process) {
+    padding-bottom: 120px;
   }
 }
 </style>

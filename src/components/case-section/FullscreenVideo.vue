@@ -135,11 +135,9 @@ onMounted(() => {
               console.log('⏸️ Video is visible but user paused it manually, skipping autoplay');
             }
           } else {
-            // Video is not visible - pause it only if it wasn't manually paused
-            if (!userPaused.value) {
-              console.log('⏸️ Video is not visible, pausing');
-              pauseVideo();
-            }
+            // Video is not visible - ALWAYS pause it to prevent background playback
+            console.log('⏸️ Video is not visible, pausing');
+            pauseVideo();
           }
         });
       },
