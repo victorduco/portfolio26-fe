@@ -70,13 +70,30 @@ export function initializeMarkdownParallax() {
   const parallaxContainers = document.querySelectorAll('.fullscreen-parallax-image');
 
   parallaxContainers.forEach((container) => {
-    const img = container.querySelector('.parallax-image');
-    if (!img) return;
+    // Check if this is a multi-image parallax (has grid)
+    const hasGrid = container.querySelector('.parallax-images-grid');
 
-    initializeParallaxImage(container, img, {
-      speed: 1.3,
-      scrub: 0.5,
-      markers: false
-    });
+    if (hasGrid) {
+      // Initialize each image separately with its own speed
+      const images = container.querySelectorAll('.parallax-image');
+      images.forEach((img) => {
+        const speed = parseFloat(img.getAttribute('data-speed')) || 1.0;
+        initializeParallaxImage(container, img, {
+          speed: speed,
+          scrub: 0.5,
+          markers: false
+        });
+      });
+    } else {
+      // Single image parallax
+      const img = container.querySelector('.parallax-image');
+      if (!img) return;
+
+      initializeParallaxImage(container, img, {
+        speed: 1.3,
+        scrub: 0.5,
+        markers: false
+      });
+    }
   });
 }

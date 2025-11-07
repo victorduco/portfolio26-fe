@@ -147,6 +147,13 @@ function renderMarkdown(md) {
 
   return (
     md
+      // Triple parallax images: ![fullscreen|parallax3|Label](image1.png|image2.png|image3.png)
+      .replace(
+        /!\[fullscreen\|parallax3(?:\|(.*?))?\]\((.*?)\|(.*?)\|(.*?)\)/gim,
+        (_match, label, url1, url2, url3) => {
+          return `___PARALLAX3_IMAGE___${url1}___${url2}___${url3}___BG_${bgColor}___LABEL_${label || ''}___END___`;
+        }
+      )
       // Parallax images: ![fullscreen|parallax|Label](url) or ![fullscreen|parallax](url)
       .replace(
         /!\[fullscreen\|parallax(?:\|(.*?))?\]\((.*?)\)/gim,
@@ -221,6 +228,14 @@ function renderMarkdown(md) {
       .replace(/\n\n/g, "</p><p>")
       .replace(/^(?!<[hult]|<pre|<blockquote|<hr|___)/gm, "<p>")
       .replace(/(?![hult]>|pre>|blockquote>|hr>|___)$/gm, "</p>")
+      // Replace triple parallax image placeholder with HTML
+      .replace(
+        /___PARALLAX3_IMAGE___(.*?)___(.*?)___(.*?)___BG_(.*?)___LABEL_(.*?)___END___/gim,
+        (_match, url1, url2, url3, bg, label) => {
+          const labelHtml = label ? `<h3 class="parallax-image-label">${label}</h3>` : '';
+          return `<div class="fullscreen-parallax-wrapper">${labelHtml}<div class="fullscreen-parallax-image"><div class="parallax-background-container" style="background-color: ${bg};"><div class="parallax-images-grid"><div class="parallax-image-strip" style="width: 20%;"><div class="parallax-image-container"><img src="${url1}" alt="Parallax image 1" class="parallax-image" data-speed="1.3" loading="lazy" /></div></div><div class="parallax-image-strip" style="width: 50%;"><div class="parallax-image-container"><img src="${url2}" alt="Parallax image 2" class="parallax-image" data-speed="1.0" loading="lazy" /></div></div><div class="parallax-image-strip" style="width: 30%;"><div class="parallax-image-container"><img src="${url3}" alt="Parallax image 3" class="parallax-image" data-speed="1.8" loading="lazy" /></div></div></div></div></div></div>`;
+        }
+      )
       // Replace parallax image placeholder with HTML
       .replace(
         /___PARALLAX_IMAGE___(.*?)___BG_(.*?)___LABEL_(.*?)___END___/gim,
@@ -576,9 +591,19 @@ function renderMarkdown(md) {
   width: 100%;
   height: 100%;
   border-radius: 12px;
+  overflow: hidden;
+}
+
+.markdown-content :deep(.parallax-images-grid) {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 0;
+}
+
+.markdown-content :deep(.parallax-image-strip) {
+  height: 100%;
+  overflow: hidden;
 }
 
 .markdown-content :deep(.parallax-image-container) {
@@ -586,7 +611,6 @@ function renderMarkdown(md) {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
