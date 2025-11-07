@@ -97,13 +97,13 @@ const imageRef = ref(null);
 const showMagnifier = ref(false);
 const mouseX = ref(0);
 const mouseY = ref(0);
-const imgRect = ref(null);
+const containerRect = ref(null);
 
 const handleMouseEnter = () => {
   if (!props.enableMagnifier) return;
   showMagnifier.value = true;
-  if (imageRef.value) {
-    imgRect.value = imageRef.value.getBoundingClientRect();
+  if (containerRef.value) {
+    containerRect.value = containerRef.value.getBoundingClientRect();
   }
 };
 
@@ -112,9 +112,9 @@ const handleMouseLeave = () => {
 };
 
 const handleMouseMove = (e) => {
-  if (!props.enableMagnifier || !imgRect.value) return;
+  if (!props.enableMagnifier || !containerRect.value) return;
 
-  const rect = imgRect.value;
+  const rect = containerRect.value;
   mouseX.value = e.clientX - rect.left;
   mouseY.value = e.clientY - rect.top;
 };
@@ -132,7 +132,7 @@ const magnifierStyle = computed(() => {
 });
 
 const magnifierImageStyle = computed(() => {
-  if (!imgRect.value) return {};
+  if (!containerRect.value) return {};
 
   const size = props.magnifierSize;
   const zoom = props.zoomLevel;
@@ -143,8 +143,8 @@ const magnifierImageStyle = computed(() => {
 
   const imgNaturalWidth = imgElement.naturalWidth;
   const imgNaturalHeight = imgElement.naturalHeight;
-  const containerWidth = imgRect.value.width;
-  const containerHeight = imgRect.value.height;
+  const containerWidth = containerRect.value.width;
+  const containerHeight = containerRect.value.height;
 
   // Calculate actual rendered size with object-fit: contain
   const containerRatio = containerWidth / containerHeight;
@@ -255,7 +255,7 @@ const magnifierImageStyle = computed(() => {
 
 .fullscreen-image__img {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 100vh;
   width: auto;
   height: auto;
   object-fit: contain;

@@ -105,6 +105,30 @@ const {
 
 // Intersection Observer for scroll-based play/pause
 let observer = null;
+let scrollCheckInterval = null;
+
+// Helper function to check if video is in viewport
+const isVideoInViewport = () => {
+  if (!videoContainerRef.value) return false;
+
+  const rect = videoContainerRef.value.getBoundingClientRect();
+  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+  const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+
+  // Calculate what portion of the video is visible
+  const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+  const visibleWidth = Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
+
+  const totalHeight = rect.height;
+  const totalWidth = rect.width;
+
+  const visibleArea = visibleHeight * visibleWidth;
+  const totalArea = totalHeight * totalWidth;
+
+  const visibilityRatio = totalArea > 0 ? visibleArea / totalArea : 0;
+
+  return visibilityRatio >= props.autoplayThreshold;
+};
 
 // Setup on mount
 onMounted(() => {
@@ -124,27 +148,39 @@ onMounted(() => {
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Video is visible - play it only if user didn't manually pause
+          // Check if video is sufficiently visible (meets threshold)
+          const isSufficientlyVisible = entry.isIntersecting && entry.intersectionRatio >= props.autoplayThreshold;
+
+          if (isSufficientlyVisible) {
+            // Video is visible enough - play it only if user didn't manually pause
             if (!userPaused.value) {
               setTimeout(() => {
                 attemptPlay();
               }, 300);
             }
           } else {
-            // Video is not visible - ALWAYS pause it to prevent background playback
+            // Video is not sufficiently visible - ALWAYS pause it to prevent background playback
             pauseVideo();
           }
         });
       },
       {
-        threshold: props.autoplayThreshold,
+        // Use multiple thresholds to catch fast scrolling
+        threshold: [0, 0.25, 0.5, props.autoplayThreshold, 1],
         rootMargin: '0px',
       }
     );
 
     observer.observe(videoContainerRef.value);
   }
+
+  // Additional safeguard: periodically check if video should be paused
+  // This catches cases where IntersectionObserver might miss fast scrolling
+  scrollCheckInterval = setInterval(() => {
+    if (isPlaying.value && !isVideoInViewport()) {
+      pauseVideo();
+    }
+  }, 200); // Check every 200ms
 });
 
 // Cleanup on unmount
@@ -159,6 +195,12 @@ onUnmounted(() => {
   if (observer) {
     observer.disconnect();
     observer = null;
+  }
+
+  // Clear interval
+  if (scrollCheckInterval) {
+    clearInterval(scrollCheckInterval);
+    scrollCheckInterval = null;
   }
 
   pauseVideo();

@@ -81,9 +81,9 @@ function initializeMagnifiers() {
     const handleMouseMove = (e) => {
       if (!magnifier || !magnifierImage) return;
 
-      const rect = img.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const containerRect = container.getBoundingClientRect();
+      const x = e.clientX - containerRect.left;
+      const y = e.clientY - containerRect.top;
 
       const magnifierSize = 250;
       const zoomLevel = 2.5;
@@ -98,8 +98,8 @@ function initializeMagnifiers() {
       // Calculate actual image dimensions based on object-fit: contain
       const imgNaturalWidth = img.naturalWidth;
       const imgNaturalHeight = img.naturalHeight;
-      const containerWidth = rect.width;
-      const containerHeight = rect.height;
+      const containerWidth = containerRect.width;
+      const containerHeight = containerRect.height;
 
       // Calculate actual rendered size with object-fit: contain
       const containerRatio = containerWidth / containerHeight;
@@ -633,7 +633,7 @@ function renderMarkdown(md) {
 
 .markdown-content :deep(.fullscreen-image-md) {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 100vh;
   width: auto;
   height: auto;
   object-fit: contain;
