@@ -85,26 +85,20 @@ useMeta(`case${props.caseId}`);
 
 // Always scroll to top when case page is mounted
 onMounted(() => {
-  console.log('📄 CasePage mounted, scroll:', window.scrollY);
-
   // Immediate scroll
   window.scrollTo(0, 0);
-  console.log('✅ Scrolled immediately, now:', window.scrollY);
 
   // Also scroll after Vue updates DOM
   nextTick(() => {
-    console.log('🔄 nextTick, scroll:', window.scrollY);
     window.scrollTo(0, 0);
   });
 
   // And once more after delays
   setTimeout(() => {
-    console.log('⏰ setTimeout 0ms, scroll:', window.scrollY);
     window.scrollTo(0, 0);
   }, 0);
 
   setTimeout(() => {
-    console.log('⏰ setTimeout 500ms, scroll:', window.scrollY);
     window.scrollTo(0, 0);
   }, 500);
 });

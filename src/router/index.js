@@ -45,7 +45,6 @@ const router = createRouter({
     if (to.path === "/" && from.path?.startsWith("/story")) {
       const savedScroll = scrollPositions.get("/");
       if (savedScroll !== undefined) {
-        console.log('📍 Restoring scroll position:', savedScroll);
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve({ top: savedScroll, behavior: "instant" });
@@ -69,7 +68,6 @@ router.beforeEach(async (to, from, next) => {
   if (from.path === "/" && to.path.startsWith("/story")) {
     const scrollTop = window.scrollY || window.pageYOffset;
     scrollPositions.set("/", scrollTop);
-    console.log('💾 Saved scroll position:', scrollTop);
   }
 
   // Set meta for skipping intro animation when returning from story

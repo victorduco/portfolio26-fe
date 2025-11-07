@@ -127,16 +127,12 @@ onMounted(() => {
           if (entry.isIntersecting) {
             // Video is visible - play it only if user didn't manually pause
             if (!userPaused.value) {
-              console.log('📺 Video is visible, attempting autoplay');
               setTimeout(() => {
                 attemptPlay();
               }, 300);
-            } else {
-              console.log('⏸️ Video is visible but user paused it manually, skipping autoplay');
             }
           } else {
             // Video is not visible - ALWAYS pause it to prevent background playback
-            console.log('⏸️ Video is not visible, pausing');
             pauseVideo();
           }
         });

@@ -78,18 +78,12 @@ watch(
 watch(
   () => route.meta?.skipNavIntro,
   (shouldSkip) => {
-    console.log('👀 Watch triggered, skipNavIntro:', shouldSkip);
     if (shouldSkip) {
-      console.log('🎬 Triggering fade-in on return, shouldFadeIn:', shouldFadeIn.value);
       shouldFadeIn.value = true;
-      console.log('✅ shouldFadeIn set to:', shouldFadeIn.value);
 
       // Remove the class after animation completes (0.3s delay + 0.3s fade = 600ms)
-      console.log('⏰ Setting timeout for 600ms');
       setTimeout(() => {
-        console.log('⏰ Timeout fired! Removing fade-in class');
         shouldFadeIn.value = false;
-        console.log('🎬 Fade-in class removed, shouldFadeIn:', shouldFadeIn.value);
       }, 600);
     }
   },

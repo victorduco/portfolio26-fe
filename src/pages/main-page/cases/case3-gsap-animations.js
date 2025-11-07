@@ -24,7 +24,6 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
     if (cloudCorners?.$el) {
       gsap.set(cloudCorners.$el, { opacity: 1, clearProps: "all" });
     }
-    console.log('⏭️ Skipped Case3 animations - set to final state');
   }
 
   // Find sections inside pinContainer

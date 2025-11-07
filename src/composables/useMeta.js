@@ -13,7 +13,6 @@ export function useMeta(pageKey) {
     route = useRoute();
   } catch (error) {
     // Route недоступен (компонент вне RouterView или до инициализации роутера)
-    console.warn("useMeta: component is outside router context, meta tags will not be updated");
     return {
       updateMeta: () => {},
     };
