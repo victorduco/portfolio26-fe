@@ -233,7 +233,7 @@ function renderMarkdown(md) {
         /___PARALLAX3_IMAGE___(.*?)___(.*?)___(.*?)___BG_(.*?)___LABEL_(.*?)___END___/gim,
         (_match, url1, url2, url3, bg, label) => {
           const labelHtml = label ? `<h3 class="parallax-image-label">${label}</h3>` : '';
-          return `<div class="fullscreen-parallax-wrapper">${labelHtml}<div class="fullscreen-parallax-image"><div class="parallax-background-container" style="background-color: ${bg};"><div class="parallax-images-grid"><div class="parallax-image-strip" style="width: 20%;"><div class="parallax-image-container"><img src="${url1}" alt="Parallax image 1" class="parallax-image" data-speed="1.3" loading="lazy" /></div></div><div class="parallax-image-strip" style="width: 50%;"><div class="parallax-image-container"><img src="${url2}" alt="Parallax image 2" class="parallax-image" data-speed="1.0" loading="lazy" /></div></div><div class="parallax-image-strip" style="width: 30%;"><div class="parallax-image-container"><img src="${url3}" alt="Parallax image 3" class="parallax-image" data-speed="1.8" loading="lazy" /></div></div></div></div></div></div>`;
+          return `<div class="fullscreen-parallax-wrapper">${labelHtml}<div class="fullscreen-parallax-image"><div class="parallax-background-container" style="background-color: ${bg};"><div class="parallax-inner-container"><div class="parallax-images-grid"><div class="parallax-image-strip" style="width: 20%;"><div class="parallax-image-container"><img src="${url1}" alt="Parallax image 1" class="parallax-image" data-speed="1.3" loading="lazy" /></div></div><div class="parallax-image-strip" style="width: 50%;"><div class="parallax-image-container"><img src="${url2}" alt="Parallax image 2" class="parallax-image" data-speed="1.0" loading="lazy" /></div></div><div class="parallax-image-strip" style="width: 30%;"><div class="parallax-image-container"><img src="${url3}" alt="Parallax image 3" class="parallax-image" data-speed="1.8" loading="lazy" /></div></div></div></div></div></div></div>`;
         }
       )
       // Replace parallax image placeholder with HTML
@@ -592,6 +592,15 @@ function renderMarkdown(md) {
   height: 100%;
   border-radius: 12px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.markdown-content :deep(.parallax-inner-container) {
+  width: 80%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .markdown-content :deep(.parallax-images-grid) {
@@ -604,6 +613,7 @@ function renderMarkdown(md) {
 .markdown-content :deep(.parallax-image-strip) {
   height: 100%;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .markdown-content :deep(.parallax-image-container) {
@@ -612,18 +622,19 @@ function renderMarkdown(md) {
   height: 100%;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
 .markdown-content :deep(.parallax-image) {
   width: 100%;
-  height: 200%;
-  min-height: 200%;
+  height: 160%;
+  min-height: 160%;
+  min-width: 100%;
   max-width: none;
   max-height: none;
   object-fit: cover;
-  object-position: top center;
+  object-position: center top;
   display: block;
   position: absolute;
   top: 0;
