@@ -6,6 +6,10 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const props = defineProps({
   caseId: {
@@ -33,9 +37,10 @@ onMounted(async () => {
     const markdown = await response.text();
     markdownContent.value = renderMarkdown(markdown);
 
-    // Initialize magnifier after content is rendered
+    // Initialize magnifier and parallax after content is rendered
     await nextTick();
     initializeMagnifiers();
+    initializeParallax();
   } catch (error) {
     console.error(`Error loading ${props.sectionType} content:`, error);
     markdownContent.value = "<p>Error loading content</p>";
@@ -139,51 +144,104 @@ function initializeMagnifiers() {
   });
 }
 
+function initializeParallax() {
+  const parallaxContainers = document.querySelectorAll('.fullscreen-parallax-image');
+
+  parallaxContainers.forEach((container) => {
+    const img = container.querySelector('.parallax-image');
+    if (!img) return;
+
+    const setupAnimation = () => {
+      // Image is 160% of container height
+      // Start from top (y: 0) and move down to show bottom
+      const containerHeight = container.offsetHeight;
+      const imgHeight = img.offsetHeight;
+
+      // Move from 0 (top visible) to negative value (bottom visible)
+      // Multiply by 1.3 for faster parallax speed
+      const endY = -(imgHeight - containerHeight) * 1.3;
+
+      gsap.fromTo(
+        img,
+        { y: 0 },
+        {
+          y: endY,
+          ease: "none",
+          scrollTrigger: {
+            trigger: container,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+            markers: false,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
+    };
+
+    if (img.complete) {
+      setupAnimation();
+    } else {
+      img.addEventListener('load', () => {
+        setupAnimation();
+        setTimeout(() => ScrollTrigger.refresh(), 100);
+      });
+    }
+  });
+}
+
 function renderMarkdown(md) {
   // Get background color from case config (same as video background for case 1)
   const bgColor = props.caseConfig?.videoBackground || 'transparent';
 
   return (
     md
+      // Parallax images: ![fullscreen|parallax|Label](url) or ![fullscreen|parallax](url)
+      .replace(
+        /!\[fullscreen\|parallax(?:\|(.*?))?\]\((.*?)\)/gim,
+        (_match, label, url) => {
+          return `___PARALLAX_IMAGE___${url}___BG_${bgColor}___LABEL_${label || ''}___END___`;
+        }
+      )
       // Fullscreen images with magnifier, label and sources: ![fullscreen|magnifier|Label|sources:Name:url,Name2:url2](url)
       .replace(
         /!\[fullscreen\|magnifier\|(.*?)\|sources:(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$3___BG_${bgColor}___MAG_true___LABEL_$1___SOURCES_$2___END___`
+        `___FULLSCREEN_IMAGE___$3___BG_${bgColor}___MAG_true___PARALLAX_false___LABEL_$1___SOURCES_$2___END___`
       )
       // Fullscreen images with label and sources: ![fullscreen|Label|sources:Name:url,Name2:url2](url)
       .replace(
         /!\[fullscreen\|(.*?)\|sources:(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$3___BG_${bgColor}___MAG_false___LABEL_$1___SOURCES_$2___END___`
+        `___FULLSCREEN_IMAGE___$3___BG_${bgColor}___MAG_false___PARALLAX_false___LABEL_$1___SOURCES_$2___END___`
       )
       // Fullscreen images with magnifier and sources (no label): ![fullscreen|magnifier|sources:Name:url](url)
       .replace(
         /!\[fullscreen\|magnifier\|sources:(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_true___LABEL____SOURCES_$1___END___`
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_true___PARALLAX_false___LABEL____SOURCES_$1___END___`
       )
       // Fullscreen images with sources only (no label, no magnifier): ![fullscreen|sources:Name:url](url)
       .replace(
         /!\[fullscreen\|sources:(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_false___LABEL____SOURCES_$1___END___`
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_false___PARALLAX_false___LABEL____SOURCES_$1___END___`
       )
       // Fullscreen images with magnifier and label: ![fullscreen|magnifier|Label](url)
       .replace(
         /!\[fullscreen\|magnifier\|(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_true___LABEL_$1___SOURCES____END___`
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_true___PARALLAX_false___LABEL_$1___SOURCES____END___`
       )
       // Fullscreen images with magnifier: ![fullscreen|magnifier](url)
       .replace(
         /!\[fullscreen\|magnifier\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_true___LABEL____SOURCES____END___`
+        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_true___PARALLAX_false___LABEL____SOURCES____END___`
       )
       // Fullscreen images with label: ![fullscreen|Label](url)
       .replace(
         /!\[fullscreen\|(.*?)\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_false___LABEL_$1___SOURCES____END___`
+        `___FULLSCREEN_IMAGE___$2___BG_${bgColor}___MAG_false___PARALLAX_false___LABEL_$1___SOURCES____END___`
       )
       // Fullscreen images: ![fullscreen](url) - use unique placeholder
       .replace(
         /!\[fullscreen\]\((.*?)\)/gim,
-        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_false___LABEL____SOURCES____END___`
+        `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_false___PARALLAX_false___LABEL____SOURCES____END___`
       )
       .replace(/^### (.*$)/gim, "<h3>$1</h3>")
       .replace(/^## (.*$)/gim, "<h2>$1</h2>")
@@ -212,10 +270,18 @@ function renderMarkdown(md) {
       .replace(/\n\n/g, "</p><p>")
       .replace(/^(?!<[hult]|<pre|<blockquote|<hr|___)/gm, "<p>")
       .replace(/(?![hult]>|pre>|blockquote>|hr>|___)$/gm, "</p>")
+      // Replace parallax image placeholder with HTML
+      .replace(
+        /___PARALLAX_IMAGE___(.*?)___BG_(.*?)___LABEL_(.*?)___END___/gim,
+        (_match, url, bg, label) => {
+          const labelHtml = label ? `<h3 class="parallax-image-label">${label}</h3>` : '';
+          return `<div class="fullscreen-parallax-wrapper">${labelHtml}<div class="fullscreen-parallax-image"><div class="parallax-background-container" style="background-color: ${bg};"><div class="parallax-image-container"><img src="${url}" alt="Parallax image" class="parallax-image" loading="lazy" /></div></div></div></div>`;
+        }
+      )
       // Replace placeholder with actual image after paragraph processing
       .replace(
-        /___FULLSCREEN_IMAGE___(.*?)___BG_(.*?)___MAG_(.*?)___LABEL_(.*?)___SOURCES_(.*?)___END___/gim,
-        (match, url, bg, mag, label, sources) => {
+        /___FULLSCREEN_IMAGE___(.*?)___BG_(.*?)___MAG_(.*?)___PARALLAX_(.*?)___LABEL_(.*?)___SOURCES_(.*?)___END___/gim,
+        (match, url, bg, mag, _parallax, label, sources) => {
           // Parse sources: "Name:url,Name2:url2" -> array of {name, url}
           const sourcesArray = sources ? sources.split(',').map(s => {
             const [name, url] = s.split(':');
@@ -253,11 +319,17 @@ function renderMarkdown(md) {
         /<p>(<div class="fullscreen-image-wrapper".*?<\/div>)<\/p>/g,
         "$1"
       )
+      .replace(
+        /<p>(<div class="fullscreen-parallax-wrapper".*?<\/div><\/div><\/div><\/div>)<\/p>/g,
+        "$1"
+      )
       // Clean up orphaned </p> and <p> around block elements
       .replace(/<\/p><p>(<div class="fullscreen-image-wrapper-md">)/g, "$1")
       .replace(/<\/p><p>(<div class="fullscreen-image-wrapper")/g, "$1")
+      .replace(/<\/p><p>(<div class="fullscreen-parallax-wrapper">)/g, "$1")
       .replace(/(<\/div><\/div>)<\/p><p>/g, "$1")
       .replace(/(<\/div>)<\/p><p>/g, "$1")
+      .replace(/(<\/div><\/div><\/div><\/div>)<\/p><p>/g, "$1")
       // Clean up orphaned tags at the start/end
       .replace(/^<\/p>/, "")
       .replace(/<p>$/g, "")
@@ -519,8 +591,91 @@ function renderMarkdown(md) {
   justify-content: center;
 }
 
+/* Parallax images styles */
+.markdown-content :deep(.fullscreen-parallax-wrapper) {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px;
+  box-sizing: border-box;
+  margin-top: 48px;
+  margin-bottom: 0;
+}
+
+.markdown-content :deep(.parallax-image-label) {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 0 -8px 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 1.2;
+  color: inherit;
+  opacity: 0.5;
+}
+
+.markdown-content :deep(.fullscreen-parallax-image) {
+  width: 100%;
+  height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.markdown-content :deep(.parallax-background-container) {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.markdown-content :deep(.parallax-image-container) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.markdown-content :deep(.parallax-image) {
+  width: 100%;
+  height: 200%;
+  min-height: 200%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Spacing for parallax images */
+.markdown-content :deep(p + .fullscreen-parallax-wrapper) {
+  margin-top: -8px;
+}
+
+.markdown-content :deep(.fullscreen-parallax-wrapper + p) {
+  margin-top: 64px;
+}
+
 /* If wrapper ends up inside a paragraph, fix it */
 .markdown-content :deep(p .fullscreen-image-wrapper) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-content :deep(p .fullscreen-parallax-wrapper) {
   margin-top: 0;
   margin-bottom: 0;
 }
