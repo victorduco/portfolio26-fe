@@ -6,10 +6,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { initializeMarkdownParallax } from "@/composables/useParallaxImage";
 
 const props = defineProps({
   caseId: {
@@ -40,7 +37,7 @@ onMounted(async () => {
     // Initialize magnifier and parallax after content is rendered
     await nextTick();
     initializeMagnifiers();
-    initializeParallax();
+    initializeMarkdownParallax();
   } catch (error) {
     console.error(`Error loading ${props.sectionType} content:`, error);
     markdownContent.value = "<p>Error loading content</p>";
@@ -141,52 +138,6 @@ function initializeMagnifiers() {
     container.addEventListener('mouseenter', handleMouseEnter);
     container.addEventListener('mouseleave', handleMouseLeave);
     container.addEventListener('mousemove', handleMouseMove);
-  });
-}
-
-function initializeParallax() {
-  const parallaxContainers = document.querySelectorAll('.fullscreen-parallax-image');
-
-  parallaxContainers.forEach((container) => {
-    const img = container.querySelector('.parallax-image');
-    if (!img) return;
-
-    const setupAnimation = () => {
-      // Image is 160% of container height
-      // Start from top (y: 0) and move down to show bottom
-      const containerHeight = container.offsetHeight;
-      const imgHeight = img.offsetHeight;
-
-      // Move from 0 (top visible) to negative value (bottom visible)
-      // Multiply by 1.3 for faster parallax speed
-      const endY = -(imgHeight - containerHeight) * 1.3;
-
-      gsap.fromTo(
-        img,
-        { y: 0 },
-        {
-          y: endY,
-          ease: "none",
-          scrollTrigger: {
-            trigger: container,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.5,
-            markers: false,
-            invalidateOnRefresh: true,
-          },
-        }
-      );
-    };
-
-    if (img.complete) {
-      setupAnimation();
-    } else {
-      img.addEventListener('load', () => {
-        setupAnimation();
-        setTimeout(() => ScrollTrigger.refresh(), 100);
-      });
-    }
   });
 }
 
@@ -591,17 +542,12 @@ function renderMarkdown(md) {
   justify-content: center;
 }
 
-/* Parallax images styles */
+/* Parallax images in markdown - fullscreen positioning and spacing */
 .markdown-content :deep(.fullscreen-parallax-wrapper) {
   width: 100vw;
   position: relative;
   left: 50%;
   margin-left: -50vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 16px;
-  box-sizing: border-box;
   margin-top: 48px;
   margin-bottom: 0;
 }
@@ -609,8 +555,8 @@ function renderMarkdown(md) {
 .markdown-content :deep(.parallax-image-label) {
   width: 100%;
   max-width: 1200px;
-  margin: 0 0 -8px 0;
-  padding: 0;
+  margin: 0 auto -8px;
+  padding: 0 16px;
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
   font-size: 14px;

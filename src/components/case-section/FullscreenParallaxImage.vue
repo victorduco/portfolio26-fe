@@ -19,10 +19,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { initializeParallaxImage } from '@/composables/useParallaxImage';
 
 const props = defineProps({
   imageSrc: {
@@ -47,45 +44,11 @@ const containerRef = ref(null);
 const imageRef = ref(null);
 
 onMounted(() => {
-  const img = imageRef.value;
-  if (!img) return;
-
-  const setupAnimation = () => {
-    // Fast parallax movement: show top of image at start, bottom at end
-    // Image starts at top (0%) and moves down to show bottom (-60%)
-    // 60% movement matches 160% image height to show full content
-    gsap.fromTo(
-      img,
-      {
-        yPercent: 0,
-      },
-      {
-        yPercent: -60,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.value,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 0.5,
-          markers: false,
-          invalidateOnRefresh: true,
-        },
-      }
-    );
-  };
-
-  // Wait for image to load before setting up animation
-  if (img.complete) {
-    setupAnimation();
-  } else {
-    img.addEventListener('load', () => {
-      setupAnimation();
-      // Refresh ScrollTrigger after image loads
-      setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 100);
-    });
-  }
+  initializeParallaxImage(containerRef.value, imageRef.value, {
+    speed: 1.3,
+    scrub: 0.5,
+    markers: false
+  });
 });
 </script>
 
