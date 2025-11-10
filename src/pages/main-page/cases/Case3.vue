@@ -131,9 +131,9 @@ const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
 const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url)
   .href;
 
-// Video positioning
+// Video positioning (relative to media container)
 const videoPositionX = "62.5%";
-const videoPositionY = "calc(39% + 145px)";
+const videoPositionY = "39%";
 const videoScale = 0.33;
 
 // Refs
