@@ -133,6 +133,7 @@ const createBoxVariants = (sizes) => ({
         y: 0,
         rotate: 0,
         scale: 1,
+        opacity: 0,
         zIndex: 5,
         "--border-color": "#ffffff10",
         "--border-gradient": "transparent",
@@ -151,6 +152,7 @@ const createBoxVariants = (sizes) => ({
         y: 0,
         rotate: 0,
         scale: 1,
+        opacity: 1,
         zIndex: 5,
         "--border-color": "#ffffff10",
         "--border-gradient": "transparent",
@@ -169,6 +171,7 @@ const createBoxVariants = (sizes) => ({
       marginRight: `${baseMargin}px`,
       rotate: 0,
       scale: 1,
+      opacity: 1,
       zIndex: 5,
       "--border-color": "#ffffff10",
       "--border-gradient": "transparent",
@@ -198,7 +201,7 @@ const createBoxVariants = (sizes) => ({
         zIndex: 5,
         "--border-color": "#ffffff10",
         "--border-gradient": "transparent",
-        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--glow-color": getBorderColorWithAlpha(index, 0.1),
         "--border-radius": "26px",
       };
     }
@@ -216,7 +219,7 @@ const createBoxVariants = (sizes) => ({
         zIndex: 10,
         "--border-color": getBorderColorWithAlpha(index, 0),
         "--border-gradient": "transparent",
-        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--glow-color": getBorderColorWithAlpha(index, 0.1),
         "--border-radius": "26px",
       };
     }
@@ -271,7 +274,7 @@ const createBoxVariants = (sizes) => ({
         zIndex: 10000,
         "--border-color": getBorderColorWithAlpha(index, 0),
         "--border-gradient": "transparent",
-        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--glow-color": getBorderColorWithAlpha(index, 0.1),
         "--border-radius": "26px",
       };
     }
@@ -289,7 +292,7 @@ const createBoxVariants = (sizes) => ({
         zIndex: 10000,
         "--border-color": getBorderColorWithAlpha(index, 0),
         "--border-gradient": "transparent",
-        "--glow-color": getBorderColorWithAlpha(index, 0),
+        "--glow-color": getBorderColorWithAlpha(index, 0.1),
         "--border-radius": "26px",
       };
     }

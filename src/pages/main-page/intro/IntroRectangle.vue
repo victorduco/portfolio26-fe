@@ -1,5 +1,6 @@
 <template>
   <motion.li
+    v-if="shouldAnimate"
     @hoverStart="isHovered = true"
     @hoverEnd="isHovered = false"
     @click="toggleState"
@@ -18,7 +19,6 @@
       'intro-square--smallest-active': isSmallestBreakpoints && isActive,
     }"
     :data-state="isActive"
-    :style="{ opacity: shouldAnimate ? 1 : 0 }"
     v-backdrop-filter="backdropFilter"
   >
     <motion.div
@@ -63,7 +63,6 @@ import {
   squareContentVariants,
   useBoxVariants,
 } from "./variants.js";
-
 
 const boxVariants = useBoxVariants();
 
@@ -114,35 +113,29 @@ const localActive = ref(false);
 const isHovered = ref(false);
 
 const isActive = computed(() => {
-  
   if (props.isSmallestBreakpoints || props.isMobileLayout) {
     return props.activeMobileIndex === props.index;
   }
   return localActive.value;
 });
 
-
 const animationState = computed(() => {
-  
   if (props.isSmallestBreakpoints || props.isMobileLayout) {
     if (isActive.value) return "active";
     return "default";
   }
-  
+
   if (isActive.value) return "active";
-  
+
   if (isHovered.value && props.introVisible && props.shouldAnimate)
     return "hover";
   return "default";
 });
 
-
 const boxTransition = computed(() => {
   if (isActive.value) {
-    
     return spring;
   } else {
-    
     return {
       type: "spring",
       stiffness: 70,
@@ -156,7 +149,7 @@ const emit = defineEmits(["activeChange", "mobileOpen", "mobileClose"]);
 
 function toggleState() {
   isHovered.value = false;
-  
+
   if (props.isSmallestBreakpoints || props.isMobileLayout) {
     if (isActive.value) {
       handleMobileCloseRequest();
@@ -170,7 +163,6 @@ function toggleState() {
   localActive.value = !localActive.value;
   emit("activeChange", localActive.value);
 }
-
 
 watch(
   () => props.forceClose,
@@ -187,15 +179,11 @@ watch(
   }
 );
 
-
-
 const additionalMargin = computed(() =>
   props.isMobileLayout || props.isSmallestBreakpoints
     ? 0
     : props.activeCount * -40
 );
-
-
 
 function getIconClass(index) {
   const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];
@@ -252,7 +240,7 @@ function handleMobileCloseRequest() {
   border-radius: var(--border-radius);
   transform-origin: 50% 50%;
   border: 3px solid var(--border-color);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -305,8 +293,8 @@ function handleMobileCloseRequest() {
   user-select: none;
   text-shadow: calc(-1 * var(--text-shadow-offset)) var(--text-shadow-offset)
       var(--text-shadow-blur) var(--text-glow-color),
-    var(--text-shadow-offset) var(--text-shadow-offset)
-      var(--text-shadow-blur) var(--text-glow-color),
+    var(--text-shadow-offset) var(--text-shadow-offset) var(--text-shadow-blur)
+      var(--text-glow-color),
     0px 0px var(--text-shadow-blur) var(--text-glow-color);
 }
 

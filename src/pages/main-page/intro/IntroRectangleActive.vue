@@ -20,6 +20,7 @@
         'intro-active-content--smallest': isSmallestBreakpoints,
       }"
       :variants="activeContentVariants"
+      initial="hidden"
       :animate="isActive ? 'active' : 'hidden'"
       :transition="spring"
       :custom="{ isMobileLayout: isMobileLayout || isSmallestBreakpoints }"
@@ -136,7 +137,7 @@ function handleBackdropClick() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: clamp(12px, 2vh, 20px);
   text-align: center;
   padding: 32px;
   max-width: 400px;
@@ -208,7 +209,7 @@ function handleBackdropClick() {
     width: 100%;
     background: rgba(255, 255, 255, 0.85);
     border-radius: 26px;
-    padding: 32px 24px 56px;
+    padding: 40px 24px calc(72px + 100px);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
     color: #000000;
   }
@@ -290,7 +291,7 @@ function handleBackdropClick() {
 
   .intro-active-content--smallest {
     /* Контент внутри ромба */
-    padding: 32px 20px 64px;
+    padding: 40px 20px calc(80px + 100px);
     max-width: 100%;
     width: 100%;
   }
