@@ -129,7 +129,8 @@ defineExpose({
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, 50px);
+  /* Positioned lower so all text is initially hidden under the mask */
+  transform: translate(-50%, 0);
   text-align: center;
   z-index: 1;
 }
@@ -181,6 +182,7 @@ defineExpose({
   position: absolute;
   top: 50%;
   left: 50%;
+  /* Top edge of mask aligns with the line (center) */
   transform: translate(-50%, 0);
   width: 100vw;
   height: 25vh;
