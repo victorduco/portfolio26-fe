@@ -133,7 +133,7 @@ const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url)
 
 // Video positioning (relative to media container)
 const videoPositionX = "62.5%";
-const videoPositionY = "39%";
+const videoPositionY = "54.5%";
 const videoScale = 0.33;
 
 // Refs
@@ -155,31 +155,38 @@ let animationInstance = null;
 onMounted(() => {
   // Initialize GSAP animations with ScrollTrigger
   if (pinContainerRef.value) {
-    animationInstance = initAnimations(pinContainerRef.value, {
-      tagsElement: tagsElement.value,
-      titleElement: titleElement.value,
-      descriptionElement: descriptionElement.value,
-      buttonElement: buttonElement.value,
-      imageContainer: imageContainer.value,
-      videoElement: videoElement.value,
-      cloudCorners: cloudCornersRef.value,
-    }, shouldSkipAnimation.value);
+    animationInstance = initAnimations(
+      pinContainerRef.value,
+      {
+        tagsElement: tagsElement.value,
+        titleElement: titleElement.value,
+        descriptionElement: descriptionElement.value,
+        buttonElement: buttonElement.value,
+        imageContainer: imageContainer.value,
+        videoElement: videoElement.value,
+        cloudCorners: cloudCornersRef.value,
+      },
+      shouldSkipAnimation.value
+    );
   }
 });
 
 // Watch for route changes - if returning from story, set elements to final state
-watch(() => route.meta?.skipNavIntro, (skipIntro) => {
-  if (skipIntro && buttonElement.value && imageContainer.value) {
-    gsap.set(imageContainer.value, { scale: 1 });
-    gsap.set(tagsElement.value, { opacity: 1, scale: 1 });
-    gsap.set(titleElement.value, { opacity: 1, scale: 1, x: 0, y: 0 });
-    gsap.set(descriptionElement.value, { opacity: 1, scale: 1 });
-    gsap.set(buttonElement.value, { opacity: 1, scale: 1 });
-    if (cloudCornersRef.value?.$el) {
-      gsap.set(cloudCornersRef.value.$el, { opacity: 1 });
+watch(
+  () => route.meta?.skipNavIntro,
+  (skipIntro) => {
+    if (skipIntro && buttonElement.value && imageContainer.value) {
+      gsap.set(imageContainer.value, { scale: 1 });
+      gsap.set(tagsElement.value, { opacity: 1, scale: 1 });
+      gsap.set(titleElement.value, { opacity: 1, scale: 1, x: 0, y: 0 });
+      gsap.set(descriptionElement.value, { opacity: 1, scale: 1 });
+      gsap.set(buttonElement.value, { opacity: 1, scale: 1 });
+      if (cloudCornersRef.value?.$el) {
+        gsap.set(cloudCornersRef.value.$el, { opacity: 1 });
+      }
     }
   }
-});
+);
 
 onUnmounted(() => {
   cleanupAnimations(animationInstance);
@@ -307,7 +314,8 @@ defineExpose({
 /* Individual tag styling */
 .case3-tag {
   margin: 0;
-  font-family: "Neue Haas Grotesk Display Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 700;
   font-size: clamp(15px, 1.06vw, 17px);
@@ -334,7 +342,8 @@ defineExpose({
 /* Base title styling */
 .case3-title {
   margin: 0;
-  font-family: "Neue Haas Grotesk Display Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: clamp(36px, 4.86vw, 78px);
@@ -379,7 +388,8 @@ defineExpose({
 /* Description Styling */
 .case3-description {
   margin: 0;
-  font-family: "Neue Haas Grotesk Display Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: clamp(16.5px, 1.43vw, 23px);
@@ -426,7 +436,8 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Neue Haas Grotesk Display Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: clamp(16px, 1.3vw, 21px);
