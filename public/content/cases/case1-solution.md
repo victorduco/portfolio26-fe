@@ -4,7 +4,7 @@
 
 We developed a comprehensive AI framework that combines conversational design with intelligent automation. The system uses natural language processing to understand user intent and provides contextual assistance throughout the reconciliation workflow, reducing the learning curve by 70%.
 
-![fullscreen|parallax3|AI Framework Architecture](/src/assets/images/case1_framework_1.png|/src/assets/images/case1_framework_2.png|/src/assets/images/case1_framework_3.png)
+![fullscreen|parallax3|AI Framework Architecture](/src/assets/images/case1_fw_s1.png|/src/assets/images/case1_fw_s2.png|/src/assets/images/case1_fw_s3.png)
 
 ## Flow Integration
 

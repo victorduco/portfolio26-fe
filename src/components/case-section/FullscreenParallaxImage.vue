@@ -164,8 +164,8 @@ onMounted(() => {
 
 .parallax-image {
   width: 100%;
-  height: 160%;
-  min-height: 160%;
+  height: 250%;
+  min-height: 250%;
   max-width: none;
   max-height: none;
   object-fit: cover;
