@@ -5,12 +5,13 @@
       <p class="results-intro">
         {{ introText }}
       </p>
-      <div class="results-wrapper">
-        <div class="results-container">
+      <div class="results-wrapper" ref="containerRef">
+        <div class="results-container" :style="{ '--bg-color': cardBackground, ...shadowVars }">
           <div class="results-grid">
             <div
               v-for="(result, index) in results"
               :key="index"
+              :ref="el => cardRefs[index] = el"
               class="result-card"
             >
               <div class="result-card-header">
@@ -33,6 +34,12 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
+
+// Скорости параллакса для каждой карточки
+const parallaxSpeeds = [0.5, 1.0];
+
 const props = defineProps({
   results: {
     type: Array,
@@ -62,6 +69,44 @@ const props = defineProps({
 const formatTitle = (title) => {
   return title.replace(/→/g, '<span class="arrow">➔</span>');
 };
+
+const shadowVars = computed(() => useAdaptiveShadow());
+
+const containerRef = ref(null);
+const cardRefs = ref([]);
+
+let animationFrameId = null;
+
+const updateParallax = () => {
+  if (!containerRef.value) return;
+
+  const rect = containerRef.value.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+
+  // Вычисляем прогресс скролла контейнера
+  const scrollProgress = (viewportHeight / 2 - rect.top - rect.height / 2) / (viewportHeight / 2 + rect.height / 2);
+
+  cardRefs.value.forEach((card, index) => {
+    if (!card) return;
+
+    const speed = parallaxSpeeds[index] || 0.5;
+    const offset = scrollProgress * 100 * speed;
+
+    card.style.transform = `translateY(${offset}px)`;
+  });
+
+  animationFrameId = requestAnimationFrame(updateParallax);
+};
+
+onMounted(() => {
+  updateParallax();
+});
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+});
 </script>
 
 <style scoped>
@@ -143,12 +188,14 @@ const formatTitle = (title) => {
   width: 450px;
   background-color: #ffffff;
   border-radius: 24px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
   padding: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 700px;
+  will-change: transform;
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .result-card-header {

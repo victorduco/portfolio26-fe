@@ -2,7 +2,7 @@
   <div class="layered-cards-wrapper">
     <h3 v-if="label" class="cards-label">{{ label }}</h3>
     <div class="layered-cards" ref="containerRef">
-      <div class="cards-container" :style="{ backgroundColor: backgroundColor, '--bg-color': backgroundColor }">
+      <div class="cards-container" :style="{ backgroundColor: backgroundColor, '--bg-color': backgroundColor, ...shadowVars }">
         <!-- Left card -->
         <div class="card card-left" ref="cardLeftRef">
           <div class="card-inner">
@@ -41,8 +41,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { parallaxSpeeds } from './layeredCardsVariants.js';
+import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
 
 const props = defineProps({
   imageLeft: {
@@ -77,12 +78,33 @@ const props = defineProps({
     type: String,
     default: 'transparent',
   },
+  speedLeft: {
+    type: Number,
+    default: null,
+  },
+  speedCenter: {
+    type: Number,
+    default: null,
+  },
+  speedRight: {
+    type: Number,
+    default: null,
+  },
 });
 
 const containerRef = ref(null);
 const cardLeftRef = ref(null);
 const cardCenterRef = ref(null);
 const cardRightRef = ref(null);
+
+const shadowVars = computed(() => useAdaptiveShadow());
+
+// Используем кастомные скорости если они переданы, иначе дефолтные из variants
+const speeds = computed(() => [
+  props.speedLeft ?? parallaxSpeeds[0],
+  props.speedCenter ?? parallaxSpeeds[1],
+  props.speedRight ?? parallaxSpeeds[2],
+]);
 
 let animationFrameId = null;
 
@@ -105,7 +127,7 @@ const updateParallax = () => {
   cards.forEach((card, index) => {
     if (!card) return;
 
-    const speed = parallaxSpeeds[index];
+    const speed = speeds.value[index];
     const offset = scrollProgress * 100 * speed;
 
     card.style.transform = `translateY(${offset}px)`;
@@ -187,17 +209,14 @@ onUnmounted(() => {
   height: 100%;
   border-radius: 24px;
   overflow: hidden;
-  /* Тень: берём цвет фона, увеличиваем saturation умеренно, делаем темнее */
-  --shadow-saturated: hsl(from var(--bg-color, hsl(220deg 13% 18%)) h calc(s * 1.5) calc(l * 0.3));
-  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) 14%, transparent);
+  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
   transform-origin: center center;
-  border: 10px solid white;
   box-sizing: border-box;
   transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-inner:hover {
-  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) 14%, transparent);
+  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
 }
 
 .card-inner img {
@@ -212,18 +231,21 @@ onUnmounted(() => {
 .card-left {
   left: calc(50% - 45vw);
   top: calc(50% - 35vh);
+  z-index: 3;
 }
 
 /* Card 2 - middle right */
 .card-center {
   left: calc(50% + 5vw);
   top: calc(50% - 25vh);
+  z-index: 2;
 }
 
 /* Card 3 - bottom center-left */
 .card-right {
   left: calc(50% - 25vw);
   top: calc(50% - 10vh);
+  z-index: 1;
 }
 
 /* Responsive */

@@ -10,4 +10,4 @@ Smarp is the leading employee communication platform trusted by global enterpris
 
 The previous design was built on legacy patterns that no longer served modern workplace needs. Cluttered interfaces, inconsistent components, and outdated visual language created friction across the entire user experience. Navigation was confusing, key features were buried, and the mobile experience was an afterthought.
 
-![fullscreen](/src/assets/images/case2_challenge.png)
+![layered-cards](/src/assets/images/case2_challenge_1.png|/src/assets/images/case2_challenge_2.png|/src/assets/images/case2_challenge_3.png|speeds:0.5,1.0,1.5)

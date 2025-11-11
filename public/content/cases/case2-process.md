@@ -4,9 +4,7 @@
 
 Through extensive user research with employees across different departments and seniority levels, we identified key pain points in the existing communication flow. Conducted stakeholder interviews, competitive analysis, and analyzed usage analytics to understand how teams were actually using the platform versus how we intended them to use it.
 
-![fullscreen](/src/assets/images/case2_discovery.png)
-
-![layered-cards](/src/assets/images/case2_card_left.png|/src/assets/images/case2_card_center.png|/src/assets/images/case2_card_right.png|speeds:1.5,1.0,1.8)
+![layered-cards](/src/assets/images/case2_discovery_1.png|/src/assets/images/case2_discovery_2.png|/src/assets/images/case2_discovery_3.png|speeds:0.5,1.0,1.5)
 
 ## Wireframing
 
