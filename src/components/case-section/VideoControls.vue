@@ -2,6 +2,7 @@
   <div class="case-video-controls">
     <!-- Mute/Unmute Button -->
     <button
+      v-if="!hideMute"
       class="control-button"
       type="button"
       @click.stop="$emit('toggle-mute')"
@@ -121,6 +122,10 @@ defineProps({
   isMuted: Boolean,
   isFullscreen: Boolean,
   isSmallScreen: Boolean,
+  hideMute: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 defineEmits(['toggle-mute', 'toggle-play-pause', 'restart', 'toggle-fullscreen']);

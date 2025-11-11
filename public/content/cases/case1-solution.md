@@ -10,7 +10,7 @@ We developed a comprehensive AI framework that combines conversational design wi
 
 Our hybrid approach seamlessly integrates AI-powered conversational interfaces with traditional UI components. Users can switch between chat-based interactions and classic forms based on their preference and task complexity, ensuring flexibility without sacrificing efficiency.
 
-![fullscreen](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+![chaptered-video|UX Transition Workflow](/videos/case1-chaptered-test.mp4|chapters:Interface Design:Chat Interface:0:Form Interface:3:Hybrid Approach:6:Component Library:9;User Experience:Interaction Flow:12:Context Switching:15:Progress Tracking:17:Adaptive UI:19)
 
 ## Smooth Experience Switch
 

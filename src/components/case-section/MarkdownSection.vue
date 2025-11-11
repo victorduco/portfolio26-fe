@@ -1,12 +1,24 @@
 <template>
   <section :class="`case-${sectionType}`">
-    <div class="markdown-content" v-html="markdownContent"></div>
+    <div class="markdown-content">
+      <template v-for="(item, index) in parsedContent" :key="index">
+        <div v-if="item.type === 'html'" v-html="item.content"></div>
+        <ChapteredVideo
+          v-else-if="item.type === 'chaptered-video'"
+          :video-src="item.videoSrc"
+          :background-color="item.backgroundColor"
+          :video-label="item.label"
+          :chapter-groups="item.chapterGroups"
+        />
+      </template>
+    </div>
   </section>
 </template>
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
 import { initializeMarkdownParallax } from "@/composables/useParallaxImage";
+import ChapteredVideo from "./ChapteredVideo.vue";
 
 const props = defineProps({
   caseId: {
@@ -25,6 +37,7 @@ const props = defineProps({
 });
 
 const markdownContent = ref("");
+const parsedContent = ref([]);
 
 onMounted(async () => {
   try {
@@ -32,7 +45,7 @@ onMounted(async () => {
       `/content/cases/case${props.caseId}-${props.sectionType}.md`
     );
     const markdown = await response.text();
-    markdownContent.value = renderMarkdown(markdown);
+    parsedContent.value = parseMarkdownWithComponents(markdown);
 
     // Initialize magnifier and parallax after content is rendered
     await nextTick();
@@ -40,9 +53,92 @@ onMounted(async () => {
     initializeMarkdownParallax();
   } catch (error) {
     console.error(`Error loading ${props.sectionType} content:`, error);
-    markdownContent.value = "<p>Error loading content</p>";
+    parsedContent.value = [{ type: 'html', content: "<p>Error loading content</p>" }];
   }
 });
+
+function parseMarkdownWithComponents(markdown) {
+  const bgColor = props.caseConfig?.videoBackground || 'transparent';
+
+  // Check for chaptered video syntax: ![chaptered-video|Label](video.mp4|chapters:Group1:Title1:0,Title2:10;Group2:Title3:15)
+  const chapteredVideoRegex = /!\[chaptered-video(?:\|(.*?))?\]\((.*?)\|(.*?)\)/gim;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = chapteredVideoRegex.exec(markdown)) !== null) {
+    // Add HTML content before this video
+    if (match.index > lastIndex) {
+      const htmlContent = markdown.substring(lastIndex, match.index);
+      const rendered = renderMarkdown(htmlContent);
+      if (rendered.trim()) {
+        parts.push({ type: 'html', content: rendered });
+      }
+    }
+
+    // Parse chaptered video
+    const label = match[1] || '';
+    const videoSrc = match[2].trim();
+    const chaptersData = match[3];
+
+    // Parse chapters: Group1:Title1:0,Title2:10;Group2:Title3:15
+    const chapterGroups = [];
+
+    if (chaptersData.startsWith('chapters:')) {
+      const chaptersStr = chaptersData.replace('chapters:', '');
+      const groups = chaptersStr.split(';');
+
+      groups.forEach((groupStr) => {
+        const parts = groupStr.split(':');
+        const groupTitle = parts[0].trim();
+        const chapters = [];
+
+        // Parse chapters in format: Title:time,Title:time
+        for (let i = 1; i < parts.length; i += 2) {
+          if (i + 1 < parts.length) {
+            chapters.push({
+              title: parts[i].trim(),
+              startTime: parseFloat(parts[i + 1])
+            });
+          }
+        }
+
+        if (chapters.length > 0) {
+          chapterGroups.push({
+            title: groupTitle,
+            chapters
+          });
+        }
+      });
+    }
+
+    parts.push({
+      type: 'chaptered-video',
+      videoSrc,
+      backgroundColor: bgColor,
+      label,
+      chapterGroups
+    });
+
+    lastIndex = chapteredVideoRegex.lastIndex;
+  }
+
+  // Add remaining HTML content
+  if (lastIndex < markdown.length) {
+    const htmlContent = markdown.substring(lastIndex);
+    const rendered = renderMarkdown(htmlContent);
+    if (rendered.trim()) {
+      parts.push({ type: 'html', content: rendered });
+    }
+  }
+
+  // If no chaptered videos found, return all as HTML
+  if (parts.length === 0) {
+    return [{ type: 'html', content: renderMarkdown(markdown) }];
+  }
+
+  return parts;
+}
 
 function initializeMagnifiers() {
   const containers = document.querySelectorAll('.fullscreen-image-container[data-magnifier="true"]');
@@ -697,6 +793,33 @@ function renderMarkdown(md) {
   height: 100%;
   background-repeat: no-repeat;
   border-radius: 50%;
+}
+
+/* Chaptered video styles - fullscreen layout */
+.markdown-content :deep(.chaptered-video-wrapper) {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
+  padding: 0;
+  box-sizing: border-box;
+  margin-top: 48px;
+  margin-bottom: 0;
+}
+
+.markdown-content :deep(.chaptered-video-label) {
+  max-width: 1200px;
+  margin: 0 auto -8px;
+  padding: 0 16px;
+}
+
+/* Spacing for chaptered video */
+.markdown-content :deep(p + .chaptered-video-wrapper) {
+  margin-top: -8px;
+}
+
+.markdown-content :deep(.chaptered-video-wrapper + p) {
+  margin-top: 64px;
 }
 
 @media (max-width: 768px) {
