@@ -6,9 +6,15 @@ We developed a comprehensive AI framework that combines conversational design wi
 
 ![fullscreen|parallax3|AI Framework Architecture](/src/assets/images/case1_fw_s1.png|/src/assets/images/case1_fw_s2.png|/src/assets/images/case1_fw_s3.png)
 
-## Flow Integration
+## From Classic UX to AI UX
 
 Our hybrid approach seamlessly integrates AI-powered conversational interfaces with traditional UI components. Users can switch between chat-based interactions and classic forms based on their preference and task complexity, ensuring flexibility without sacrificing efficiency.
+
+![fullscreen](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+
+## Smooth Experience Switch
+
+The transition between AI-assisted and traditional workflows is seamless and intuitive. Users can effortlessly move between interaction modes without losing context or progress, ensuring a consistent experience regardless of their chosen approach.
 
 ![fullscreen](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
 
