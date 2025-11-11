@@ -2,44 +2,38 @@
   <div class="layered-cards-wrapper">
     <h3 v-if="label" class="cards-label">{{ label }}</h3>
     <div class="layered-cards" ref="containerRef">
-      <div class="cards-container" :style="{ backgroundColor: backgroundColor }">
+      <div class="cards-container" :style="{ backgroundColor: backgroundColor, '--bg-color': backgroundColor }">
         <!-- Left card -->
-        <div
-          class="card card-left"
-          ref="cardLeftRef"
-          :style="{ zIndex: 3 }"
-        >
-          <img
-            :src="imageLeft"
-            :alt="altLeft || 'Left card'"
-            loading="lazy"
-          />
+        <div class="card card-left" ref="cardLeftRef">
+          <div class="card-inner">
+            <img
+              :src="imageLeft"
+              :alt="altLeft || 'Left card'"
+              loading="lazy"
+            />
+          </div>
         </div>
 
         <!-- Center card (main) -->
-        <div
-          class="card card-center"
-          ref="cardCenterRef"
-          :style="{ zIndex: 1 }"
-        >
-          <img
-            :src="imageCenter"
-            :alt="altCenter || 'Center card'"
-            loading="lazy"
-          />
+        <div class="card card-center" ref="cardCenterRef">
+          <div class="card-inner">
+            <img
+              :src="imageCenter"
+              :alt="altCenter || 'Center card'"
+              loading="lazy"
+            />
+          </div>
         </div>
 
         <!-- Right card -->
-        <div
-          class="card card-right"
-          ref="cardRightRef"
-          :style="{ zIndex: 2 }"
-        >
-          <img
-            :src="imageRight"
-            :alt="altRight || 'Right card'"
-            loading="lazy"
-          />
+        <div class="card card-right" ref="cardRightRef">
+          <div class="card-inner">
+            <img
+              :src="imageRight"
+              :alt="altRight || 'Right card'"
+              loading="lazy"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -47,11 +41,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { ref, onMounted, onUnmounted } from 'vue';
+import { parallaxSpeeds } from './layeredCardsVariants.js';
 
 const props = defineProps({
   imageLeft: {
@@ -86,19 +77,6 @@ const props = defineProps({
     type: String,
     default: 'transparent',
   },
-  // Скорости параллакса для каждой карточки
-  speedLeft: {
-    type: Number,
-    default: 1.5,
-  },
-  speedCenter: {
-    type: Number,
-    default: 1.0,
-  },
-  speedRight: {
-    type: Number,
-    default: 1.8,
-  },
 });
 
 const containerRef = ref(null);
@@ -106,39 +84,49 @@ const cardLeftRef = ref(null);
 const cardCenterRef = ref(null);
 const cardRightRef = ref(null);
 
-onMounted(() => {
+let animationFrameId = null;
+
+const updateParallax = () => {
   if (!containerRef.value) return;
 
-  // Parallax effect for each card
   const cards = [
-    { ref: cardLeftRef.value, speed: props.speedLeft },
-    { ref: cardCenterRef.value, speed: props.speedCenter },
-    { ref: cardRightRef.value, speed: props.speedRight },
+    cardLeftRef.value,
+    cardCenterRef.value,
+    cardRightRef.value,
   ];
 
-  cards.forEach(({ ref, speed }) => {
-    if (ref) {
-      gsap.fromTo(
-        ref,
-        { y: -50 * speed },
-        {
-          y: 50 * speed,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.value,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.5,
-            markers: false,
-          },
-        }
-      );
-    }
+  const rect = containerRef.value.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+
+  // Вычисляем прогресс скролла контейнера
+  // -1 когда контейнер внизу экрана, 0 в центре, 1 вверху экрана
+  const scrollProgress = (viewportHeight / 2 - rect.top - rect.height / 2) / (viewportHeight / 2 + rect.height / 2);
+
+  cards.forEach((card, index) => {
+    if (!card) return;
+
+    const speed = parallaxSpeeds[index];
+    const offset = scrollProgress * 100 * speed;
+
+    card.style.transform = `translateY(${offset}px)`;
   });
+
+  animationFrameId = requestAnimationFrame(updateParallax);
+};
+
+onMounted(() => {
+  updateParallax();
+});
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
 });
 </script>
 
 <style scoped>
+
 .layered-cards-wrapper {
   width: 100vw;
   position: relative;
@@ -149,6 +137,7 @@ onMounted(() => {
   align-items: center;
   margin-top: 48px;
   margin-bottom: 0;
+  overflow: visible;
 }
 
 .cards-label {
@@ -169,6 +158,8 @@ onMounted(() => {
   height: 100vh;
   padding: 16px;
   box-sizing: border-box;
+  perspective: 1200px;
+  overflow: visible;
 }
 
 .cards-container {
@@ -179,54 +170,60 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
+  transform-style: preserve-3d;
 }
 
 .card {
   position: absolute;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.15),
-    0 8px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  will-change: transform;
   width: 40vw;
   aspect-ratio: 2 / 1.1;
+  will-change: transform, opacity;
 }
 
-.card:hover {
-  box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.2),
-    0 12px 30px rgba(0, 0, 0, 0.15);
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  /* Тень: берём цвет фона, увеличиваем saturation умеренно, делаем темнее */
+  --shadow-saturated: hsl(from var(--bg-color, hsl(220deg 13% 18%)) h calc(s * 1.5) calc(l * 0.3));
+  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) 14%, transparent);
+  transform-origin: center center;
+  border: 10px solid white;
+  box-sizing: border-box;
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card img {
+.card-inner:hover {
+  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) 14%, transparent);
+}
+
+.card-inner img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
+  border-radius: 14px;
 }
 
 /* Card 1 - top left */
 .card-left {
   left: calc(50% - 45vw);
   top: calc(50% - 35vh);
-  transform: translateZ(0);
 }
 
 /* Card 2 - middle right */
 .card-center {
   left: calc(50% + 5vw);
   top: calc(50% - 25vh);
-  transform: translateZ(0);
 }
 
 /* Card 3 - bottom center-left */
 .card-right {
   left: calc(50% - 25vw);
   top: calc(50% - 10vh);
-  transform: translateZ(0);
 }
 
 /* Responsive */
