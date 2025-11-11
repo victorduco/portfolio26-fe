@@ -6,6 +6,8 @@ Through extensive user research with employees across different departments and 
 
 ![fullscreen](/src/assets/images/case2_discovery.png)
 
+![layered-cards](/src/assets/images/case2_card_left.png|/src/assets/images/case2_card_center.png|/src/assets/images/case2_card_right.png|speeds:1.5,1.0,1.8)
+
 ## Wireframing
 
 Created low-fidelity wireframes to explore new navigation patterns and information architecture. Iterated rapidly through multiple concepts, testing different approaches to content organization, feature discoverability, and user flows. Collaborated closely with product managers and engineers to ensure technical feasibility while pushing for better UX.

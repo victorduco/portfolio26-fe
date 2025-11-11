@@ -10,6 +10,20 @@
           :video-label="item.label"
           :chapter-groups="item.chapterGroups"
         />
+        <LayeredCards
+          v-else-if="item.type === 'layered-cards'"
+          :image-left="item.imageLeft"
+          :image-center="item.imageCenter"
+          :image-right="item.imageRight"
+          :alt-left="item.altLeft"
+          :alt-center="item.altCenter"
+          :alt-right="item.altRight"
+          :label="item.label"
+          :background-color="item.backgroundColor"
+          :speed-left="item.speedLeft"
+          :speed-center="item.speedCenter"
+          :speed-right="item.speedRight"
+        />
       </template>
     </div>
   </section>
@@ -19,6 +33,7 @@
 import { ref, onMounted, nextTick } from "vue";
 import { initializeMarkdownParallax } from "@/composables/useParallaxImage";
 import ChapteredVideo from "./ChapteredVideo.vue";
+import LayeredCards from "./LayeredCards.vue";
 
 const props = defineProps({
   caseId: {
@@ -60,23 +75,35 @@ onMounted(async () => {
 function parseMarkdownWithComponents(markdown) {
   const bgColor = props.caseConfig?.videoBackground || 'transparent';
 
+  // Collect all components (layered cards and chaptered videos) with their positions
+  const components = [];
+
+  // Check for layered cards syntax: ![layered-cards|Label](left.png|center.png|right.png|speeds:1.5,1.0,1.8)
+  const layeredCardsRegex = /!\[layered-cards(?:\|(.*?))?\]\((.*?)\|(.*?)\|(.*?)(?:\|speeds:(.*?))?\)/gim;
+  let match;
+  while ((match = layeredCardsRegex.exec(markdown)) !== null) {
+    const speeds = match[5] ? match[5].split(',').map(s => parseFloat(s.trim())) : [1.5, 1.0, 1.8];
+    components.push({
+      type: 'layered-cards',
+      index: match.index,
+      lastIndex: layeredCardsRegex.lastIndex,
+      imageLeft: match[2].trim(),
+      imageCenter: match[3].trim(),
+      imageRight: match[4].trim(),
+      altLeft: '',
+      altCenter: '',
+      altRight: '',
+      label: match[1] || '',
+      backgroundColor: bgColor,
+      speedLeft: speeds[0] || 1.5,
+      speedCenter: speeds[1] || 1.0,
+      speedRight: speeds[2] || 1.8
+    });
+  }
+
   // Check for chaptered video syntax: ![chaptered-video|Label](video.mp4|chapters:Group1:Title1:0,Title2:10;Group2:Title3:15)
   const chapteredVideoRegex = /!\[chaptered-video(?:\|(.*?))?\]\((.*?)\|(.*?)\)/gim;
-  const parts = [];
-  let lastIndex = 0;
-  let match;
-
   while ((match = chapteredVideoRegex.exec(markdown)) !== null) {
-    // Add HTML content before this video
-    if (match.index > lastIndex) {
-      const htmlContent = markdown.substring(lastIndex, match.index);
-      const rendered = renderMarkdown(htmlContent);
-      if (rendered.trim()) {
-        parts.push({ type: 'html', content: rendered });
-      }
-    }
-
-    // Parse chaptered video
     const label = match[1] || '';
     const videoSrc = match[2].trim();
     const chaptersData = match[3];
@@ -112,16 +139,38 @@ function parseMarkdownWithComponents(markdown) {
       });
     }
 
-    parts.push({
+    components.push({
       type: 'chaptered-video',
+      index: match.index,
+      lastIndex: chapteredVideoRegex.lastIndex,
       videoSrc,
       backgroundColor: bgColor,
       label,
       chapterGroups
     });
-
-    lastIndex = chapteredVideoRegex.lastIndex;
   }
+
+  // Sort components by index
+  components.sort((a, b) => a.index - b.index);
+
+  // Build parts array with HTML and components
+  const parts = [];
+  let lastIndex = 0;
+
+  components.forEach(component => {
+    // Add HTML content before this component
+    if (component.index > lastIndex) {
+      const htmlContent = markdown.substring(lastIndex, component.index);
+      const rendered = renderMarkdown(htmlContent);
+      if (rendered.trim()) {
+        parts.push({ type: 'html', content: rendered });
+      }
+    }
+
+    // Add component
+    parts.push(component);
+    lastIndex = component.lastIndex;
+  });
 
   // Add remaining HTML content
   if (lastIndex < markdown.length) {
@@ -132,7 +181,7 @@ function parseMarkdownWithComponents(markdown) {
     }
   }
 
-  // If no chaptered videos found, return all as HTML
+  // If no components found, return all as HTML
   if (parts.length === 0) {
     return [{ type: 'html', content: renderMarkdown(markdown) }];
   }
