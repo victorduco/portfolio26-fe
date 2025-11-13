@@ -4,11 +4,11 @@ import { RouterView, useRoute, useRouter } from "vue-router";
 import Keypad from "./components/keypad/Keypad.vue";
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
-import { useLenis } from "./composables/useLenis.js";
+// import { useLenis } from "./composables/useLenis.js";
 
 const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
-const { setupLenis, destroy } = useLenis();
+// const { setupLenis, destroy } = useLenis();
 const route = useRoute();
 const router = useRouter();
 
@@ -16,20 +16,20 @@ onMounted(() => {
   checkAuth();
 
   // Initialize Lenis smooth scroll with snap
-  setupLenis();
+  // setupLenis();
 });
 
 onUnmounted(() => {
   // Cleanup Lenis on unmount
-  destroy();
+  // destroy();
 });
 
 // Force scroll to top for story pages on route change
 watch(() => route.path, (newPath, oldPath) => {
   if (newPath.startsWith("/story")) {
     // Stop Lenis temporarily to force scroll position
-    const { stop, start } = useLenis();
-    stop();
+    // const { stop, start } = useLenis();
+    // stop();
 
     // Immediate scroll
     window.scrollTo(0, 0);
@@ -47,9 +47,9 @@ watch(() => route.path, (newPath, oldPath) => {
     });
 
     // Re-enable Lenis after scroll is set (story pages don't use it, but we enable it anyway)
-    setTimeout(() => {
-      start();
-    }, 300);
+    // setTimeout(() => {
+    //   start();
+    // }, 300);
   }
 }, { immediate: true });
 

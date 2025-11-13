@@ -133,9 +133,6 @@ export function initAnimations(pinContainer) {
   // Enable button clicking when text appears
   mainTimeline.set(".line-element", { pointerEvents: "auto" }, "<");
 
-  // Add 5 second pause at the end (for testing)
-  mainTimeline.to({}, { duration: 5 });
-
   // Refresh after loading
   setTimeout(() => ScrollTrigger.refresh(), 0);
 

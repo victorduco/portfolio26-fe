@@ -135,9 +135,6 @@ export function initAnimations(trigger) {
     0.8
   );
 
-  // Add 1 second pause at the end
-  tl.to({}, { duration: 1 });
-
   if (videoElement) {
     // Video scrubbing based on scroll - completes at 75% scroll progress
     ScrollTrigger.create({
