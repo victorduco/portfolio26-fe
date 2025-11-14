@@ -1,4 +1,3 @@
-import { delay } from "motion-v";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 
 // Color mappings for different states
@@ -105,13 +104,6 @@ export const useResponsiveSizes = () => {
   return sizes;
 };
 
-const getGridPosition = (index) => {
-  const gridCol = index * 2 + 1; // 1, 3, 5, 7
-  const gridRow = index % 2 === 0 ? 1 : 2; // четные всегда в row 1, нечетные всегда в row 2
-
-  return { gridColumn: gridCol, gridRow };
-};
-
 // Функция для создания boxVariants с актуальными размерами
 const createBoxVariants = (sizes) => ({
   default: ({
@@ -126,8 +118,6 @@ const createBoxVariants = (sizes) => ({
     if (isSmallestBreakpoints) {
       return {
         "--element-side-size": sizes.default,
-        gridColumn: "auto",
-        gridRow: "auto",
         marginLeft: `${baseMargin}px`,
         marginRight: `${baseMargin}px`,
         y: 0,
@@ -145,8 +135,6 @@ const createBoxVariants = (sizes) => ({
     if (isMobileLayout) {
       return {
         "--element-side-size": sizes.default,
-        gridColumn: "auto",
-        gridRow: "auto",
         marginLeft: `${baseMargin}px`,
         marginRight: `${baseMargin}px`,
         y: 0,
@@ -161,12 +149,8 @@ const createBoxVariants = (sizes) => ({
       };
     }
 
-    const position = getGridPosition(index);
-
     return {
       "--element-side-size": sizes.default,
-      gridColumn: position.gridColumn,
-      gridRow: position.gridRow,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
       rotate: 0,
@@ -191,8 +175,6 @@ const createBoxVariants = (sizes) => ({
     if (isSmallestBreakpoints) {
       return {
         "--element-side-size": sizes.default,
-        gridColumn: "auto",
-        gridRow: "auto",
         marginLeft: `${baseMargin}px`,
         marginRight: `${baseMargin}px`,
         y: 0,
@@ -209,8 +191,6 @@ const createBoxVariants = (sizes) => ({
     if (isMobileLayout) {
       return {
         "--element-side-size": sizes.default,
-        gridColumn: "auto",
-        gridRow: "auto",
         marginLeft: `${baseMargin}px`,
         marginRight: `${baseMargin}px`,
         y: 0,
@@ -223,8 +203,6 @@ const createBoxVariants = (sizes) => ({
         "--border-radius": "26px",
       };
     }
-
-    const position = getGridPosition(index);
 
     // Вычисляем сдвиг вверх как половину от увеличения размера
     const defaultSize = parseInt(sizes.default);
@@ -240,8 +218,6 @@ const createBoxVariants = (sizes) => ({
 
     return {
       "--element-side-size": sizes.hover,
-      gridColumn: position.gridColumn,
-      gridRow: position.gridRow,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
       y: `${yOffset}px`,
@@ -264,8 +240,6 @@ const createBoxVariants = (sizes) => ({
     if (isSmallestBreakpoints) {
       return {
         "--element-side-size": sizes.default, // Оставляем исходный размер, fullscreen через CSS
-        gridColumn: "auto",
-        gridRow: "auto",
         marginLeft: "0px",
         marginRight: "0px",
         y: 0,
@@ -282,8 +256,6 @@ const createBoxVariants = (sizes) => ({
     if (isMobileLayout) {
       return {
         "--element-side-size": sizes.active,
-        gridColumn: "auto",
-        gridRow: "auto",
         marginLeft: "0px",
         marginRight: "0px",
         y: 0,
@@ -298,7 +270,6 @@ const createBoxVariants = (sizes) => ({
     }
 
     const baseMargin = -45;
-    const position = getGridPosition(index);
     // Центрируем активные элементы: четные вниз, нечетные вверх
     // Четные (0, 2): смещаются вниз (используем activeTopOffsetEven с инверсией знака)
     // Нечетные (1, 3): смещаются вверх (используем activeTopOffsetOdd как есть)
@@ -307,8 +278,6 @@ const createBoxVariants = (sizes) => ({
 
     return {
       "--element-side-size": sizes.active,
-      gridColumn: position.gridColumn,
-      gridRow: position.gridRow,
       marginLeft: `${baseMargin + additionalMargin}px`,
       marginRight: `${baseMargin}px`,
       y, // расходятся от центра симметрично

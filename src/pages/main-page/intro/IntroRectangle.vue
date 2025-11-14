@@ -248,6 +248,41 @@ function handleMobileCloseRequest() {
   overflow: hidden;
 }
 
+/* Grid positioning for desktop (non-mobile layouts) */
+@media (min-width: 900px) {
+  /* index 0: gridColumn 1, gridRow 1 */
+  .intro-square:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* index 1: gridColumn 3, gridRow 2 */
+  .intro-square:nth-child(2) {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  /* index 2: gridColumn 5, gridRow 1 */
+  .intro-square:nth-child(3) {
+    grid-column: 5;
+    grid-row: 1;
+  }
+
+  /* index 3: gridColumn 7, gridRow 2 */
+  .intro-square:nth-child(4) {
+    grid-column: 7;
+    grid-row: 2;
+  }
+}
+
+/* Mobile: auto positioning */
+@media (max-width: 899px) {
+  .intro-square {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
 .intro-square::after {
   content: "";
   position: absolute;
