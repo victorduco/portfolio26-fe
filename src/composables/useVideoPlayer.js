@@ -191,11 +191,16 @@ export function useVideoPlayer(videoSrc, videoElement) {
     const video = getVideoElement();
     if (!video) return;
 
+    // Ensure video is muted for autoplay to work
+    video.muted = true;
+    isMuted.value = true;
+
     video.play().then(() => {
       isPlaying.value = true;
       hasStartedPlayback.value = true;
-    }).catch(() => {
-      // Ignore autoplay errors
+    }).catch((error) => {
+      console.warn('Autoplay failed:', error);
+      isPlaying.value = false;
     });
   };
 

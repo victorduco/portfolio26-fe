@@ -31,6 +31,10 @@ export const META_CONFIG = {
       title: "Story Three",
       description: "Performance Optimization - Maximizing speed and efficiency",
     },
+    404: {
+      title: "404 - Page Not Found",
+      description: "The page you are looking for doesn't exist",
+    },
   },
 
   // Генерация полного title

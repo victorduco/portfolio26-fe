@@ -40,6 +40,7 @@
                 :src="videoSrc"
                 muted
                 playsinline
+                preload="auto"
                 @timeupdate="handleTimeUpdate"
                 @ended="handleVideoEnded"
                 @click="handleTogglePlayPause"
@@ -75,7 +76,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import VideoControls from "./VideoControls.vue";
-import { useVideoPlayer } from "@/composables/useVideoPlayer";
+import { useChapteredVideo } from "@/composables/useChapteredVideo";
 import { useMediaQuery } from "@/composables/useMediaQuery";
 
 const props = defineProps({
@@ -122,7 +123,7 @@ const {
   toggleFullscreen,
   pauseVideo,
   playVideo,
-} = useVideoPlayer(videoElement);
+} = useChapteredVideo(videoElement);
 
 // Current chapter tracking
 const currentChapterIndex = ref({ groupIndex: 0, chapterIndex: 0 });
@@ -160,7 +161,6 @@ const seekToChapter = (groupIndex, chapterIndex) => {
     // Auto-play when seeking to a chapter
     if (!isPlaying.value) {
       userPaused.value = false;
-      hasStartedPlayback.value = true;
       togglePlayPause();
     }
   }
@@ -192,14 +192,7 @@ const handleTimeUpdate = () => {
 
 // Handle video ended
 const handleVideoEnded = () => {
-  hasStartedPlayback.value = true;
-};
-
-// Format time in MM:SS format
-const formatTime = (seconds) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
+  // Video ended, nothing special to do
 };
 
 // Intersection Observer for scroll-based play/pause
@@ -232,20 +225,13 @@ const isVideoInViewport = () => {
 // User pause tracking
 const userPaused = ref(false);
 
-// Override togglePlayPause to track user pause
+// Handle play/pause and track user pause state
 const handleTogglePlayPause = () => {
-  if (isPlaying.value) {
-    // User is pausing the video
-    userPaused.value = true;
-  } else {
-    // User is playing the video
-    userPaused.value = false;
-    hasStartedPlayback.value = true;
-  }
+  userPaused.value = isPlaying.value; // If playing, user is pausing it
   togglePlayPause();
 };
 
-// Override restartVideo to track user interaction
+// Handle restart and reset user pause state
 const handleRestartVideo = () => {
   userPaused.value = false;
   restartVideo();
@@ -296,6 +282,13 @@ onMounted(() => {
       hasStartedPlayback.value = false;
     }
   }, 200); // Check every 200ms
+
+  // Auto-play video on mount if it's in viewport
+  setTimeout(() => {
+    if (isVideoInViewport() && !userPaused.value) {
+      playVideo();
+    }
+  }, 100);
 });
 
 onUnmounted(() => {

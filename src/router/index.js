@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainPage from "../pages/main-page/MainPage.vue";
 import CasePage from "../pages/case-page/CasePage.vue";
+import NotFoundPage from "../pages/NotFoundPage.vue";
 import { mixpanel } from "../plugins/mixpanel.js";
 
 const routes = [
@@ -26,6 +27,11 @@ const routes = [
     name: "StoryThree",
     component: CasePage,
     props: { caseId: "3" },
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFoundPage,
   },
 ];
 

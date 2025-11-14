@@ -53,7 +53,7 @@
       :initial="false"
       @click="showClearButton ? handleClear() : null"
     >
-      {{ showClearButton ? 'Clear' : 'Enter PIN Code' }}
+      {{ showClearButton ? 'Clear' : 'Enter Access Code' }}
     </Motion>
   </div>
 </template>
