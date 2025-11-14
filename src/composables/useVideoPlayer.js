@@ -187,6 +187,18 @@ export function useVideoPlayer(videoSrc, videoElement) {
     }
   };
 
+  const playVideo = () => {
+    const video = getVideoElement();
+    if (!video) return;
+
+    video.play().then(() => {
+      isPlaying.value = true;
+      hasStartedPlayback.value = true;
+    }).catch(() => {
+      // Ignore autoplay errors
+    });
+  };
+
   const saveState = () => {
     const video = getVideoElement();
     if (hasStartedPlayback.value) {
@@ -231,6 +243,7 @@ export function useVideoPlayer(videoSrc, videoElement) {
     handleFullscreenChange,
     handleUserInteraction,
     pauseVideo,
+    playVideo,
     saveState,
     restoreState,
     clearVideoState,

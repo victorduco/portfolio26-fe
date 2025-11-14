@@ -4,16 +4,25 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 export function initAnimations(trigger) {
   const videoElement = document.querySelector(".case2-video");
 
+  // Create pin ScrollTrigger separately (starts at top top)
+  ScrollTrigger.create({
+    trigger: trigger,
+    start: "top top",
+    end: "bottom bottom",
+    pin: true,
+    pinSpacing: false,
+    id: "case2-pin",
+  });
+
+  // Animation timeline starts earlier (top bottom) for text fade-in
   const tl = gsap.timeline({
     defaults: {
       ease: "power2.out",
     },
     scrollTrigger: {
       trigger: trigger,
-      start: "top top",
+      start: "top bottom",
       end: "bottom bottom",
-      pin: true,
-      pinSpacing: false,
       scrub: 1,
       id: "case2-main",
     },
@@ -136,12 +145,15 @@ export function initAnimations(trigger) {
   );
 
   if (videoElement) {
+    // Use quickSetter for smoother video scrubbing
+    const setVideoTime = gsap.quickSetter(videoElement, "currentTime");
+
     // Video scrubbing based on scroll - completes at 75% scroll progress
     ScrollTrigger.create({
       trigger: trigger,
       start: "top bottom", // Start playing when section enters viewport
       end: "bottom bottom",
-      scrub: true,
+      scrub: 2,
       id: "case2-video-scrub",
       onUpdate: (self) => {
         if (videoElement.duration && !isNaN(videoElement.duration)) {
@@ -149,9 +161,8 @@ export function initAnimations(trigger) {
           // Video completes when scroll reaches 75%
           const videoProgress = Math.min(self.progress / 0.6, 1);
           const targetTime = videoProgress * videoElement.duration;
-          if (Math.abs(videoElement.currentTime - targetTime) > 0.01) {
-            videoElement.currentTime = targetTime;
-          }
+          // Use quickSetter for smoother performance
+          setVideoTime(targetTime);
         }
       },
     });

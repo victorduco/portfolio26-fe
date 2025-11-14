@@ -120,6 +120,8 @@ const {
   togglePlayPause,
   restartVideo,
   toggleFullscreen,
+  pauseVideo,
+  playVideo,
 } = useVideoPlayer(videoElement);
 
 // Current chapter tracking
@@ -261,19 +263,17 @@ onMounted(() => {
 
         if (isSufficientlyVisible) {
           // Video is visible enough - play it only if user didn't manually pause
-          if (!userPaused.value && videoElement.value) {
+          if (!userPaused.value) {
             setTimeout(() => {
-              videoElement.value.play().then(() => {
-                hasStartedPlayback.value = true;
-              }).catch(() => {
-                // Ignore autoplay errors
-              });
+              playVideo();
             }, 300);
           }
         } else {
           // Video is not sufficiently visible - ALWAYS pause it to prevent background playback
-          if (videoElement.value && isPlaying.value) {
-            videoElement.value.pause();
+          if (isPlaying.value) {
+            pauseVideo();
+            // Reset hasStartedPlayback so pause overlay doesn't show when scrolling away
+            hasStartedPlayback.value = false;
           }
         }
       });
@@ -290,8 +290,10 @@ onMounted(() => {
   // Additional safeguard: periodically check if video should be paused
   // This catches cases where IntersectionObserver might miss fast scrolling
   scrollCheckInterval = setInterval(() => {
-    if (isPlaying.value && !isVideoInViewport() && videoElement.value) {
-      videoElement.value.pause();
+    if (isPlaying.value && !isVideoInViewport()) {
+      pauseVideo();
+      // Reset hasStartedPlayback so pause overlay doesn't show when scrolling away
+      hasStartedPlayback.value = false;
     }
   }, 200); // Check every 200ms
 });
@@ -309,9 +311,7 @@ onUnmounted(() => {
     scrollCheckInterval = null;
   }
 
-  if (videoElement.value) {
-    videoElement.value.pause();
-  }
+  pauseVideo();
 });
 </script>
 

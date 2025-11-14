@@ -218,29 +218,36 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
   );
 
   // Video playback control scrubbed to scroll (independent timeline)
+  // Extended to continue beyond section1 into section2
   let videoTrigger = null;
   if (videoElement) {
     // Load video metadata to get duration
     videoElement.load();
 
+    // Use quickSetter for smoother video scrubbing
+    const setVideoTime = gsap.quickSetter(videoElement, "currentTime");
+
     // Use scrub to tie video progress to scroll progress
+    // Extended to section2 so video continues after other animations finish
+    // Starts earlier (top bottom) so video begins playing as user scrolls toward section
     videoTrigger = ScrollTrigger.create({
       trigger: section1,
-      start: "top top",
+      start: "top bottom",
+      endTrigger: section2,
       end: "bottom bottom",
-      scrub: true,
+      scrub: 2,
       id: "VIDEO-CASE3",
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         if (videoElement.readyState >= 2) {
           // HAVE_CURRENT_DATA
-          // Map scroll progress (0-1) to video time (3-8 seconds)
-          const videoDuration = 5; // 8 - 3 = 5 seconds of playback
+          // Map scroll progress (0-1) to video time (3-9 seconds)
+          const videoDuration = 6; // 9 - 3 = 6 seconds of playback (extended)
           const startTime = 3;
           const targetTime = startTime + self.progress * videoDuration;
 
-          // Set video current time based on scroll progress
-          videoElement.currentTime = targetTime;
+          // Set video current time using quickSetter for smoother performance
+          setVideoTime(targetTime);
         }
       },
     });
