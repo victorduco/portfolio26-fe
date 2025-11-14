@@ -1,6 +1,6 @@
 # Solution
 
-## AI Framework
+##|AI Framework|Consistency with Time and Effort
 
 We developed a comprehensive AI framework that combines conversational design with intelligent automation. The system uses natural language processing to understand user intent and provides contextual assistance throughout the reconciliation workflow, reducing the learning curve by 70%.
 

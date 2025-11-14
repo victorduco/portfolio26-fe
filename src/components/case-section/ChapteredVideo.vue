@@ -313,13 +313,13 @@ onUnmounted(() => {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
 }
 
 .chaptered-video-label {
   width: 100%;
   max-width: 1200px;
-  margin: 0 0 -8px 0;
+  margin: 0 auto -8px;
   padding: 0;
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);

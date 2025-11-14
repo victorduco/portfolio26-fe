@@ -346,6 +346,8 @@ function renderMarkdown(md) {
         /!\[fullscreen\]\((.*?)\)/gim,
         `___FULLSCREEN_IMAGE___$1___BG_${bgColor}___MAG_false___PARALLAX_false___LABEL____SOURCES____END___`
       )
+      // Two-level headings MUST be processed BEFORE regular ## headings
+      .replace(/^##\|(.*?)\|(.*?)$/gim, "___TWO_LEVEL_HEADING___$1___$2___END___")
       .replace(/^### (.*$)/gim, "<h3>$1</h3>")
       .replace(/^## (.*$)/gim, "<h2>$1</h2>")
       .replace(/^# (.*$)/gim, "<h1>$1</h1>")
@@ -420,6 +422,11 @@ function renderMarkdown(md) {
           return `<div class="fullscreen-image-wrapper-md">${labelHtml}<div class="fullscreen-image-wrapper"><div class="fullscreen-image-background" style="background-color: ${bg};"><div class="fullscreen-image-container" data-magnifier="${mag}"${sourcesAttr}><img src="${url}" alt="Fullscreen image" class="fullscreen-image-md" loading="lazy" /></div></div></div></div>`;
         }
       )
+      // Replace two-level heading placeholders with HTML
+      .replace(
+        /___TWO_LEVEL_HEADING___(.*?)___(.*?)___END___/gim,
+        '<div class="heading-two-level"><div class="heading-subtitle">$1</div><h2>$2</h2></div>'
+      )
       // Clean up empty paragraphs and paragraphs around images
       .replace(/<p><\/p>/g, "")
       .replace(
@@ -434,10 +441,16 @@ function renderMarkdown(md) {
         /<p>(<div class="fullscreen-parallax-wrapper".*?<\/div><\/div><\/div><\/div>)<\/p>/g,
         "$1"
       )
+      // Clean up two-level headings wrapped in paragraphs
+      .replace(
+        /<p>(<div class="heading-two-level">.*?<\/div>)<\/p>/g,
+        "$1"
+      )
       // Clean up orphaned </p> and <p> around block elements
       .replace(/<\/p><p>(<div class="fullscreen-image-wrapper-md">)/g, "$1")
       .replace(/<\/p><p>(<div class="fullscreen-image-wrapper")/g, "$1")
       .replace(/<\/p><p>(<div class="fullscreen-parallax-wrapper">)/g, "$1")
+      .replace(/<\/p><p>(<div class="heading-two-level">)/g, "$1")
       .replace(/(<\/div><\/div>)<\/p><p>/g, "$1")
       .replace(/(<\/div>)<\/p><p>/g, "$1")
       .replace(/(<\/div><\/div><\/div><\/div>)<\/p><p>/g, "$1")
@@ -500,6 +513,28 @@ function renderMarkdown(md) {
   margin-bottom: 16px;
   color: inherit;
   opacity: 0.8;
+}
+
+/* Two-level headings */
+.markdown-content :deep(.heading-two-level) {
+  margin-top: 48px;
+  margin-bottom: 24px;
+}
+
+.markdown-content :deep(.heading-two-level .heading-subtitle) {
+  font-family: var(--font-family-base);
+  font-size: clamp(14px, 2.8vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #007aff;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.markdown-content :deep(.heading-two-level h2) {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .markdown-content :deep(p) {
@@ -716,7 +751,7 @@ function renderMarkdown(md) {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto -8px;
-  padding: 0 16px;
+  padding: 0;
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
   font-size: 14px;
@@ -857,9 +892,16 @@ function renderMarkdown(md) {
 }
 
 .markdown-content :deep(.chaptered-video-label) {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto -8px;
-  padding: 0 16px;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 1.2;
+  color: inherit;
+  opacity: 0.5;
 }
 
 /* Spacing for chaptered video */
