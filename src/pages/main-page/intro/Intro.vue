@@ -284,19 +284,12 @@ watch(isMobileLayout, (isMobile) => {
 .intro-hero__title {
   max-width: 1050px;
   display: grid;
-  gap: 39px;
+  gap: clamp(39px, 2.5vw, 48px);
   position: relative;
   z-index: 1;
   margin-bottom: 22vh;
   anchor-name: --title;
   place-items: start start;
-}
-
-/* Large desktops: increased spacing */
-@media (min-width: 1920px) {
-  .intro-hero__title {
-    gap: 48px;
-  }
 }
 
 .intro-list {
@@ -321,9 +314,9 @@ watch(isMobileLayout, (isMobile) => {
 
   /* Desktop: 4 columns horizontal layout with gap columns */
   grid-template-columns:
-    fit-content(100px) clamp(40px, 6vw, 80px)
-    fit-content(100px) clamp(40px, 6vw, 80px)
-    fit-content(100px) clamp(40px, 6vw, 80px)
+    fit-content(100px) clamp(40px, 4vw, 80px)
+    fit-content(100px) clamp(40px, 4vw, 80px)
+    fit-content(100px) clamp(40px, 4vw, 80px)
     fit-content(100px);
   /* 2 rows: верх и низ */
   grid-template-rows:

@@ -179,11 +179,14 @@ watch(
   }
 );
 
-const additionalMargin = computed(() =>
-  props.isMobileLayout || props.isSmallestBreakpoints
-    ? 0
-    : props.activeCount * -40
-);
+const additionalMargin = computed(() => {
+  if (props.isMobileLayout || props.isSmallestBreakpoints) {
+    return 0;
+  }
+  // Adaptive margin based on viewport: scales from -28px to -40px
+  const baseValue = Math.max(-40, Math.min(-28, -40 + (window.innerWidth - 1200) * 0.01));
+  return props.activeCount * baseValue;
+});
 
 function getIconClass(index) {
   const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];

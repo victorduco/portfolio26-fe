@@ -27,6 +27,16 @@ const getBorderColorWithAlpha = (index, alpha) => {
   return hexToRgba(color, alpha);
 };
 
+// Calculate adaptive base margin for active state
+const getAdaptiveBaseMargin = () => {
+  if (typeof window === 'undefined') return -45;
+  const vw = window.innerWidth;
+  // Scale from -32px (at 1200px) to -45px (at 1920px+)
+  if (vw <= 1200) return -32;
+  if (vw >= 1920) return -45;
+  return -32 - ((vw - 1200) / (1920 - 1200)) * 13;
+};
+
 export const spring = {
   type: "spring",
   stiffness: 70, // унифицированная жёсткость для всех свойств
@@ -269,7 +279,7 @@ const createBoxVariants = (sizes) => ({
       };
     }
 
-    const baseMargin = -45;
+    const baseMargin = getAdaptiveBaseMargin();
     // Центрируем активные элементы: четные вниз, нечетные вверх
     // Четные (0, 2): смещаются вниз (используем activeTopOffsetEven с инверсией знака)
     // Нечетные (1, 3): смещаются вверх (используем activeTopOffsetOdd как есть)

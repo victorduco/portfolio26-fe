@@ -148,7 +148,7 @@ defineExpose({
   margin: 0;
   font-family: 'Noto Sans', sans-serif;
   font-weight: 600;
-  font-size: clamp(24px, 3vw, 48px);
+  font-size: clamp(24px, 2.2vw, 48px);
   line-height: 1.2;
   color: #000000;
 }

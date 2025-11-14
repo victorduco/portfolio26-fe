@@ -346,7 +346,7 @@ defineExpose({
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
-  font-size: clamp(36px, 4.86vw, 78px);
+  font-size: clamp(36px, 3.2vw, 78px);
   line-height: 1.21;
   text-align: center;
   width: 100%;
@@ -392,7 +392,7 @@ defineExpose({
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
-  font-size: clamp(16.5px, 1.43vw, 23px);
+  font-size: clamp(16.5px, 1.1vw, 23px);
   line-height: 1.23;
   text-align: center;
   color: #143154;

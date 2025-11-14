@@ -147,7 +147,7 @@ const handleStoryLinkClick = (event) => {
   font-family: 'Hanken Grotesk', sans-serif;
   font-style: normal;
   font-weight: 590;
-  font-size: 21px;
+  font-size: clamp(16px, 1.2vw, 21px);
   line-height: 25px;
   color: #B39999;
   margin: 0;
@@ -159,7 +159,7 @@ const handleStoryLinkClick = (event) => {
   margin: 0;
   font-family: 'Hanken Grotesk', sans-serif;
   font-weight: 500;
-  font-size: 56px;
+  font-size: clamp(32px, 3vw, 56px);
   line-height: 1.2;
   letter-spacing: -0.01em;
   color: #000000;
@@ -177,7 +177,7 @@ const handleStoryLinkClick = (event) => {
   margin-top: clamp(7px, 2vh, 23px);
   margin-bottom: clamp(17px, 3vh, 33px);
   font-weight: 400;
-  font-size: 26px;
+  font-size: clamp(18px, 1.6vw, 26px);
   line-height: 2;
   color: rgba(0, 0, 0, 0.7);
   text-align: left;
