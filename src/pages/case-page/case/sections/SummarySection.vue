@@ -1,10 +1,9 @@
 <template>
   <section class="case-summary">
     <div class="summary-content">
-      <!-- Part 1: Title and description -->
+      <!-- Part 1: Title -->
       <div class="summary-header">
         <h2 class="summary-title">{{ summaryData.title }}</h2>
-        <p class="summary-description">{{ summaryData.description }}</p>
       </div>
 
       <!-- Part 2: All details in horizontal flow -->
@@ -128,7 +127,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   align-items: center;
   padding: 150px 0 135px;
   box-sizing: border-box;
-  gap: 64px;
+  gap: 32px;
 }
 
 /* Part 1: Header */
@@ -145,16 +144,6 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   margin: 0;
   color: inherit;
   text-align: left;
-}
-
-.summary-description {
-  margin: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 16px;
-  line-height: 1.5;
-  color: inherit;
-  max-width: 1200px;
 }
 
 /* Part 2: All details wrapper */
@@ -175,6 +164,9 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 .detail-label {
   font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: 16px;
+  line-height: 1.5;
   margin: 0;
   color: inherit;
   opacity: 0.5;
