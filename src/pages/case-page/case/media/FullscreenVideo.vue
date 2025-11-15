@@ -2,7 +2,6 @@
   <MediaContainer
     type="fullheight"
     :background-color="backgroundColor"
-    :has-background="true"
     :label="videoLabel"
     wrapper-class="fullscreen-video-wrapper"
     container-class="fullscreen-video"

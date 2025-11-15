@@ -2,7 +2,6 @@
   <MediaContainer
     type="fullheight"
     :background-color="backgroundColor"
-    :has-background="true"
     :label="imageLabel"
     wrapper-class="fullscreen-parallax-wrapper"
     container-class="fullscreen-parallax"

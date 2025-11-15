@@ -2,7 +2,6 @@
   <MediaContainer
     type="inline"
     :background-color="backgroundColor"
-    :has-background="false"
     :label="imageLabel"
     :sources="sources"
     wrapper-class="fullscreen-image-wrapper"

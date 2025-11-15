@@ -2,7 +2,6 @@
   <MediaContainer
     type="fullwidth"
     :background-color="backgroundColor"
-    :has-background="true"
     :label="label"
     :overflow="'visible'"
     wrapper-class="layered-cards-wrapper"

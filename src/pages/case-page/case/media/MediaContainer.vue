@@ -1,5 +1,5 @@
 <template>
-  <div :class="['media-container-wrapper', wrapperClass, { 'fullwidth': type === 'fullwidth' }]">
+  <div :class="['media-container-wrapper', wrapperClass, { 'fullwidth': type === 'fullwidth' || type === 'fullheight' }]">
     <!-- Media Label (если нужен) -->
     <MediaLabel
       v-if="label || sources.length > 0"
@@ -10,15 +10,8 @@
     />
 
     <!-- Main container -->
-    <div :class="['media-container', containerClass, { 'fullheight': type === 'fullheight' || type === 'fullwidth' }]" :style="containerStyle">
-      <div
-        v-if="hasBackground"
-        class="background-container"
-        :style="backgroundStyle"
-      >
-        <slot />
-      </div>
-      <slot v-else />
+    <div :class="['media-container', containerClass, { 'fullheight': type === 'fullheight' || type === 'fullwidth', 'with-background': backgroundColor !== 'transparent' }]" :style="containerStyle">
+      <slot />
     </div>
   </div>
 </template>
@@ -39,12 +32,6 @@ const props = defineProps({
   backgroundColor: {
     type: String,
     default: 'transparent',
-  },
-
-  // Нужен ли серый фон контейнер с border-radius
-  hasBackground: {
-    type: Boolean,
-    default: true,
   },
 
   // Overflow behavior для background container
@@ -89,11 +76,17 @@ const props = defineProps({
 });
 
 const containerStyle = computed(() => {
-  const style = {};
+  const style = {
+    overflow: props.overflow,
+    backgroundColor: props.backgroundColor,
+  };
 
   if (props.type === 'fullheight' || props.type === 'fullwidth') {
     style.height = '100vh';
-    style.padding = '16px';
+    style.padding = '0 32px';
+  } else {
+    // Для остальных типов применяем maxWidth
+    style.maxWidth = props.maxWidth;
   }
 
   if (props.type === 'fullwidth') {
@@ -101,14 +94,6 @@ const containerStyle = computed(() => {
   }
 
   return style;
-});
-
-const backgroundStyle = computed(() => {
-  return {
-    backgroundColor: props.backgroundColor,
-    maxWidth: props.maxWidth,
-    overflow: props.overflow,
-  };
 });
 </script>
 
@@ -129,23 +114,17 @@ const backgroundStyle = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
-/* Background container - серый фон с закругленными углами */
-.background-container {
-  width: 100%;
-  height: 100%;
+/* Фон с закругленными углами */
+.media-container.with-background {
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
 }
 
 /* Тип: fullheight - для видео, parallax, layered cards */
 .media-container.fullheight {
   height: 100vh;
-  padding: 16px;
 }
 
 /* Тип: fullwidth - для LayeredCards с полноэкранной шириной */

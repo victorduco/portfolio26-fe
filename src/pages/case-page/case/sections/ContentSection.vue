@@ -72,18 +72,33 @@ function getMediaComponent(type: string): Component {
 .case-section {
   width: 100%;
   max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Медиа компоненты не должны ограничиваться max-width */
+.case-section > :deep(.media-container-wrapper) {
+  width: 100vw;
+  max-width: none;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
 }
 
 .section-heading {
   margin-top: 32px;
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .text-before {
   margin-bottom: -8px;
+  width: 100%;
 }
 
 .text-after {
   margin-top: 64px;
+  width: 100%;
 }
 </style>
