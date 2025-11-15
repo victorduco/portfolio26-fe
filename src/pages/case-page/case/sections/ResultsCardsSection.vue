@@ -112,7 +112,7 @@ onUnmounted(() => {
 <style scoped>
 .case-results-2 {
   width: 100%;
-  padding: 80px 16px 48px;
+  padding: 80px 0 48px;
   overflow-x: hidden;
   display: flex;
   justify-content: center;
@@ -274,7 +274,7 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .case-results-2 {
-    padding: 60px 16px 24px;
+    padding: 60px 0 24px;
   }
 
   .case-results-title {

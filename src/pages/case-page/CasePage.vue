@@ -271,7 +271,7 @@ const navigationSections = computed(() => {
 
 .content-section {
   width: 100%;
-  padding: 80px 16px 48px;
+  padding: 80px 0 48px;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -298,7 +298,7 @@ section:has(+ .case-next-project) {
 
 @media (max-width: 768px) {
   .content-section {
-    padding: 60px 16px 24px;
+    padding: 60px 0 24px;
   }
 
   section:has(+ .case-next-project) {

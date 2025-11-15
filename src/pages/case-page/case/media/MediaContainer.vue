@@ -1,5 +1,5 @@
 <template>
-  <div :class="['media-container-wrapper', wrapperClass, { 'fullwidth': type === 'fullwidth' || type === 'fullheight' }]">
+  <div :class="['media-container-wrapper', 'fullwidth', wrapperClass]">
     <!-- Media Label (если нужен) -->
     <MediaLabel
       v-if="label || sources.length > 0"
@@ -10,41 +10,49 @@
     />
 
     <!-- Main container -->
-    <div :class="['media-container', containerClass, { 'fullheight': type === 'fullheight' || type === 'fullwidth', 'with-background': backgroundColor !== 'transparent' }]" :style="containerStyle">
+    <div
+      :class="[
+        'media-container',
+        'fullheight',
+        containerClass,
+        { 'with-background': backgroundColor !== 'transparent' },
+      ]"
+      :style="containerStyle"
+    >
       <slot />
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import MediaLabel from '../elements/MediaLabel.vue';
+import { computed } from "vue";
+import MediaLabel from "../elements/MediaLabel.vue";
 
 const props = defineProps({
   // Тип медиа контейнера
   type: {
     type: String,
-    default: 'default', // 'default' | 'fullheight' | 'inline' | 'fullwidth'
-    validator: (value) => ['default', 'fullheight', 'inline', 'fullwidth'].includes(value),
+    default: "fullheight", // 'fullheight' | 'fullwidth'
+    validator: (value) => ["fullheight", "fullwidth"].includes(value),
   },
 
   // Background настройки
   backgroundColor: {
     type: String,
-    default: 'transparent',
+    default: "transparent",
   },
 
   // Overflow behavior для background container
   overflow: {
     type: String,
-    default: 'hidden', // 'hidden' | 'visible'
-    validator: (value) => ['hidden', 'visible'].includes(value),
+    default: "hidden", // 'hidden' | 'visible'
+    validator: (value) => ["hidden", "visible"].includes(value),
   },
 
   // Label props
   label: {
     type: String,
-    default: '',
+    default: "",
   },
 
   sources: {
@@ -54,24 +62,18 @@ const props = defineProps({
 
   labelTag: {
     type: String,
-    default: 'h3',
+    default: "h3",
   },
 
   // Кастомные классы
   wrapperClass: {
     type: String,
-    default: '',
+    default: "",
   },
 
   containerClass: {
     type: String,
-    default: '',
-  },
-
-  // Максимальная ширина контента (для centering)
-  maxWidth: {
-    type: String,
-    default: '1200px',
+    default: "",
   },
 });
 
@@ -79,18 +81,12 @@ const containerStyle = computed(() => {
   const style = {
     overflow: props.overflow,
     backgroundColor: props.backgroundColor,
+    height: "95vh",
+    width: "98vw",
   };
 
-  if (props.type === 'fullheight' || props.type === 'fullwidth') {
-    style.height = '100vh';
-    style.padding = '0 32px';
-  } else {
-    // Для остальных типов применяем maxWidth
-    style.maxWidth = props.maxWidth;
-  }
-
-  if (props.type === 'fullwidth') {
-    style.perspective = '1200px';
+  if (props.type === "fullwidth") {
+    style.perspective = "1200px";
   }
 
   return style;
@@ -115,6 +111,7 @@ const containerStyle = computed(() => {
   align-items: center;
   justify-content: center;
   position: relative;
+  z-index: 0;
 }
 
 /* Фон с закругленными углами */
@@ -122,17 +119,17 @@ const containerStyle = computed(() => {
   border-radius: 12px;
 }
 
-/* Тип: fullheight - для видео, parallax, layered cards */
+/* Класс fullheight применяется всегда, height задается в JS */
 .media-container.fullheight {
-  height: 100vh;
+  /* height задается через inline styles */
 }
 
 /* Тип: fullwidth - для LayeredCards с полноэкранной шириной */
 .media-container-wrapper.fullwidth {
-  width: 100vw;
+  width: 100%;
   position: relative;
   left: 50%;
-  margin-left: -50vw;
+  transform: translateX(-50%);
   margin-top: 48px;
   margin-bottom: 0;
   overflow: visible;
@@ -141,7 +138,13 @@ const containerStyle = computed(() => {
 /* Label для fullwidth компонентов */
 .media-container-wrapper.fullwidth :deep(.fullwidth-label) {
   max-width: 1200px;
-  margin: 0 auto -8px;
+  margin: 0 auto;
   padding: 0 16px;
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 100%;
 }
 </style>

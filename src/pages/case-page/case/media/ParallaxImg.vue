@@ -106,10 +106,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.fullscreen-parallax-wrapper {
-  padding: 0 16px;
-}
-
 .images-grid {
   display: flex;
   width: 100%;

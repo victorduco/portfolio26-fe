@@ -9,67 +9,71 @@
     <div class="video-container-inner" ref="videoContainerRef">
       <!-- Left sidebar with chapter navigation -->
       <nav class="chapters-nav" ref="navRef">
-          <div
-            v-for="(group, groupIndex) in chapterGroups"
-            :key="groupIndex"
-            class="chapter-group"
-          >
-            <h4 v-if="group.title" class="group-title">{{ group.title }}</h4>
-            <ul class="chapters-list">
-              <li
-                v-for="(chapter, chapterIndex) in group.chapters"
-                :key="`${groupIndex}-${chapterIndex}`"
-                class="chapter-item"
+        <div
+          v-for="(group, groupIndex) in chapterGroups"
+          :key="groupIndex"
+          class="chapter-group"
+        >
+          <h4 v-if="group.title" class="group-title">{{ group.title }}</h4>
+          <ul class="chapters-list">
+            <li
+              v-for="(chapter, chapterIndex) in group.chapters"
+              :key="`${groupIndex}-${chapterIndex}`"
+              class="chapter-item"
+            >
+              <button
+                class="chapter-button"
+                :class="{ active: isChapterActive(groupIndex, chapterIndex) }"
+                @click="seekToChapter(groupIndex, chapterIndex)"
+                :aria-label="`Go to ${chapter.title}`"
               >
-                <button
-                  class="chapter-button"
-                  :class="{ active: isChapterActive(groupIndex, chapterIndex) }"
-                  @click="seekToChapter(groupIndex, chapterIndex)"
-                  :aria-label="`Go to ${chapter.title}`"
-                >
-                  {{ chapter.title }}
-                </button>
-              </li>
-            </ul>
-          </div>
-        </nav>
-
-        <!-- Video wrapper -->
-        <div class="video-wrapper">
-              <!-- Native video element -->
-              <video
-                ref="videoElement"
-                :src="videoSrc"
-                muted
-                playsinline
-                preload="auto"
-                @timeupdate="handleTimeUpdate"
-                @ended="handleVideoEnded"
-                @click="handleTogglePlayPause"
-                :class="{ 'video-paused-blur': !isPlaying && hasStartedPlayback }"
-              />
-
-              <!-- Pause overlay with play button -->
-              <div v-if="!isPlaying && hasStartedPlayback" class="pause-overlay" @click="handleTogglePlayPause">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                  <circle cx="40" cy="40" r="40" fill="rgba(255, 255, 255, 0.9)" />
-                  <path d="M32 25L55 40L32 55V25Z" fill="#000000" />
-                </svg>
-              </div>
-
-              <!-- Control buttons -->
-              <VideoControls
-                v-if="hasStartedPlayback"
-                :is-playing="isPlaying"
-                :is-muted="true"
-                :is-fullscreen="isFullscreen"
-                :is-small-screen="isSmallScreen"
-                :hide-mute="true"
-                @toggle-play-pause="handleTogglePlayPause"
-                @restart="handleRestartVideo"
-                @toggle-fullscreen="toggleFullscreen"
-              />
+                {{ chapter.title }}
+              </button>
+            </li>
+          </ul>
         </div>
+      </nav>
+
+      <!-- Video wrapper -->
+      <div class="video-wrapper">
+        <!-- Native video element -->
+        <video
+          ref="videoElement"
+          :src="videoSrc"
+          muted
+          playsinline
+          preload="auto"
+          @timeupdate="handleTimeUpdate"
+          @ended="handleVideoEnded"
+          @click="handleTogglePlayPause"
+          :class="{ 'video-paused-blur': !isPlaying && hasStartedPlayback }"
+        />
+
+        <!-- Pause overlay with play button -->
+        <div
+          v-if="!isPlaying && hasStartedPlayback"
+          class="pause-overlay"
+          @click="handleTogglePlayPause"
+        >
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="40" fill="rgba(255, 255, 255, 0.9)" />
+            <path d="M32 25L55 40L32 55V25Z" fill="#000000" />
+          </svg>
+        </div>
+
+        <!-- Control buttons -->
+        <VideoControls
+          v-if="hasStartedPlayback"
+          :is-playing="isPlaying"
+          :is-muted="true"
+          :is-fullscreen="isFullscreen"
+          :is-small-screen="isSmallScreen"
+          :hide-mute="true"
+          @toggle-play-pause="handleTogglePlayPause"
+          @restart="handleRestartVideo"
+          @toggle-fullscreen="toggleFullscreen"
+        />
+      </div>
     </div>
   </MediaContainer>
 </template>
@@ -79,7 +83,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import VideoControls from "./VideoControls.vue";
 import { useChapteredVideo } from "@/composables/useChapteredVideo";
 import { useMediaQuery } from "@/composables/useMediaQuery";
-import MediaContainer from './MediaContainer.vue';
+import MediaContainer from "./MediaContainer.vue";
 
 const props = defineProps({
   videoSrc: {
@@ -102,7 +106,8 @@ const props = defineProps({
         return (
           Array.isArray(group.chapters) &&
           group.chapters.every(
-            (ch) => typeof ch.title === "string" && typeof ch.startTime === "number"
+            (ch) =>
+              typeof ch.title === "string" && typeof ch.startTime === "number"
           )
         );
       });
@@ -206,12 +211,15 @@ const isVideoInViewport = () => {
   if (!videoContainerRef.value) return false;
 
   const rect = videoContainerRef.value.getBoundingClientRect();
-  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+  const windowHeight =
+    window.innerHeight || document.documentElement.clientHeight;
   const windowWidth = window.innerWidth || document.documentElement.clientWidth;
 
   // Calculate what portion of the video is visible
-  const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-  const visibleWidth = Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
+  const visibleHeight =
+    Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+  const visibleWidth =
+    Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
 
   const totalHeight = rect.height;
   const totalWidth = rect.width;
@@ -247,7 +255,8 @@ onMounted(() => {
     (entries) => {
       entries.forEach((entry) => {
         // Check if video is sufficiently visible (meets threshold)
-        const isSufficientlyVisible = entry.isIntersecting && entry.intersectionRatio >= 0.5;
+        const isSufficientlyVisible =
+          entry.isIntersecting && entry.intersectionRatio >= 0.5;
 
         if (isSufficientlyVisible) {
           // Video is visible enough - play it only if user didn't manually pause
@@ -269,7 +278,7 @@ onMounted(() => {
     {
       // Use multiple thresholds to catch fast scrolling
       threshold: [0, 0.25, 0.5, 0.75, 1],
-      rootMargin: '0px',
+      rootMargin: "0px",
     }
   );
 
@@ -311,10 +320,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.chaptered-video-wrapper {
-  padding: 0 16px;
-}
-
 .video-container-inner {
   width: 100%;
   height: 100%;

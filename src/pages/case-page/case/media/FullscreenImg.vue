@@ -1,6 +1,6 @@
 <template>
   <MediaContainer
-    type="inline"
+    type="fullheight"
     :background-color="backgroundColor"
     :label="imageLabel"
     :sources="sources"
@@ -167,10 +167,6 @@ const magnifierImageStyle = computed(() => {
 </script>
 
 <style scoped>
-.fullscreen-image-wrapper {
-  padding: 0 16px;
-}
-
 .fullscreen-image__container {
   width: 100%;
   position: relative;

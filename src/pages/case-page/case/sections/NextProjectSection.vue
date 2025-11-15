@@ -40,7 +40,7 @@ const getCaseRoute = (caseId) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 16px;
+  padding: 48px 0;
   box-sizing: border-box;
   background-color: #171717;
   color: #ffffff;
@@ -107,7 +107,7 @@ const getCaseRoute = (caseId) => {
 @media (max-width: 768px) {
   .case-next-project {
     min-height: 25vh;
-    padding: 32px 16px;
+    padding: 32px 0;
   }
 
   .next-project-content {

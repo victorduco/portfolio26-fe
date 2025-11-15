@@ -40,7 +40,7 @@ const props = defineProps({
 <style scoped>
 .case-results {
   width: 100%;
-  padding: 80px 16px 48px;
+  padding: 80px 0 48px;
   overflow-x: hidden;
   display: flex;
   justify-content: center;
@@ -102,7 +102,7 @@ const props = defineProps({
 
 @media (max-width: 768px) {
   .case-results {
-    padding: 60px 16px 24px;
+    padding: 60px 0 24px;
   }
 
   .case-results-title {

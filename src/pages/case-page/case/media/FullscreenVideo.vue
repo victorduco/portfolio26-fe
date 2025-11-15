@@ -57,11 +57,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useMediaQuery } from '@/composables/useMediaQuery.js';
-import { useVideoPlayer } from '@/composables/useVideoPlayer.js';
-import VideoControls from './VideoControls.vue';
-import MediaContainer from './MediaContainer.vue';
+import { ref, onMounted, onUnmounted } from "vue";
+import { useMediaQuery } from "@/composables/useMediaQuery.js";
+import { useVideoPlayer } from "@/composables/useVideoPlayer.js";
+import VideoControls from "./VideoControls.vue";
+import MediaContainer from "./MediaContainer.vue";
 
 const props = defineProps({
   videoSrc: {
@@ -70,7 +70,7 @@ const props = defineProps({
   },
   backgroundColor: {
     type: String,
-    default: '#000000',
+    default: "#000000",
   },
   autoplayThreshold: {
     type: Number,
@@ -79,13 +79,13 @@ const props = defineProps({
   },
   videoLabel: {
     type: String,
-    default: '',
+    default: "",
   },
 });
 
 const videoElement = ref(null);
 const videoContainerRef = ref(null);
-const isSmallScreen = useMediaQuery('(max-width: 600px)');
+const isSmallScreen = useMediaQuery("(max-width: 600px)");
 
 const {
   isPlaying,
@@ -114,12 +114,15 @@ const isVideoInViewport = () => {
   if (!videoContainerRef.value) return false;
 
   const rect = videoContainerRef.value.getBoundingClientRect();
-  const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+  const windowHeight =
+    window.innerHeight || document.documentElement.clientHeight;
   const windowWidth = window.innerWidth || document.documentElement.clientWidth;
 
   // Calculate what portion of the video is visible
-  const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-  const visibleWidth = Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
+  const visibleHeight =
+    Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+  const visibleWidth =
+    Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
 
   const totalHeight = rect.height;
   const totalWidth = rect.width;
@@ -135,15 +138,15 @@ const isVideoInViewport = () => {
 // Setup on mount
 onMounted(() => {
   // Setup interaction listeners
-  document.addEventListener('click', handleUserInteraction);
-  document.addEventListener('touchstart', handleUserInteraction, {
+  document.addEventListener("click", handleUserInteraction);
+  document.addEventListener("touchstart", handleUserInteraction, {
     passive: true,
   });
-  document.addEventListener('keydown', handleUserInteraction);
+  document.addEventListener("keydown", handleUserInteraction);
 
   // Setup fullscreen listeners
-  document.addEventListener('fullscreenchange', handleFullscreenChange);
-  document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+  document.addEventListener("fullscreenchange", handleFullscreenChange);
+  document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
 
   // Setup Intersection Observer for scroll-based autoplay
   if (videoContainerRef.value) {
@@ -151,7 +154,9 @@ onMounted(() => {
       (entries) => {
         entries.forEach((entry) => {
           // Check if video is sufficiently visible (meets threshold)
-          const isSufficientlyVisible = entry.isIntersecting && entry.intersectionRatio >= props.autoplayThreshold;
+          const isSufficientlyVisible =
+            entry.isIntersecting &&
+            entry.intersectionRatio >= props.autoplayThreshold;
 
           if (isSufficientlyVisible) {
             // Video is visible enough - play it only if user didn't manually pause
@@ -169,7 +174,7 @@ onMounted(() => {
       {
         // Use multiple thresholds to catch fast scrolling
         threshold: [0, 0.25, 0.5, props.autoplayThreshold, 1],
-        rootMargin: '0px',
+        rootMargin: "0px",
       }
     );
 
@@ -187,11 +192,14 @@ onMounted(() => {
 
 // Cleanup on unmount
 onUnmounted(() => {
-  document.removeEventListener('click', handleUserInteraction);
-  document.removeEventListener('touchstart', handleUserInteraction);
-  document.removeEventListener('keydown', handleUserInteraction);
-  document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+  document.removeEventListener("click", handleUserInteraction);
+  document.removeEventListener("touchstart", handleUserInteraction);
+  document.removeEventListener("keydown", handleUserInteraction);
+  document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  document.removeEventListener(
+    "webkitfullscreenchange",
+    handleFullscreenChange
+  );
 
   // Disconnect Intersection Observer
   if (observer) {
@@ -210,10 +218,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.fullscreen-video-wrapper {
-  padding: 0 16px;
-}
-
 .video-wrapper {
   position: relative;
   max-width: 1200px;
