@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, watch } from "vue";
 import { RouterView, useRoute, useRouter } from "vue-router";
-import Keypad from "./components/keypad/Keypad.vue";
+import Keypad from "./pages/keypad-page/keypad/Keypad.vue";
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
 // import { useLenis } from "./composables/useLenis.js";

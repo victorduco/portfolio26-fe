@@ -1,7 +1,7 @@
 <template>
   <section class="case-results-2">
     <div class="results-content">
-      <h1 class="results-title">Results</h1>
+      <h1 class="case-results-title">Results</h1>
       <p class="results-intro">
         {{ introText }}
       </p>
@@ -121,14 +121,6 @@ onUnmounted(() => {
 .results-content {
   width: 100%;
   max-width: 1200px;
-}
-
-.results-title {
-  font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: var(--font-weight-semibold);
-  margin: 0 0 24px 0;
-  color: inherit;
 }
 
 .results-intro {
@@ -285,7 +277,7 @@ onUnmounted(() => {
     padding: 60px 16px 24px;
   }
 
-  .results-title {
+  .case-results-title {
     margin-bottom: 16px;
   }
 

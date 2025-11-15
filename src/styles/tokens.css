@@ -20,13 +20,109 @@
   /* Typography */
   --fs-body: clamp(14px, 1.6vw, 16px);
   --lh-body: 1.7;
+
+  /* Case sections */
+  --case-content-max: 1200px;
+  --case-section-padding-top: 80px;
+  --case-section-padding-bottom: 48px;
+  --case-summary-padding-top: 150px;
+  --case-summary-padding-bottom: 135px;
+
+  /* Spacing between elements */
+  --spacing-heading-to-text: 24px;
+  --spacing-text-to-media: 16px; /* p + media */
+  --spacing-media-to-text: 64px; /* media + p */
+  --spacing-section-to-media: 48px;
 }
+
+/* Case Page Shared Heading Styles */
+.case-heading-single {
+  font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: inherit;
+}
+
+.case-heading-two-level {
+  margin: 0;
+}
+
+.case-heading-subtitle {
+  font-family: var(--font-family-base);
+  font-size: clamp(14px, 2.8vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #007aff;
+  margin-bottom: 2px;
+  line-height: 1.2;
+  display: block;
+}
+
+.case-heading-main {
+  font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  color: inherit;
+  display: block;
+}
+
+/* Case Results Title - Shared */
+.case-results-title {
+  font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 24px 0;
+  color: inherit;
+}
+
+/* Content Section Heading - Smaller variant */
+.case-section-heading-single {
+  font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: var(--font-weight-medium);
+  color: inherit;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.case-section-heading-two-level {
+  margin: 0;
+}
+
+.case-section-heading-subtitle {
+  font-family: var(--font-family-base);
+  font-size: clamp(14px, 2.8vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #007aff;
+  margin-bottom: 2px;
+  line-height: 1.2;
+  display: block;
+}
+
+.case-section-heading-main {
+  font-family: var(--case-title-font, var(--font-family-base));
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: var(--font-weight-medium);
+  color: inherit;
+  opacity: 0.8;
+  margin: 0;
+}
+
 
 @media (min-width: 600px) {
   :root {
     --gutter: 24px;
     --container-max: min(90vw, 680px);
     --lh-body: 1.65;
+    --case-section-padding-top: 60px;
+    --case-section-padding-bottom: 24px;
+    --case-summary-padding-top: 80px;
+    --case-summary-padding-bottom: 48px;
   }
 }
 
@@ -35,6 +131,7 @@
     --gutter: 32px;
     --container-max: min(92vw, 960px);
     --lh-body: 1.6;
+    --case-summary-padding-top: 100px;
   }
 }
 

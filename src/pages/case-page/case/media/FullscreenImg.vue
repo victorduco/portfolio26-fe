@@ -1,54 +1,43 @@
 <template>
-  <div class="fullscreen-image-wrapper">
-    <div v-if="imageLabel || sources.length > 0" class="image-label-wrapper">
-      <h3 v-if="imageLabel" class="image-label">
-        {{ imageLabel }}
-        <span v-if="sources.length > 0" class="image-sources-inline">
-          ({{ sources.length > 1 ? 'Sources' : 'Source' }}:
-          <template v-for="(source, index) in sources" :key="index">
-            <a :href="source.url" target="_blank" rel="noopener noreferrer" class="source-link">{{ source.name }}</a><template v-if="index < sources.length - 1">, </template>
-          </template>)
-        </span>
-      </h3>
-      <div v-else-if="sources.length > 0" class="image-sources">
-        {{ sources.length > 1 ? 'Sources' : 'Source' }}:
-        <template v-for="(source, index) in sources" :key="index">
-          <a :href="source.url" target="_blank" rel="noopener noreferrer" class="source-link">{{ source.name }}</a><template v-if="index < sources.length - 1">, </template>
-        </template>
-      </div>
-    </div>
-    <div class="fullscreen-image" :style="{ backgroundColor: backgroundColor }">
+  <MediaContainer
+    type="inline"
+    :background-color="backgroundColor"
+    :has-background="false"
+    :label="imageLabel"
+    :sources="sources"
+    wrapper-class="fullscreen-image-wrapper"
+  >
+    <div
+      class="fullscreen-image__container"
+      @mousemove="handleMouseMove"
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
+      ref="containerRef"
+    >
+      <img
+        :src="imageSrc"
+        :alt="alt"
+        class="fullscreen-image__img"
+        loading="lazy"
+        ref="imageRef"
+      />
       <div
-        class="fullscreen-image__container"
-        @mousemove="handleMouseMove"
-        @mouseenter="handleMouseEnter"
-        @mouseleave="handleMouseLeave"
-        ref="containerRef"
+        v-if="enableMagnifier && showMagnifier"
+        class="magnifier"
+        :style="magnifierStyle"
       >
-        <img
-          :src="imageSrc"
-          :alt="alt"
-          class="fullscreen-image__img"
-          loading="lazy"
-          ref="imageRef"
-        />
         <div
-          v-if="enableMagnifier && showMagnifier"
-          class="magnifier"
-          :style="magnifierStyle"
-        >
-          <div
-            class="magnifier__image"
-            :style="magnifierImageStyle"
-          ></div>
-        </div>
+          class="magnifier__image"
+          :style="magnifierImageStyle"
+        ></div>
       </div>
     </div>
-  </div>
+  </MediaContainer>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   imageSrc: {
@@ -180,67 +169,7 @@ const magnifierImageStyle = computed(() => {
 
 <style scoped>
 .fullscreen-image-wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 0 16px;
-  box-sizing: border-box;
-}
-
-.image-label-wrapper {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 0 -8px 0;
-  padding: 0;
-}
-
-.image-label {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.2;
-  color: inherit;
-  opacity: 0.5;
-}
-
-.image-sources {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.2;
-  color: inherit;
-  opacity: 0.5;
-}
-
-.image-sources-inline {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.2;
-  color: inherit;
-  opacity: 1;
-}
-
-.source-link {
-  color: inherit;
-  text-decoration: underline;
-  transition: opacity 0.2s ease;
-}
-
-.source-link:hover {
-  opacity: 0.7;
-}
-
-.fullscreen-image {
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
 }
 
 .fullscreen-image__container {

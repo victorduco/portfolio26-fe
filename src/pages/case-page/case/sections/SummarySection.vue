@@ -44,11 +44,12 @@
         </div>
       </div>
     </div>
-    <FullscreenImage
+    <FullscreenImg
       v-if="caseConfig.summaryImage"
       :image-src="caseConfig.summaryImage"
       :alt="`${summaryData.title} preview`"
       :background-color="caseConfig.videoBackground || 'transparent'"
+      :image-label="caseConfig.videoLabel || ''"
     />
     <FullscreenVideo
       v-if="caseConfig.summaryVideo"
@@ -62,8 +63,8 @@
 
 <script setup>
 import { computed } from 'vue';
-import FullscreenImage from './FullscreenImage.vue';
-import FullscreenVideo from './FullscreenVideo.vue';
+import FullscreenImg from '../media/FullscreenImg.vue';
+import FullscreenVideo from '../media/FullscreenVideo.vue';
 
 const props = defineProps({
   caseId: {

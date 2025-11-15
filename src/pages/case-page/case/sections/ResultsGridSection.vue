@@ -1,7 +1,7 @@
 <template>
   <section class="case-results">
     <div class="results-content">
-      <h1 class="results-title">Results</h1>
+      <h1 class="case-results-title">Results</h1>
       <div class="results-grid">
         <div
           v-for="(result, index) in results"
@@ -49,14 +49,6 @@ const props = defineProps({
 .results-content {
   width: 100%;
   max-width: 1200px;
-}
-
-.results-title {
-  font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: var(--font-weight-semibold);
-  margin: 0 0 24px 0;
-  color: inherit;
 }
 
 .results-grid {
@@ -113,7 +105,7 @@ const props = defineProps({
     padding: 60px 16px 24px;
   }
 
-  .results-title {
+  .case-results-title {
     margin-bottom: 16px;
   }
 }

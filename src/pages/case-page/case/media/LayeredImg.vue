@@ -1,49 +1,55 @@
 <template>
-  <div class="layered-cards-wrapper">
-    <h3 v-if="label" class="cards-label">{{ label }}</h3>
-    <div class="layered-cards" ref="containerRef">
-      <div class="cards-container" :style="{ backgroundColor: backgroundColor, '--bg-color': backgroundColor, ...shadowVars }">
-        <!-- Left card -->
-        <div class="card card-left" ref="cardLeftRef">
-          <div class="card-inner">
-            <img
-              :src="imageLeft"
-              :alt="altLeft || 'Left card'"
-              loading="lazy"
-            />
-          </div>
+  <MediaContainer
+    type="fullwidth"
+    :background-color="backgroundColor"
+    :has-background="true"
+    :label="label"
+    :overflow="'visible'"
+    wrapper-class="layered-cards-wrapper"
+    container-class="layered-cards"
+  >
+    <div class="cards-container" ref="containerRef" :style="{ '--bg-color': backgroundColor, ...shadowVars }">
+      <!-- Left card -->
+      <div class="card card-left" ref="cardLeftRef">
+        <div class="card-inner">
+          <img
+            :src="imageLeft"
+            :alt="altLeft || 'Left card'"
+            loading="lazy"
+          />
         </div>
+      </div>
 
-        <!-- Center card (main) -->
-        <div class="card card-center" ref="cardCenterRef">
-          <div class="card-inner">
-            <img
-              :src="imageCenter"
-              :alt="altCenter || 'Center card'"
-              loading="lazy"
-            />
-          </div>
+      <!-- Center card (main) -->
+      <div class="card card-center" ref="cardCenterRef">
+        <div class="card-inner">
+          <img
+            :src="imageCenter"
+            :alt="altCenter || 'Center card'"
+            loading="lazy"
+          />
         </div>
+      </div>
 
-        <!-- Right card -->
-        <div class="card card-right" ref="cardRightRef">
-          <div class="card-inner">
-            <img
-              :src="imageRight"
-              :alt="altRight || 'Right card'"
-              loading="lazy"
-            />
-          </div>
+      <!-- Right card -->
+      <div class="card card-right" ref="cardRightRef">
+        <div class="card-inner">
+          <img
+            :src="imageRight"
+            :alt="altRight || 'Right card'"
+            loading="lazy"
+          />
         </div>
       </div>
     </div>
-  </div>
+  </MediaContainer>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { parallaxSpeeds } from './layeredCardsVariants.js';
 import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
+import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   imageLeft: {
@@ -149,46 +155,10 @@ onUnmounted(() => {
 
 <style scoped>
 
-.layered-cards-wrapper {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  margin-left: -50vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 48px;
-  margin-bottom: 0;
-  overflow: visible;
-}
-
-.cards-label {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto -8px;
-  padding: 0 16px;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.2;
-  color: inherit;
-  opacity: 0.5;
-}
-
-.layered-cards {
-  width: 100%;
-  height: 100vh;
-  padding: 16px;
-  box-sizing: border-box;
-  perspective: 1200px;
-  overflow: visible;
-}
-
 .cards-container {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;

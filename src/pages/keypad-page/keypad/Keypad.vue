@@ -70,7 +70,7 @@ import {
   getBackgroundPath,
   preloadInitialBackgrounds,
   prefetchNextDigits,
-} from "../../utils/keypadBackgroundLoader.js";
+} from "@/utils/keypadBackgroundLoader.js";
 
 const emit = defineEmits(["unlock"]);
 

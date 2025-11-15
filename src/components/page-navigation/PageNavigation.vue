@@ -76,7 +76,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import NavigationItem from "./NavigationItem.vue";
-import NavigationChevron from "@/components/common/NavigationChevron.vue";
+import NavigationChevron from "@/components/navigation-chevron/NavigationChevron.vue";
 import {
   useMediaQuery,
   NAVIGATION_MOBILE,

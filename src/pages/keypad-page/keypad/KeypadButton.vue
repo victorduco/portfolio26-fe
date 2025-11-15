@@ -52,13 +52,13 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { motion } from "motion-v";
-import GlassEffect from "../glass-effect/GlassEffect.vue";
+import GlassEffect from "@/components/glass-effect/GlassEffect.vue";
 import { spring, numberVariants } from "./keypadVariants.js";
 import { glassEffectConfig } from "./glassEffectConfig.js";
 import {
   useIsMobile,
   useIsLandscapeMobile,
-} from "../../composables/useMediaQuery.js";
+} from "@/composables/useMediaQuery.js";
 
 const props = defineProps({
   value: {

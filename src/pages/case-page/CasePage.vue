@@ -24,34 +24,48 @@
       :dark-mode="caseConfig.darkMode"
     />
     <section :id="`case${caseId}-summary`">
-      <CaseSummary :case-id="caseId" :case-config="caseConfig" />
+      <SummarySection :case-id="caseId" :case-config="caseConfig" />
     </section>
     <section
-      v-for="section in caseConfig.sections"
-      :key="section.type"
-      :id="`case${caseId}-${section.type}`"
+      v-for="(contentSection, sectionKey) in caseContent"
+      :key="sectionKey"
+      :id="`case${caseId}-${sectionKey}`"
+      class="content-section"
     >
-      <MarkdownSection
-        :case-id="caseId"
-        :section-type="section.type"
-        :case-config="caseConfig"
+      <div v-if="contentSection.heading" class="section-title">
+        <h2 v-if="!contentSection.heading.subtitle" class="case-heading-single">
+          {{ contentSection.heading.main }}
+        </h2>
+        <h2 v-else class="case-heading-two-level">
+          <span class="case-heading-subtitle">{{ contentSection.heading.subtitle }}</span>
+          <span class="case-heading-main">{{ contentSection.heading.main }}</span>
+        </h2>
+      </div>
+      <ContentSection
+        v-for="(section, index) in contentSection.sections"
+        :key="`${sectionKey}-${index}`"
+        :heading="section.heading"
+        :text-before="section.textBefore"
+        :media="section.media"
+        :text-after="section.textAfter"
+        :background-color="caseConfig.videoBackground"
       />
     </section>
     <section v-if="caseConfig.results" :id="`case${caseId}-results`">
-      <CaseResults2
+      <ResultsCardsSection
         v-if="caseId === '2'"
         :results="caseConfig.results"
         :intro-text="caseConfig.resultsIntro"
         :conclusion-text="caseConfig.resultsConclusion"
         :card-background="caseConfig.videoBackground"
       />
-      <CaseResults
+      <ResultsGridSection
         v-else
         :results="caseConfig.results"
         :results-note="caseConfig.resultsNote"
       />
     </section>
-    <CaseNextProject
+    <NextProjectSection
       v-if="caseConfig.nextProject"
       :case-id="caseConfig.nextProject.caseId"
       :title="caseConfig.nextProject.title"
@@ -61,17 +75,17 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, nextTick } from "vue";
-import NavigationChevron from "@/components/common/NavigationChevron.vue";
+import { computed, onMounted, nextTick } from "vue";
+import NavigationChevron from "@/components/navigation-chevron/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import AppFooter from "@/components/app-footer/AppFooter.vue";
-import MarkdownSection from "@/components/case-section/MarkdownSection.vue";
-import CaseSummary from "@/components/case-section/CaseSummary.vue";
-import CaseResults from "@/components/case-section/CaseResults.vue";
-import CaseResults2 from "@/components/case-section/CaseResults2.vue";
-import CaseNextProject from "@/components/case-section/CaseNextProject.vue";
+import ContentSection from "./case/sections/ContentSection.vue";
+import SummarySection from "./case/sections/SummarySection.vue";
+import ResultsGridSection from "./case/sections/ResultsGridSection.vue";
+import ResultsCardsSection from "./case/sections/ResultsCardsSection.vue";
+import NextProjectSection from "./case/sections/NextProjectSection.vue";
 import { useMeta } from "@/composables/useMeta.js";
-// import { getSnapInstance } from "@/composables/useLenis.js";
+import { casesContent } from "@/content/cases";
 
 const props = defineProps({
   caseId: {
@@ -83,24 +97,13 @@ const props = defineProps({
 
 useMeta(`case${props.caseId}`);
 
+// Get case content
+const caseContent = computed(() => casesContent[props.caseId] || {});
+
 // Always scroll to top when case page is mounted
 onMounted(() => {
-  // Immediate scroll
   window.scrollTo(0, 0);
-
-  // Also scroll after Vue updates DOM
-  nextTick(() => {
-    window.scrollTo(0, 0);
-  });
-
-  // And once more after delays
-  setTimeout(() => {
-    window.scrollTo(0, 0);
-  }, 0);
-
-  setTimeout(() => {
-    window.scrollTo(0, 0);
-  }, 500);
+  nextTick(() => window.scrollTo(0, 0));
 });
 
 // Configuration for each case
@@ -115,7 +118,7 @@ const caseConfigs = {
     summaryVideo: "/videos/case1-summary.mp4",
     videoBackground: "#f5f5f7", // Apple gray background
     autoplayThreshold: 0.75, // 75% visibility to trigger autoplay
-    videoLabel: "Video Overview", // Label above video
+    videoLabel: "Product Overview Video", // Label above video
     sections: [
       { type: "challenge", label: "Challenge" },
       { type: "scale", label: "Scale" },
@@ -214,14 +217,31 @@ const caseConfig = computed(() => {
 });
 
 const navigationSections = computed(() => {
-  const sections = caseConfig.value.sections || [];
+  const content = caseContent.value;
   const navSections = [
     { id: `case${props.caseId}-summary`, label: "Summary" },
-    ...sections.map(section => ({
-      id: `case${props.caseId}-${section.type}`,
-      label: section.label
-    }))
   ];
+
+  // Add sections from content
+  const sectionLabels = {
+    challenge: 'Challenge',
+    scale: 'Scale',
+    solution: 'Solution',
+    background: 'Background',
+    process: 'Process',
+    design: 'Final Design',
+    audit: 'UX Audit',
+    redesign: 'App Redesign',
+    conclusion: 'Conclusion',
+  };
+
+  Object.keys(content).forEach(key => {
+    const label = sectionLabels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    navSections.push({
+      id: `case${props.caseId}-${key}`,
+      label: label
+    });
+  });
 
   // Add Results if it exists
   if (caseConfig.value.results) {
@@ -230,24 +250,6 @@ const navigationSections = computed(() => {
 
   return navSections;
 });
-
-// Disable snap scrolling on case detail pages
-// onMounted(() => {
-//   const snapInstance = getSnapInstance();
-//   if (snapInstance) {
-//     snapInstance.stop();
-//     console.log("🚫 Snap disabled on case detail page");
-//   }
-// });
-
-// Re-enable snap when leaving the page
-// onUnmounted(() => {
-//   const snapInstance = getSnapInstance();
-//   if (snapInstance) {
-//     snapInstance.start();
-//     console.log("✅ Snap re-enabled");
-//   }
-// });
 </script>
 
 <style scoped>
@@ -267,18 +269,23 @@ const navigationSections = computed(() => {
   z-index: 1001;
 }
 
+.content-section {
+  width: 100%;
+  padding: 80px 16px 48px;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section-title {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 24px;
+}
+
 /* Add extra padding to the last section before Next Project */
-section:has(+ .case-next-project) :deep(.case-results),
-section:has(+ .case-next-project) :deep(.case-results-2),
-section:has(+ .case-next-project) :deep(.case-background),
-section:has(+ .case-next-project) :deep(.case-challenge),
-section:has(+ .case-next-project) :deep(.case-scale),
-section:has(+ .case-next-project) :deep(.case-solution),
-section:has(+ .case-next-project) :deep(.case-process),
-section:has(+ .case-next-project) :deep(.case-design),
-section:has(+ .case-next-project) :deep(.case-audit),
-section:has(+ .case-next-project) :deep(.case-redesign),
-section:has(+ .case-next-project) :deep(.case-conclusion) {
+section:has(+ .case-next-project) {
   padding-bottom: 180px;
 }
 
@@ -290,17 +297,11 @@ section:has(+ .case-next-project) :deep(.case-conclusion) {
 }
 
 @media (max-width: 768px) {
-  section:has(+ .case-next-project) :deep(.case-results),
-  section:has(+ .case-next-project) :deep(.case-results-2),
-  section:has(+ .case-next-project) :deep(.case-background),
-  section:has(+ .case-next-project) :deep(.case-challenge),
-  section:has(+ .case-next-project) :deep(.case-scale),
-  section:has(+ .case-next-project) :deep(.case-solution),
-  section:has(+ .case-next-project) :deep(.case-process),
-  section:has(+ .case-next-project) :deep(.case-design),
-  section:has(+ .case-next-project) :deep(.case-audit),
-  section:has(+ .case-next-project) :deep(.case-redesign),
-  section:has(+ .case-next-project) :deep(.case-conclusion) {
+  .content-section {
+    padding: 60px 16px 24px;
+  }
+
+  section:has(+ .case-next-project) {
     padding-bottom: 120px;
   }
 }

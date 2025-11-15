@@ -1,34 +1,37 @@
 <template>
-  <div class="fullscreen-parallax-wrapper">
-    <h3 v-if="imageLabel" class="image-label">{{ imageLabel }}</h3>
-    <div class="fullscreen-parallax" ref="containerRef">
-      <div class="background-container" :style="{ backgroundColor: backgroundColor }">
-        <div class="images-grid">
-          <div
-            v-for="(imageData, index) in images"
-            :key="index"
-            class="image-strip"
-            :style="{ width: imageData.width }"
-          >
-            <div class="image-container">
-              <img
-                :ref="el => imageRefs[index] = el"
-                :src="imageData.src"
-                :alt="imageData.alt || alt"
-                class="parallax-image"
-                loading="lazy"
-              />
-            </div>
-          </div>
+  <MediaContainer
+    type="fullheight"
+    :background-color="backgroundColor"
+    :has-background="true"
+    :label="imageLabel"
+    wrapper-class="fullscreen-parallax-wrapper"
+    container-class="fullscreen-parallax"
+  >
+    <div class="images-grid" ref="containerRef">
+      <div
+        v-for="(imageData, index) in images"
+        :key="index"
+        class="image-strip"
+        :style="{ width: imageData.width }"
+      >
+        <div class="image-container">
+          <img
+            :ref="el => imageRefs[index] = el"
+            :src="imageData.src"
+            :alt="imageData.alt || alt"
+            class="parallax-image"
+            loading="lazy"
+          />
         </div>
       </div>
     </div>
-  </div>
+  </MediaContainer>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { initializeParallaxImage } from '@/composables/useParallaxImage';
+import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   image1: {
@@ -105,39 +108,7 @@ onMounted(() => {
 
 <style scoped>
 .fullscreen-parallax-wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 0 16px;
-  box-sizing: border-box;
-}
-
-.image-label {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 0 -8px 0;
-  padding: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.2;
-  color: inherit;
-  opacity: 0.5;
-}
-
-.fullscreen-parallax {
-  width: 100%;
-  height: 100vh;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.background-container {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  overflow: hidden;
 }
 
 .images-grid {

@@ -1,12 +1,15 @@
 <template>
-  <div class="chaptered-video-wrapper">
-    <!-- Optional label above video -->
-    <h3 v-if="videoLabel" class="chaptered-video-label">{{ videoLabel }}</h3>
-
-    <div class="chaptered-video" ref="videoContainerRef">
-      <div class="background-container" :style="{ backgroundColor }">
-        <!-- Left sidebar with chapter navigation -->
-        <nav class="chapters-nav" ref="navRef">
+  <MediaContainer
+    type="fullheight"
+    :background-color="backgroundColor"
+    :has-background="true"
+    :label="videoLabel"
+    wrapper-class="chaptered-video-wrapper"
+    container-class="chaptered-video"
+  >
+    <div class="video-container-inner" ref="videoContainerRef">
+      <!-- Left sidebar with chapter navigation -->
+      <nav class="chapters-nav" ref="navRef">
           <div
             v-for="(group, groupIndex) in chapterGroups"
             :key="groupIndex"
@@ -68,9 +71,8 @@
                 @toggle-fullscreen="toggleFullscreen"
               />
         </div>
-      </div>
     </div>
-  </div>
+  </MediaContainer>
 </template>
 
 <script setup>
@@ -78,6 +80,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import VideoControls from "./VideoControls.vue";
 import { useChapteredVideo } from "@/composables/useChapteredVideo";
 import { useMediaQuery } from "@/composables/useMediaQuery";
+import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   videoSrc: {
@@ -310,36 +313,12 @@ onUnmounted(() => {
 
 <style scoped>
 .chaptered-video-wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  padding: 0 16px;
 }
 
-.chaptered-video-label {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto -8px;
-  padding: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.2;
-  color: inherit;
-  opacity: 0.5;
-}
-
-.chaptered-video {
-  width: 100%;
-  height: 100vh;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.background-container {
+.video-container-inner {
   width: 100%;
   height: 100%;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;

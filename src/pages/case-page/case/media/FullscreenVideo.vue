@@ -1,9 +1,13 @@
 <template>
-  <div class="fullscreen-video-wrapper">
-    <h3 v-if="videoLabel" class="video-label">{{ videoLabel }}</h3>
-    <div class="fullscreen-video" ref="videoContainerRef">
-      <div class="background-container" :style="{ backgroundColor: backgroundColor }">
-      <div class="video-wrapper">
+  <MediaContainer
+    type="fullheight"
+    :background-color="backgroundColor"
+    :has-background="true"
+    :label="videoLabel"
+    wrapper-class="fullscreen-video-wrapper"
+    container-class="fullscreen-video"
+  >
+    <div class="video-wrapper" ref="videoContainerRef">
       <!-- Video Element -->
       <video
         ref="videoElement"
@@ -49,10 +53,8 @@
         @restart="restartVideo"
         @toggle-fullscreen="toggleFullscreen"
       />
-      </div>
     </div>
-    </div>
-  </div>
+  </MediaContainer>
 </template>
 
 <script setup>
@@ -60,6 +62,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useMediaQuery } from '@/composables/useMediaQuery.js';
 import { useVideoPlayer } from '@/composables/useVideoPlayer.js';
 import VideoControls from './VideoControls.vue';
+import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   videoSrc: {
@@ -209,41 +212,7 @@ onUnmounted(() => {
 
 <style scoped>
 .fullscreen-video-wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   padding: 0 16px;
-  box-sizing: border-box;
-}
-
-.video-label {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 0 -8px 0;
-  padding: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.2;
-  color: inherit;
-  opacity: 0.5;
-}
-
-.fullscreen-video {
-  width: 100%;
-  height: 100vh;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.background-container {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .video-wrapper {
