@@ -3,7 +3,7 @@
     <div class="summary-content">
       <!-- Part 1: Title and description -->
       <div class="summary-header">
-        <h1 class="summary-title">{{ summaryData.title }}</h1>
+        <h2 class="summary-title">{{ summaryData.title }}</h2>
         <p class="summary-description">{{ summaryData.description }}</p>
       </div>
 
@@ -11,31 +11,31 @@
       <div class="summary-details-wrapper">
         <!-- Organization -->
         <div class="detail-group">
-          <h3 class="detail-label">{{ summaryData.organizationType }}</h3>
+          <h4 class="detail-label">{{ summaryData.organizationType }}</h4>
           <p class="detail-value">{{ summaryData.organizationName }}</p>
         </div>
 
         <!-- Timeline -->
         <div class="detail-group">
-          <h3 class="detail-label">Timeline</h3>
+          <h4 class="detail-label">Timeline</h4>
           <p class="detail-value">{{ summaryData.timeline }}</p>
         </div>
 
         <!-- Project Type -->
         <div class="detail-group">
-          <h3 class="detail-label">Project Type</h3>
+          <h4 class="detail-label">Project Type</h4>
           <p class="detail-value">{{ summaryData.projectType }}</p>
         </div>
 
         <!-- Role -->
         <div class="detail-group">
-          <h3 class="detail-label">Role</h3>
+          <h4 class="detail-label">Role</h4>
           <p class="detail-value">{{ summaryData.role }}</p>
         </div>
 
         <!-- Contribution -->
         <div class="detail-group">
-          <h3 class="detail-label">Contribution</h3>
+          <h4 class="detail-label">Contribution</h4>
           <div class="detail-value">
             <span v-for="(item, index) in summaryData.contribution" :key="item">
               {{ item }}<span v-if="index < summaryData.contribution.length - 1"> → </span>
@@ -141,11 +141,8 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 }
 
 .summary-title {
-  margin: 0;
   font-family: var(--case-title-font, var(--font-family-base));
-  font-weight: var(--font-weight-semibold);
-  font-size: clamp(28px, 5vw, 48px);
-  line-height: 1.2;
+  margin: 0;
   color: inherit;
   text-align: left;
 }
@@ -177,11 +174,8 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 }
 
 .detail-label {
-  margin: 0;
   font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 14px;
-  line-height: 1.5;
+  margin: 0;
   color: inherit;
   opacity: 0.5;
 }
@@ -214,10 +208,6 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   .summary-content {
     padding: 80px 0 48px;
     gap: 40px;
-  }
-
-  .summary-title {
-    font-size: clamp(24px, 7vw, 32px);
   }
 }
 </style>

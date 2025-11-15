@@ -1,7 +1,7 @@
 <template>
   <section class="case-results-2">
     <div class="results-content">
-      <h1 class="case-results-title">Results</h1>
+      <h3 class="case-results-title">Results</h3>
       <p class="results-intro">
         {{ introText }}
       </p>

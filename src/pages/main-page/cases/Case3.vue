@@ -616,7 +616,6 @@ defineExpose({
 
   .case3-title {
     font-size: clamp(28px, 5vw, 40px);
-    padding: 0 16px;
   }
 
   .case3-company {

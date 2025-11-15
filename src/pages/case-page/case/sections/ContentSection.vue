@@ -2,12 +2,12 @@
   <section class="case-section">
     <!-- Heading -->
     <div v-if="heading" class="section-heading">
-      <h3 v-if="!heading.subtitle" class="case-section-heading-single">
+      <h4 v-if="!heading.subtitle" class="case-section-heading-single">
         {{ heading.main }}
-      </h3>
+      </h4>
       <div v-else class="case-section-heading-two-level">
         <div class="case-section-heading-subtitle">{{ heading.subtitle }}</div>
-        <h3 class="case-section-heading-main">{{ heading.main }}</h3>
+        <h4 class="case-section-heading-main">{{ heading.main }}</h4>
       </div>
     </div>
 
@@ -81,20 +81,17 @@ function getMediaComponent(type: string): Component {
   margin-bottom: 16px;
   width: 100%;
   max-width: 1200px;
-  padding: 0 16px;
 }
 
 .text-before {
   margin-bottom: -8px;
   width: 100%;
   max-width: 1200px;
-  padding: 0 16px;
 }
 
 .text-after {
   margin-top: 64px;
   width: 100%;
   max-width: 1200px;
-  padding: 0 16px;
 }
 </style>

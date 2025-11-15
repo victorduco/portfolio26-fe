@@ -1,7 +1,7 @@
 <template>
   <section class="case-results">
     <div class="results-content">
-      <h1 class="case-results-title">Results</h1>
+      <h3 class="case-results-title">Results</h3>
       <div class="results-grid">
         <div
           v-for="(result, index) in results"

@@ -38,8 +38,6 @@
 /* Case Page Shared Heading Styles */
 .case-heading-single {
   font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: var(--font-weight-semibold);
   margin: 0;
   color: inherit;
 }
@@ -50,20 +48,16 @@
 
 .case-heading-subtitle {
   font-family: var(--font-family-base);
-  font-size: clamp(14px, 2.8vw, 16px);
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: #007aff;
-  margin-bottom: 2px;
-  line-height: 1.2;
+  margin-bottom: 0px;
   display: block;
 }
 
 .case-heading-main {
   font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(24px, 4vw, 32px);
-  font-weight: var(--font-weight-semibold);
   margin: 0;
   color: inherit;
   display: block;
@@ -72,8 +66,6 @@
 /* Case Results Title - Shared */
 .case-results-title {
   font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: var(--font-weight-semibold);
   margin: 0 0 24px 0;
   color: inherit;
 }
@@ -81,8 +73,8 @@
 /* Content Section Heading - Smaller variant */
 .case-section-heading-single {
   font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(18px, 3vw, 24px);
-  font-weight: var(--font-weight-medium);
+  font-size: clamp(22px, 2.8vw, 28px);
+  font-weight: var(--font-weight-semibold);
   color: inherit;
   opacity: 0.8;
   margin: 0;
@@ -94,20 +86,19 @@
 
 .case-section-heading-subtitle {
   font-family: var(--font-family-base);
-  font-size: clamp(14px, 2.8vw, 16px);
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: clamp(12px, 2.4vw, 14px);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: #007aff;
-  margin-bottom: 2px;
-  line-height: 1.2;
+  margin-bottom: 0px;
   display: block;
 }
 
 .case-section-heading-main {
   font-family: var(--case-title-font, var(--font-family-base));
-  font-size: clamp(18px, 3vw, 24px);
-  font-weight: var(--font-weight-medium);
+  font-size: clamp(22px, 2.8vw, 28px);
+  font-weight: var(--font-weight-semibold);
   color: inherit;
   opacity: 0.8;
   margin: 0;

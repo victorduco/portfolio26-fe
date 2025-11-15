@@ -33,13 +33,13 @@
       class="content-section"
     >
       <div v-if="contentSection.heading" class="section-title">
-        <h2 v-if="!contentSection.heading.subtitle" class="case-heading-single">
+        <h3 v-if="!contentSection.heading.subtitle" class="case-heading-single">
           {{ contentSection.heading.main }}
-        </h2>
-        <h2 v-else class="case-heading-two-level">
+        </h3>
+        <h3 v-else class="case-heading-two-level">
           <span class="case-heading-subtitle">{{ contentSection.heading.subtitle }}</span>
           <span class="case-heading-main">{{ contentSection.heading.main }}</span>
-        </h2>
+        </h3>
       </div>
       <ContentSection
         v-for="(section, index) in contentSection.sections"
@@ -271,7 +271,7 @@ const navigationSections = computed(() => {
 
 .content-section {
   width: 100%;
-  padding: 80px 0 48px;
+  padding: 40px 0;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -281,6 +281,7 @@ const navigationSections = computed(() => {
 .section-title {
   width: 100%;
   max-width: 1200px;
+  margin-top: 24px;
   margin-bottom: 24px;
 }
 
@@ -298,7 +299,7 @@ section:has(+ .case-next-project) {
 
 @media (max-width: 768px) {
   .content-section {
-    padding: 60px 0 24px;
+    padding: 40px 0;
   }
 
   section:has(+ .case-next-project) {

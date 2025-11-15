@@ -139,7 +139,6 @@ const containerStyle = computed(() => {
 .media-container-wrapper.fullwidth :deep(.fullwidth-label) {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
   position: absolute;
   top: -40px;
   left: 50%;

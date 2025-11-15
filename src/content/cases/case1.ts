@@ -8,7 +8,7 @@ export const case1Content = {
       {
         heading: {
           main: 'Working Across Multiple Interconnected Sub-Domains',
-          subtitle: 'Account Reconciliation',
+          subtitle: 'Domain Complexity',
         },
         textBefore: 'A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.',
         media: {
@@ -16,7 +16,7 @@ export const case1Content = {
           props: {
             imageSrc: '/src/assets/images/domain_tree.png',
             enableMagnifier: true,
-            imageLabel: 'Domain Tree Diagram',
+            imageLabel: 'Account Reconciliation: Domain Tree Diagram',
           },
         },
       },
@@ -54,8 +54,8 @@ export const case1Content = {
     sections: [
       {
         heading: {
-          main: 'Consistency with Time and Effort',
-          subtitle: 'AI Framework',
+          main: 'Consistent Experience Across Variable Inputs',
+          subtitle: 'Product Vision & Design System',
         },
         textBefore: 'We developed a comprehensive AI framework that combines conversational design with intelligent automation. The system uses natural language processing to understand user intent and provides contextual assistance throughout the reconciliation workflow, reducing the learning curve by 70%.',
         media: {
@@ -70,8 +70,8 @@ export const case1Content = {
       },
       {
         heading: {
-          main: 'From Classic UX to AI UX',
-          subtitle: undefined,
+          main: 'Pairing Natural Dialogue with Heavy Data Workflows',
+          subtitle: 'Conversational & Classic UI',
         },
         textBefore: 'Our hybrid approach seamlessly integrates AI-powered conversational interfaces with traditional UI components. Users can switch between chat-based interactions and classic forms based on their preference and task complexity, ensuring flexibility without sacrificing efficiency.',
         media: {
@@ -104,8 +104,8 @@ export const case1Content = {
       },
       {
         heading: {
-          main: 'Smooth Experience Switch',
-          subtitle: undefined,
+          main: 'Helping Users Navigate AI Variability',
+          subtitle: 'AI Output Interpretation',
         },
         textBefore: 'The transition between AI-assisted and traditional workflows is seamless and intuitive. Users can effortlessly move between interaction modes without losing context or progress, ensuring a consistent experience regardless of their chosen approach.',
         media: {
@@ -117,8 +117,8 @@ export const case1Content = {
       },
       {
         heading: {
-          main: 'Display Tools',
-          subtitle: undefined,
+          main: 'Helping Users See What Truly Matters in the Data',
+          subtitle: 'Data Visualization',
         },
         textBefore: 'We built adaptive display tools that intelligently render information in either conversational or traditional formats. The system analyzes data complexity and user context to determine the optimal presentation method, improving comprehension and reducing cognitive load.',
         media: {
