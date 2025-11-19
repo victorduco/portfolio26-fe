@@ -143,7 +143,7 @@ const caseConfigs = {
     background: "#ffffff",
     primary: "#000000",
     secondary: null,
-    subtitleColor: null, // Will use default #007aff
+    subtitleColor: "#B14127", // Coral red color for two-level headings
     font: "'Hanken Grotesk', sans-serif",
     theme: "light",
     summaryImage: new URL("@/assets/images/case2_summary.png", import.meta.url).href,

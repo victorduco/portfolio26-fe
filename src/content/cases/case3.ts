@@ -91,26 +91,22 @@ export const case3Content = {
     sections: [
       {
         heading: {
-          main: "Making ways shorter",
-          subtitle: "Navigation",
-        },
-        textBefore:
-          "Gradual migration allowed business continuity while rebuilding. We audited 47 page templates, prioritized revenue-driving pages, and set targets: 75% faster loads, 100% mobile conversion increase, Lighthouse scores above 95.",
-        media: {
-          type: "image" as const,
-          props: {
-            imageSrc:
-              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=900&fit=crop",
-          },
-        },
-      },
-      {
-        heading: {
           main: "Considering Real data for Page Customization",
           subtitle: "Home Page",
         },
         textBefore:
           "A design system with 142 components provided consistency. Navigation restructured through user testing reduced clicks-to-product from 4.2 to 2.1. Mobile got touch-optimized interactions and streamlined checkout. A/B tests validated every decision.",
+        media: {
+          type: "image" as const,
+          props: {
+            imageSrc:
+              "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&h=900&fit=crop",
+          },
+        },
+      },
+      {
+        textBefore:
+          "The new interface introduced streamlined workflows that significantly reduced cognitive load. By consolidating related actions and providing contextual information at the right moment, users could accomplish tasks with fewer clicks and less mental effort. Progressive disclosure techniques ensured that advanced features remained accessible without overwhelming new users.",
         media: {
           type: "horizontalParallax" as const,
           props: {
@@ -130,13 +126,17 @@ export const case3Content = {
         },
       },
       {
+        heading: {
+          main: "Making ways shorter",
+          subtitle: "Navigation",
+        },
         textBefore:
-          "The new interface introduced streamlined workflows that significantly reduced cognitive load. By consolidating related actions and providing contextual information at the right moment, users could accomplish tasks with fewer clicks and less mental effort. Progressive disclosure techniques ensured that advanced features remained accessible without overwhelming new users.",
+          "Gradual migration allowed business continuity while rebuilding. We audited 47 page templates, prioritized revenue-driving pages, and set targets: 75% faster loads, 100% mobile conversion increase, Lighthouse scores above 95.",
         media: {
           type: "image" as const,
           props: {
             imageSrc:
-              "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&h=900&fit=crop",
+              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=900&fit=crop",
           },
         },
       },
