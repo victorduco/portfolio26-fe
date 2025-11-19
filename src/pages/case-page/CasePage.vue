@@ -8,6 +8,7 @@
       '--case-title-font': caseConfig.font || 'var(--font-family-base)',
       '--case-primary-color': caseConfig.primary,
       '--case-secondary-color': caseConfig.secondary || caseConfig.primary,
+      '--case-subtitle-color': caseConfig.subtitleColor || '#007aff',
     }"
   >
     <NavigationChevron
@@ -109,21 +110,16 @@ onMounted(() => {
 // Configuration for each case
 const caseConfigs = {
   1: {
-    title: "Cross-Domain AI Solution for Account Reconcilers",
     background: "#ffffff",
     primary: "#007aff",
     secondary: null, // optional
+    subtitleColor: "#007aff", // Color for subtitle in two-level headings
     font: null, // optional, uses global font if null
     theme: "light", // light or dark
     summaryVideo: "/videos/case1-summary.mp4",
     videoBackground: "#f5f5f7", // Apple gray background
     autoplayThreshold: 0.75, // 75% visibility to trigger autoplay
     videoLabel: "Product Overview Video", // Label above video
-    sections: [
-      { type: "challenge", label: "Challenge" },
-      { type: "scale", label: "Scale" },
-      { type: "solution", label: "Solution" },
-    ],
     results: [
       {
         title: "Time Efficiency Improvement",
@@ -144,19 +140,14 @@ const caseConfigs = {
     },
   },
   2: {
-    title: "Redesigning the Communications App",
     background: "#ffffff",
     primary: "#000000",
     secondary: null,
+    subtitleColor: null, // Will use default #007aff
     font: "'Hanken Grotesk', sans-serif",
     theme: "light",
     summaryImage: new URL("@/assets/images/case2_summary.png", import.meta.url).href,
     videoBackground: "#F7E7E7", // Same as button color on main page
-    sections: [
-      { type: "background", label: "Background" },
-      { type: "process", label: "Process" },
-      { type: "design", label: "Final Design" },
-    ],
     results: [
       {
         label: "App Rating",
@@ -185,19 +176,14 @@ const caseConfigs = {
     },
   },
   3: {
-    title: "Terminal Shift Redesign",
     background: "#ffffff",
     primary: "#ca4034",
     secondary: null,
+    subtitleColor: "#ca4034", // Red color matching case3 button
     font: "'Neue Haas Grotesk Display Pro', sans-serif",
     theme: "light",
     summaryImage: "/images/case3-summary.png",
     videoBackground: "#f5f5f7", // Light gray background for all media elements
-    sections: [
-      { type: "audit", label: "UX Audit" },
-      { type: "redesign", label: "App Redesign" },
-      { type: "conclusion", label: "Conclusion" },
-    ],
     nextProject: {
       caseId: "1",
       title: "Cross-Domain AI Solution for Account Reconcilers",

@@ -21,6 +21,9 @@ export const case3Content = {
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
+            zIndexLeft: 2,
+            zIndexCenter: 1,
+            zIndexRight: 3,
           },
         },
       },
@@ -50,7 +53,7 @@ export const case3Content = {
       {
         heading: {
           main: "Building the Base",
-          subtitle: undefined,
+          subtitle: "User & Competitor Research",
         },
         textBefore:
           "Conducted extensive usability testing with 30+ participants and analyzed top 10 competitors to identify industry best practices. Heat maps revealed friction points, scroll depth analytics showed content discovery issues, and competitor analysis identified key opportunities for differentiation in navigation, checkout flows, and mobile experience.",
@@ -63,8 +66,8 @@ export const case3Content = {
       },
       {
         heading: {
-          main: "Final Report",
-          subtitle: undefined,
+          main: "Actionable Improvements with References",
+          subtitle: "UX Audit Report",
         },
         textBefore:
           "Delivered comprehensive UX audit report with prioritized recommendations across 5 key areas: navigation & IA, product discovery, checkout optimization, mobile experience, and performance. Each recommendation included severity rating, estimated impact, implementation effort, and supporting data from user testing. Created detailed roadmap for phased implementation aligned with business priorities.",
@@ -80,13 +83,17 @@ export const case3Content = {
     ],
   },
 
-  solution: {
+  redesign: {
     heading: {
-      main: "Solution",
+      main: "App Redesign",
       subtitle: undefined,
     },
     sections: [
       {
+        heading: {
+          main: "Making ways shorter",
+          subtitle: "Navigation",
+        },
         textBefore:
           "Gradual migration allowed business continuity while rebuilding. We audited 47 page templates, prioritized revenue-driving pages, and set targets: 75% faster loads, 100% mobile conversion increase, Lighthouse scores above 95.",
         media: {
@@ -96,10 +103,14 @@ export const case3Content = {
               "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=900&fit=crop",
           },
         },
-        textAfter:
-          "A design system with 142 components provided consistency. Navigation restructured through user testing reduced clicks-to-product from 4.2 to 2.1. Mobile got touch-optimized interactions and streamlined checkout. A/B tests validated every decision.",
       },
       {
+        heading: {
+          main: "Considering Real data for Page Customization",
+          subtitle: "Home Page",
+        },
+        textBefore:
+          "A design system with 142 components provided consistency. Navigation restructured through user testing reduced clicks-to-product from 4.2 to 2.1. Mobile got touch-optimized interactions and streamlined checkout. A/B tests validated every decision.",
         media: {
           type: "horizontalParallax" as const,
           props: {
@@ -117,24 +128,22 @@ export const case3Content = {
             alt: "Platform migration process",
           },
         },
-        textAfter:
-          "The multi-layered approach to migration ensured smooth transition across all touchpoints.",
       },
       {
+        textBefore:
+          "The new interface introduced streamlined workflows that significantly reduced cognitive load. By consolidating related actions and providing contextual information at the right moment, users could accomplish tasks with fewer clicks and less mental effort. Progressive disclosure techniques ensured that advanced features remained accessible without overwhelming new users.",
         media: {
           type: "image" as const,
           props: {
             imageSrc:
-              "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
+              "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&h=900&fit=crop",
           },
         },
-        textAfter:
-          "Vue 3 with SSG, aggressive caching, and code splitting optimized performance. API-first architecture separated frontend from backend. 87% test coverage ensured stability. Rollout took 16 weeks, maintaining SEO and 100% feature parity.",
       },
       {
         heading: {
-          main: "Home Page",
-          subtitle: undefined,
+          main: "Simplifying Navigation to Navigate Quicker",
+          subtitle: "Order Flow",
         },
         textBefore:
           "Redesigned the homepage with a clean, modern aesthetic that prioritizes product discovery and creates clear visual hierarchy. Implemented large hero imagery, featured product carousels, and category navigation that guides users naturally through the experience. Reduced clutter by 60%, improved above-the-fold conversion triggers, and created a mobile-first responsive layout that adapts beautifully across all screen sizes.",
@@ -142,37 +151,22 @@ export const case3Content = {
           type: "image" as const,
           props: {
             imageSrc:
-              "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
-          },
-        },
-      },
-      {
-        heading: {
-          main: "Summary View",
-          subtitle: undefined,
-        },
-        textBefore:
-          "Completely reimagined the product listing and search results pages to make browsing effortless. Introduced smart filtering with faceted search, infinite scroll with lazy loading for performance, and improved product cards with better imagery and quick-view functionality. Added persistent filters, sorting options, and comparison features that reduced time to find products by 73%.",
-        media: {
-          type: "image" as const,
-          props: {
-            imageSrc:
-              "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop",
-          },
-        },
-      },
-      {
-        heading: {
-          main: "Order View",
-          subtitle: undefined,
-        },
-        textBefore:
-          "Streamlined the checkout process from 7+ steps down to a single-page checkout with progressive disclosure. Implemented smart form validation, guest checkout option, and integrated payment methods including Apple Pay and Google Pay. Added order tracking, saved addresses, and one-click reorder functionality that reduced checkout time from 4.2 minutes to under 60 seconds.",
-        media: {
-          type: "image" as const,
-          props: {
-            imageSrc:
               "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+          },
+        },
+      },
+      {
+        heading: {
+          main: "Optimisation of the time users spend on data entry",
+          subtitle: "Data Input",
+        },
+        textBefore:
+          "Smart input fields with autocomplete and validation reduced data entry errors by 85%. Introduced contextual defaults based on user history and patterns, minimizing repetitive typing. Implemented bulk actions and templates for common scenarios, allowing users to complete forms 3x faster. Real-time feedback and inline error correction prevented submission issues before they occurred.",
+        media: {
+          type: "image" as const,
+          props: {
+            imageSrc:
+              "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&h=900&fit=crop",
           },
         },
       },

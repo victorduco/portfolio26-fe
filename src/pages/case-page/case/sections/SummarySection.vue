@@ -125,7 +125,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 150px 0 135px;
+  padding: 75px 0 75px;
   box-sizing: border-box;
   gap: 32px;
 }
@@ -187,7 +187,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 @media (max-width: 900px) {
   .summary-content {
-    padding: 100px 0 60px;
+    padding: 50px 0 50px;
     gap: 48px;
   }
 
@@ -198,7 +198,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 @media (max-width: 600px) {
   .summary-content {
-    padding: 80px 0 48px;
+    padding: 40px 0 40px;
     gap: 40px;
   }
 }

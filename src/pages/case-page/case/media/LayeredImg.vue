@@ -9,7 +9,7 @@
   >
     <div class="cards-container" ref="containerRef" :style="{ '--bg-color': backgroundColor, ...shadowVars }">
       <!-- Left card -->
-      <div class="card card-left" ref="cardLeftRef">
+      <div class="card card-left" ref="cardLeftRef" :style="{ zIndex: zIndexLeft }">
         <div class="card-inner">
           <img
             :src="imageLeft"
@@ -20,7 +20,7 @@
       </div>
 
       <!-- Center card (main) -->
-      <div class="card card-center" ref="cardCenterRef">
+      <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexCenter }">
         <div class="card-inner">
           <img
             :src="imageCenter"
@@ -31,7 +31,7 @@
       </div>
 
       <!-- Right card -->
-      <div class="card card-right" ref="cardRightRef">
+      <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexRight }">
         <div class="card-inner">
           <img
             :src="imageRight"
@@ -94,6 +94,18 @@ const props = defineProps({
   speedRight: {
     type: Number,
     default: null,
+  },
+  zIndexLeft: {
+    type: Number,
+    default: 3,
+  },
+  zIndexCenter: {
+    type: Number,
+    default: 2,
+  },
+  zIndexRight: {
+    type: Number,
+    default: 1,
   },
 });
 
@@ -200,21 +212,18 @@ onUnmounted(() => {
 .card-left {
   left: calc(50% - 45vw);
   top: calc(50% - 35vh);
-  z-index: 3;
 }
 
 /* Card 2 - middle right */
 .card-center {
   left: calc(50% + 5vw);
   top: calc(50% - 25vh);
-  z-index: 2;
 }
 
 /* Card 3 - bottom center-left */
 .card-right {
   left: calc(50% - 25vw);
   top: calc(50% - 10vh);
-  z-index: 1;
 }
 
 /* Responsive */
