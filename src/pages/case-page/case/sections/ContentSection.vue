@@ -18,7 +18,7 @@
     <component
       v-if="media"
       :is="getMediaComponent(media.type)"
-      v-bind="{ ...media.props, backgroundColor }"
+      v-bind="{ backgroundColor, ...media.props }"
     />
 
     <!-- Text after media -->
@@ -32,6 +32,7 @@ import TextBlock from '../elements/TextBlock.vue'
 import FullscreenImg from '../media/FullscreenImg.vue'
 import FullscreenVideo from '../media/FullscreenVideo.vue'
 import ParallaxImg from '../media/ParallaxImg.vue'
+import HorizontalParallaxImg from '../media/HorizontalParallaxImg.vue'
 import ChapteredVideo from '../media/ChapteredVideo.vue'
 import LayeredImg from '../media/LayeredImg.vue'
 
@@ -41,7 +42,7 @@ interface Heading {
 }
 
 interface Media {
-  type: 'image' | 'video' | 'parallax' | 'chaptered-video' | 'layered-cards'
+  type: 'image' | 'video' | 'parallax' | 'horizontalParallax' | 'chaptered-video' | 'layered-cards'
   props: Record<string, any>
 }
 
@@ -59,6 +60,7 @@ const mediaComponents: Record<string, Component> = {
   'image': FullscreenImg,
   'video': FullscreenVideo,
   'parallax': ParallaxImg,
+  'horizontalParallax': HorizontalParallaxImg,
   'chaptered-video': ChapteredVideo,
   'layered-cards': LayeredImg,
 }

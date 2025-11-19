@@ -191,9 +191,8 @@ const caseConfigs = {
     secondary: null,
     font: "'Neue Haas Grotesk Display Pro', sans-serif",
     theme: "light",
-    summaryImage:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop",
-    videoBackground: "#B9E2F7", // Blue background for images (previously page background)
+    summaryImage: "/images/case3-summary.png",
+    videoBackground: "#f5f5f7", // Light gray background for all media elements
     sections: [
       { type: "audit", label: "UX Audit" },
       { type: "redesign", label: "App Redesign" },
