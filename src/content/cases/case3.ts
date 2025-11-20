@@ -97,10 +97,17 @@ export const case3Content = {
         textBefore:
           "A design system with 142 components provided consistency. Navigation restructured through user testing reduced clicks-to-product from 4.2 to 2.1. Mobile got touch-optimized interactions and streamlined checkout. A/B tests validated every decision.",
         media: {
-          type: "image" as const,
+          type: 'layered-cards' as const,
           props: {
-            imageSrc:
-              "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&h=900&fit=crop",
+            imageLeft: '/images/case3-home-1-1.png',
+            imageCenter: '/images/case3-home-1-2.png',
+            imageRight: '/images/case3-home-1-3.png',
+            speedLeft: 0.5,
+            speedCenter: 1.0,
+            speedRight: 1.5,
+            zIndexLeft: 2,
+            zIndexCenter: 1,
+            zIndexRight: 3,
           },
         },
       },
