@@ -185,21 +185,44 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   opacity: 0.5;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 767px) {
   .summary-content {
-    padding: 50px 0 50px;
+    padding: 40px 24px;
+    gap: 40px;
+  }
+
+  .summary-header {
+    max-width: 100%;
+  }
+
+  .summary-details-wrapper {
+    max-width: 100%;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .detail-group {
+    width: 100%;
+  }
+
+  /* Make contribution items stack vertically */
+  .detail-value span {
+    display: block;
+  }
+
+  .detail-value span span {
+    display: none; /* Hide the arrow separator */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 900px) {
+  .summary-content {
+    padding: 50px 24px;
     gap: 48px;
   }
 
   .summary-details-wrapper {
     gap: 24px 32px;
-  }
-}
-
-@media (max-width: 600px) {
-  .summary-content {
-    padding: 40px 0 40px;
-    gap: 40px;
   }
 }
 </style>

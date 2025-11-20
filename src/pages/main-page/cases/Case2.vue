@@ -281,7 +281,63 @@ const handleStoryLinkClick = (event) => {
   border-radius: 12px;
 }
 
-@media (max-width: 899px) {
+@media (max-width: 767px) {
+  .case2 {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .case2-content {
+    width: 100%;
+    padding: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .case2-content-inner {
+    width: calc(100vw - 48px);
+    max-width: calc(100vw - 48px);
+    padding: 0 24px;
+    align-items: center;
+    text-align: center;
+    gap: clamp(16px, 3vh, 24px);
+  }
+
+  .case2-company {
+    text-align: center;
+  }
+
+  .case2-title {
+    text-align: center;
+    width: 100%;
+  }
+
+  .case2-paragraph {
+    text-align: center;
+    width: 100%;
+  }
+
+  .case2-open-story {
+    width: 100%;
+  }
+
+  .case2-image-container {
+    display: none;
+  }
+
+  .case2-video {
+    display: none;
+  }
+
+  .case2-final-image {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 899px) {
   .case2 {
     height: auto;
     min-height: 100dvh;
@@ -330,36 +386,6 @@ const handleStoryLinkClick = (event) => {
 
   .case2-final-image {
     object-fit: contain;
-  }
-}
-
-@media (max-width: 600px) {
-  .case2-content {
-    padding: clamp(24px, 6vh, 48px) 20px;
-  }
-
-  .case2-content-inner {
-    gap: 16px;
-    padding: 16px 20px;
-  }
-
-  .case2-title {
-    font-size: clamp(24px, 5vw, 32px);
-  }
-
-  .case2-paragraph {
-    font-size: 14px;
-  }
-
-  .case2-open-story {
-    font-size: 18px;
-    gap: 10px;
-  }
-
-  .case2-icon {
-    height: 23px;
-    width: auto;
-    transform: translateY(-1px);
   }
 }
 

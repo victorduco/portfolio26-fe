@@ -282,13 +282,27 @@ section:has(+ .case-next-project) {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .content-section {
     padding: 40px 0;
   }
 
+  .section-title {
+    padding: 0 24px;
+  }
+
   section:has(+ .case-next-project) {
     padding-bottom: 120px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 899px) {
+  .content-section {
+    padding: 40px 24px;
+  }
+
+  .section-title {
+    padding: 0 24px;
   }
 }
 </style>

@@ -210,10 +210,6 @@ defineProps({
     gap: 24px;
   }
 
-  .contacts__email {
-    font-size: clamp(16px, 4vw, 20px);
-  }
-
   .contacts__icon {
     width: 20px;
     height: 20px;

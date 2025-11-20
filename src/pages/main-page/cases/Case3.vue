@@ -600,7 +600,83 @@ defineExpose({
 }
 
 /* Mobile Responsive */
-@media (max-width: 899px) {
+@media (max-width: 767px) {
+  .scroll-container {
+    min-height: 100vh;
+  }
+
+  .section-1 {
+    height: 100vh;
+  }
+
+  .content {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .case3-container {
+    width: calc(100vw - 48px);
+    max-width: calc(100vw - 48px);
+    padding: 0 24px;
+    justify-content: center;
+  }
+
+  .case3-text-section {
+    width: 100%;
+    height: auto;
+    flex: none;
+    gap: clamp(16px, 3vh, 24px);
+  }
+
+  .case3-company-title-group {
+    width: 100%;
+  }
+
+  .case3-tags-container {
+    width: 100%;
+  }
+
+  .case3-title-wrapper {
+    width: 100%;
+  }
+
+  .case3-title {
+    width: 100%;
+    padding: 0;
+  }
+
+  .case3-description {
+    width: 100%;
+  }
+
+  .case3-button-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .case3-image-section {
+    display: none;
+  }
+
+  .case3-media-container {
+    display: none;
+  }
+
+  .case3-video-container {
+    display: none;
+  }
+
+  .case3-video {
+    display: none;
+  }
+
+  /* Hide CloudCorners on mobile */
+  .content > :first-child {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 899px) {
   .case3-container {
     width: 90%;
   }
@@ -645,65 +721,6 @@ defineExpose({
 
   .case3-button-icon {
     width: clamp(16px, 4vw, 20px);
-  }
-}
-
-@media (max-width: 600px) {
-  .case3-container {
-    width: 95%;
-  }
-
-  .case3-text-section {
-    height: 20%;
-  }
-
-  .case3-image-section {
-    height: 80%;
-  }
-
-  .case3-title {
-    font-size: clamp(24px, 4.5vw, 32px);
-    padding: 0 12px;
-  }
-
-  .case3-company {
-    font-size: clamp(11px, 2vw, 14px);
-  }
-
-  .case3-tag {
-    font-size: clamp(12px, 2.2vw, 14px);
-  }
-
-  .case3-tag-separator {
-    width: clamp(6px, 1.4vw, 8px);
-  }
-
-  .case3-tags-container {
-    gap: 5px;
-  }
-
-  .case3-description {
-    font-size: clamp(13.2px, 2.42vw, 17.6px);
-  }
-
-  .case3-button-wrapper {
-    width: 90%;
-    max-width: 290px;
-    height: clamp(38px, 9vw, 50px);
-  }
-
-  .case3-button {
-    font-size: clamp(13px, 3.2vw, 16px);
-    gap: 8px;
-  }
-
-  .case3-button-icon {
-    width: clamp(14px, 3.5vw, 18px);
-  }
-
-  .case3-button-shadow {
-    top: 6px;
-    left: 5px;
   }
 }
 </style>

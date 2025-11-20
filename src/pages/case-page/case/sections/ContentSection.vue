@@ -96,4 +96,19 @@ function getMediaComponent(type: string): Component {
   width: 100%;
   max-width: 1200px;
 }
+
+/* Mobile: Add horizontal padding for text content */
+@media (max-width: 767px) {
+  .section-heading {
+    padding: 0 24px;
+  }
+
+  .text-before {
+    padding: 0 24px;
+  }
+
+  .text-after {
+    padding: 0 24px;
+  }
+}
 </style>

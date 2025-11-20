@@ -146,4 +146,12 @@ const containerStyle = computed(() => {
   z-index: 10;
   width: 100%;
 }
+
+/* Mobile: Remove fixed height to allow content to take natural height */
+@media (max-width: 767px) {
+  .media-container.fullheight {
+    height: auto !important;
+    min-height: auto;
+  }
+}
 </style>

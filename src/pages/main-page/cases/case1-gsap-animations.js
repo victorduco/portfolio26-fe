@@ -7,6 +7,9 @@ export function initAnimations(pinContainer) {
   // Find section inside pinContainer
   const section1 = pinContainer.querySelector(".section-1");
 
+  // Check if mobile
+  const isMobile = window.innerWidth <= 767;
+
   // Set initial transform values for GSAP
   gsap.set(".line-element", {
     xPercent: -50,
@@ -70,36 +73,39 @@ export function initAnimations(pinContainer) {
   mainTimeline.to(
     ".line-element",
     {
-      width: "60vw",
+      width: isMobile ? "100vw" : "60vw",
       duration: 7,
     },
     "<25%"
   );
 
   // PHASE 2: Move elements vertically (20% of timeline)
-  // Balanced spacing for better laptop visibility: 105px
+  // Balanced spacing for better laptop visibility: 105px (desktop) / 100px (mobile for more space)
+  const verticalOffset = isMobile ? "100px" : "105px";
+  const textOffset = isMobile ? "-200px" : "-210px";
+
   mainTimeline.to(
     ".line-element",
     {
-      y: "105px",
+      y: verticalOffset,
       xPercent: -50,
-      borderRadius: "30px",
+      borderRadius: isMobile ? "0px" : "30px",
       duration: 5,
     },
     "<75%"
   );
   // Text needs to move further up because it starts lower (at line level, not centered)
   // Total distance from initial position to final = 105px (line movement) + 105px (spacing) = 210px
-  mainTimeline.to(".text-container", { y: "-210px", duration: 5 }, "<");
+  mainTimeline.to(".text-container", { y: textOffset, duration: 5 }, "<");
   // Mask moves down with the line to keep blue line = top edge of mask
-  mainTimeline.to(".mask-element", { y: "105px", duration: 5 }, "<");
+  mainTimeline.to(".mask-element", { y: verticalOffset, duration: 5 }, "<");
 
   // PHASE 3: Transform line into button (50% of timeline)
   // First, shrink the width and change background to white
   mainTimeline.to(
     ".line-element",
     {
-      width: "280px",
+      width: isMobile ? "calc(100vw - 48px)" : "280px",
       xPercent: -50,
       borderRadius: "30px",
       backgroundColor: "#ffffff",

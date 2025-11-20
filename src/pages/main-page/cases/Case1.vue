@@ -231,4 +231,40 @@ defineExpose({
   white-space: nowrap;
   opacity: 0;
 }
+
+/* ========================================
+   Mobile styles
+   ======================================== */
+@media (max-width: 767px) {
+  .text-container {
+    width: calc(100vw - 48px);
+    max-width: calc(100vw - 48px);
+  }
+
+  .company-text {
+    text-align: center;
+  }
+
+  .main-text {
+    width: 100%;
+    text-align: center;
+  }
+
+  .tags-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tag {
+    width: 100%;
+    text-align: center;
+  }
+
+  .tag-separator {
+    display: none;
+  }
+}
 </style>
