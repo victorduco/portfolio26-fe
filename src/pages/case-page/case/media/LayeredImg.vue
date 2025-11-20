@@ -7,7 +7,7 @@
     wrapper-class="layered-cards-wrapper"
     container-class="layered-cards"
   >
-    <div class="cards-container" ref="containerRef" :style="{ '--bg-color': backgroundColor, ...shadowVars }">
+    <div class="cards-container" ref="containerRef" :style="{ '--bg-color': backgroundColor, ...shadowVars, ...cardSizeStyles }">
       <!-- Left card -->
       <div class="card card-left" ref="cardLeftRef" :style="{ zIndex: zIndexLeft }">
         <div class="card-inner">
@@ -107,6 +107,14 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
+  containRatioWidth: {
+    type: Number,
+    default: null,
+  },
+  containRatioHeight: {
+    type: Number,
+    default: null,
+  },
 });
 
 const containerRef = ref(null);
@@ -122,6 +130,19 @@ const speeds = computed(() => [
   props.speedCenter ?? parallaxSpeeds[1],
   props.speedRight ?? parallaxSpeeds[2],
 ]);
+
+// Computed для пропорций карточек
+const cardSizeStyles = computed(() => {
+  if (!props.containRatioWidth || !props.containRatioHeight) {
+    return {};
+  }
+  // Вычисляем aspect-ratio на основе переданных размеров
+  const aspectRatio = props.containRatioWidth / props.containRatioHeight;
+  return {
+    '--card-aspect-ratio': aspectRatio,
+    '--card-object-fit': 'contain',
+  };
+});
 
 let animationFrameId = null;
 
@@ -180,7 +201,7 @@ onUnmounted(() => {
 .card {
   position: absolute;
   width: 40vw;
-  aspect-ratio: 2 / 1.1;
+  aspect-ratio: var(--card-aspect-ratio, 2 / 1.1);
   will-change: transform, opacity;
 }
 
@@ -204,7 +225,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: var(--card-object-fit, cover);
   border-radius: 14px;
 }
 

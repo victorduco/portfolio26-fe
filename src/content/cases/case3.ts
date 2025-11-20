@@ -108,6 +108,8 @@ export const case3Content = {
             zIndexLeft: 2,
             zIndexCenter: 1,
             zIndexRight: 3,
+            containRatioWidth: 1502,
+            containRatioHeight: 955,
           },
         },
       },
@@ -140,10 +142,39 @@ export const case3Content = {
         textBefore:
           "Gradual migration allowed business continuity while rebuilding. We audited 47 page templates, prioritized revenue-driving pages, and set targets: 75% faster loads, 100% mobile conversion increase, Lighthouse scores above 95.",
         media: {
-          type: "image" as const,
+          type: 'layered-cards' as const,
           props: {
-            imageSrc:
-              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&h=900&fit=crop",
+            imageLeft: '/images/case3-nav-1-1.png',
+            imageCenter: '/images/case3-nav-1-2.png',
+            imageRight: '/images/case3-nav-1-3.png',
+            speedLeft: 0.5,
+            speedCenter: 1.0,
+            speedRight: 1.5,
+            zIndexLeft: 2,
+            zIndexCenter: 1,
+            zIndexRight: 3,
+            containRatioWidth: 1502,
+            containRatioHeight: 955,
+          },
+        },
+      },
+      {
+        textBefore:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+        media: {
+          type: 'layered-cards' as const,
+          props: {
+            imageLeft: '/images/case3-nav-2-1.png',
+            imageCenter: '/images/case3-nav-2-2.png',
+            imageRight: '/images/case3-nav-2-3.png',
+            speedLeft: 0.5,
+            speedCenter: 1.0,
+            speedRight: 1.5,
+            zIndexLeft: 2,
+            zIndexCenter: 1,
+            zIndexRight: 3,
+            containRatioWidth: 3840,
+            containRatioHeight: 2160,
           },
         },
       },
@@ -159,21 +190,6 @@ export const case3Content = {
           props: {
             imageSrc:
               "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
-          },
-        },
-      },
-      {
-        heading: {
-          main: "Optimisation of the time users spend on data entry",
-          subtitle: "Data Input",
-        },
-        textBefore:
-          "Smart input fields with autocomplete and validation reduced data entry errors by 85%. Introduced contextual defaults based on user history and patterns, minimizing repetitive typing. Implemented bulk actions and templates for common scenarios, allowing users to complete forms 3x faster. Real-time feedback and inline error correction prevented submission issues before they occurred.",
-        media: {
-          type: "image" as const,
-          props: {
-            imageSrc:
-              "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&h=900&fit=crop",
           },
         },
       },
