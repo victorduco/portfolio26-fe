@@ -122,15 +122,15 @@ const caseConfigs = {
     videoLabel: "Product Overview Video", // Label above video
     results: [
       {
-        title: "Time Efficiency Improvement",
+        title: "Noticeable Time Reduction",
         description: "Task completion times improved significantly, with reductions in time required depending on task complexity."
       },
       {
-        title: "AI and Predictive Analysis",
+        title: "Lower SLA Violations",
         description: "AI has enhanced the system's ability to identify incidents and perform predictive analysis, improving decision-making."
       },
       {
-        title: "Peak Time Management",
+        title: "Peak Load Support",
         description: "Workload management during peak financial periods has improved, resulting in smoother operations and reduced stress for users."
       }
     ],

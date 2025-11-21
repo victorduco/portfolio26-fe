@@ -77,8 +77,8 @@ const finalImageSrc = new URL(
 
 const containerRef = ref(null);
 
-const titlePart1Words = computed(() => ["Redesigning", "the", "employee"]);
-const titlePart2Words = computed(() => ["Communications", "App"]);
+const titlePart1Words = computed(() => ["Relaunching", "the", "Employee"]);
+const titlePart2Words = computed(() => ["Comms", "App"]);
 
 const descriptionPart1 = "Streamlining internal communications for leading customers like ";
 const descriptionPart2 = " and empowering organizations to connect and collaborate with recognized excellence ";

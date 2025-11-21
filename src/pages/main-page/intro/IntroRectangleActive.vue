@@ -77,22 +77,22 @@ const contentData = [
   {
     title: "Vision",
     description:
-      "Building consistent and scalable UI components that work seamlessly across all platforms and devices",
+      "Strong vision means understanding the real problem. I know how to guide teams toward aligned direction and keep the product focused on meaningful outcomes.",
   },
   {
     title: "Connection",
     description:
-      "Making digital content available and usable for everyone regardless of their abilities or disabilities",
+      "Great projects are built by people. I love bringing different perspectives together and turning collaboration into real progress.",
   },
   {
     title: "Technology",
     description:
-      "Creating intuitive and delightful interactions that help users achieve their goals with minimal friction",
+      "Continuous learning and hands-on tech experience help me create solutions that are both innovative and practical, grounded in real engineering constraints.",
   },
   {
     title: "Scale",
     description:
-      "Maximizing speed and efficiency through careful code analysis and modern best practices for web",
+      "I shape and build large-scale enterprise experiences used internationally, ensuring the UX stays consistent, predictable, and easy to operate.",
   },
 ];
 
@@ -140,7 +140,7 @@ function handleBackdropClick() {
   gap: clamp(12px, 2vh, 20px);
   text-align: center;
   padding: 32px;
-  max-width: 400px;
+  max-width: 480px;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;

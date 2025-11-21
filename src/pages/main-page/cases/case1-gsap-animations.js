@@ -18,6 +18,14 @@ export function initAnimations(pinContainer) {
     y: 0
   });
 
+  // Set initial transform values for text-container
+  gsap.set(".text-container", {
+    xPercent: -50,
+    yPercent: 0,
+    x: 0,
+    y: 0
+  });
+
   // Main pin: pins .circle for the duration of section1
   ScrollTrigger.create({
     trigger: section1,
@@ -43,6 +51,9 @@ export function initAnimations(pinContainer) {
         gsap.set(".line-element", {
           xPercent: -50,
           yPercent: -50,
+        });
+        gsap.set(".text-container", {
+          xPercent: -50,
         });
       },
     },
@@ -96,7 +107,7 @@ export function initAnimations(pinContainer) {
   );
   // Text needs to move further up because it starts lower (at line level, not centered)
   // Total distance from initial position to final = 105px (line movement) + 105px (spacing) = 210px
-  mainTimeline.to(".text-container", { y: textOffset, duration: 5 }, "<");
+  mainTimeline.to(".text-container", { y: textOffset, xPercent: -50, duration: 5 }, "<");
   // Mask moves down with the line to keep blue line = top edge of mask
   mainTimeline.to(".mask-element", { y: verticalOffset, duration: 5 }, "<");
 

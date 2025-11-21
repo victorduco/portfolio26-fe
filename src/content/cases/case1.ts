@@ -65,7 +65,7 @@ export const case1Content = {
             image1: '/src/assets/images/case1_fw_s1.png',
             image2: '/src/assets/images/case1_fw_s2.png',
             image3: '/src/assets/images/case1_fw_s3.png',
-            imageLabel: 'AI Framework Architecture',
+            imageLabel: 'Input & Output Elements for Chat and Classic UI',
           },
         },
       },
@@ -79,7 +79,7 @@ export const case1Content = {
           type: 'chaptered-video' as const,
           props: {
             videoSrc: '/videos/case1-chaptered-test.mp4',
-            videoLabel: 'UX Transition Workflow',
+            videoLabel: 'Two workflows, one unified experience. Users pick what fits best.',
             chapterGroups: [
               {
                 groupTitle: 'Interface Design',
@@ -105,7 +105,7 @@ export const case1Content = {
       },
       {
         heading: {
-          main: 'Helping Users Navigate AI Variability',
+          main: 'Building Users\' Trust Through Transparency',
           subtitle: 'AI Output Interpretation',
         },
         textBefore: 'The transition between AI-assisted and traditional workflows is seamless and intuitive. Users can effortlessly move between interaction modes without losing context or progress, ensuring a consistent experience regardless of their chosen approach.',
@@ -113,6 +113,7 @@ export const case1Content = {
           type: 'image' as const,
           props: {
             imageSrc: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop',
+            imageLabel: 'LLM responses are unified and passed through a reliability check.',
           },
         },
       },
@@ -126,6 +127,7 @@ export const case1Content = {
           type: 'image' as const,
           props: {
             imageSrc: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop',
+            imageLabel: 'Results tailored to users\' specific task context.',
           },
         },
       },

@@ -11,7 +11,7 @@
           <div class="text-container">
             <p class="company-text">Apple</p>
             <h2 class="main-text">
-              Simplifying Finance Workflows with AI-Driven UX
+              Transforming Account Reconciliation with AI-Driven User Experience
             </h2>
             <div class="tags-container">
               <span class="tag">Global User Research</span>
@@ -133,6 +133,8 @@ defineExpose({
   transform: translate(-50%, 0);
   text-align: center;
   z-index: 1;
+  width: 90vw;
+  max-width: 1200px;
 }
 
 .company-text {
@@ -142,6 +144,9 @@ defineExpose({
   font-size: clamp(16px, 2vw, 28px);
   line-height: 1.4;
   color: #007aff;
+  text-align: center;
+  width: 100%;
+  max-width: none;
 }
 
 .main-text {

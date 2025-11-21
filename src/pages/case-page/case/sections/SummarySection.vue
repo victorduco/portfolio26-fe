@@ -90,7 +90,7 @@ const props = defineProps({
 
 const summaryConfigs = {
   '1': {
-    title: 'Transforming Financial Services with AI-Powered Reconciliation',
+    title: 'Transforming Account Reconciliation with AI-Driven User Experience',
     description: 'Building intelligent automation for enterprise financial operations from ground up. Designed and developed a comprehensive AI-driven reconciliation system that streamlines complex financial workflows, reduces manual processing time by 85%, and improves accuracy across multiple business units. Led the product vision from initial concept through successful enterprise deployment.',
     timeline: 'Feb 2022 - Present',
     projectType: '0-1 Product',
@@ -100,7 +100,7 @@ const summaryConfigs = {
     organizationName: 'Apple Financial Services'
   },
   '2': {
-    title: 'Reimagining Team Communication for the Modern Workplace',
+    title: 'Relaunching the Employee Comms App',
     description: 'Complete redesign of enterprise communication platform serving 50,000+ users. Transformed the entire user experience by conducting extensive research, reimagining core interaction patterns, and establishing a cohesive design system that improved engagement by 40% and reduced support tickets by 60%. Created a scalable foundation for future product evolution.',
     timeline: 'Jan 2021 - Dec 2021',
     projectType: 'Redesign',
