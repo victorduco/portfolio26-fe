@@ -123,10 +123,10 @@ const route = useRoute();
 const shouldSkipAnimation = computed(() => route.meta?.skipNavIntro === true);
 
 // Content data
-const title = "Oil Terminal Field App";
+const title = "Field Operations App for Oil Terminals";
 const tags = ["Consultancy", "Redesign", "Mentorship"];
 const description =
-  "Enterprise tool for enhanced employee engagement, satisfaction, and overall workplace productivity.";
+  "A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.";
 const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
 const videoSrc = new URL("@/assets/case-videos/case3-2.mp4", import.meta.url)
   .href;

@@ -7,7 +7,7 @@ export const case3Content = {
     sections: [
       {
         heading: {
-          main: "Critical Work",
+          main: "Harsh Conditions, Critical Actions",
           subtitle: "User Challenge",
         },
         textBefore:
@@ -24,6 +24,7 @@ export const case3Content = {
             zIndexLeft: 2,
             zIndexCenter: 1,
             zIndexRight: 3,
+            mediaLabel: 'Typical field conditions: rain, safety equipment, and a tablet with a protective screen.',
           },
         },
       },
@@ -38,6 +39,7 @@ export const case3Content = {
           type: "image" as const,
           props: {
             imageSrc: "/images/case3_task.png",
+            mediaLabel: "Previous version: Home screen, My Tasks (two views), and user profile.",
           },
         },
       },
@@ -52,7 +54,7 @@ export const case3Content = {
     sections: [
       {
         heading: {
-          main: "Building the Base",
+          main: "Building a Fact-Based Case for Change",
           subtitle: "User & Competitor Research",
         },
         textBefore:
@@ -69,12 +71,13 @@ export const case3Content = {
             zIndexLeft: 2,
             zIndexCenter: 1,
             zIndexRight: 3,
+            mediaLabel: "Internal documentation samples: personas, best practices, and user testing of the previous design.",
           },
         },
       },
       {
         heading: {
-          main: "Actionable Improvements with References",
+          main: "Prioritized and Actionable Summary of UX Problems",
           subtitle: "UX Audit Report",
         },
         textBefore:
@@ -91,6 +94,7 @@ export const case3Content = {
             zIndexLeft: 2,
             zIndexCenter: 1,
             zIndexRight: 3,
+            mediaLabel: "Sample slides from the final report showing issues and solutions.",
           },
         },
         textAfter:
@@ -107,7 +111,7 @@ export const case3Content = {
     sections: [
       {
         heading: {
-          main: "Considering Real data for Page Customization",
+          main: "Keeping Only What Matters, Without Losing the Experience",
           subtitle: "Home Page",
         },
         textBefore:
@@ -126,6 +130,7 @@ export const case3Content = {
             zIndexRight: 3,
             containRatioWidth: 1502,
             containRatioHeight: 955,
+            mediaLabel: "The home screen adapts to the user's current situation, showing only what matters most.",
           },
         },
       },
@@ -145,14 +150,14 @@ export const case3Content = {
             height2: "33.33%",
             height3: "33.33%",
             backgroundColor: "#f5f5f7",
-            mediaLabel: "Horizontal Parallax Effect",
+            mediaLabel: "Illustration samples for different order types, statuses, and conditions.",
             alt: "Platform migration process",
           },
         },
       },
       {
         heading: {
-          main: "Making ways shorter",
+          main: "Attention Goes to What Truly Matters",
           subtitle: "App Navigation",
         },
         textBefore:
@@ -171,6 +176,7 @@ export const case3Content = {
             zIndexRight: 3,
             containRatioWidth: 1502,
             containRatioHeight: 955,
+            mediaLabel: "Examples of visual hierarchy: (1) the menu stays low-priority; (2) notifications gain prominence only when something critical happens.",
           },
         },
       },

@@ -110,14 +110,14 @@ const summaryConfigs = {
     organizationName: 'Smarp (Haiilo)'
   },
   '3': {
-    title: 'Revitalizing E-Commerce Platform Through Strategic Modernization',
-    description: 'End-to-end UX audit and complete platform redesign for 2M+ users. Conducted comprehensive analysis of user behavior, identified critical pain points across the entire customer journey, and delivered a modernized experience that increased conversion rates by 35% and customer satisfaction scores by 45%. Established design principles and component library for sustained growth.',
-    timeline: 'Mar 2020 - Aug 2020',
-    projectType: 'UX Audit & Full Redesign',
-    role: 'Lead UX Designer',
-    contribution: ['UX Audit', 'User Research', 'Interface Design', 'Design System'],
+    title: 'A Full Redesign of an Oil Terminal Operations App',
+    description: 'A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience for oil terminal operations.',
+    timeline: 'Feb 2025 - Jun 2025',
+    projectType: 'UX Audit, Redesign, Mentorship',
+    role: 'External UX Expert',
+    contribution: ['UX Audit', 'User Research', 'Product Design', 'Team Support'],
     organizationType: 'Company',
-    organizationName: 'Mirai'
+    organizationName: 'Digineox (Houston, TX)'
   }
 };
 

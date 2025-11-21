@@ -185,6 +185,7 @@ const caseConfigs = {
     theme: "light",
     summaryImage: "/images/case3-summary.png",
     videoBackground: "#f5f5f7", // Light gray background for all media elements
+    mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     nextProject: {
       caseId: "1",
       title: "Cross-Domain AI Solution for Account Reconcilers",
