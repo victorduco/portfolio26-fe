@@ -91,9 +91,10 @@ onMounted(() => {
 <style scoped>
 .images-grid {
   display: flex;
-  width: 100%;
+  width: 85%;
   height: 100%;
   gap: 0;
+  margin: 0 auto;
 }
 
 .image-strip {
