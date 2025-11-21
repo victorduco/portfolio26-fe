@@ -44,8 +44,8 @@ export function initializeParallaxImage(container, img, options = {}) {
         ease: "none",
         scrollTrigger: {
           trigger: container,
-          start: "top center",
-          end: "bottom center",
+          start: "top bottom",
+          end: "bottom top",
           scrub: scrub,
           markers: markers,
           invalidateOnRefresh: true,
