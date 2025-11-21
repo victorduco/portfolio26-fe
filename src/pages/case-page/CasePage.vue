@@ -148,6 +148,7 @@ const caseConfigs = {
     theme: "light",
     summaryImage: new URL("@/assets/images/case2_summary.png", import.meta.url).href,
     videoBackground: "#F7E7E7", // Same as button color on main page
+    videoLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     results: [
       {
         label: "App Rating",

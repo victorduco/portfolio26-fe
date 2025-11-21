@@ -77,12 +77,12 @@ const finalImageSrc = new URL(
 
 const containerRef = ref(null);
 
-const titlePart1Words = computed(() => ["Relaunching", "the", "Employee"]);
-const titlePart2Words = computed(() => ["Comms", "App"]);
+const titlePart1Words = computed(() => ["Redesigning", "the", "Employee"]);
+const titlePart2Words = computed(() => ["Comms", "mobile", "experience"]);
 
-const descriptionPart1 = "Streamlining internal communications for leading customers like ";
-const descriptionPart2 = " and empowering organizations to connect and collaborate with recognized excellence ";
-const descriptionPart3 = " in design";
+const descriptionPart1 = "Redesigning the Employee Comms mobile experience used by global teams ";
+const descriptionPart2 = " and improving content variety, information discoverability, and overall usability with recognized excellence ";
+const descriptionPart3 = " by G2";
 
 const googleLogo = new URL("@/assets/images/google.svg", import.meta.url).href;
 const cocaColaLogo = new URL("@/assets/images/coca-cola.svg", import.meta.url).href;

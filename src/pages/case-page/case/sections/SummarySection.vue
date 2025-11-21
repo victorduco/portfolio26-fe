@@ -107,7 +107,7 @@ const summaryConfigs = {
     role: 'Senior Product Designer',
     contribution: ['User Research', 'Interface Design', 'Interaction Design', 'Design System'],
     organizationType: 'Company',
-    organizationName: 'Smarp'
+    organizationName: 'Smarp (Haiilo)'
   },
   '3': {
     title: 'Revitalizing E-Commerce Platform Through Strategic Modernization',
