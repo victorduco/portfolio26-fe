@@ -58,9 +58,17 @@ export const case3Content = {
         textBefore:
           "Conducted extensive usability testing with 30+ participants and analyzed top 10 competitors to identify industry best practices. Heat maps revealed friction points, scroll depth analytics showed content discovery issues, and competitor analysis identified key opportunities for differentiation in navigation, checkout flows, and mobile experience.",
         media: {
-          type: "image" as const,
+          type: 'layered-cards' as const,
           props: {
-            imageSrc: "/images/case3_docs.png",
+            imageLeft: '/images/case3-ground-1.png',
+            imageCenter: '/images/case3-ground-2.png',
+            imageRight: '/images/case3-ground-3.png',
+            speedLeft: 0.5,
+            speedCenter: 1.0,
+            speedRight: 1.5,
+            zIndexLeft: 2,
+            zIndexCenter: 1,
+            zIndexRight: 3,
           },
         },
       },
@@ -72,9 +80,17 @@ export const case3Content = {
         textBefore:
           "Delivered comprehensive UX audit report with prioritized recommendations across 5 key areas: navigation & IA, product discovery, checkout optimization, mobile experience, and performance. Each recommendation included severity rating, estimated impact, implementation effort, and supporting data from user testing. Created detailed roadmap for phased implementation aligned with business priorities.",
         media: {
-          type: "image" as const,
+          type: 'layered-cards' as const,
           props: {
-            imageSrc: "/images/case3_rep2.png",
+            imageLeft: '/images/case3-audit-1.png',
+            imageCenter: '/images/case3-audit-2.png',
+            imageRight: '/images/case3-audit-3.png',
+            speedLeft: 0.5,
+            speedCenter: 1.0,
+            speedRight: 1.5,
+            zIndexLeft: 2,
+            zIndexCenter: 1,
+            zIndexRight: 3,
           },
         },
         textAfter:
@@ -137,7 +153,7 @@ export const case3Content = {
       {
         heading: {
           main: "Making ways shorter",
-          subtitle: "Navigation",
+          subtitle: "App Navigation",
         },
         textBefore:
           "Gradual migration allowed business continuity while rebuilding. We audited 47 page templates, prioritized revenue-driving pages, and set targets: 75% faster loads, 100% mobile conversion increase, Lighthouse scores above 95.",
@@ -159,6 +175,25 @@ export const case3Content = {
         },
       },
       {
+        heading: {
+          main: "Simplifying Navigation to Navigate Quicker",
+          subtitle: "Order View",
+        },
+        textBefore:
+          "Redesigned the homepage with a clean, modern aesthetic that prioritizes product discovery and creates clear visual hierarchy. Implemented large hero imagery, featured product carousels, and category navigation that guides users naturally through the experience. Reduced clutter by 60%, improved above-the-fold conversion triggers, and created a mobile-first responsive layout that adapts beautifully across all screen sizes.",
+        media: {
+          type: "image" as const,
+          props: {
+            imageSrc:
+              "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+          },
+        },
+      },
+      {
+        heading: {
+          main: "Simplifying Navigation to Navigate Quicker",
+          subtitle: "Order Navigation",
+        },
         textBefore:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
         media: {
@@ -175,21 +210,6 @@ export const case3Content = {
             zIndexRight: 3,
             containRatioWidth: 3840,
             containRatioHeight: 2160,
-          },
-        },
-      },
-      {
-        heading: {
-          main: "Simplifying Navigation to Navigate Quicker",
-          subtitle: "Order Flow",
-        },
-        textBefore:
-          "Redesigned the homepage with a clean, modern aesthetic that prioritizes product discovery and creates clear visual hierarchy. Implemented large hero imagery, featured product carousels, and category navigation that guides users naturally through the experience. Reduced clutter by 60%, improved above-the-fold conversion triggers, and created a mobile-first responsive layout that adapts beautifully across all screen sizes.",
-        media: {
-          type: "image" as const,
-          props: {
-            imageSrc:
-              "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
           },
         },
       },
