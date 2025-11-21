@@ -1,12 +1,5 @@
 <template>
-  <MediaContainer
-    type="fullheight"
-    :background-color="backgroundColor"
-    :label="videoLabel"
-    wrapper-class="fullscreen-video-wrapper"
-    container-class="fullscreen-video"
-  >
-    <div class="video-wrapper" ref="videoContainerRef">
+  <div class="video-wrapper" ref="videoContainerRef">
       <!-- Video Element -->
       <video
         ref="videoElement"
@@ -53,7 +46,6 @@
         @toggle-fullscreen="toggleFullscreen"
       />
     </div>
-  </MediaContainer>
 </template>
 
 <script setup>
@@ -61,25 +53,16 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { useMediaQuery } from "@/composables/useMediaQuery.js";
 import { useVideoPlayer } from "@/composables/useVideoPlayer.js";
 import VideoControls from "./VideoControls.vue";
-import MediaContainer from "./MediaContainer.vue";
 
 const props = defineProps({
   videoSrc: {
     type: String,
     required: true,
   },
-  backgroundColor: {
-    type: String,
-    default: "#000000",
-  },
   autoplayThreshold: {
     type: Number,
     default: 0.75,
     validator: (value) => value >= 0 && value <= 1,
-  },
-  videoLabel: {
-    type: String,
-    default: "",
   },
 });
 

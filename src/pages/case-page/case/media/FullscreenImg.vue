@@ -1,42 +1,33 @@
 <template>
-  <MediaContainer
-    type="fullheight"
-    :background-color="backgroundColor"
-    :label="imageLabel"
-    :sources="sources"
-    wrapper-class="fullscreen-image-wrapper"
+  <div
+    class="fullscreen-image__container"
+    @mousemove="handleMouseMove"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+    ref="containerRef"
   >
+    <img
+      :src="imageSrc"
+      :alt="alt"
+      class="fullscreen-image__img"
+      loading="lazy"
+      ref="imageRef"
+    />
     <div
-      class="fullscreen-image__container"
-      @mousemove="handleMouseMove"
-      @mouseenter="handleMouseEnter"
-      @mouseleave="handleMouseLeave"
-      ref="containerRef"
+      v-if="enableMagnifier && showMagnifier"
+      class="magnifier"
+      :style="magnifierStyle"
     >
-      <img
-        :src="imageSrc"
-        :alt="alt"
-        class="fullscreen-image__img"
-        loading="lazy"
-        ref="imageRef"
-      />
       <div
-        v-if="enableMagnifier && showMagnifier"
-        class="magnifier"
-        :style="magnifierStyle"
-      >
-        <div
-          class="magnifier__image"
-          :style="magnifierImageStyle"
-        ></div>
-      </div>
+        class="magnifier__image"
+        :style="magnifierImageStyle"
+      ></div>
     </div>
-  </MediaContainer>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   imageSrc: {
@@ -46,10 +37,6 @@ const props = defineProps({
   alt: {
     type: String,
     default: 'Case image',
-  },
-  backgroundColor: {
-    type: String,
-    default: 'transparent',
   },
   enableMagnifier: {
     type: Boolean,
@@ -62,21 +49,6 @@ const props = defineProps({
   zoomLevel: {
     type: Number,
     default: 2.5,
-  },
-  imageLabel: {
-    type: String,
-    default: '',
-  },
-  sources: {
-    type: Array,
-    default: () => [],
-    validator: (value) => {
-      return value.every(source =>
-        typeof source === 'object' &&
-        'name' in source &&
-        'url' in source
-      );
-    },
   },
 });
 
@@ -158,7 +130,6 @@ const magnifierImageStyle = computed(() => {
   const adjustedMouseY = mouseY.value - offsetY;
 
   return {
-    backgroundColor: props.backgroundColor,
     backgroundImage: `url(${props.imageSrc})`,
     backgroundSize: `${renderedWidth * zoom}px ${renderedHeight * zoom}px`,
     backgroundPosition: `-${adjustedMouseX * zoom - size / 2}px -${adjustedMouseY * zoom - size / 2}px`,

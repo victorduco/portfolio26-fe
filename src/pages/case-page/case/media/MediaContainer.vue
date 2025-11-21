@@ -6,7 +6,6 @@
       :label="label"
       :sources="sources"
       :tag="labelTag"
-      :class="{ 'fullwidth-label': type === 'fullwidth' }"
     />
 
     <!-- Main container -->
@@ -133,18 +132,6 @@ const containerStyle = computed(() => {
   margin-top: 48px;
   margin-bottom: 0;
   overflow: visible;
-}
-
-/* Label для fullwidth компонентов */
-.media-container-wrapper.fullwidth :deep(.fullwidth-label) {
-  max-width: 1200px;
-  margin: 0 auto;
-  position: absolute;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  width: 100%;
 }
 
 /* Mobile: Remove fixed height to allow content to take natural height */

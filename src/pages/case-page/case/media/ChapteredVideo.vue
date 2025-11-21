@@ -1,12 +1,5 @@
 <template>
-  <MediaContainer
-    type="fullheight"
-    :background-color="backgroundColor"
-    :label="videoLabel"
-    wrapper-class="chaptered-video-wrapper"
-    container-class="chaptered-video"
-  >
-    <div class="video-container-inner" ref="videoContainerRef">
+  <div class="video-container-inner" ref="videoContainerRef">
       <!-- Left sidebar with chapter navigation -->
       <nav class="chapters-nav" ref="navRef">
         <div
@@ -75,7 +68,6 @@
         />
       </div>
     </div>
-  </MediaContainer>
 </template>
 
 <script setup>
@@ -83,20 +75,11 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import VideoControls from "./VideoControls.vue";
 import { useChapteredVideo } from "@/composables/useChapteredVideo";
 import { useMediaQuery } from "@/composables/useMediaQuery";
-import MediaContainer from "./MediaContainer.vue";
 
 const props = defineProps({
   videoSrc: {
     type: String,
     required: true,
-  },
-  backgroundColor: {
-    type: String,
-    default: "#f5f5f7",
-  },
-  videoLabel: {
-    type: String,
-    default: "",
   },
   chapterGroups: {
     type: Array,

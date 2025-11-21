@@ -1,13 +1,5 @@
 <template>
-  <MediaContainer
-    type="fullwidth"
-    :background-color="backgroundColor"
-    :label="label"
-    :overflow="'visible'"
-    wrapper-class="layered-cards-wrapper"
-    container-class="layered-cards"
-  >
-    <div class="cards-container" ref="containerRef" :style="{ '--bg-color': backgroundColor, ...shadowVars, ...cardSizeStyles }">
+  <div class="cards-container" ref="containerRef" :style="{ ...shadowVars, ...cardSizeStyles }">
       <!-- Left card -->
       <div class="card card-left" ref="cardLeftRef" :style="{ zIndex: zIndexLeft }">
         <div class="card-inner">
@@ -41,14 +33,12 @@
         </div>
       </div>
     </div>
-  </MediaContainer>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { parallaxSpeeds } from './layeredCardsVariants.js';
 import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
-import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   imageLeft: {
@@ -74,14 +64,6 @@ const props = defineProps({
   altRight: {
     type: String,
     default: '',
-  },
-  label: {
-    type: String,
-    default: '',
-  },
-  backgroundColor: {
-    type: String,
-    default: 'transparent',
   },
   speedLeft: {
     type: Number,

@@ -1,36 +1,27 @@
 <template>
-  <MediaContainer
-    type="fullheight"
-    :background-color="backgroundColor"
-    :label="imageLabel"
-    wrapper-class="fullscreen-horizontal-parallax-wrapper"
-    container-class="fullscreen-horizontal-parallax"
-  >
-    <div class="images-stack" ref="containerRef">
-      <div
-        v-for="(imageData, index) in images"
-        :key="index"
-        class="image-row"
-        :style="{ height: imageData.height }"
-      >
-        <div class="image-container">
-          <img
-            :ref="el => imageRefs[index] = el"
-            :src="imageData.src"
-            :alt="imageData.alt || alt"
-            class="horizontal-parallax-image"
-            loading="lazy"
-          />
-        </div>
+  <div class="images-stack" ref="containerRef">
+    <div
+      v-for="(imageData, index) in images"
+      :key="index"
+      class="image-row"
+      :style="{ height: imageData.height }"
+    >
+      <div class="image-container">
+        <img
+          :ref="el => imageRefs[index] = el"
+          :src="imageData.src"
+          :alt="imageData.alt || alt"
+          class="horizontal-parallax-image"
+          loading="lazy"
+        />
       </div>
     </div>
-  </MediaContainer>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { initializeHorizontalParallaxImage } from '@/composables/useHorizontalParallaxImage';
-import MediaContainer from './MediaContainer.vue';
 
 const props = defineProps({
   image1: {
@@ -72,14 +63,6 @@ const props = defineProps({
   alt: {
     type: String,
     default: 'Horizontal parallax image',
-  },
-  backgroundColor: {
-    type: String,
-    default: 'transparent',
-  },
-  imageLabel: {
-    type: String,
-    default: '',
   },
 });
 

@@ -182,10 +182,19 @@ export const case3Content = {
         textBefore:
           "Redesigned the homepage with a clean, modern aesthetic that prioritizes product discovery and creates clear visual hierarchy. Implemented large hero imagery, featured product carousels, and category navigation that guides users naturally through the experience. Reduced clutter by 60%, improved above-the-fold conversion triggers, and created a mobile-first responsive layout that adapts beautifully across all screen sizes.",
         media: {
-          type: "image" as const,
+          type: 'layered-cards' as const,
           props: {
-            imageSrc:
-              "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop",
+            imageLeft: '/images/case3-order-1-1.png',
+            imageCenter: '/images/case3-order-1-2.png',
+            imageRight: '/images/case3-order-1-3.png',
+            speedLeft: 0.5,
+            speedCenter: 1.0,
+            speedRight: 1.5,
+            zIndexLeft: 2,
+            zIndexCenter: 1,
+            zIndexRight: 3,
+            containRatioWidth: 1502,
+            containRatioHeight: 955,
           },
         },
       },

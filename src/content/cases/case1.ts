@@ -7,8 +7,8 @@ export const case1Content = {
     sections: [
       {
         heading: {
-          main: 'Working Across Multiple Interconnected Sub-Domains',
-          subtitle: 'Domain Complexity',
+          main: 'Something Went Wrong, Somehow',
+          subtitle: 'Account Reconciliation Specifics',
         },
         textBefore: 'A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.',
         media: {
@@ -16,7 +16,7 @@ export const case1Content = {
           props: {
             imageSrc: '/src/assets/images/domain_tree.png',
             enableMagnifier: true,
-            imageLabel: 'Account Reconciliation: Domain Tree Diagram',
+            imageLabel: 'Users must grasp multiple subdomains to resolve problems.',
           },
         },
       },
@@ -40,6 +40,7 @@ export const case1Content = {
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
+            imageLabel: 'Research Summary and Business Context',
           },
         },
       },

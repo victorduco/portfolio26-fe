@@ -14,12 +14,22 @@
     <!-- Text before media -->
     <TextBlock v-if="textBefore" :content="textBefore" class="text-before" />
 
-    <!-- Media component -->
-    <component
+    <!-- Media component wrapped in MediaContainer -->
+    <MediaContainer
       v-if="media"
-      :is="getMediaComponent(media.type)"
-      v-bind="{ backgroundColor, ...media.props }"
-    />
+      :type="getMediaContainerType(media.type)"
+      :background-color="backgroundColor || media.props.backgroundColor || 'transparent'"
+      :label="getMediaLabel(media.props)"
+      :sources="media.props.sources || []"
+      :overflow="getMediaOverflow(media.type)"
+      :wrapper-class="getWrapperClass(media.type)"
+      :container-class="getContainerClass(media.type)"
+    >
+      <component
+        :is="getMediaComponent(media.type)"
+        v-bind="getMediaProps(media.props)"
+      />
+    </MediaContainer>
 
     <!-- Text after media -->
     <TextBlock v-if="textAfter" :content="textAfter" class="text-after" />
@@ -29,6 +39,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import TextBlock from '../elements/TextBlock.vue'
+import MediaContainer from '../media/MediaContainer.vue'
 import FullscreenImg from '../media/FullscreenImg.vue'
 import FullscreenVideo from '../media/FullscreenVideo.vue'
 import ParallaxImg from '../media/ParallaxImg.vue'
@@ -67,6 +78,54 @@ const mediaComponents: Record<string, Component> = {
 
 function getMediaComponent(type: string): Component {
   return mediaComponents[type] || FullscreenImg
+}
+
+// Extract label from props (imageLabel or videoLabel)
+function getMediaLabel(props: Record<string, any>): string {
+  return props.imageLabel || props.videoLabel || ''
+}
+
+// Get MediaContainer type based on media type
+function getMediaContainerType(mediaType: string): 'fullheight' | 'fullwidth' {
+  if (mediaType === 'layered-cards') {
+    return 'fullwidth'
+  }
+  return 'fullheight'
+}
+
+// Get overflow setting based on media type
+function getMediaOverflow(mediaType: string): 'hidden' | 'visible' {
+  if (mediaType === 'layered-cards') {
+    return 'visible'
+  }
+  return 'hidden'
+}
+
+// Get wrapper class based on media type
+function getWrapperClass(mediaType: string): string {
+  const classMap: Record<string, string> = {
+    'image': 'fullscreen-image-wrapper',
+    'video': 'fullscreen-video-wrapper',
+    'parallax': 'parallax-wrapper',
+    'horizontalParallax': 'horizontal-parallax-wrapper',
+    'chaptered-video': 'chaptered-video-wrapper',
+    'layered-cards': 'layered-cards-wrapper',
+  }
+  return classMap[mediaType] || ''
+}
+
+// Get container class based on media type
+function getContainerClass(mediaType: string): string {
+  const classMap: Record<string, string> = {
+    'layered-cards': 'layered-cards',
+  }
+  return classMap[mediaType] || ''
+}
+
+// Remove label-related props before passing to media component
+function getMediaProps(props: Record<string, any>): Record<string, any> {
+  const { imageLabel, videoLabel, backgroundColor, sources, ...rest } = props
+  return rest
 }
 </script>
 

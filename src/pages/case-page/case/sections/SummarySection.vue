@@ -43,25 +43,37 @@
         </div>
       </div>
     </div>
-    <FullscreenImg
+    <MediaContainer
       v-if="caseConfig.summaryImage"
-      :image-src="caseConfig.summaryImage"
-      :alt="`${summaryData.title} preview`"
+      type="fullheight"
       :background-color="caseConfig.videoBackground || 'transparent'"
-      :image-label="caseConfig.videoLabel || ''"
-    />
-    <FullscreenVideo
+      :label="caseConfig.videoLabel || ''"
+      wrapper-class="fullscreen-image-wrapper"
+    >
+      <FullscreenImg
+        :image-src="caseConfig.summaryImage"
+        :alt="`${summaryData.title} preview`"
+      />
+    </MediaContainer>
+    <MediaContainer
       v-if="caseConfig.summaryVideo"
-      :video-src="caseConfig.summaryVideo"
+      type="fullheight"
       :background-color="caseConfig.videoBackground || caseConfig.primary"
-      :autoplay-threshold="caseConfig.autoplayThreshold || 0.75"
-      :video-label="caseConfig.videoLabel || ''"
-    />
+      :label="caseConfig.videoLabel || ''"
+      wrapper-class="fullscreen-video-wrapper"
+      container-class="fullscreen-video"
+    >
+      <FullscreenVideo
+        :video-src="caseConfig.summaryVideo"
+        :autoplay-threshold="caseConfig.autoplayThreshold || 0.75"
+      />
+    </MediaContainer>
   </section>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import MediaContainer from '../media/MediaContainer.vue';
 import FullscreenImg from '../media/FullscreenImg.vue';
 import FullscreenVideo from '../media/FullscreenVideo.vue';
 
