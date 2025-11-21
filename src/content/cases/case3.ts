@@ -182,7 +182,7 @@ export const case3Content = {
       },
       {
         heading: {
-          main: "Simplifying Navigation to Navigate Quicker",
+          main: "Flatter Navigation With 50% Fewer Transitions",
           subtitle: "Order View",
         },
         textBefore:
@@ -201,14 +201,11 @@ export const case3Content = {
             zIndexRight: 3,
             containRatioWidth: 1502,
             containRatioHeight: 955,
+            mediaLabel: "Examples of order screens: main view, steps panel, and order overview.",
           },
         },
       },
       {
-        heading: {
-          main: "Simplifying Navigation to Navigate Quicker",
-          subtitle: "Order Navigation",
-        },
         textBefore:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
         media: {
@@ -225,6 +222,7 @@ export const case3Content = {
             zIndexRight: 3,
             containRatioWidth: 3840,
             containRatioHeight: 2160,
+            mediaLabel: "Multiple other improvements driven by insights from the research phase.",
           },
         },
       },
@@ -233,7 +231,7 @@ export const case3Content = {
 
   conclusion: {
     heading: {
-      main: "Conclusion",
+      main: "Redesign Results",
       subtitle: undefined,
     },
     sections: [

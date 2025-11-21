@@ -219,7 +219,7 @@ const navigationSections = computed(() => {
     design: 'Final Design',
     audit: 'UX Audit',
     redesign: 'App Redesign',
-    conclusion: 'Conclusion',
+    conclusion: 'Results',
   };
 
   Object.keys(content).forEach(key => {
