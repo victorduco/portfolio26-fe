@@ -1,26 +1,36 @@
 <template>
   <motion.li
-    v-if="shouldAnimate"
-    @hoverStart="isHovered = true"
-    @hoverEnd="isHovered = false"
-    @click="toggleState"
-    :custom="{ index, additionalMargin, isMobileLayout, isSmallestBreakpoints }"
-    :variants="boxVariants"
-    :animate="animationState"
-    :transition="boxTransition"
-    initial="default"
-    class="intro-square"
+    class="intro-square-wrapper"
     :class="{
-      'is-intro-visible': introVisible,
-      'should-animate': shouldAnimate,
-      'intro-square--mobile': isMobileLayout,
-      'intro-square--mobile-active': isMobileLayout && isActive,
-      'intro-square--smallest': isSmallestBreakpoints,
-      'intro-square--smallest-active': isSmallestBreakpoints && isActive,
+      'intro-square-wrapper--mobile': isMobileLayout,
+      'intro-square-wrapper--smallest': isSmallestBreakpoints,
     }"
-    :data-state="isActive"
-    v-backdrop-filter="backdropFilter"
+    :variants="wrapperVariants"
+    :animate="shouldAnimate ? 'visible' : 'hidden'"
+    :transition="wrapperTransition"
+    initial="hidden"
   >
+    <motion.div
+      @hoverStart="isHovered = true"
+      @hoverEnd="isHovered = false"
+      @click="toggleState"
+      :custom="{ index, additionalMargin, isMobileLayout, isSmallestBreakpoints }"
+      :variants="boxVariants"
+      :animate="animationState"
+      :transition="boxTransition"
+      initial="default"
+      class="intro-square"
+      :class="{
+        'is-intro-visible': introVisible,
+        'should-animate': shouldAnimate,
+        'intro-square--mobile': isMobileLayout,
+        'intro-square--mobile-active': isMobileLayout && isActive,
+        'intro-square--smallest': isSmallestBreakpoints,
+        'intro-square--smallest-active': isSmallestBreakpoints && isActive,
+      }"
+      :data-state="isActive"
+      v-backdrop-filter="backdropFilter"
+    >
     <motion.div
       class="intro-square-content-wrap"
       :variants="contentWrapVariants"
@@ -42,13 +52,14 @@
       ></motion.i>
     </motion.div>
 
-    <IntroRectangleActive
-      :index="index"
-      :is-active="isActive"
-      :is-mobile-layout="isMobileLayout"
-      :is-smallest-breakpoints="isSmallestBreakpoints"
-      @close="handleMobileCloseRequest"
-    />
+      <IntroRectangleActive
+        :index="index"
+        :is-active="isActive"
+        :is-mobile-layout="isMobileLayout"
+        :is-smallest-breakpoints="isSmallestBreakpoints"
+        @close="handleMobileCloseRequest"
+      />
+    </motion.div>
   </motion.li>
 </template>
 
@@ -108,6 +119,18 @@ const props = defineProps({
     }),
   },
 });
+
+// Wrapper variants для анимации появления
+const wrapperVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const wrapperTransition = {
+  type: "tween",
+  duration: 1.2,
+  ease: [0.4, 0, 0.2, 1],
+};
 
 const localActive = ref(false);
 const isHovered = ref(false);
@@ -219,6 +242,11 @@ function handleMobileCloseRequest() {
 </script>
 
 <style scoped>
+.intro-square-wrapper {
+  place-self: start start;
+  list-style: none;
+}
+
 .intro-square {
   --element-side-size: clamp(80px, 20vw, 120px);
   --border-gradient: transparent;
@@ -232,10 +260,8 @@ function handleMobileCloseRequest() {
   position: relative;
   display: grid;
   place-items: center;
-  place-self: start start;
   width: var(--element-side-size);
   height: var(--element-side-size);
-  list-style: none;
   box-sizing: border-box;
   cursor: pointer;
   z-index: 5;
@@ -254,25 +280,25 @@ function handleMobileCloseRequest() {
 /* Grid positioning for desktop (non-mobile layouts) */
 @media (min-width: 900px) {
   /* index 0: gridColumn 1, gridRow 1 */
-  .intro-square:nth-child(1) {
+  .intro-square-wrapper:nth-child(1) {
     grid-column: 1;
     grid-row: 1;
   }
 
   /* index 1: gridColumn 3, gridRow 2 */
-  .intro-square:nth-child(2) {
+  .intro-square-wrapper:nth-child(2) {
     grid-column: 3;
     grid-row: 2;
   }
 
   /* index 2: gridColumn 5, gridRow 1 */
-  .intro-square:nth-child(3) {
+  .intro-square-wrapper:nth-child(3) {
     grid-column: 5;
     grid-row: 1;
   }
 
   /* index 3: gridColumn 7, gridRow 2 */
-  .intro-square:nth-child(4) {
+  .intro-square-wrapper:nth-child(4) {
     grid-column: 7;
     grid-row: 2;
   }
@@ -280,7 +306,7 @@ function handleMobileCloseRequest() {
 
 /* Mobile: auto positioning */
 @media (max-width: 899px) {
-  .intro-square {
+  .intro-square-wrapper {
     grid-column: auto;
     grid-row: auto;
   }
