@@ -16,7 +16,7 @@ export const case1Content = {
           props: {
             imageSrc: '/src/assets/images/domain_tree.png',
             enableMagnifier: true,
-            imageLabel: 'Users must grasp multiple subdomains to resolve problems.',
+            mediaLabel: 'Users must grasp multiple subdomains to resolve problems.',
           },
         },
       },
@@ -40,7 +40,7 @@ export const case1Content = {
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
-            imageLabel: 'Research Summary and Business Context',
+            mediaLabel: 'Research Summary and Business Context',
           },
         },
       },
@@ -65,7 +65,7 @@ export const case1Content = {
             image1: '/src/assets/images/case1_fw_s1.png',
             image2: '/src/assets/images/case1_fw_s2.png',
             image3: '/src/assets/images/case1_fw_s3.png',
-            imageLabel: 'Input & Output Elements for Chat and Classic UI',
+            mediaLabel: 'Input & Output Elements for Chat and Classic UI',
           },
         },
       },
@@ -79,7 +79,7 @@ export const case1Content = {
           type: 'chaptered-video' as const,
           props: {
             videoSrc: '/videos/case1-chaptered-test.mp4',
-            videoLabel: 'Two workflows, one unified experience. Users pick what fits best.',
+            mediaLabel: 'Two workflows, one unified experience. Users pick what fits best.',
             chapterGroups: [
               {
                 groupTitle: 'Interface Design',
@@ -113,7 +113,7 @@ export const case1Content = {
           type: 'image' as const,
           props: {
             imageSrc: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop',
-            imageLabel: 'LLM responses are unified and passed through a reliability check.',
+            mediaLabel: 'LLM responses are unified and passed through a reliability check.',
           },
         },
       },
@@ -127,7 +127,7 @@ export const case1Content = {
           type: 'image' as const,
           props: {
             imageSrc: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&h=900&fit=crop',
-            imageLabel: 'Results tailored to users\' specific task context.',
+            mediaLabel: 'Results tailored to users\' specific task context.',
           },
         },
       },

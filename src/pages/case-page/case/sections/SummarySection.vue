@@ -47,7 +47,7 @@
       v-if="caseConfig.summaryImage"
       type="fullheight"
       :background-color="caseConfig.videoBackground || 'transparent'"
-      :label="caseConfig.videoLabel || ''"
+      :label="caseConfig.mediaLabel || ''"
       wrapper-class="fullscreen-image-wrapper"
     >
       <FullscreenImg
@@ -59,7 +59,7 @@
       v-if="caseConfig.summaryVideo"
       type="fullheight"
       :background-color="caseConfig.videoBackground || caseConfig.primary"
-      :label="caseConfig.videoLabel || ''"
+      :label="caseConfig.mediaLabel || ''"
       wrapper-class="fullscreen-video-wrapper"
       container-class="fullscreen-video"
     >

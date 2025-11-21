@@ -15,7 +15,7 @@ export const case2Content = {
           type: 'image' as const,
           props: {
             imageSrc: '/src/assets/images/p2-3@2x.png',
-            imageLabel: 'Side-by-Side Comparison of the Old and New Home Screens',
+            mediaLabel: 'Side-by-Side Comparison of the Old and New Home Screens',
           },
         },
       },
@@ -37,7 +37,7 @@ export const case2Content = {
             zIndexLeft: 2,
             zIndexCenter: 1,
             zIndexRight: 3,
-            imageLabel: 'Overview of Issues in the Previous Mobile App',
+            mediaLabel: 'Overview of Issues in the Previous Mobile App',
           },
         },
       },
@@ -65,7 +65,7 @@ export const case2Content = {
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
-            imageLabel: 'Sample Documents From the Initial Discovery Stage',
+            mediaLabel: 'Sample Documents From the Initial Discovery Stage',
           },
         },
       },
@@ -79,7 +79,7 @@ export const case2Content = {
           type: 'image' as const,
           props: {
             imageSrc: '/src/assets/images/case2_wireframes.png',
-            imageLabel: 'Wireframes Exploring Different Solution Concepts',
+            mediaLabel: 'Wireframes Exploring Different Solution Concepts',
           },
         },
       },
@@ -93,7 +93,7 @@ export const case2Content = {
           type: 'image' as const,
           props: {
             imageSrc: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop',
-            imageLabel: 'Interactive Prototype Used During User Testing',
+            mediaLabel: 'Interactive Prototype Used During User Testing',
           },
         },
       },
@@ -116,7 +116,7 @@ export const case2Content = {
           type: 'image' as const,
           props: {
             imageSrc: '/src/assets/images/case2_final1.png',
-            imageLabel: 'Home screen featuring a slider, an interactive widget, articles, company events, channels, personal recommendations, and curated content for key moments.',
+            mediaLabel: 'Home screen featuring a slider, an interactive widget, articles, company events, channels, personal recommendations, and curated content for key moments.',
           },
         },
       },
@@ -130,7 +130,7 @@ export const case2Content = {
           type: 'image' as const,
           props: {
             imageSrc: '/src/assets/images/case2_final2.png',
-            imageLabel: 'Channel and search result screens updated to support the new features.',
+            mediaLabel: 'Channel and search result screens updated to support the new features.',
           },
         },
       },

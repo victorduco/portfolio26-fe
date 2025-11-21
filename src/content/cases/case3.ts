@@ -145,7 +145,7 @@ export const case3Content = {
             height2: "33.33%",
             height3: "33.33%",
             backgroundColor: "#f5f5f7",
-            imageLabel: "Horizontal Parallax Effect",
+            mediaLabel: "Horizontal Parallax Effect",
             alt: "Platform migration process",
           },
         },

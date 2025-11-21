@@ -80,9 +80,9 @@ function getMediaComponent(type: string): Component {
   return mediaComponents[type] || FullscreenImg
 }
 
-// Extract label from props (imageLabel or videoLabel)
+// Extract label from props
 function getMediaLabel(props: Record<string, any>): string {
-  return props.imageLabel || props.videoLabel || ''
+  return props.mediaLabel || ''
 }
 
 // Get MediaContainer type based on media type
@@ -124,7 +124,7 @@ function getContainerClass(mediaType: string): string {
 
 // Remove label-related props before passing to media component
 function getMediaProps(props: Record<string, any>): Record<string, any> {
-  const { imageLabel, videoLabel, backgroundColor, sources, ...rest } = props
+  const { mediaLabel, backgroundColor, sources, ...rest } = props
   return rest
 }
 </script>

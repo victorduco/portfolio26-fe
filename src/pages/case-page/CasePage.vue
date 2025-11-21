@@ -119,7 +119,7 @@ const caseConfigs = {
     summaryVideo: "/videos/case1-summary.mp4",
     videoBackground: "#f5f5f7", // Apple gray background
     autoplayThreshold: 0.75, // 75% visibility to trigger autoplay
-    videoLabel: "Product Overview Video", // Label above video
+    mediaLabel: "Product Overview Video", // Label above video
     results: [
       {
         title: "Noticeable Time Reduction",
@@ -148,7 +148,7 @@ const caseConfigs = {
     theme: "light",
     summaryImage: new URL("@/assets/images/case2_summary.png", import.meta.url).href,
     videoBackground: "#F7E7E7", // Same as button color on main page
-    videoLabel: "Side-by-Side Comparison of the Old and New Home Screens",
+    mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     results: [
       {
         label: "App Rating",
