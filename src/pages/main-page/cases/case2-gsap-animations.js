@@ -144,6 +144,9 @@ export function initAnimations(trigger) {
     0.8
   );
 
+  // PAUSE: Add empty space at the end to keep the pin active while animations are done
+  tl.to({}, { duration: 0.25 });
+
   if (videoElement) {
     // Use quickSetter for smoother video scrubbing
     const setVideoTime = gsap.quickSetter(videoElement, "currentTime");

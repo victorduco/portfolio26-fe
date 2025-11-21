@@ -150,6 +150,9 @@ export function initAnimations(pinContainer) {
   // Enable button clicking when text appears
   mainTimeline.set(".line-element", { pointerEvents: "auto" }, "<");
 
+  // PAUSE: Add empty space at the end to keep the pin active while animations are done
+  mainTimeline.to({}, { duration: 10 });
+
   // Refresh after loading
   setTimeout(() => ScrollTrigger.refresh(), 0);
 

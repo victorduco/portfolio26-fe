@@ -28,20 +28,24 @@ export function initializeParallaxImage(container, img, options = {}) {
     const containerHeight = container.offsetHeight;
     const imgHeight = img.offsetHeight;
 
-    // Move from 0 (top visible) to negative value (bottom visible)
-    // Multiply by speed for faster parallax movement
-    const endY = -(imgHeight - containerHeight) * speed;
+    // Calculate the total distance image needs to travel
+    const totalDistance = imgHeight - containerHeight;
+
+    // Start position: show top of image (y: 0)
+    // End position: show bottom of image (negative y)
+    const startY = 0;
+    const endY = -totalDistance * speed;
 
     gsap.fromTo(
       img,
-      { y: 0 },
+      { y: startY },
       {
         y: endY,
         ease: "none",
         scrollTrigger: {
           trigger: container,
-          start: "top bottom",
-          end: "bottom top",
+          start: "top center",
+          end: "bottom center",
           scrub: scrub,
           markers: markers,
           invalidateOnRefresh: true,

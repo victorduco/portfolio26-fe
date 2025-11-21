@@ -217,6 +217,9 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
     ">-0.1"
   );
 
+  // PAUSE: Add empty space at the end to keep the pin active while animations are done
+  tl1.to({}, { duration: 2 });
+
   // Video playback control scrubbed to scroll (independent timeline)
   // Extended to continue beyond section1 into section2
   let videoTrigger = null;
