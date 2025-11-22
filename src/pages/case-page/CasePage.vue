@@ -11,68 +11,69 @@
       '--case-subtitle-color': caseConfig.subtitleColor || '#007aff',
     }"
   >
-    <NavigationChevron
-      class="case-page-back"
-      type="route"
-      to="/"
-      direction="back"
-      aria-label="Back to home"
-      :dark-mode="caseConfig.darkMode"
-    />
-    <PageNavigation
-      :sections="navigationSections"
-      :enable-intro-animation="false"
-      :dark-mode="caseConfig.darkMode"
-    />
-    <section :id="`case${caseId}-summary`">
-      <SummarySection :case-id="caseId" :case-config="caseConfig" />
-    </section>
-    <section
-      v-for="(contentSection, sectionKey) in caseContent"
-      :key="sectionKey"
-      :id="`case${caseId}-${sectionKey}`"
-      class="content-section"
-    >
-      <div v-if="contentSection.heading" class="section-title">
-        <h3 v-if="!contentSection.heading.subtitle" class="case-heading-single">
-          {{ contentSection.heading.main }}
-        </h3>
-        <h3 v-else class="case-heading-two-level">
-          <span class="case-heading-subtitle">{{ contentSection.heading.subtitle }}</span>
-          <span class="case-heading-main">{{ contentSection.heading.main }}</span>
-        </h3>
-      </div>
-      <ContentSection
-        v-for="(section, index) in contentSection.sections"
-        :key="`${sectionKey}-${index}`"
-        :heading="section.heading"
-        :text-before="section.textBefore"
-        :media="section.media"
-        :text-after="section.textAfter"
-        :background-color="caseConfig.videoBackground"
+    <div class="case-main-content">
+      <NavigationChevron
+        class="case-page-back"
+        type="route"
+        to="/"
+        direction="back"
+        aria-label="Back to home"
+        :dark-mode="caseConfig.darkMode"
       />
-    </section>
-    <section v-if="caseConfig.results" :id="`case${caseId}-results`">
-      <ResultsCardsSection
-        v-if="caseId === '2'"
-        :results="caseConfig.results"
-        :intro-text="caseConfig.resultsIntro"
-        :conclusion-text="caseConfig.resultsConclusion"
-        :card-background="caseConfig.videoBackground"
+      <PageNavigation
+        :sections="navigationSections"
+        :enable-intro-animation="false"
+        :dark-mode="caseConfig.darkMode"
       />
-      <ResultsGridSection
-        v-else
-        :results="caseConfig.results"
-        :results-note="caseConfig.resultsNote"
-      />
-    </section>
+      <section :id="`case${caseId}-summary`">
+        <SummarySection :case-id="caseId" :case-config="caseConfig" />
+      </section>
+      <section
+        v-for="(contentSection, sectionKey) in caseContent"
+        :key="sectionKey"
+        :id="`case${caseId}-${sectionKey}`"
+        class="content-section"
+      >
+        <div v-if="contentSection.heading" class="section-title">
+          <h3 v-if="!contentSection.heading.subtitle" class="case-heading-single">
+            {{ contentSection.heading.main }}
+          </h3>
+          <h3 v-else class="case-heading-two-level">
+            <span class="case-heading-subtitle">{{ contentSection.heading.subtitle }}</span>
+            <span class="case-heading-main">{{ contentSection.heading.main }}</span>
+          </h3>
+        </div>
+        <ContentSection
+          v-for="(section, index) in contentSection.sections"
+          :key="`${sectionKey}-${index}`"
+          :heading="section.heading"
+          :text-before="section.textBefore"
+          :media="section.media"
+          :text-after="section.textAfter"
+          :background-color="caseConfig.videoBackground"
+        />
+      </section>
+      <section v-if="caseConfig.results" :id="`case${caseId}-results`">
+        <ResultsCardsSection
+          v-if="caseId === '2'"
+          :results="caseConfig.results"
+          :intro-text="caseConfig.resultsIntro"
+          :conclusion-text="caseConfig.resultsConclusion"
+          :card-background="caseConfig.videoBackground"
+        />
+        <ResultsGridSection
+          v-else
+          :results="caseConfig.results"
+          :results-note="caseConfig.resultsNote"
+        />
+      </section>
+    </div>
     <NextProjectSection
       v-if="caseConfig.nextProject"
       :case-id="caseConfig.nextProject.caseId"
       :title="caseConfig.nextProject.title"
       :background-color="caseConfig.nextProject.backgroundColor"
     />
-    <AppFooter :dark-mode="true" />
   </div>
 </template>
 
@@ -80,7 +81,6 @@
 import { computed, onMounted, nextTick } from "vue";
 import NavigationChevron from "@/components/navigation-chevron/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
-import AppFooter from "@/components/app-footer/AppFooter.vue";
 import ContentSection from "./case/sections/ContentSection.vue";
 import SummarySection from "./case/sections/SummarySection.vue";
 import ResultsGridSection from "./case/sections/ResultsGridSection.vue";
@@ -251,6 +251,17 @@ const navigationSections = computed(() => {
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+.case-main-content {
+  position: relative;
+  z-index: 10;
+  background-color: inherit;
+}
+
+section {
+  position: relative;
+  background-color: inherit;
 }
 
 .case-page-back {

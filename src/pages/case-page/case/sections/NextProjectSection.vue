@@ -1,21 +1,23 @@
 <template>
-  <section
-    ref="sectionRef"
-    class="case-next-project"
-    :style="{ backgroundColor: backgroundColor }"
-  >
-    <div class="next-project-wrapper">
-      <div ref="contentRef" class="next-project-content">
-        <div class="next-project-text">
-          <p class="next-project-label">Next Project</p>
-          <h2 class="next-project-title">{{ title }}</h2>
+  <div ref="triggerRef" class="next-project-trigger">
+    <section
+      ref="sectionRef"
+      class="case-next-project"
+      :style="{ backgroundColor: backgroundColor }"
+    >
+      <div class="next-project-wrapper">
+        <div class="next-project-content">
+          <div class="next-project-text">
+            <p class="next-project-label">Next Project</p>
+            <h2 class="next-project-title">{{ title }}</h2>
+          </div>
+          <router-link :to="getCaseRoute(caseId)" class="next-project-button">
+            Open Story
+          </router-link>
         </div>
-        <router-link :to="getCaseRoute(caseId)" class="next-project-button">
-          Open Story
-        </router-link>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script setup>
@@ -41,8 +43,8 @@ const props = defineProps({
   },
 });
 
+const triggerRef = ref(null);
 const sectionRef = ref(null);
-const contentRef = ref(null);
 let scrollTriggerInstance = null;
 
 const getCaseRoute = (caseId) => {
@@ -55,58 +57,67 @@ const getCaseRoute = (caseId) => {
 };
 
 onMounted(() => {
-  if (!sectionRef.value || !contentRef.value) return;
+  if (!triggerRef.value || !sectionRef.value) return;
 
-  // Get the full height of the content
-  const fullHeight = sectionRef.value.scrollHeight;
+  requestAnimationFrame(() => {
+    const fullHeight = sectionRef.value.offsetHeight;
+    const initialOffset = -fullHeight / 3;
 
-  // Set initial state - height 0 with overflow hidden
-  gsap.set(sectionRef.value, {
-    height: 0,
-    overflow: 'hidden',
-  });
+    gsap.set(sectionRef.value, { y: initialOffset });
 
-  // Create animation - expand height from 0 to full
-  scrollTriggerInstance = gsap.to(sectionRef.value, {
-    height: fullHeight,
-    ease: 'power2.out',
-    scrollTrigger: {
-      trigger: sectionRef.value,
-      start: 'top bottom',
-      end: 'top center',
-      scrub: 0.5,
-      markers: false,
-      invalidateOnRefresh: true,
-      onRefresh: (self) => {
-        // Update height on refresh (e.g., window resize)
-        self.vars.height = sectionRef.value.scrollHeight;
-      },
-    },
+    scrollTriggerInstance = gsap.fromTo(
+      sectionRef.value,
+      { y: initialOffset },
+      {
+        y: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: triggerRef.value,
+          start: 'top bottom',
+          end: 'center center',
+          scrub: true,
+          invalidateOnRefresh: true,
+          onRefresh: (self) => {
+            const newHeight = sectionRef.value.offsetHeight;
+            const newInitialOffset = -newHeight / 3;
+            self.vars.y = 0;
+            gsap.set(sectionRef.value, { y: newInitialOffset });
+          },
+        },
+      }
+    );
+
+    ScrollTrigger.refresh();
   });
 });
 
 onUnmounted(() => {
-  if (scrollTriggerInstance) {
-    scrollTriggerInstance.scrollTrigger?.kill();
-    scrollTriggerInstance.kill();
-    scrollTriggerInstance = null;
-  }
+  scrollTriggerInstance?.scrollTrigger?.kill();
 });
 </script>
 
 <style scoped>
+.next-project-trigger {
+  width: 100%;
+  position: relative;
+  z-index: 0;
+}
+
 .case-next-project {
   width: 100%;
-  padding: 75px 0;
   box-sizing: border-box;
   color: #ffffff;
+  position: relative;
+  z-index: 0;
 }
 
 .next-project-wrapper {
   width: 100%;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
 .next-project-content {
@@ -177,11 +188,8 @@ onUnmounted(() => {
 }
 
 @media (max-width: 767px) {
-  .case-next-project {
-    padding: 40px 24px;
-  }
-
   .next-project-content {
+    padding: 0 24px;
     flex-direction: column;
     gap: 24px;
   }
@@ -189,12 +197,6 @@ onUnmounted(() => {
   .next-project-button {
     align-self: stretch;
     justify-content: center;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 900px) {
-  .case-next-project {
-    padding: 50px 24px;
   }
 }
 </style>
