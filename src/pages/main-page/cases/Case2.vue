@@ -67,7 +67,7 @@ const router = useRouter();
 
 const videoSrc = "/videos/case2-video.mp4";
 
-const finalImageSrc = "/images/case2-comparison@2x.png";
+const finalImageSrc = "/images/case2-comparison.png";
 
 const containerRef = ref(null);
 

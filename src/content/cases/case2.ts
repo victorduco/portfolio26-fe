@@ -14,7 +14,7 @@ export const case2Content = {
         media: {
           type: 'image' as const,
           props: {
-            imageSrc: '/images/case2-comparison@2x.png',
+            imageSrc: '/images/case2-comparison.png',
             mediaLabel: 'Side-by-Side Comparison of the Old and New Home Screens',
           },
         },

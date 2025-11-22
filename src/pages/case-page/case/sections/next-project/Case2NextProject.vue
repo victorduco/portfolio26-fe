@@ -40,7 +40,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const finalImageSrc = "/images/case2-comparison@2x.png";
+const finalImageSrc = "/images/case2-comparison.png";
 
 const googleLogo = "/images/case2-logo-google.svg";
 const cocaColaLogo = "/images/case2-logo-coca-cola.svg";
