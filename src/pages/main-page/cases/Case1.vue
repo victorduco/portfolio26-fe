@@ -241,6 +241,10 @@ defineExpose({
    Mobile styles
    ======================================== */
 @media (max-width: 767px) {
+  .mask-element {
+    height: 35vh;
+  }
+
   .text-container {
     width: calc(100vw - 48px);
     max-width: calc(100vw - 48px);

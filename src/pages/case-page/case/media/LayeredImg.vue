@@ -1,42 +1,105 @@
 <template>
-  <div class="cards-container" ref="containerRef" :style="{ ...shadowVars, ...cardSizeStyles }">
-      <!-- Left card -->
-      <div class="card card-left" ref="cardLeftRef" :style="{ zIndex: zIndexLeft }">
-        <div class="card-inner">
+  <!-- Desktop: Layered cards view -->
+  <div
+    v-if="!isMobile"
+    class="cards-container"
+    ref="containerRef"
+    :style="{ ...shadowVars, ...cardSizeStyles }"
+  >
+    <!-- Left card -->
+    <div class="card card-left" ref="cardLeftRef" :style="{ zIndex: zIndexLeft }">
+      <div class="card-inner">
+        <img
+          :src="imageLeft"
+          :alt="altLeft || 'Left card'"
+          loading="lazy"
+        />
+      </div>
+    </div>
+
+    <!-- Center card (main) -->
+    <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexCenter }">
+      <div class="card-inner">
+        <img
+          :src="imageCenter"
+          :alt="altCenter || 'Center card'"
+          loading="lazy"
+        />
+      </div>
+    </div>
+
+    <!-- Right card -->
+    <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexRight }">
+      <div class="card-inner">
+        <img
+          :src="imageRight"
+          :alt="altRight || 'Right card'"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: Slider view -->
+  <div
+    v-else
+    class="slider-container"
+    :style="cardSizeStyles"
+  >
+    <div
+      class="slider-track"
+      ref="sliderTrackRef"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+      :class="{ dragging: isDragging }"
+      :style="{ transform: `translateX(${sliderOffset}px)` }"
+    >
+      <div class="slider-slide">
+        <div class="slide-inner" :style="shadowVars">
           <img
             :src="imageLeft"
-            :alt="altLeft || 'Left card'"
+            :alt="altLeft || 'Image 1'"
             loading="lazy"
           />
         </div>
       </div>
-
-      <!-- Center card (main) -->
-      <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexCenter }">
-        <div class="card-inner">
+      <div class="slider-slide">
+        <div class="slide-inner" :style="shadowVars">
           <img
             :src="imageCenter"
-            :alt="altCenter || 'Center card'"
+            :alt="altCenter || 'Image 2'"
             loading="lazy"
           />
         </div>
       </div>
-
-      <!-- Right card -->
-      <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexRight }">
-        <div class="card-inner">
+      <div class="slider-slide">
+        <div class="slide-inner" :style="shadowVars">
           <img
             :src="imageRight"
-            :alt="altRight || 'Right card'"
+            :alt="altRight || 'Image 3'"
             loading="lazy"
           />
         </div>
       </div>
     </div>
+
+    <!-- Dots indicator -->
+    <div class="slider-dots">
+      <button
+        v-for="(_, index) in 3"
+        :key="index"
+        class="slider-dot"
+        :class="{ active: currentSlide === index }"
+        @click="goToSlide(index)"
+        :aria-label="`Go to slide ${index + 1}`"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
 import { parallaxSpeeds } from './layeredCardsVariants.js';
 import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
 
@@ -101,35 +164,111 @@ const props = defineProps({
     type: Number,
     default: 24,
   },
-  // Note: containRatioWidth and containRatioHeight props are deprecated
-  // Images now use their natural aspect ratio (height: auto)
 });
 
+// Mobile detection
+const isMobile = ref(false);
+const MOBILE_BREAKPOINT = 767;
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= MOBILE_BREAKPOINT;
+};
+
+// Watch for mobile mode changes to recalculate slide width
+watch(isMobile, (newValue) => {
+  if (newValue) {
+    nextTick(() => {
+      updateSlideWidth();
+    });
+  }
+});
+
+// Desktop parallax refs
 const containerRef = ref(null);
 const cardLeftRef = ref(null);
 const cardCenterRef = ref(null);
 const cardRightRef = ref(null);
 
+// Mobile slider state
+const sliderTrackRef = ref(null);
+const currentSlide = ref(0);
+const dragOffset = ref(0);
+const touchStartX = ref(0);
+const touchCurrentX = ref(0);
+const isDragging = ref(false);
+const slideWidth = ref(0);
+const GAP = 16; // gap between slides in px
+
+// Computed slider offset
+const sliderOffset = computed(() => {
+  const baseOffset = -(currentSlide.value * (slideWidth.value + GAP));
+  return baseOffset + dragOffset.value;
+});
+
+// Update slide width on resize
+const updateSlideWidth = () => {
+  if (sliderTrackRef.value) {
+    const firstSlide = sliderTrackRef.value.querySelector('.slider-slide');
+    if (firstSlide) {
+      slideWidth.value = firstSlide.offsetWidth;
+    }
+  }
+};
+
 const shadowVars = computed(() => useAdaptiveShadow());
 
-// Используем кастомные скорости если они переданы, иначе дефолтные из variants
+// Desktop parallax speeds
 const speeds = computed(() => [
   props.speedLeft ?? parallaxSpeeds[0],
   props.speedCenter ?? parallaxSpeeds[1],
   props.speedRight ?? parallaxSpeeds[2],
 ]);
 
-// Computed для border-radius
+// Border-radius styles
 const cardSizeStyles = computed(() => {
   return {
     '--card-border-radius': `${props.borderRadius}px`,
   };
 });
 
+// Mobile slider methods
+const goToSlide = (index) => {
+  currentSlide.value = index;
+};
+
+const handleTouchStart = (e) => {
+  touchStartX.value = e.touches[0].clientX;
+  touchCurrentX.value = e.touches[0].clientX;
+  isDragging.value = true;
+};
+
+const handleTouchMove = (e) => {
+  if (!isDragging.value) return;
+  touchCurrentX.value = e.touches[0].clientX;
+  dragOffset.value = touchCurrentX.value - touchStartX.value;
+};
+
+const handleTouchEnd = () => {
+  if (!isDragging.value) return;
+  isDragging.value = false;
+
+  const threshold = 50;
+  const diff = touchCurrentX.value - touchStartX.value;
+
+  if (diff < -threshold && currentSlide.value < 2) {
+    currentSlide.value++;
+  } else if (diff > threshold && currentSlide.value > 0) {
+    currentSlide.value--;
+  }
+
+  dragOffset.value = 0;
+};
+
+// Desktop parallax animation
 let animationFrameId = null;
 
 const updateParallax = () => {
-  if (!containerRef.value) return;
+  if (!containerRef.value || isMobile.value) return;
 
   const cards = [
     cardLeftRef.value,
@@ -139,24 +278,15 @@ const updateParallax = () => {
 
   const rect = containerRef.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
-
-  // Вычисляем прогресс скролла от 0 (контейнер внизу viewport) до 1 (контейнер вверху)
-  // start: top bottom, end: bottom top
   const containerTop = rect.top;
-  const containerBottom = rect.bottom;
-
-  // Нормализуем прогресс: 0 когда top контейнера = bottom viewport, 1 когда bottom контейнера = top viewport
   const scrollProgress = (viewportHeight - containerTop) / (viewportHeight + rect.height);
-
-  // Центрируем прогресс: -0.5 в начале, 0 в середине, +0.5 в конце
   const centeredProgress = scrollProgress - 0.5;
 
   cards.forEach((card, index) => {
     if (!card) return;
 
     const speed = speeds.value[index];
-    // Уменьшаем амплитуду движения для contain режима
-    const maxMovement = 60; // пикселей в каждую сторону
+    const maxMovement = 60;
     const offset = centeredProgress * maxMovement * speed;
 
     card.style.transform = `translateY(${offset}px)`;
@@ -166,10 +296,23 @@ const updateParallax = () => {
 };
 
 onMounted(() => {
-  updateParallax();
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+  window.addEventListener('resize', updateSlideWidth);
+
+  if (!isMobile.value) {
+    updateParallax();
+  } else {
+    // Wait for DOM to render, then calculate slide width
+    requestAnimationFrame(() => {
+      updateSlideWidth();
+    });
+  }
 });
 
 onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile);
+  window.removeEventListener('resize', updateSlideWidth);
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
   }
@@ -177,7 +320,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-
+/* Desktop: Layered cards */
 .cards-container {
   position: relative;
   width: 100%;
@@ -217,38 +360,36 @@ onUnmounted(() => {
   border-radius: var(--card-border-radius, 24px);
 }
 
-/* Card 1 - top left */
+/* Card positions */
 .card-left {
   left: calc(50% - 45vw);
   top: calc(50% - 35vh);
 }
 
-/* Card 2 - middle right */
 .card-center {
   left: calc(50% + 5vw);
   top: calc(50% - 25vh);
 }
 
-/* Card 3 - bottom center-left */
 .card-right {
   left: calc(50% - 25vw);
   top: calc(50% - 10vh);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1024px) {
   .card {
-    width: 60vw;
+    width: 50vw;
   }
 
   .card-left {
     left: calc(50% - 50vw);
-    top: calc(50% - 40vh);
+    top: calc(50% - 38vh);
   }
 
   .card-center {
-    left: calc(50% - 5vw);
-    top: calc(50% - 27vh);
+    left: calc(50% - 0vw);
+    top: calc(50% - 26vh);
   }
 
   .card-right {
@@ -257,24 +398,68 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 480px) {
-  .card {
-    width: 70vw;
-  }
+/* Mobile: Slider */
+.slider-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 16px 24px 32px;
+}
 
-  .card-left {
-    left: calc(50% - 55vw);
-    top: calc(50% - 43vh);
-  }
+.slider-track {
+  display: flex;
+  gap: 16px;
+  transition: transform 0.3s ease-out;
+  touch-action: pan-x;
+  user-select: none;
+}
 
-  .card-center {
-    left: calc(50% - 10vw);
-    top: calc(50% - 29vh);
-  }
+.slider-track.dragging {
+  transition: none;
+}
 
-  .card-right {
-    left: calc(50% - 35vw);
-    top: calc(50% - 13vh);
-  }
+.slider-slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+
+.slide-inner {
+  width: 100%;
+  border-radius: var(--card-border-radius, 16px);
+  overflow: hidden;
+  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
+}
+
+.slide-inner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--card-border-radius, 16px);
+}
+
+/* Dots indicator */
+.slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.slider-dot.active {
+  background-color: #000000;
+}
+
+.slider-dot:hover {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 </style>

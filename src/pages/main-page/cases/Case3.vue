@@ -625,15 +625,21 @@ defineExpose({
     width: 100%;
     height: auto;
     flex: none;
-    gap: clamp(16px, 3vh, 24px);
+    gap: 32px;
   }
 
   .case3-company-title-group {
     width: 100%;
+    gap: 32px;
   }
 
   .case3-tags-container {
     width: 100%;
+    margin-bottom: 0;
+  }
+
+  .case3-button-wrapper {
+    margin-top: 32px;
   }
 
   .case3-title-wrapper {
