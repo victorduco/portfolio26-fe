@@ -70,6 +70,7 @@
       v-if="caseConfig.nextProject"
       :case-id="caseConfig.nextProject.caseId"
       :title="caseConfig.nextProject.title"
+      :background-color="caseConfig.nextProject.backgroundColor"
     />
     <AppFooter :dark-mode="true" />
   </div>
@@ -136,7 +137,8 @@ const caseConfigs = {
     ],
     nextProject: {
       caseId: "2",
-      title: "Redesigning the Communications App",
+      title: "Relaunching the Employee Comms App",
+      backgroundColor: "#FF83A2", // Pink from intro rectangles
     },
   },
   2: {
@@ -173,7 +175,8 @@ const caseConfigs = {
     resultsConclusion: "These improvements demonstrate the significant impact of the redesign on user engagement and satisfaction. The mobile experience transformation led to measurable business outcomes and validated our design decisions through real-world usage data.",
     nextProject: {
       caseId: "3",
-      title: "Terminal Shift Redesign",
+      title: "A Full Redesign of an Oil Terminal Operations App",
+      backgroundColor: "#00FFBC", // Green from intro rectangles
     },
   },
   3: {
@@ -188,7 +191,8 @@ const caseConfigs = {
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     nextProject: {
       caseId: "1",
-      title: "Cross-Domain AI Solution for Account Reconcilers",
+      title: "Transforming Account Reconciliation with AI-Driven User Experience",
+      backgroundColor: "#27A9FF", // Blue from intro rectangles
     },
   },
 };
