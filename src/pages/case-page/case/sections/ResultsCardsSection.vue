@@ -40,6 +40,14 @@ import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
 // Скорости параллакса для каждой карточки
 const parallaxSpeeds = [0.5, 1.0];
 
+// Мобильный брейкпоинт
+const MOBILE_BREAKPOINT = 768;
+const isMobile = ref(window.innerWidth <= MOBILE_BREAKPOINT);
+
+const updateIsMobile = () => {
+  isMobile.value = window.innerWidth <= MOBILE_BREAKPOINT;
+};
+
 const props = defineProps({
   results: {
     type: Array,
@@ -80,6 +88,15 @@ let animationFrameId = null;
 const updateParallax = () => {
   if (!containerRef.value) return;
 
+  // На мобильных отключаем параллакс
+  if (isMobile.value) {
+    cardRefs.value.forEach((card) => {
+      if (card) card.style.transform = 'translateY(0)';
+    });
+    animationFrameId = requestAnimationFrame(updateParallax);
+    return;
+  }
+
   const rect = containerRef.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
 
@@ -99,10 +116,12 @@ const updateParallax = () => {
 };
 
 onMounted(() => {
+  window.addEventListener('resize', updateIsMobile);
   updateParallax();
 });
 
 onUnmounted(() => {
+  window.removeEventListener('resize', updateIsMobile);
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
   }
