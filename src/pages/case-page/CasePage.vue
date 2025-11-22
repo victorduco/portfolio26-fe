@@ -68,11 +68,10 @@
         />
       </section>
     </div>
+    <NextStoryPlaque v-if="caseConfig.nextProject" :story-number="nextStoryNumber" />
     <NextProjectSection
       v-if="caseConfig.nextProject"
-      :case-id="caseConfig.nextProject.caseId"
-      :title="caseConfig.nextProject.title"
-      :background-color="caseConfig.nextProject.backgroundColor"
+      :content-component="nextProjectContentComponent"
     />
   </div>
 </template>
@@ -85,7 +84,11 @@ import ContentSection from "./case/sections/ContentSection.vue";
 import SummarySection from "./case/sections/SummarySection.vue";
 import ResultsGridSection from "./case/sections/ResultsGridSection.vue";
 import ResultsCardsSection from "./case/sections/ResultsCardsSection.vue";
-import NextProjectSection from "./case/sections/NextProjectSection.vue";
+import NextStoryPlaque from "./case/sections/NextStoryPlaque.vue";
+import NextProjectSection from "./case/sections/next-project/NextProjectSection.vue";
+import Case1NextProject from "./case/sections/next-project/Case1NextProject.vue";
+import Case2NextProject from "./case/sections/next-project/Case2NextProject.vue";
+import Case3NextProject from "./case/sections/next-project/Case3NextProject.vue";
 import { useMeta } from "@/composables/useMeta.js";
 import { casesContent } from "@/content/cases";
 
@@ -138,7 +141,7 @@ const caseConfigs = {
     nextProject: {
       caseId: "2",
       title: "Relaunching the Employee Comms App",
-      backgroundColor: "#FF83A2", // Pink from intro rectangles
+      backgroundColor: "#ffffff", // White background
     },
   },
   2: {
@@ -176,7 +179,7 @@ const caseConfigs = {
     nextProject: {
       caseId: "3",
       title: "A Full Redesign of an Oil Terminal Operations App",
-      backgroundColor: "#00FFBC", // Green from intro rectangles
+      backgroundColor: "#ffffff", // White background
     },
   },
   3: {
@@ -192,7 +195,7 @@ const caseConfigs = {
     nextProject: {
       caseId: "1",
       title: "Transforming Account Reconciliation with AI-Driven User Experience",
-      backgroundColor: "#27A9FF", // Blue from intro rectangles
+      backgroundColor: "#ffffff", // White background
     },
   },
 };
@@ -205,6 +208,26 @@ const caseConfig = computed(() => {
     textColor: isLightTheme ? "#000000" : "#ffffff",
     darkMode: !isLightTheme,
   };
+});
+
+const nextProjectContentComponent = computed(() => {
+  const nextProjectCaseId = caseConfig.value.nextProject?.caseId;
+  const components = {
+    "1": Case1NextProject,
+    "2": Case2NextProject,
+    "3": Case3NextProject,
+  };
+  return components[nextProjectCaseId] || Case1NextProject;
+});
+
+const nextStoryNumber = computed(() => {
+  const caseIdToStory = {
+    "1": "One",
+    "2": "Two",
+    "3": "Three",
+  };
+  const nextProjectCaseId = caseConfig.value.nextProject?.caseId;
+  return caseIdToStory[nextProjectCaseId] || "One";
 });
 
 const navigationSections = computed(() => {
@@ -249,7 +272,6 @@ const navigationSections = computed(() => {
 .case3-page {
   width: 100%;
   position: relative;
-  min-height: 100vh;
   overflow-x: hidden;
 }
 
