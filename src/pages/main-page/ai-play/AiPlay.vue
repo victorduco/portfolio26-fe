@@ -61,8 +61,9 @@
       <div class="ai-play__title">
         <h1 class="h1">AI Playground</h1>
         <p class="body1">
-          Building my own AI system for fun, exploring how agents think and act.
-          Experimenting with neural networks and machine learning patterns.
+          I'm passionate about home gardening and working on an AI agent that
+          manages my plants using data and controls from my Home Assistant
+          system.
         </p>
         <a
           href="https://github.com/viktordiukov"

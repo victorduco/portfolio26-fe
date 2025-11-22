@@ -471,16 +471,14 @@ function handleResize() {
 }
 
 onMounted(async () => {
-  // Initialize keypad backgrounds (load manifest) before anything else
-  await initKeypadBackgrounds();
-
+  // Add keyboard listener immediately (before async operations)
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
-
     window.addEventListener("resize", handleResizeThrottled, { passive: true });
   }
 
-
+  // Initialize keypad backgrounds (load manifest) - non-blocking for keyboard
+  await initKeypadBackgrounds();
   preloadInitialBackgrounds();
 });
 
