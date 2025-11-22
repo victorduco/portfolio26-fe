@@ -65,13 +65,10 @@ import { cleanupAnimations } from "./gsap-utils.js";
 
 const router = useRouter();
 
-const videoSrc = new URL(
-  "@/assets/case-videos/case2-4-reverse.mp4",
-  import.meta.url
-).href;
+const videoSrc = "/videos/case2-video.mp4";
 
 const finalImageSrc = new URL(
-  "@/assets/images/p2-3@2x.png",
+  "@/assets/images/case2-comparison@2x.png",
   import.meta.url
 ).href;
 

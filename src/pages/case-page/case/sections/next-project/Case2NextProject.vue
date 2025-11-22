@@ -41,7 +41,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const finalImageSrc = new URL(
-  "@/assets/images/p2-3@2x.png",
+  "@/assets/images/case2-comparison@2x.png",
   import.meta.url
 ).href;
 

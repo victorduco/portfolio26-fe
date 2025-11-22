@@ -14,7 +14,7 @@ export const case1Content = {
         media: {
           type: 'image' as const,
           props: {
-            imageSrc: '/src/assets/images/domain_tree.png',
+            imageSrc: '/src/assets/images/case1-domain-tree.png',
             enableMagnifier: true,
             mediaLabel: 'Users must grasp multiple subdomains to resolve problems.',
           },
@@ -34,9 +34,9 @@ export const case1Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/src/assets/images/case1_scale_1.png',
-            imageCenter: '/src/assets/images/case1_scale_2.png',
-            imageRight: '/src/assets/images/case1_scale_3.png',
+            imageLeft: '/src/assets/images/case1-scale-1.png',
+            imageCenter: '/src/assets/images/case1-scale-2.png',
+            imageRight: '/src/assets/images/case1-scale-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -62,9 +62,9 @@ export const case1Content = {
         media: {
           type: 'parallax' as const,
           props: {
-            image1: '/src/assets/images/case1_fw_s1.png',
-            image2: '/src/assets/images/case1_fw_s2.png',
-            image3: '/src/assets/images/case1_fw_s3.png',
+            image1: '/src/assets/images/case1-framework-1.png',
+            image2: '/src/assets/images/case1-framework-2.png',
+            image3: '/src/assets/images/case1-framework-3.png',
             mediaLabel: 'Input & Output Elements for Chat and Classic UI',
           },
         },
