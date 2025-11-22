@@ -97,6 +97,12 @@ const props = defineProps({
     type: Number,
     default: null,
   },
+  borderRadius: {
+    type: Number,
+    default: 24,
+  },
+  // Note: containRatioWidth and containRatioHeight props are deprecated
+  // Images now use their natural aspect ratio (height: auto)
 });
 
 const containerRef = ref(null);
@@ -113,16 +119,10 @@ const speeds = computed(() => [
   props.speedRight ?? parallaxSpeeds[2],
 ]);
 
-// Computed для пропорций карточек
+// Computed для border-radius
 const cardSizeStyles = computed(() => {
-  if (!props.containRatioWidth || !props.containRatioHeight) {
-    return {};
-  }
-  // Вычисляем aspect-ratio на основе переданных размеров
-  const aspectRatio = props.containRatioWidth / props.containRatioHeight;
   return {
-    '--card-aspect-ratio': aspectRatio,
-    '--card-object-fit': 'contain',
+    '--card-border-radius': `${props.borderRadius}px`,
   };
 });
 
@@ -140,15 +140,24 @@ const updateParallax = () => {
   const rect = containerRef.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
 
-  // Вычисляем прогресс скролла контейнера
-  // -1 когда контейнер внизу экрана, 0 в центре, 1 вверху экрана
-  const scrollProgress = (viewportHeight / 2 - rect.top - rect.height / 2) / (viewportHeight / 2 + rect.height / 2);
+  // Вычисляем прогресс скролла от 0 (контейнер внизу viewport) до 1 (контейнер вверху)
+  // start: top bottom, end: bottom top
+  const containerTop = rect.top;
+  const containerBottom = rect.bottom;
+
+  // Нормализуем прогресс: 0 когда top контейнера = bottom viewport, 1 когда bottom контейнера = top viewport
+  const scrollProgress = (viewportHeight - containerTop) / (viewportHeight + rect.height);
+
+  // Центрируем прогресс: -0.5 в начале, 0 в середине, +0.5 в конце
+  const centeredProgress = scrollProgress - 0.5;
 
   cards.forEach((card, index) => {
     if (!card) return;
 
     const speed = speeds.value[index];
-    const offset = scrollProgress * 100 * speed;
+    // Уменьшаем амплитуду движения для contain режима
+    const maxMovement = 60; // пикселей в каждую сторону
+    const offset = centeredProgress * maxMovement * speed;
 
     card.style.transform = `translateY(${offset}px)`;
   });
@@ -183,15 +192,13 @@ onUnmounted(() => {
 .card {
   position: absolute;
   width: 40vw;
-  aspect-ratio: var(--card-aspect-ratio, 2 / 1.1);
   will-change: transform, opacity;
 }
 
 .card-inner {
   position: relative;
   width: 100%;
-  height: 100%;
-  border-radius: 24px;
+  border-radius: var(--card-border-radius, 24px);
   overflow: hidden;
   box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
   transform-origin: center center;
@@ -205,10 +212,9 @@ onUnmounted(() => {
 
 .card-inner img {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
-  object-fit: var(--card-object-fit, cover);
-  border-radius: 14px;
+  border-radius: var(--card-border-radius, 24px);
 }
 
 /* Card 1 - top left */
