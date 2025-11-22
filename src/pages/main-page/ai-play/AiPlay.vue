@@ -521,7 +521,10 @@ function handleHover(index, isHovering) {
   }
 
   .ai-play__title {
-    padding: clamp(16px, 3vw, 24px);
+    padding-left: clamp(16px, 4vw, 32px);
+    padding-right: clamp(16px, 4vw, 32px);
+    padding-top: clamp(16px, 3vw, 24px);
+    padding-bottom: clamp(16px, 3vw, 24px);
   }
 }
 

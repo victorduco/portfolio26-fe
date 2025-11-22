@@ -247,8 +247,11 @@ defineExpose({
   }
 
   .text-container {
-    width: calc(100vw - 48px);
-    max-width: calc(100vw - 48px);
+    width: 100%;
+    max-width: 100%;
+    padding-left: clamp(16px, 4vw, 32px);
+    padding-right: clamp(16px, 4vw, 32px);
+    box-sizing: border-box;
   }
 
   .company-text {

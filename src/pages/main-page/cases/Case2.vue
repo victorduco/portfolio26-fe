@@ -293,9 +293,11 @@ const handleStoryLinkClick = (event) => {
   }
 
   .case2-content-inner {
-    width: calc(100vw - 48px);
-    max-width: calc(100vw - 48px);
-    padding: 0 24px;
+    width: 100%;
+    max-width: 100%;
+    padding-left: clamp(16px, 4vw, 32px);
+    padding-right: clamp(16px, 4vw, 32px);
+    box-sizing: border-box;
     align-items: center;
     text-align: center;
     gap: clamp(16px, 3vh, 24px);

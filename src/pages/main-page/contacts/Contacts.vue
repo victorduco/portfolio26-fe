@@ -200,14 +200,23 @@ defineProps({
 }
 
 /* Mobile */
-@media (max-width: 600px) {
+@media (max-width: 767px) {
   .contacts__content {
-    padding: 48px 20px;
+    padding-left: clamp(16px, 4vw, 32px);
+    padding-right: clamp(16px, 4vw, 32px);
+    padding-top: 48px;
+    padding-bottom: 48px;
     min-height: calc(100dvh - 64px);
   }
 
   .contacts__container {
     gap: 24px;
+  }
+
+  .contacts__name,
+  .contacts__email,
+  .contacts__link {
+    font-size: min(var(--font-size-h1), 7vw);
   }
 
   .contacts__icon {
