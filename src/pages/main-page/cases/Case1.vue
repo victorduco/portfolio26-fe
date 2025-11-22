@@ -242,7 +242,8 @@ defineExpose({
    ======================================== */
 @media (max-width: 767px) {
   .mask-element {
-    height: 35vh;
+    /* Адаптивная высота: больше на маленьких экранах, меньше на больших */
+    height: clamp(30vh, 45vw, 40vh);
   }
 
   .text-container {
