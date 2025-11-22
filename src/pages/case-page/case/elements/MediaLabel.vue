@@ -124,4 +124,11 @@ const sourcesText = computed(() => {
 .source-link:hover {
   opacity: 0.7;
 }
+
+/* Mobile: Add horizontal padding to match text content */
+@media (max-width: 767px) {
+  .media-label-wrapper {
+    padding: 0 24px;
+  }
+}
 </style>
