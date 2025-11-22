@@ -78,6 +78,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import { getImagePath } from "@/utils/mediaResolver.js";
 
 const router = useRouter();
 
@@ -86,7 +87,7 @@ const title = "Field Operations App for Oil Terminals";
 const tags = ["Consultancy", "Redesign", "Mentorship"];
 const description =
   "A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.";
-const imageSrc = "/images/case3-ipad.png";
+const imageSrc = getImagePath("case3-ipad.png");
 
 const handleStoryLinkClick = (event) => {
   event.preventDefault();

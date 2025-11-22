@@ -91,6 +91,7 @@ import Case2NextProject from "./case/sections/next-project/Case2NextProject.vue"
 import Case3NextProject from "./case/sections/next-project/Case3NextProject.vue";
 import { useMeta } from "@/composables/useMeta.js";
 import { casesContent } from "@/content/cases";
+import { getImagePath, getVideoPath } from "@/utils/mediaResolver.js";
 
 const props = defineProps({
   caseId: {
@@ -120,7 +121,7 @@ const caseConfigs = {
     subtitleColor: "#007aff", // Color for subtitle in two-level headings
     font: null, // optional, uses global font if null
     theme: "light", // light or dark
-    summaryVideo: "/videos/case1-summary.mp4",
+    summaryVideo: getVideoPath("case1-summary.mp4"),
     videoBackground: "#f5f5f7", // Apple gray background
     autoplayThreshold: 0.75, // 75% visibility to trigger autoplay
     mediaLabel: "Product Overview Video", // Label above video
@@ -151,7 +152,7 @@ const caseConfigs = {
     subtitleColor: "#B14127", // Coral red color for two-level headings
     font: "'Hanken Grotesk', sans-serif",
     theme: "light",
-    summaryImage: "/images/case2-summary.png",
+    summaryImage: getImagePath("case2-summary.png"),
     videoBackground: "#F7E7E7", // Same as button color on main page
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     results: [
@@ -189,7 +190,7 @@ const caseConfigs = {
     subtitleColor: "#ca4034", // Red color matching case3 button
     font: "'Neue Haas Grotesk Display Pro', sans-serif",
     theme: "light",
-    summaryImage: "/images/case3-summary.png",
+    summaryImage: getImagePath("case3-summary.png"),
     videoBackground: "#f5f5f7", // Light gray background for all media elements
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     nextProject: {

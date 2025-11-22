@@ -1,19 +1,20 @@
+# Track if any media was updated
+MEDIA_UPDATED=false
+
 echo "🎥 Checking for new/updated videos to compress..."
 
 # Check if there are any MP4 files in the videos directory
 if [ -d "public/videos" ]; then
-  # Check if there are any .mp4 files staged for commit
-  if git diff --cached --name-only | grep -q "public/videos/.*\.mp4$"; then
+  # Check if there are any NEW .mp4 files staged for commit (not deleted)
+  if git diff --cached --name-only --diff-filter=AM | grep -q "public/videos/.*\.mp4$"; then
     echo "📹 Found MP4 files staged for commit"
     echo "🎬 Running video compression..."
     npm run compress:videos
 
-    # Add compressed videos back to staging area
-    git add public/videos/*.mp4
-
-    echo "✅ Video compression completed and files staged"
+    MEDIA_UPDATED=true
+    echo "✅ Video compression completed"
   else
-    echo "⏭️  No MP4 files found in staged changes"
+    echo "⏭️  No new MP4 files found in staged changes"
   fi
 else
   echo "⏭️  No videos directory found"
@@ -24,20 +25,35 @@ echo "🖼️  Checking for new/updated images to compress..."
 
 # Check if there are any image files in the images directory
 if [ -d "public/images" ]; then
-  # Check if there are any image files staged for commit
-  if git diff --cached --name-only | grep -qE "public/images/.*\.(png|jpg|jpeg|webp)$"; then
+  # Check if there are any NEW image files staged for commit (not deleted)
+  if git diff --cached --name-only --diff-filter=AM | grep -qE "public/images/.*\.(png|jpg|jpeg|webp)$"; then
     echo "📸 Found image files staged for commit"
     echo "🖼️  Running image compression..."
     npm run compress:images
 
-    # Add compressed images and registry back to staging area
-    git add public/images/*.png public/images/*.jpg public/images/*.jpeg public/images/*.webp 2>/dev/null || true
-    git add public/images/.compressed-images.json 2>/dev/null || true
-
-    echo "✅ Image compression completed and files staged"
+    MEDIA_UPDATED=true
+    echo "✅ Image compression completed"
   else
-    echo "⏭️  No image files found in staged changes"
+    echo "⏭️  No new image files found in staged changes"
   fi
 else
   echo "⏭️  No images directory found"
+fi
+
+# If any media was updated, prepare manifest and sync to CDN
+if [ "$MEDIA_UPDATED" = true ]; then
+  echo ""
+  echo "☁️  Preparing media manifest and syncing to CDN..."
+
+  # Generate manifest with hashed filenames
+  npm run media:prepare
+
+  # Add manifest to staging (not ignored)
+  git add public/media-manifest.json 2>/dev/null || true
+
+  # Sync to CDN (images, videos, and manifest)
+  echo "📤 Uploading to CDN..."
+  npm run cdn:sync:media
+
+  echo "✅ Media synced to CDN"
 fi

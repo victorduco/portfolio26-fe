@@ -62,12 +62,13 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { initAnimations } from "./case2-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
+import { getImagePath, getVideoPath } from "@/utils/mediaResolver.js";
 
 const router = useRouter();
 
-const videoSrc = "/videos/case2-video.mp4";
+const videoSrc = getVideoPath("case2-video.mp4");
 
-const finalImageSrc = "/images/case2-comparison.png";
+const finalImageSrc = getImagePath("case2-comparison.png");
 
 const containerRef = ref(null);
 
@@ -78,10 +79,10 @@ const descriptionPart1 = "Redesigning the Employee Comms mobile experience used 
 const descriptionPart2 = " and improving content variety, information discoverability, and overall usability with recognized excellence ";
 const descriptionPart3 = " by G2";
 
-const googleLogo = "/images/case2-logo-google.svg";
-const cocaColaLogo = "/images/case2-logo-coca-cola.svg";
-const lorealLogo = "/images/case2-logo-loreal.svg";
-const g2Badge = "/images/case2-badge-g2.png";
+const googleLogo = getImagePath("case2-logo-google.svg");
+const cocaColaLogo = getImagePath("case2-logo-coca-cola.svg");
+const lorealLogo = getImagePath("case2-logo-loreal.svg");
+const g2Badge = getImagePath("case2-badge-g2.png");
 
 let animationInstance = null;
 

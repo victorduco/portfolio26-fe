@@ -115,6 +115,7 @@ import { gsap } from "gsap";
 import CloudCorners from "./CloudCorners.vue";
 import { initAnimations } from "./case3-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
+import { getImagePath, getVideoPath } from "@/utils/mediaResolver.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -127,8 +128,8 @@ const title = "Field Operations App for Oil Terminals";
 const tags = ["Consultancy", "Redesign", "Mentorship"];
 const description =
   "A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.";
-const imageSrc = "/images/case3-ipad.png";
-const videoSrc = "/videos/case3-video.mp4";
+const imageSrc = getImagePath("case3-ipad.png");
+const videoSrc = getVideoPath("case3-video.mp4");
 
 // Video positioning (relative to media container)
 const videoPositionX = "62.5%";

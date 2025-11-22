@@ -23,6 +23,14 @@ public/keypad-backgrounds/*
 !public/keypad-backgrounds/.gitkeep
 !public/keypad-backgrounds/manifest.json
 
+# Media files (served from CDN in production)
+public/images/*
+!public/images/.gitkeep
+public/videos/*
+!public/videos/.gitkeep
+# Keep media manifest for path resolution
+!public/media-manifest.json
+
 # Test screenshots and reports
 test-screenshots/
 font-test-screenshots/

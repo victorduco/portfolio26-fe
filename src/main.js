@@ -10,11 +10,15 @@ import App from "./App.vue";
 import directivesPlugin from "./plugins/directives.js";
 import mixpanelPlugin from "./plugins/mixpanel.js";
 import router from "./router/index.js";
+import { initMediaResolver } from "./utils/mediaResolver.js";
 
 // Disable browser's automatic scroll restoration
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
 }
+
+// Initialize media resolver (loads manifest for CDN path resolution)
+initMediaResolver();
 
 const app = createApp(App);
 app.use(directivesPlugin);

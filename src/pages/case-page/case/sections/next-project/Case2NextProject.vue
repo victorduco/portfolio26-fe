@@ -37,15 +37,16 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import { getImagePath } from "@/utils/mediaResolver.js";
 
 const router = useRouter();
 
-const finalImageSrc = "/images/case2-comparison.png";
+const finalImageSrc = getImagePath("case2-comparison.png");
 
-const googleLogo = "/images/case2-logo-google.svg";
-const cocaColaLogo = "/images/case2-logo-coca-cola.svg";
-const lorealLogo = "/images/case2-logo-loreal.svg";
-const g2Badge = "/images/case2-badge-g2.png";
+const googleLogo = getImagePath("case2-logo-google.svg");
+const cocaColaLogo = getImagePath("case2-logo-coca-cola.svg");
+const lorealLogo = getImagePath("case2-logo-loreal.svg");
+const g2Badge = getImagePath("case2-badge-g2.png");
 
 const handleStoryLinkClick = (event) => {
   event.preventDefault();

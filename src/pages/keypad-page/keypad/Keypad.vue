@@ -68,8 +68,10 @@ import {
 } from "./variants.js";
 import {
   getBackgroundPath,
+  getBackgroundPathAsync,
   preloadInitialBackgrounds,
   prefetchNextDigits,
+  initKeypadBackgrounds,
 } from "@/utils/keypadBackgroundLoader.js";
 
 const emit = defineEmits(["unlock"]);
@@ -98,22 +100,22 @@ const RESIZE_THROTTLE_MS = 16; // ~60fps
 
 watch(
   () => enteredDigits.value,
-  (digits) => {
+  async (digits) => {
     if (digits.length === 0) {
-      
+
       document.documentElement.style.setProperty("--glass-filter", "none");
       void document.documentElement.offsetHeight;
 
-      
+
       document.documentElement.style.setProperty("--global-keypad-bg", "");
       document.documentElement.style.setProperty("--global-keypad-mask", "");
-      
+
       document.documentElement.classList.add("keypad-no-bg");
 
-      
+
       void document.documentElement.offsetHeight;
 
-      
+
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           document.documentElement.style.removeProperty("--glass-filter");
@@ -123,11 +125,13 @@ watch(
       return;
     }
 
-    
+
     document.documentElement.classList.remove("keypad-no-bg");
 
-    
-    const sharpPath = getBackgroundPath(digits);
+    // Use async version to ensure manifest is loaded
+    const sharpPath = await getBackgroundPathAsync(digits);
+    if (!sharpPath) return; // Skip if path is empty
+
     document.documentElement.style.setProperty(
       "--global-keypad-bg",
       `url("${sharpPath}")`
@@ -430,16 +434,20 @@ function handleResize() {
     void document.documentElement.offsetHeight;
 
     const sharpPath = getBackgroundPath(enteredDigits.value);
+    if (!sharpPath) {
+      isResizing.value = false;
+      return;
+    }
 
-    
+
     document.documentElement.style.setProperty("--global-keypad-bg", "");
     document.documentElement.style.setProperty("--global-keypad-mask", "");
     void document.documentElement.offsetHeight;
 
-    
+
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        
+
         document.documentElement.style.setProperty(
           "--global-keypad-bg",
           `url("${sharpPath}")`
@@ -462,14 +470,17 @@ function handleResize() {
   }, 250);
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Initialize keypad backgrounds (load manifest) before anything else
+  await initKeypadBackgrounds();
+
   if (typeof window !== "undefined") {
     window.addEventListener("keydown", handleKeyDown);
-    
+
     window.addEventListener("resize", handleResizeThrottled, { passive: true });
   }
 
-  
+
   preloadInitialBackgrounds();
 });
 

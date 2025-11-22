@@ -46,6 +46,7 @@ import ParallaxImg from '../media/ParallaxImg.vue'
 import HorizontalParallaxImg from '../media/HorizontalParallaxImg.vue'
 import ChapteredVideo from '../media/ChapteredVideo.vue'
 import LayeredImg from '../media/LayeredImg.vue'
+import { resolveMediaPath } from '@/utils/mediaResolver.js'
 
 interface Heading {
   main: string
@@ -122,10 +123,21 @@ function getContainerClass(mediaType: string): string {
   return classMap[mediaType] || ''
 }
 
-// Remove label-related props before passing to media component
+// Remove label-related props and resolve media paths before passing to media component
 function getMediaProps(props: Record<string, any>): Record<string, any> {
   const { mediaLabel, backgroundColor, sources, ...rest } = props
-  return rest
+
+  // Resolve all media paths in props
+  const resolved: Record<string, any> = {}
+  for (const [key, value] of Object.entries(rest)) {
+    if (typeof value === 'string' && (value.startsWith('/images/') || value.startsWith('/videos/'))) {
+      resolved[key] = resolveMediaPath(value)
+    } else {
+      resolved[key] = value
+    }
+  }
+
+  return resolved
 }
 </script>
 

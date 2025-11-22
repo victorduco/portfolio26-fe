@@ -7,18 +7,28 @@
  */
 
 let manifest = null;
+let manifestLoading = null;
+
 async function loadManifest() {
   if (manifest) return manifest;
+  if (manifestLoading) return manifestLoading;
 
-  try {
-    const response = await fetch("/keypad-backgrounds/manifest.json");
-    if (!response.ok) throw new Error("Manifest not found");
-    manifest = await response.json();
-    return manifest;
-  } catch (error) {
-    return null;
-  }
+  manifestLoading = (async () => {
+    try {
+      const response = await fetch("/keypad-backgrounds/manifest.json");
+      if (!response.ok) throw new Error("Manifest not found");
+      manifest = await response.json();
+      return manifest;
+    } catch (error) {
+      return null;
+    }
+  })();
+
+  return manifestLoading;
 }
+
+// Initialize manifest immediately on module load
+loadManifest();
 
 const CDN_BASE_URL = import.meta.env.VITE_CDN_BASE_URL;
 const USE_CDN = CDN_BASE_URL && import.meta.env.PROD;
@@ -43,16 +53,29 @@ function getCodeFromDigits(digits) {
 export function getBackgroundPath(digits) {
   const code = getCodeFromDigits(digits);
 
-  if (USE_CDN && manifest) {
-    const filename = manifest[code] || `${code}.png`;
-    return `${CDN_BASE_URL}/sharp/${filename}`;
-  }
-
+  // Always use manifest if available (required for hashed filenames)
   if (manifest && manifest[code]) {
+    if (USE_CDN) {
+      return `${CDN_BASE_URL}/sharp/${manifest[code]}`;
+    }
     return `/keypad-backgrounds/sharp/${manifest[code]}`;
   }
 
+  // Fallback: return empty string if manifest not loaded yet
+  // This prevents 404 errors for non-existent files
+  if (!manifest) {
+    console.warn('Keypad manifest not loaded yet, returning empty path');
+    return '';
+  }
+
+  // Manifest loaded but code not found (shouldn't happen normally)
   return `/keypad-backgrounds/sharp/${code}.png`;
+}
+
+// Async version that waits for manifest
+export async function getBackgroundPathAsync(digits) {
+  await loadManifest();
+  return getBackgroundPath(digits);
 }
 
 function getBackgroundPathWithManifest(digits, manifestData) {
@@ -213,6 +236,14 @@ export function getStats() {
           ).toFixed(1) + "%"
         : "0%",
   };
+}
+
+/**
+ * Initialize the keypad background loader
+ * Call this and await before using getBackgroundPath
+ */
+export async function initKeypadBackgrounds() {
+  await loadManifest();
 }
 
 if (import.meta.env.DEV) {
