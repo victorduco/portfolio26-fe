@@ -18,3 +18,26 @@ if [ -d "public/videos" ]; then
 else
   echo "⏭️  No videos directory found"
 fi
+
+echo ""
+echo "🖼️  Checking for new/updated images to compress..."
+
+# Check if there are any image files in the images directory
+if [ -d "public/images" ]; then
+  # Check if there are any image files staged for commit
+  if git diff --cached --name-only | grep -qE "public/images/.*\.(png|jpg|jpeg|webp)$"; then
+    echo "📸 Found image files staged for commit"
+    echo "🖼️  Running image compression..."
+    npm run compress:images
+
+    # Add compressed images and registry back to staging area
+    git add public/images/*.png public/images/*.jpg public/images/*.jpeg public/images/*.webp 2>/dev/null || true
+    git add public/images/.compressed-images.json 2>/dev/null || true
+
+    echo "✅ Image compression completed and files staged"
+  else
+    echo "⏭️  No image files found in staged changes"
+  fi
+else
+  echo "⏭️  No images directory found"
+fi

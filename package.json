@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "compress:videos": "node scripts/compress-videos.js",
+    "compress:images": "node scripts/compress-images.js",
     "generate:backgrounds": "node scripts/generate-fast-optimized.js",
     "generate:backgrounds:force": "node scripts/generate-fast-optimized.js --force",
     "generate:backgrounds:single": "node scripts/generate-fast-optimized.js --single-digits --force",
