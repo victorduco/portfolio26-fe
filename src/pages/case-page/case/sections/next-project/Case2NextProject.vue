@@ -40,15 +40,12 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const finalImageSrc = new URL(
-  "@/assets/images/case2-comparison@2x.png",
-  import.meta.url
-).href;
+const finalImageSrc = "/images/case2-comparison@2x.png";
 
-const googleLogo = new URL("@/assets/images/google.svg", import.meta.url).href;
-const cocaColaLogo = new URL("@/assets/images/coca-cola.svg", import.meta.url).href;
-const lorealLogo = new URL("@/assets/images/loreal.svg", import.meta.url).href;
-const g2Badge = new URL("@/assets/images/g2.png", import.meta.url).href;
+const googleLogo = "/images/case2-logo-google.svg";
+const cocaColaLogo = "/images/case2-logo-coca-cola.svg";
+const lorealLogo = "/images/case2-logo-loreal.svg";
+const g2Badge = "/images/case2-badge-g2.png";
 
 const handleStoryLinkClick = (event) => {
   event.preventDefault();

@@ -14,7 +14,7 @@ export const case2Content = {
         media: {
           type: 'image' as const,
           props: {
-            imageSrc: '/src/assets/images/case2-comparison@2x.png',
+            imageSrc: '/images/case2-comparison@2x.png',
             mediaLabel: 'Side-by-Side Comparison of the Old and New Home Screens',
           },
         },
@@ -28,9 +28,9 @@ export const case2Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/src/assets/images/case2-challenge-1.png',
-            imageCenter: '/src/assets/images/case2-challenge-2.png',
-            imageRight: '/src/assets/images/case2-challenge-3.png',
+            imageLeft: '/images/case2-challenge-1.png',
+            imageCenter: '/images/case2-challenge-2.png',
+            imageRight: '/images/case2-challenge-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -59,9 +59,9 @@ export const case2Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/src/assets/images/case2-discovery-1.png',
-            imageCenter: '/src/assets/images/case2-discovery-2.png',
-            imageRight: '/src/assets/images/case2-discovery-3.png',
+            imageLeft: '/images/case2-discovery-1.png',
+            imageCenter: '/images/case2-discovery-2.png',
+            imageRight: '/images/case2-discovery-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -78,7 +78,7 @@ export const case2Content = {
         media: {
           type: 'image' as const,
           props: {
-            imageSrc: '/src/assets/images/case2-wireframes.png',
+            imageSrc: '/images/case2-wireframes.png',
             mediaLabel: 'Wireframes Exploring Different Solution Concepts',
           },
         },
@@ -115,7 +115,7 @@ export const case2Content = {
         media: {
           type: 'image' as const,
           props: {
-            imageSrc: '/src/assets/images/case2-final-1.png',
+            imageSrc: '/images/case2-final-1.png',
             mediaLabel: 'Home screen featuring a slider, an interactive widget, articles, company events, channels, personal recommendations, and curated content for key moments.',
           },
         },
@@ -129,7 +129,7 @@ export const case2Content = {
         media: {
           type: 'image' as const,
           props: {
-            imageSrc: '/src/assets/images/case2-final-2.png',
+            imageSrc: '/images/case2-final-2.png',
             mediaLabel: 'Channel and search result screens updated to support the new features.',
           },
         },

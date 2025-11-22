@@ -38,7 +38,7 @@ export const case3Content = {
         media: {
           type: "image" as const,
           props: {
-            imageSrc: "/images/case3_task.png",
+            imageSrc: "/images/case3-task.png",
             mediaLabel: "Previous version: Home screen, My Tasks (two views), and user profile.",
           },
         },

@@ -151,7 +151,7 @@ const caseConfigs = {
     subtitleColor: "#B14127", // Coral red color for two-level headings
     font: "'Hanken Grotesk', sans-serif",
     theme: "light",
-    summaryImage: new URL("@/assets/images/case2-summary.png", import.meta.url).href,
+    summaryImage: "/images/case2-summary.png",
     videoBackground: "#F7E7E7", // Same as button color on main page
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     results: [

@@ -86,7 +86,7 @@ const title = "Field Operations App for Oil Terminals";
 const tags = ["Consultancy", "Redesign", "Mentorship"];
 const description =
   "A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.";
-const imageSrc = new URL("@/assets/images/cs3-ipad.png", import.meta.url).href;
+const imageSrc = "/images/case3-ipad.png";
 
 const handleStoryLinkClick = (event) => {
   event.preventDefault();
