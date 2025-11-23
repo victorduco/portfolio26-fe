@@ -60,6 +60,7 @@
           :intro-text="storyConfig.resultsIntro"
           :conclusion-text="storyConfig.resultsConclusion"
           :card-background="storyConfig.videoBackground"
+          :media-label="storyConfig.resultsMediaLabel"
         />
         <ResultsGridSection
           v-else
@@ -185,6 +186,7 @@ const storyConfigs = {
       }
     ],
     resultsIntro: "The results show impact 11 months post-launch. Metrics were measured and validated by the marketing team through comprehensive analytics tracking across App Store, Google Play, and internal user engagement platforms.",
+    resultsMediaLabel: "Redesign results showing impact 11 months post-launch",
     resultsConclusion: "These improvements demonstrate the significant impact of the redesign on user engagement and satisfaction. The mobile experience transformation led to measurable business outcomes and validated our design decisions through real-world usage data.",
     nextStory: {
       storyId: "3",

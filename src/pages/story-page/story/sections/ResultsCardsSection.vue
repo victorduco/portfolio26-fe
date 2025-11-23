@@ -6,6 +6,11 @@
         {{ introText }}
       </p>
       <div class="results-wrapper" ref="containerRef">
+        <MediaLabel
+          v-if="mediaLabel"
+          :label="mediaLabel"
+          tag="h3"
+        />
         <div
           class="results-container"
           :style="{ '--bg-color': cardBackground, ...shadowVars }"
@@ -42,6 +47,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useAdaptiveShadow } from "@/composables/useAdaptiveShadow.js";
+import MediaLabel from "../elements/MediaLabel.vue";
 
 // Скорости параллакса для каждой карточки (разные направления и скорости)
 const parallaxSpeeds = [-0.4, 0.8, -0.6];
@@ -78,6 +84,10 @@ const props = defineProps({
   cardBackground: {
     type: String,
     default: "#F7E7E7",
+  },
+  mediaLabel: {
+    type: String,
+    default: "",
   },
 });
 
@@ -229,6 +239,13 @@ onUnmounted(() => {
   margin-left: -50vw;
   padding: 16px;
   box-sizing: border-box;
+}
+
+/* MediaLabel alignment inside fullwidth wrapper */
+.results-wrapper :deep(.media-label-wrapper) {
+  max-width: 1200px;
+  margin: 0 auto 4px auto;
+  padding: 0 16px;
 }
 
 .results-container {
