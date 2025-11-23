@@ -73,6 +73,7 @@
           :text="storyConfig.simpleResults.text"
         />
       </section>
+      <AppFooter :dark-mode="false" />
     </div>
     <NextStoryPlaque v-if="storyConfig.nextStory" :story-number="nextStoryNumber" />
     <NextStorySection
@@ -91,6 +92,7 @@ import SummarySection from "./story/sections/SummarySection.vue";
 import ResultsGridSection from "./story/sections/ResultsGridSection.vue";
 import ResultsCardsSection from "./story/sections/ResultsCardsSection.vue";
 import SimpleResultsSection from "./story/sections/SimpleResultsSection.vue";
+import AppFooter from "@/components/app-footer/AppFooter.vue";
 import NextStoryPlaque from "./story/sections/NextStoryPlaque.vue";
 import NextStorySection from "./story/sections/next-story/NextStorySection.vue";
 import Story1NextStory from "./story/sections/next-story/Story1NextStory.vue";

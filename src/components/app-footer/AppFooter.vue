@@ -13,16 +13,17 @@
           <span class="app-footer__icon"></span>
         </a>
         <a
-          href="/resume.pdf"
+          :href="resumePath"
           target="_blank"
           rel="noopener noreferrer"
+          download="Victor_Diukov_Resume.pdf"
           class="app-footer__link"
         >
           Resume
           <span class="app-footer__icon"></span>
         </a>
         <a
-          href="https://www.linkedin.com/in/victordiukov/"
+          href="https://www.linkedin.com/in/victorduco/"
           target="_blank"
           rel="noopener noreferrer"
           class="app-footer__link"
@@ -31,7 +32,7 @@
           <span class="app-footer__icon"></span>
         </a>
         <a
-          href="https://github.com/viktordiukov"
+          href="https://github.com/victorduco/"
           target="_blank"
           rel="noopener noreferrer"
           class="app-footer__link"
@@ -45,12 +46,16 @@
 </template>
 
 <script setup>
+import { getDocumentPath } from "@/utils/mediaResolver.js";
+
 defineProps({
   darkMode: {
     type: Boolean,
     default: false,
   },
 });
+
+const resumePath = getDocumentPath("victor_diukov_resume.pdf");
 </script>
 
 <style scoped>
@@ -124,8 +129,9 @@ defineProps({
   opacity: 0.65;
 }
 
-/* Light theme by default */
+/* Light theme by default - white background with dark text */
 .app-footer {
+  background-color: #ffffff;
   color: #000000;
 }
 
