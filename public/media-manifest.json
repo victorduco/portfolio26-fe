@@ -1,5 +1,5 @@
 {
-  "generated": "2025-11-23T18:42:11.802Z",
+  "generated": "2025-11-23T19:58:10.810Z",
   "images": {
     "story1-domain-tree.png": "story1-domain-tree.f8abba0a.png",
     "story1-framework-1.png": "story1-framework-1.e3a700cc.png",
@@ -63,5 +63,8 @@
     "story1-summary.mp4": "story1-summary.89ff3e15.mp4",
     "story2-video.mp4": "story2-video.150de6fd.mp4",
     "story3-video.mp4": "story3-video.f8cf461d.mp4"
+  },
+  "documents": {
+    "victor_diukov_resume.pdf": "victor_diukov_resume.bffb82f8.pdf"
   }
 }

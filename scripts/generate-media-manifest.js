@@ -13,6 +13,7 @@ const projectRoot = path.join(__dirname, "..");
 const MEDIA_DIRS = {
   images: path.join(projectRoot, "public/images"),
   videos: path.join(projectRoot, "public/videos"),
+  documents: path.join(projectRoot, "public/documents"),
 };
 
 // Output manifest path
@@ -21,6 +22,7 @@ const MANIFEST_PATH = path.join(projectRoot, "public/media-manifest.json");
 // Supported extensions
 const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"];
 const VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov"];
+const DOCUMENT_EXTENSIONS = [".pdf"];
 
 // Generate content hash for a file
 function getContentHash(filePath) {
@@ -183,6 +185,7 @@ function generateManifest() {
     generated: new Date().toISOString(),
     images: {},
     videos: {},
+    documents: {},
   };
 
   // Process images
@@ -199,17 +202,26 @@ function generateManifest() {
     "videos"
   );
 
+  // Process documents
+  manifest.documents = processDirectory(
+    MEDIA_DIRS.documents,
+    DOCUMENT_EXTENSIONS,
+    "documents"
+  );
+
   // Write manifest
   fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
 
   // Summary
   const totalImages = Object.keys(manifest.images).length;
   const totalVideos = Object.keys(manifest.videos).length;
+  const totalDocuments = Object.keys(manifest.documents).length;
 
   console.log("\n" + "─".repeat(50));
   console.log("📊 Manifest Summary:");
   console.log(`   Images: ${totalImages} files`);
   console.log(`   Videos: ${totalVideos} files`);
+  console.log(`   Documents: ${totalDocuments} files`);
   console.log(`   Output: ${MANIFEST_PATH}`);
   console.log("─".repeat(50));
   console.log("\n✅ Media manifest generated successfully!");

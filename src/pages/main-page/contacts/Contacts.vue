@@ -19,16 +19,17 @@
             </a>
             <div class="contacts__social">
               <a
-                href="/resume.pdf"
+                :href="resumePath"
                 target="_blank"
                 rel="noopener noreferrer"
+                download="Victor_Diukov_Resume.pdf"
                 class="contacts__link"
               >
                 Resume
                 <span class="contacts__icon"></span>
               </a>
               <a
-                href="https://www.linkedin.com/in/victordiukov/"
+                href="https://www.linkedin.com/in/victorduco/"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="contacts__link"
@@ -37,7 +38,7 @@
                 <span class="contacts__icon"></span>
               </a>
               <a
-                href="https://github.com/viktordiukov"
+                href="https://github.com/victorduco/"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="contacts__link"
@@ -54,12 +55,16 @@
 </template>
 
 <script setup>
+import { getDocumentPath } from "@/utils/mediaResolver.js";
+
 defineProps({
   darkMode: {
     type: Boolean,
     default: true,
   },
 });
+
+const resumePath = getDocumentPath("victor_diukov_resume.pdf");
 </script>
 
 <style scoped>

@@ -30,6 +30,8 @@ public/videos/*
 !public/videos/.gitkeep
 public/fonts/*
 !public/fonts/.gitkeep
+public/documents/*
+!public/documents/.gitkeep
 # Keep media manifest for path resolution
 !public/media-manifest.json
 

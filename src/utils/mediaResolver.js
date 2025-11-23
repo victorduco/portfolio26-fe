@@ -134,6 +134,33 @@ export function getFontPath(filename) {
 }
 
 /**
+ * Get the resolved path for a document (PDF, etc.)
+ * @param {string} filename - Original filename (e.g., 'victor_diukov_resume.pdf')
+ * @returns {string} Resolved path (CDN URL in prod, local path in dev)
+ */
+export function getDocumentPath(filename) {
+  // Handle full paths (e.g., '/documents/resume.pdf')
+  if (filename.startsWith("/documents/")) {
+    filename = filename.replace("/documents/", "");
+  }
+
+  // In dev mode, try hashed name first, fallback to original if not in manifest
+  if (import.meta.env.DEV) {
+    const hashedName = manifest?.documents?.[filename];
+    return hashedName ? `/documents/${hashedName}` : `/documents/${filename}`;
+  }
+
+  // In prod, always use manifest (or original as fallback)
+  const hashedName = manifest?.documents?.[filename] || filename;
+
+  if (USE_CDN) {
+    return `${CDN_BASE_URL}/documents/${hashedName}`;
+  }
+
+  return `/documents/${hashedName}`;
+}
+
+/**
  * Get CDN base URL for fonts (for CSS usage)
  * @returns {string} Base URL for fonts
  */
@@ -199,6 +226,7 @@ export function getManifestStats() {
     generated: manifest.generated,
     images: Object.keys(manifest.images || {}).length,
     videos: Object.keys(manifest.videos || {}).length,
+    documents: Object.keys(manifest.documents || {}).length,
     useCDN: USE_CDN,
     cdnUrl: CDN_BASE_URL || "not configured",
   };
@@ -209,6 +237,7 @@ if (typeof window !== "undefined") {
   window.__mediaResolver = {
     getImagePath,
     getVideoPath,
+    getDocumentPath,
     resolveMediaPath,
     getManifestStats,
     isManifestLoaded,
