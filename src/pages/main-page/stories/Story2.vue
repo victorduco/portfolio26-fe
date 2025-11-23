@@ -72,8 +72,8 @@ const finalImageSrc = getImagePath("story2-comparison.png");
 
 const containerRef = ref(null);
 
-const titlePart1Words = computed(() => ["Redesigning", "the", "Employee"]);
-const titlePart2Words = computed(() => ["Comms", "mobile", "experience"]);
+const titlePart1Words = computed(() => ["Relaunching", "the", "Employee"]);
+const titlePart2Words = computed(() => ["Comms", "App"]);
 
 const descriptionPart1 = "Redesigning the Employee Comms mobile experience used by global teams ";
 const descriptionPart2 = " and improving content variety, information discoverability, and overall usability with recognized excellence ";

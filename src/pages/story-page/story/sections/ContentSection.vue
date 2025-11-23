@@ -27,7 +27,7 @@
     >
       <component
         :is="getMediaComponent(media.type)"
-        v-bind="getMediaProps(media.props)"
+        v-bind="getMediaProps(media.props, backgroundColor)"
       />
     </MediaContainer>
 
@@ -127,7 +127,7 @@ function getContainerClass(mediaType: string): string {
 }
 
 // Remove label-related props and resolve media paths before passing to media component
-function getMediaProps(props: Record<string, any>): Record<string, any> {
+function getMediaProps(props: Record<string, any>, sectionBackgroundColor?: string): Record<string, any> {
   const { mediaLabel, backgroundColor, sources, ...rest } = props
 
   // Resolve all media paths in props
@@ -145,6 +145,9 @@ function getMediaProps(props: Record<string, any>): Record<string, any> {
       resolved[key] = value
     }
   }
+
+  // Pass backgroundColor to component (for magnifier background etc.)
+  resolved.backgroundColor = backgroundColor || sectionBackgroundColor || '#ffffff'
 
   return resolved
 }

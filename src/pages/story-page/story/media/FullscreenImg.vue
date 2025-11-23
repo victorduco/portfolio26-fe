@@ -50,6 +50,10 @@ const props = defineProps({
     type: Number,
     default: 2.5,
   },
+  backgroundColor: {
+    type: String,
+    default: '#ffffff',
+  },
 });
 
 const containerRef = ref(null);
@@ -130,6 +134,7 @@ const magnifierImageStyle = computed(() => {
   const adjustedMouseY = mouseY.value - offsetY;
 
   return {
+    backgroundColor: props.backgroundColor,
     backgroundImage: `url(${props.imageSrc})`,
     backgroundSize: `${renderedWidth * zoom}px ${renderedHeight * zoom}px`,
     backgroundPosition: `-${adjustedMouseX * zoom - size / 2}px -${adjustedMouseY * zoom - size / 2}px`,

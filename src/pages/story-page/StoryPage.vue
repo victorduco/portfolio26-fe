@@ -133,7 +133,7 @@ const storyConfigs = {
     summaryVideo: getVideoPath("story1-summary.mp4"),
     videoBackground: "#f5f5f7", // Apple gray background
     autoplayThreshold: 0.75, // 75% visibility to trigger autoplay
-    mediaLabel: "Product Overview Video", // Label above video
+    mediaLabel: "Overview Video", // Label above video
     results: [
       {
         title: "Noticeable Time Reduction",
