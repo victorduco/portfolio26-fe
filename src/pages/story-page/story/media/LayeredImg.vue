@@ -264,11 +264,17 @@ const handleTouchEnd = () => {
   dragOffset.value = 0;
 };
 
-// Desktop parallax animation
+// Desktop parallax animation with IntersectionObserver optimization
 let animationFrameId = null;
+let isInViewport = false;
+let observer = null;
 
 const updateParallax = () => {
-  if (!containerRef.value || isMobile.value) return;
+  // Stop RAF loop when not in viewport or on mobile
+  if (!containerRef.value || isMobile.value || !isInViewport) {
+    animationFrameId = null;
+    return;
+  }
 
   // Массив карточек в порядке слева-направо (визуально)
   const cards = [
@@ -296,14 +302,44 @@ const updateParallax = () => {
   animationFrameId = requestAnimationFrame(updateParallax);
 };
 
+const startParallax = () => {
+  if (!animationFrameId && !isMobile.value && isInViewport) {
+    animationFrameId = requestAnimationFrame(updateParallax);
+  }
+};
+
+const stopParallax = () => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+};
+
 onMounted(() => {
   checkMobile();
   window.addEventListener('resize', checkMobile);
   window.addEventListener('resize', updateSlideWidth);
 
-  if (!isMobile.value) {
-    updateParallax();
-  } else {
+  if (!isMobile.value && containerRef.value) {
+    // Setup IntersectionObserver to only run RAF when in viewport
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isInViewport = entry.isIntersecting;
+          if (isInViewport) {
+            startParallax();
+          } else {
+            stopParallax();
+          }
+        });
+      },
+      {
+        rootMargin: '100px 0px', // Start slightly before entering viewport
+        threshold: 0,
+      }
+    );
+    observer.observe(containerRef.value);
+  } else if (isMobile.value) {
     // Wait for DOM to render, then calculate slide width
     requestAnimationFrame(() => {
       updateSlideWidth();
@@ -314,8 +350,10 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile);
   window.removeEventListener('resize', updateSlideWidth);
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
+  stopParallax();
+  if (observer) {
+    observer.disconnect();
+    observer = null;
   }
 });
 </script>

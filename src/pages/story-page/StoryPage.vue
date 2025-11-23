@@ -295,9 +295,17 @@ const navigationSections = computed(() => {
   background-color: inherit;
 }
 
+/* Explicit z-index for sections to ensure proper stacking order */
 section {
   position: relative;
+  z-index: 1;
+  /* Inherit background from story page to maintain theming while ensuring solid background */
   background-color: inherit;
+}
+
+/* Ensure sections within main content have proper stacking and solid backgrounds */
+.story-main-content > section {
+  isolation: isolate;
 }
 
 .story-page-back {

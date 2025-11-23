@@ -83,17 +83,25 @@ const shadowVars = computed(() => useAdaptiveShadow());
 const containerRef = ref(null);
 const cardRefs = ref([]);
 
+// Parallax animation with IntersectionObserver optimization
 let animationFrameId = null;
+let isInViewport = false;
+let observer = null;
 
 const updateParallax = () => {
-  if (!containerRef.value) return;
+  // Stop RAF loop when not in viewport
+  if (!containerRef.value || !isInViewport) {
+    animationFrameId = null;
+    return;
+  }
 
   // На мобильных отключаем параллакс
   if (isMobile.value) {
     cardRefs.value.forEach((card) => {
       if (card) card.style.transform = 'translateY(0)';
     });
-    animationFrameId = requestAnimationFrame(updateParallax);
+    // Don't continue RAF loop on mobile
+    animationFrameId = null;
     return;
   }
 
@@ -115,15 +123,50 @@ const updateParallax = () => {
   animationFrameId = requestAnimationFrame(updateParallax);
 };
 
+const startParallax = () => {
+  if (!animationFrameId && isInViewport) {
+    animationFrameId = requestAnimationFrame(updateParallax);
+  }
+};
+
+const stopParallax = () => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+};
+
 onMounted(() => {
   window.addEventListener('resize', updateIsMobile);
-  updateParallax();
+
+  if (containerRef.value) {
+    // Setup IntersectionObserver to only run RAF when in viewport
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isInViewport = entry.isIntersecting;
+          if (isInViewport) {
+            startParallax();
+          } else {
+            stopParallax();
+          }
+        });
+      },
+      {
+        rootMargin: '100px 0px', // Start slightly before entering viewport
+        threshold: 0,
+      }
+    );
+    observer.observe(containerRef.value);
+  }
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', updateIsMobile);
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
+  stopParallax();
+  if (observer) {
+    observer.disconnect();
+    observer = null;
   }
 });
 </script>
@@ -131,7 +174,9 @@ onUnmounted(() => {
 <style scoped>
 .story-results-2 {
   width: 100%;
-  padding: 80px 0 168px;
+  /* Reduced top padding to account for margin from MediaContainer above (48px) */
+  /* This creates consistent spacing: 48px (media margin) + 40px (this padding) = 88px total */
+  padding: 40px 0 168px;
   overflow-x: hidden;
   display: flex;
   justify-content: center;

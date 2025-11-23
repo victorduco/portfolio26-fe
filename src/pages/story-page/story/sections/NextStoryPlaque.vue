@@ -31,7 +31,8 @@ const props = defineProps({
   margin: 0;
   padding: 0;
   position: relative;
-  z-index: 100;
+  /* Lower z-index to avoid conflicts with video controls (z-index: 150) and overlays (z-index: 100) */
+  z-index: 5;
 }
 
 .next-story-text {

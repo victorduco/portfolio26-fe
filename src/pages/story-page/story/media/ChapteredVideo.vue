@@ -187,33 +187,6 @@ const handleVideoEnded = () => {
 
 // Intersection Observer for scroll-based play/pause
 let observer = null;
-let scrollCheckInterval = null;
-
-// Helper function to check if video is in viewport
-const isVideoInViewport = () => {
-  if (!videoContainerRef.value) return false;
-
-  const rect = videoContainerRef.value.getBoundingClientRect();
-  const windowHeight =
-    window.innerHeight || document.documentElement.clientHeight;
-  const windowWidth = window.innerWidth || document.documentElement.clientWidth;
-
-  // Calculate what portion of the video is visible
-  const visibleHeight =
-    Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-  const visibleWidth =
-    Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
-
-  const totalHeight = rect.height;
-  const totalWidth = rect.width;
-
-  const visibleArea = visibleHeight * visibleWidth;
-  const totalArea = totalHeight * totalWidth;
-
-  const visibilityRatio = totalArea > 0 ? visibleArea / totalArea : 0;
-
-  return visibilityRatio >= 0.5; // 50% threshold
-};
 
 // User pause tracking
 const userPaused = ref(false);
@@ -234,6 +207,7 @@ onMounted(() => {
   if (!videoContainerRef.value) return;
 
   // Setup Intersection Observer for scroll-based autoplay
+  // Using multiple thresholds is sufficient - no need for setInterval polling
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -260,29 +234,12 @@ onMounted(() => {
     },
     {
       // Use multiple thresholds to catch fast scrolling
-      threshold: [0, 0.25, 0.5, 0.75, 1],
+      threshold: [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1],
       rootMargin: "0px",
     }
   );
 
   observer.observe(videoContainerRef.value);
-
-  // Additional safeguard: periodically check if video should be paused
-  // This catches cases where IntersectionObserver might miss fast scrolling
-  scrollCheckInterval = setInterval(() => {
-    if (isPlaying.value && !isVideoInViewport()) {
-      pauseVideo();
-      // Reset hasStartedPlayback so pause overlay doesn't show when scrolling away
-      hasStartedPlayback.value = false;
-    }
-  }, 200); // Check every 200ms
-
-  // Auto-play video on mount if it's in viewport
-  setTimeout(() => {
-    if (isVideoInViewport() && !userPaused.value) {
-      playVideo();
-    }
-  }, 100);
 });
 
 onUnmounted(() => {
@@ -290,12 +247,6 @@ onUnmounted(() => {
   if (observer) {
     observer.disconnect();
     observer = null;
-  }
-
-  // Clear interval
-  if (scrollCheckInterval) {
-    clearInterval(scrollCheckInterval);
-    scrollCheckInterval = null;
   }
 
   pauseVideo();

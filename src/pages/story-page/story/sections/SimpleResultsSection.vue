@@ -23,7 +23,9 @@ defineProps({
 <style scoped>
 .story-results-simple {
   width: 100%;
-  padding: 80px 0 168px;
+  /* Reduced top padding to account for margin from MediaContainer above (48px) */
+  /* This creates consistent spacing: 48px (media margin) + 40px (this padding) = 88px total */
+  padding: 40px 0 168px;
   overflow-x: hidden;
   display: flex;
   justify-content: center;
