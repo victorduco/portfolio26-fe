@@ -137,7 +137,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 75px 0 75px;
+  padding: 75px 16px;
   box-sizing: border-box;
   gap: 32px;
 }
@@ -229,7 +229,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 
 @media (min-width: 768px) and (max-width: 900px) {
   .summary-content {
-    padding: 50px 24px;
+    padding: 50px 16px;
     gap: 48px;
   }
 

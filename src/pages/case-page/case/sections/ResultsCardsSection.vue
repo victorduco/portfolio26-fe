@@ -140,6 +140,8 @@ onUnmounted(() => {
 .results-content {
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .results-intro {
@@ -290,6 +292,7 @@ onUnmounted(() => {
     aspect-ratio: auto;
   }
 }
+
 
 @media (max-width: 768px) {
   .case-results-2 {

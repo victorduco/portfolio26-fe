@@ -308,6 +308,8 @@ section {
   max-width: 1200px;
   margin-top: 24px;
   margin-bottom: 24px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 /* Add extra padding to the last section before Next Project */

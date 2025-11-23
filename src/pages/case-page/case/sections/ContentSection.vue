@@ -154,18 +154,24 @@ function getMediaProps(props: Record<string, any>): Record<string, any> {
   margin-bottom: 16px;
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .text-before {
   margin-bottom: -8px;
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .text-after {
   margin-top: 64px;
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 /* Mobile: Add horizontal padding for text content */

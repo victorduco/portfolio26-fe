@@ -81,7 +81,8 @@ const sourcesText = computed(() => {
   width: 100%;
   max-width: var(--case-content-max);
   margin: 0 0 4px 0;
-  padding: 0;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .media-label {

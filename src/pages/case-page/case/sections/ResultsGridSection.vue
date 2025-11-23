@@ -49,6 +49,8 @@ const props = defineProps({
 .results-content {
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .results-grid {
@@ -99,6 +101,7 @@ const props = defineProps({
     gap: 32px;
   }
 }
+
 
 @media (max-width: 768px) {
   .case-results {
