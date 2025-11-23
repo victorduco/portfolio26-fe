@@ -34,9 +34,12 @@ export const story1Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/story1-scale-1.png',
-            imageCenter: '/images/story1-scale-2.png',
+            imageLeft: '/images/story1-scale-2.png',
+            imageCenter: '/images/story1-scale-1.png',
             imageRight: '/images/story1-scale-3.png',
+            zIndexLeft: 2,
+            zIndexCenter: 3,
+            zIndexRight: 1,
             mediaLabel: 'Research Summary and Business Context',
           },
         },

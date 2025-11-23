@@ -18,22 +18,22 @@
     </div>
 
     <!-- Center card (визуально в центре) -->
-    <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexRight }">
+    <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexCenter }">
       <div class="card-inner">
         <img
-          :src="imageRight"
-          :alt="altRight || 'Center card'"
+          :src="imageCenter"
+          :alt="altCenter || 'Center card'"
           loading="lazy"
         />
       </div>
     </div>
 
     <!-- Right card (визуально справа) -->
-    <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexCenter }">
+    <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexRight }">
       <div class="card-inner">
         <img
-          :src="imageCenter"
-          :alt="altCenter || 'Right card'"
+          :src="imageRight"
+          :alt="altRight || 'Right card'"
           loading="lazy"
         />
       </div>
@@ -67,8 +67,8 @@
       <div class="slider-slide">
         <div class="slide-inner" :style="shadowVars">
           <img
-            :src="imageRight"
-            :alt="altRight || 'Image 2'"
+            :src="imageCenter"
+            :alt="altCenter || 'Image 2'"
             loading="lazy"
           />
         </div>
@@ -76,8 +76,8 @@
       <div class="slider-slide">
         <div class="slide-inner" :style="shadowVars">
           <img
-            :src="imageCenter"
-            :alt="altCenter || 'Image 3'"
+            :src="imageRight"
+            :alt="altRight || 'Image 3'"
             loading="lazy"
           />
         </div>
