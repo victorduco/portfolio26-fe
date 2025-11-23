@@ -1,7 +1,7 @@
 export const story1Content = {
-  challenge: {
+  background: {
     heading: {
-      main: 'User Challenge',
+      main: 'Background',
       subtitle: undefined,
     },
     sections: [
@@ -20,11 +20,6 @@ export const story1Content = {
           },
         },
       },
-    ],
-  },
-
-  scale: {
-    sections: [
       {
         heading: {
           main: 'Identifying Cross-Regional Patterns in User Workflows',
