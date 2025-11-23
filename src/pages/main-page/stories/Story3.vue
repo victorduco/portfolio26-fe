@@ -132,8 +132,8 @@ const imageSrc = getImagePath("story3-ipad.png");
 const videoSrc = getVideoPath("story3-video.mp4");
 
 // Video positioning (relative to media container)
-const videoPositionX = "4.5%";
-const videoPositionY = "44%";
+const videoPositionX = "4.25%";
+const videoPositionY = "53.1%";
 const videoScale = 0.45;
 
 // Refs

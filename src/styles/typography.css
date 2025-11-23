@@ -7,7 +7,7 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --font-size-h1: clamp(40px, 3.5vw, 80px);
+  --font-size-h1: clamp(48px, 4.2vw, 80px);
   --font-size-h2: clamp(32px, 2.8vw, 48px);
   --font-size-h3: clamp(30px, 2.6vw, 42px);
   --font-size-h4: clamp(20px, 2.5vw, 24px);

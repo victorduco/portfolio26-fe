@@ -59,7 +59,7 @@ const handleStoryLinkClick = (event) => {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background-color: #000000;
+  background-color: #F7E7E7;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -98,7 +98,7 @@ const handleStoryLinkClick = (event) => {
   font-weight: 590;
   font-size: clamp(16px, 1.2vw, 21px);
   line-height: 25px;
-  color: #C89999;
+  color: #B14127;
   margin: 0;
   margin-bottom: -18px;
 }
@@ -110,7 +110,7 @@ const handleStoryLinkClick = (event) => {
   font-size: clamp(32px, 3vw, 56px);
   line-height: 1.2;
   letter-spacing: -0.01em;
-  color: #ffffff;
+  color: #000000;
   text-align: left;
 }
 
@@ -121,7 +121,7 @@ const handleStoryLinkClick = (event) => {
   font-weight: 400;
   font-size: clamp(18px, 1.6vw, 26px);
   line-height: 2;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(0, 0, 0, 0.7);
   text-align: left;
 }
 
@@ -157,7 +157,7 @@ const handleStoryLinkClick = (event) => {
 }
 
 .story2-open-story {
-  background: #1a1a1a;
+  background: #f1d5d5;
   border: none;
   font-family: 'Hanken Grotesk', sans-serif;
   font-weight: 600;
@@ -165,7 +165,7 @@ const handleStoryLinkClick = (event) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ff8a7a;
+  color: #6B1F13;
   cursor: pointer;
   padding: 0 24px 0 29px;
   gap: 10px;
@@ -177,7 +177,7 @@ const handleStoryLinkClick = (event) => {
 }
 
 .story2-open-story:hover {
-  background: rgba(26, 26, 26, 0.8);
+  background: #e6c4c4;
 }
 
 .story2-icon {
