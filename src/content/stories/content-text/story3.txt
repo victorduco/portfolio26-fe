@@ -16,8 +16,8 @@ Media label: Side-by-Side Comparison of the Old and New Home Screens
 
 === BACKGROUND ===
 
+Label: User Challenge
 ## Harsh Conditions, Critical Actions
-### User Challenge
 
 <TODO: Write a paragraph>
 
@@ -35,8 +35,8 @@ Media label: Previous version: Home screen, My Tasks (two views), and user profi
 
 === UX AUDIT ===
 
+Label: User & Competitor Research
 ## Building a Fact-Based Case for Change
-### User & Competitor Research
 
 <TODO: Write a paragraph>
 
@@ -44,8 +44,8 @@ Media label: Internal documentation samples: personas, best practices, and user 
 
 ---
 
+Label: UX Audit Report
 ## Prioritized and Actionable Summary of UX Problems
-### UX Audit Report
 
 <TODO: Write a paragraph>
 
@@ -57,8 +57,8 @@ Text after: <TODO: Write a paragraph>
 
 === APP REDESIGN ===
 
+Label: Home Page
 ## Keeping Only What Matters, Without Losing the Experience
-### Home Page
 
 <TODO: Write a paragraph>
 
@@ -74,8 +74,8 @@ Media label: Illustration samples for different order types, statuses, and condi
 
 ---
 
+Label: App Navigation
 ## Attention Goes to What Truly Matters
-### App Navigation
 
 <TODO: Write a paragraph>
 
@@ -83,8 +83,8 @@ Media label: Examples of visual hierarchy: (1) the menu stays low-priority; (2) 
 
 ---
 
+Label: Order View
 ## Flatter Navigation With 50% Fewer Transitions
-### Order View
 
 <TODO: Write a paragraph>
 

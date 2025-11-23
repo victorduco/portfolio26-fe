@@ -16,8 +16,8 @@ Media label: Side-by-Side Comparison of the Old and New Home Screens
 
 === BACKGROUND ===
 
+Label: About Smarp / Haiilo
 ## Leader in Employee Communications
-### About Smarp / Haiilo
 
 <TODO: Write a paragraph>
 
@@ -25,8 +25,8 @@ Media label: Key Highlights from Smarp (now Haiilo) with major clients, core fea
 
 ---
 
+Label: Challenge
 ## Desktop-First Mobile Experience
-### Challenge
 
 <TODO: Write a paragraph>
 
@@ -36,8 +36,8 @@ Media label: Overview of Issues in the Previous Mobile App
 
 === PROCESS ===
 
+Label: Discovery
 ## Best Practices & User Interviews
-### Discovery
 
 <TODO: Write a paragraph>
 
@@ -45,8 +45,8 @@ Media label: Sample Documents From the Initial Discovery Stage
 
 ---
 
+Label: Ideation & Prioritization
 ## Defining What Matters Most for Employee Comms
-### Ideation & Prioritization
 
 <TODO: Write a paragraph>
 
@@ -54,8 +54,8 @@ Media label: Wireframes Exploring Different Solution Concepts
 
 ---
 
+Label: Prototype Testing
 ## Polishing the UX of the New Flows
-### Prototype Testing
 
 <TODO: Write a paragraph>
 
@@ -65,8 +65,8 @@ Media label: Improvements from the testing, showing both pre-test and updated sc
 
 === FINAL DESIGN ===
 
+Label: Home Screen
 ## Enhanced Content Options for Employees and Community Managers
-### Home Screen
 
 <TODO: Write a paragraph>
 
@@ -74,8 +74,8 @@ Media label: Home screen featuring a slider, an interactive widget, articles, co
 
 ---
 
+Label: Internal Screens
 ## Supporting New Content Types and Improving UX
-### Internal Screens
 
 <TODO: Write a paragraph>
 

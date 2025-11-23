@@ -16,8 +16,8 @@ Media label: Overview Video
 
 === BACKGROUND ===
 
+Label: Account Reconciliation Specifics
 ## Something Went Wrong, Somehow
-### Account Reconciliation Specifics
 
 <TODO: Write a paragraph>
 
@@ -25,8 +25,8 @@ Media label: Users must grasp multiple subdomains to resolve problems.
 
 ---
 
+Label: Global Product Research
 ## Identifying Cross-Regional Patterns in User Workflows
-### Global Product Research
 
 <TODO: Write a paragraph>
 
@@ -36,8 +36,8 @@ Media label: Research Summary and Business Context
 
 === SOLUTION ===
 
+Label: Conversational & Classic UI
 ## Pairing Natural Dialogue with Heavy Data Workflows
-### Conversational & Classic UI
 
 <TODO: Write a paragraph>
 
@@ -45,8 +45,8 @@ Media label: Two workflows, one unified experience. Users pick what fits best.
 
 ---
 
+Label: Product Vision & Design System
 ## Consistent Experience Across Variable Inputs
-### Product Vision & Design System
 
 <TODO: Write a paragraph>
 
@@ -54,8 +54,8 @@ Media label: Input & Output Elements for Chat and Classic UI
 
 ---
 
+Label: AI Output Interpretation
 ## Building Users' Trust Through Transparency
-### AI Output Interpretation
 
 <TODO: Write a paragraph>
 
@@ -63,8 +63,8 @@ Media label: LLM responses are unified and passed through a reliability check.
 
 ---
 
+Label: Data Visualization
 ## Helping Users See What Truly Matters in the Data
-### Data Visualization
 
 <TODO: Write a paragraph>
 
