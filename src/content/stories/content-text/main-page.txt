@@ -1,0 +1,92 @@
+MAIN PAGE
+
+=== INTRO ===
+
+# Hero
+Victor Diukov
+
+Currently designing for Apple. Bringing experience from large-scale B2B & FinTech with a product management background.
+
+---
+
+## Interactive Squares Content
+
+### Square 1: Vision
+Strong vision means understanding the real problem. I know how to guide teams toward aligned direction and keep the product focused on meaningful outcomes.
+
+### Square 2: Connection
+Great projects are built by people. I love bringing different perspectives together and turning collaboration into real progress.
+
+### Square 3: Technology
+Continuous learning and hands-on tech experience help me create solutions that are both innovative and practical, grounded in real engineering constraints.
+
+### Square 4: Scale
+I shape and build large-scale enterprise experiences used internationally, ensuring the UX stays consistent, predictable, and easy to operate.
+
+---
+
+=== STORY 1 (Apple) ===
+
+Company: Apple
+
+Title: Transforming Account Reconciliation with AI-Driven User Experience
+
+Tags:
+- Global User Research
+- Concept-to-Launch Design
+- Cross-Domain UX Alignment
+
+Button: Open Story
+
+---
+
+=== STORY 2 (Smarp) ===
+
+Company: Smarp
+
+Title: Relaunching the Employee Comms App
+
+Description part 1: Redesigning the Employee Comms mobile experience used by global teams [Google logo] [Coca-Cola logo] [L'Oréal logo]
+
+Description part 2: and improving content variety, information discoverability, and overall usability with recognized excellence [G2 badge] by G2.
+
+Button: Open Story
+
+---
+
+=== STORY 3 (Oil Terminals) ===
+
+Tags:
+- Consultancy
+- Redesign
+- Mentorship
+
+Title: Field Operations App for Oil Terminals
+
+Description: A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.
+
+Button: Open Story
+
+---
+
+=== AI PLAYGROUND ===
+
+Title: AI Playground
+
+Description: I'm passionate about home gardening and working on an AI agent that manages my plants using data and controls from my Home Assistant system.
+
+Link: View Repository
+URL: https://github.com/victorduco/agent-taskmanager
+
+---
+
+=== CONTACTS ===
+
+Name: Victor Diukov
+
+Email: mail@victorduco.com
+
+Links:
+- Resume (download: Victor_Diukov_Resume.pdf)
+- LinkedIn: https://www.linkedin.com/in/victorduco/
+- GitHub: https://github.com/victorduco/

@@ -1,0 +1,87 @@
+STORY 1
+
+=== SUMMARY ===
+
+Title: Transforming Account Reconciliation with AI-Driven User Experience
+
+Team: Apple Financial Services
+Timeline: Feb 2022 - Present
+Project Type: 0-1 Product
+Role: Senior Product Designer & Product Manager
+Contribution: User Research → Interface Design → Interaction Design → Product Strategy
+
+Media label: Overview Video
+
+---
+
+=== BACKGROUND ===
+
+## Something Went Wrong, Somehow
+### Account Reconciliation Specifics
+
+<TODO: Write a paragraph>
+
+Media label: Users must grasp multiple subdomains to resolve problems.
+
+---
+
+## Identifying Cross-Regional Patterns in User Workflows
+### Global Product Research
+
+<TODO: Write a paragraph>
+
+Media label: Research Summary and Business Context
+
+---
+
+=== SOLUTION ===
+
+## Pairing Natural Dialogue with Heavy Data Workflows
+### Conversational & Classic UI
+
+<TODO: Write a paragraph>
+
+Media label: Two workflows, one unified experience. Users pick what fits best.
+
+---
+
+## Consistent Experience Across Variable Inputs
+### Product Vision & Design System
+
+<TODO: Write a paragraph>
+
+Media label: Input & Output Elements for Chat and Classic UI
+
+---
+
+## Building Users' Trust Through Transparency
+### AI Output Interpretation
+
+<TODO: Write a paragraph>
+
+Media label: LLM responses are unified and passed through a reliability check.
+
+---
+
+## Helping Users See What Truly Matters in the Data
+### Data Visualization
+
+<TODO: Write a paragraph>
+
+Media label: Results tailored to users' specific task context.
+
+---
+
+=== RESULTS ===
+
+## Result 1: Noticeable Time Reduction
+<TODO: Write a paragraph>
+
+
+## Result 2: Lower SLA Violations
+<TODO: Write a paragraph>
+
+
+## Result 3: Peak Load Support
+<TODO: Write a paragraph>
+

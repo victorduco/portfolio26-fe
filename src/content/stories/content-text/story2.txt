@@ -1,0 +1,110 @@
+STORY 2
+
+=== SUMMARY ===
+
+Title: Relaunching the Employee Comms App
+
+Company: Smarp (now Haiilo)
+Timeline: Jan 2021 - Dec 2021
+Project Type: Redesign
+Role: Senior Product Designer
+Contribution: User Research → Interface Design → Interaction Design → Design System
+
+Media label: Side-by-Side Comparison of the Old and New Home Screens
+
+---
+
+=== BACKGROUND ===
+
+## Leader in Employee Communications
+### About Smarp / Haiilo
+
+<TODO: Write a paragraph>
+
+Media label: Key Highlights from Smarp (now Haiilo) with major clients, core features, and results
+
+---
+
+## Desktop-First Mobile Experience
+### Challenge
+
+<TODO: Write a paragraph>
+
+Media label: Overview of Issues in the Previous Mobile App
+
+---
+
+=== PROCESS ===
+
+## Best Practices & User Interviews
+### Discovery
+
+<TODO: Write a paragraph>
+
+Media label: Sample Documents From the Initial Discovery Stage
+
+---
+
+## Defining What Matters Most for Employee Comms
+### Ideation & Prioritization
+
+<TODO: Write a paragraph>
+
+Media label: Wireframes Exploring Different Solution Concepts
+
+---
+
+## Polishing the UX of the New Flows
+### Prototype Testing
+
+<TODO: Write a paragraph>
+
+Media label: Improvements from the testing, showing both pre-test and updated screen versions.
+
+---
+
+=== FINAL DESIGN ===
+
+## Enhanced Content Options for Employees and Community Managers
+### Home Screen
+
+<TODO: Write a paragraph>
+
+Media label: Home screen featuring a slider, an interactive widget, articles, company events, channels, personal recommendations, and curated content for key moments.
+
+---
+
+## Supporting New Content Types and Improving UX
+### Internal Screens
+
+<TODO: Write a paragraph>
+
+Media label: Channel and search result screens updated to support the new features.
+
+---
+
+=== RESULTS ===
+
+Intro: The results show impact 11 months post-launch. Metrics were measured and validated by the marketing team through comprehensive analytics tracking across App Store, Google Play, and internal user engagement platforms.
+
+Media label: Redesign results showing impact 11 months post-launch
+
+## Result 1: App Rating
+Label: App Rating
+Icon: Star
+Title: 3.2 → 4.6
+Description: Average rating in the App Store and Google Play Store.
+
+## Result 2: Installation Rate
+Label: Installation Rate
+Icon: Download
+Title: 4.5% → 32%
+Description: Percentage of users who installed the app out of the total user base.
+
+## Result 3: Active Users
+Label: Active Users
+Icon: User
+Title: 0.5% → 14%
+Description: Percentage of users who became regular mobile app users out of the total user base.
+
+Conclusion: <TODO: Write a paragraph>
