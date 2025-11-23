@@ -177,6 +177,16 @@ export function isManifestLoaded() {
 }
 
 /**
+ * Force reload the manifest (useful in dev when manifest changes)
+ * @returns {Promise<void>}
+ */
+export async function reloadManifest() {
+  manifest = null;
+  manifestLoading = null;
+  await loadManifest();
+}
+
+/**
  * Get manifest stats (for debugging)
  */
 export function getManifestStats() {
@@ -202,5 +212,6 @@ if (typeof window !== "undefined") {
     resolveMediaPath,
     getManifestStats,
     isManifestLoaded,
+    reloadManifest,
   };
 }

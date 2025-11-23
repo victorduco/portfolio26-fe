@@ -63,9 +63,12 @@ function ensureHashedFilename(filePath, dryRun = false) {
       // Content changed, need new hash
       const newHashedName = `${originalName}.${currentHash}${ext}`;
       const newPath = path.join(dir, newHashedName);
+      const oldPath = filePath;
 
       if (!dryRun) {
         fs.renameSync(filePath, newPath);
+        // Delete old file with previous hash (already renamed, so delete oldPath which is now non-existent)
+        // Actually, renameSync already moved it, so we don't need to delete
       }
 
       return {
@@ -73,6 +76,7 @@ function ensureHashedFilename(filePath, dryRun = false) {
         hashedName: newHashedName,
         changed: true,
         oldName: path.basename(filePath),
+        oldPath: oldPath,
       };
     }
   } else {
@@ -90,6 +94,44 @@ function ensureHashedFilename(filePath, dryRun = false) {
       hashedName: hashedName,
       changed: true,
     };
+  }
+}
+
+// Clean up orphaned hashed files (files with hash but no corresponding current version)
+function cleanOrphanedFiles(dirPath, extensions, processedFiles) {
+  if (!fs.existsSync(dirPath)) {
+    return;
+  }
+
+  const hashPattern = /^(.+)\.([a-f0-9]{8})(\.[^.]+)$/;
+  const allFiles = fs.readdirSync(dirPath);
+  let cleanedCount = 0;
+
+  for (const file of allFiles) {
+    const ext = path.extname(file).toLowerCase();
+    if (!extensions.includes(ext) || file.startsWith(".")) {
+      continue;
+    }
+
+    const match = file.match(hashPattern);
+    if (match) {
+      const originalName = match[1] + match[3];
+
+      // Check if this file is in our processed results
+      const isCurrentVersion = Object.values(processedFiles).includes(file);
+
+      if (!isCurrentVersion) {
+        // This is an orphaned file (old hash version)
+        const filePath = path.join(dirPath, file);
+        fs.unlinkSync(filePath);
+        console.log(`  🗑️  Removed orphaned file: ${file}`);
+        cleanedCount++;
+      }
+    }
+  }
+
+  if (cleanedCount > 0) {
+    console.log(`  ✨ Cleaned up ${cleanedCount} orphaned file(s)`);
   }
 }
 
@@ -126,6 +168,9 @@ function processDirectory(dirPath, extensions, mediaType) {
       console.log(`  ✓ ${result.hashedName} (unchanged)`);
     }
   }
+
+  // Clean up orphaned files after processing
+  cleanOrphanedFiles(dirPath, extensions, results);
 
   return results;
 }
