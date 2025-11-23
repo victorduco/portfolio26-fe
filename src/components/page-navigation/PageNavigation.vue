@@ -265,7 +265,7 @@ onUnmounted(() => {
 .page-navigation {
   position: fixed;
   right: 48px;
-  top: 50%;
+  top: 50svh;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
