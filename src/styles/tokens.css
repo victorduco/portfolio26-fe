@@ -21,12 +21,12 @@
   --fs-body: clamp(14px, 1.6vw, 16px);
   --lh-body: 1.7;
 
-  /* Case sections */
-  --case-content-max: 1200px;
-  --case-section-padding-top: 80px;
-  --case-section-padding-bottom: 48px;
-  --case-summary-padding-top: 150px;
-  --case-summary-padding-bottom: 135px;
+  /* Story sections */
+  --story-content-max: 1200px;
+  --story-section-padding-top: 80px;
+  --story-section-padding-bottom: 48px;
+  --story-summary-padding-top: 150px;
+  --story-summary-padding-bottom: 135px;
 
   /* Spacing between elements */
   --spacing-heading-to-text: 24px;
@@ -35,44 +35,44 @@
   --spacing-section-to-media: 48px;
 }
 
-/* Case Page Shared Heading Styles */
-.case-heading-single {
-  font-family: var(--case-title-font, var(--font-family-base));
+/* Story Page Shared Heading Styles */
+.story-heading-single {
+  font-family: var(--story-title-font, var(--font-family-base));
   margin: 0;
   color: inherit;
 }
 
-.case-heading-two-level {
+.story-heading-two-level {
   margin: 0;
 }
 
-.case-heading-subtitle {
+.story-heading-subtitle {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--case-subtitle-color, #007aff);
+  color: var(--story-subtitle-color, #007aff);
   margin-bottom: 0px;
   display: block;
 }
 
-.case-heading-main {
-  font-family: var(--case-title-font, var(--font-family-base));
+.story-heading-main {
+  font-family: var(--story-title-font, var(--font-family-base));
   margin: 0;
   color: inherit;
   display: block;
 }
 
-/* Case Results Title - Shared */
-.case-results-title {
-  font-family: var(--case-title-font, var(--font-family-base));
+/* Story Results Title - Shared */
+.story-results-title {
+  font-family: var(--story-title-font, var(--font-family-base));
   margin: 0 0 24px 0;
   color: inherit;
 }
 
 /* Content Section Heading - Smaller variant */
-.case-section-heading-single {
-  font-family: var(--case-title-font, var(--font-family-base));
+.story-section-heading-single {
+  font-family: var(--story-title-font, var(--font-family-base));
   font-size: clamp(22px, 2.8vw, 28px);
   font-weight: var(--font-weight-semibold);
   color: inherit;
@@ -80,23 +80,23 @@
   margin: 0;
 }
 
-.case-section-heading-two-level {
+.story-section-heading-two-level {
   margin: 0;
 }
 
-.case-section-heading-subtitle {
+.story-section-heading-subtitle {
   font-family: var(--font-family-base);
   font-size: clamp(12px, 2.4vw, 14px);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--case-subtitle-color, #007aff);
+  color: var(--story-subtitle-color, #007aff);
   margin-bottom: 0px;
   display: block;
 }
 
-.case-section-heading-main {
-  font-family: var(--case-title-font, var(--font-family-base));
+.story-section-heading-main {
+  font-family: var(--story-title-font, var(--font-family-base));
   font-size: clamp(22px, 2.8vw, 28px);
   font-weight: var(--font-weight-semibold);
   color: inherit;
@@ -110,10 +110,10 @@
     --gutter: 24px;
     --container-max: min(90vw, 680px);
     --lh-body: 1.65;
-    --case-section-padding-top: 60px;
-    --case-section-padding-bottom: 24px;
-    --case-summary-padding-top: 80px;
-    --case-summary-padding-bottom: 48px;
+    --story-section-padding-top: 60px;
+    --story-section-padding-bottom: 24px;
+    --story-summary-padding-top: 80px;
+    --story-summary-padding-bottom: 48px;
   }
 }
 
@@ -122,7 +122,7 @@
     --gutter: 32px;
     --container-max: min(92vw, 960px);
     --lh-body: 1.6;
-    --case-summary-padding-top: 100px;
+    --story-summary-padding-top: 100px;
   }
 }
 

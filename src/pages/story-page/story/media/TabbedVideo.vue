@@ -338,7 +338,7 @@ onUnmounted(() => {
 }
 
 .tab-button.active {
-  background: var(--case-primary-color, #007aff);
+  background: var(--story-primary-color, #007aff);
   color: #ffffff;
   opacity: 1;
 }

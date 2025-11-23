@@ -258,7 +258,7 @@ onUnmounted(() => {
 }
 
 .result-value {
-  font-family: var(--case-title-font, var(--font-family-base));
+  font-family: var(--story-title-font, var(--font-family-base));
   font-size: clamp(32px, 4vw, 48px);
   font-weight: var(--font-weight-semibold);
   line-height: 1.2;
