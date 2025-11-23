@@ -19,9 +19,7 @@
             >
               <div class="result-card-header">
                 <div class="result-label">{{ result.label }}</div>
-                <div v-if="result.icon" class="result-icon">
-                  {{ result.icon }}
-                </div>
+                <img v-if="result.iconSrc" :src="result.iconSrc" alt="" class="result-icon" />
               </div>
               <div class="result-card-inner">
                 <div
@@ -45,8 +43,8 @@
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useAdaptiveShadow } from "@/composables/useAdaptiveShadow.js";
 
-// Скорости параллакса для каждой карточки
-const parallaxSpeeds = [0.5, 1.0];
+// Скорости параллакса для каждой карточки (разные направления и скорости)
+const parallaxSpeeds = [-0.4, 0.8, -0.6];
 
 // Мобильный брейкпоинт
 const MOBILE_BREAKPOINT = 768;
@@ -304,9 +302,8 @@ onUnmounted(() => {
 }
 
 .result-icon {
-  font-size: 32px;
-  line-height: 1;
-  opacity: 0.5;
+  width: 22px;
+  height: 22px;
 }
 
 .result-card-inner {

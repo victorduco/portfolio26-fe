@@ -167,19 +167,19 @@ const storyConfigs = {
     results: [
       {
         label: "App Rating",
-        icon: "★",
+        iconSrc: new URL('@/assets/icons/results-star.svg', import.meta.url).href,
         title: "3.2 → 4.6",
         description: "Average rating in the App Store and Google Play Store."
       },
       {
         label: "Installation Rate",
-        icon: "↗",
+        iconSrc: new URL('@/assets/icons/results-download.svg', import.meta.url).href,
         title: "4.5% → 32%",
         description: "Percentage of users who installed the app out of the total user base."
       },
       {
         label: "Active Users",
-        icon: "◆",
+        iconSrc: new URL('@/assets/icons/results-user.svg', import.meta.url).href,
         title: "0.5% → 14%",
         description: "Percentage of users who became regular mobile app users out of the total user base."
       }
