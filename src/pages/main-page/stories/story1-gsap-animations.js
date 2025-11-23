@@ -34,6 +34,22 @@ export function initAnimations(pinContainer) {
     pin: ".circle",
     id: "MAIN-PIN",
     invalidateOnRefresh: true,
+    onEnter: () => {
+      // Dispatch custom event when entering story1 from above
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story1' } }));
+    },
+    onEnterBack: () => {
+      // Dispatch custom event when scrolling back into story1 from below
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story1' } }));
+    },
+    onLeave: () => {
+      // When leaving story1 downwards, activate next section (story2)
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story2' } }));
+    },
+    onLeaveBack: () => {
+      // When leaving story1 upwards, activate previous section (intro)
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'intro' } }));
+    },
   });
 
   // Main timeline: simplified animation for line to button transformation

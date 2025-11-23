@@ -1,6 +1,6 @@
 <template>
   <div class="story1-next-story">
-    <!-- Text Container (positioned above) -->
+    <!-- Text Container -->
     <div class="text-container">
       <p class="company-text">Apple</p>
       <h2 class="main-text">
@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <!-- Button (positioned below) -->
+    <!-- Button -->
     <a href="/story/one" class="line-element" @click.prevent="handleClick">
       <span class="open-story-text">Open Story</span>
     </a>
@@ -37,25 +37,24 @@ const handleClick = (event) => {
 .story1-next-story {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #1a1a1a;
+  background-color: #f5f5f5;
 }
 
-/* Text Container (positioned above center) */
+/* Text Container - positioned at final animation state */
 .text-container {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, calc(-50% - 105px));
+  /* Final state: translate(-50%, 0) + y: -210px */
+  transform: translate(-50%, -210px);
   text-align: center;
+  z-index: 1;
   width: 90vw;
   max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .company-text {
@@ -67,8 +66,7 @@ const handleClick = (event) => {
   color: #007aff;
   text-align: center;
   width: 100%;
-  display: block;
-  box-sizing: border-box;
+  max-width: none;
 }
 
 .main-text {
@@ -77,9 +75,7 @@ const handleClick = (event) => {
   font-weight: 600;
   font-size: clamp(24px, 2.2vw, 48px);
   line-height: 1.2;
-  color: #ffffff;
-  text-align: center;
-  width: 100%;
+  color: #000000;
 }
 
 .tags-container {
@@ -95,23 +91,24 @@ const handleClick = (event) => {
   font-weight: 500;
   font-size: 18px;
   line-height: 1.4;
-  color: #999999;
+  color: #666666;
 }
 
 .tag-separator {
   font-family: 'Noto Sans', sans-serif;
   font-size: 18px;
   line-height: 1.4;
-  color: #999999;
+  color: #666666;
   opacity: 0.5;
 }
 
-/* Button (positioned below center) */
+/* Button - final animation state */
 .line-element {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, calc(50% + 45px));
+  /* Final state: translate(-50%, -50%) + y: 105px */
+  transform: translate(-50%, calc(-50% + 105px));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,15 +116,17 @@ const handleClick = (event) => {
   height: 60px;
   border: 4px solid #007aff;
   border-radius: 30px;
-  background-color: #1a1a1a;
+  overflow: hidden;
   cursor: pointer;
   text-decoration: none;
   box-sizing: border-box;
+  z-index: 3;
+  background-color: transparent;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .line-element:hover {
-  background-color: rgba(26, 26, 26, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
   border-color: rgba(0, 122, 255, 0.8);
 }
 
@@ -147,9 +146,22 @@ const handleClick = (event) => {
 /* Mobile styles */
 @media (max-width: 767px) {
   .text-container {
-    transform: translate(-50%, calc(-50% - 100px));
-    width: calc(100vw - 48px);
-    max-width: calc(100vw - 48px);
+    /* Final state on mobile: translate(-50%, 0) + y: -200px */
+    transform: translate(-50%, -200px);
+    width: 100%;
+    max-width: 100%;
+    padding-left: clamp(16px, 4vw, 32px);
+    padding-right: clamp(16px, 4vw, 32px);
+    box-sizing: border-box;
+  }
+
+  .company-text {
+    text-align: center;
+  }
+
+  .main-text {
+    width: 100%;
+    text-align: center;
   }
 
   .tags-container {
@@ -170,8 +182,10 @@ const handleClick = (event) => {
   }
 
   .line-element {
-    transform: translate(-50%, calc(50% + 40px));
+    /* Final state on mobile: translate(-50%, -50%) + y: 100px */
+    transform: translate(-50%, calc(-50% + 100px));
     width: calc(100vw - 48px);
+    border-radius: 0px;
   }
 }
 </style>

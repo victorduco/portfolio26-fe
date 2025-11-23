@@ -12,6 +12,22 @@ export function initAnimations(trigger) {
     pin: true,
     pinSpacing: false,
     id: "story2-pin",
+    onEnter: () => {
+      // Dispatch custom event when entering story2 from above
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story2' } }));
+    },
+    onEnterBack: () => {
+      // Dispatch custom event when scrolling back into story2 from below
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story2' } }));
+    },
+    onLeave: () => {
+      // When leaving story2 downwards, activate next section (story3)
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story3' } }));
+    },
+    onLeaveBack: () => {
+      // When leaving story2 upwards, activate previous section (story1)
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story1' } }));
+    },
   });
 
   // Animation timeline starts earlier (top bottom) for text fade-in

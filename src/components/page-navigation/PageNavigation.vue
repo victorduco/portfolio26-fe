@@ -151,6 +151,10 @@ function setupIntersectionObserver() {
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
+        // Skip all story sections - they're controlled by ScrollTrigger callbacks
+        if (entry.target.id === 'story1' || entry.target.id === 'story2' || entry.target.id === 'story3') {
+          return;
+        }
         activeSection.value = entry.target.id;
         emit("activeSectionChange", entry.target.id);
       }

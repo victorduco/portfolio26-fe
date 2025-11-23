@@ -48,12 +48,20 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
     id: "MAIN-PIN-STORY3",
     invalidateOnRefresh: true,
     onEnter: () => {
-      // Dispatch custom event when entering story3
+      // Dispatch custom event when entering story3 from above
       window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story3' } }));
     },
     onEnterBack: () => {
-      // Dispatch custom event when scrolling back into story3
+      // Dispatch custom event when scrolling back into story3 from below
       window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story3' } }));
+    },
+    onLeave: () => {
+      // When leaving story3 downwards, activate next section (ai-play)
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'ai-play' } }));
+    },
+    onLeaveBack: () => {
+      // When leaving story3 upwards, activate previous section (story2)
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story2' } }));
     },
   });
 
