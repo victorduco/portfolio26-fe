@@ -137,7 +137,7 @@ const summaryData = computed(() => summaryConfigs[props.storyId]);
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 75px 16px;
+  padding: 75px 0;
   box-sizing: border-box;
   gap: 32px;
 }
@@ -146,6 +146,8 @@ const summaryData = computed(() => summaryConfigs[props.storyId]);
 .summary-header {
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -162,6 +164,8 @@ const summaryData = computed(() => summaryConfigs[props.storyId]);
 .summary-details-wrapper {
   width: 100%;
   max-width: 1200px;
+  padding: 0 16px;
+  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   gap: 32px 128px;
@@ -199,16 +203,18 @@ const summaryData = computed(() => summaryConfigs[props.storyId]);
 
 @media (max-width: 767px) {
   .summary-content {
-    padding: 40px 24px;
+    padding: 40px 0;
     gap: 40px;
   }
 
   .summary-header {
     max-width: 100%;
+    padding: 0 24px;
   }
 
   .summary-details-wrapper {
     max-width: 100%;
+    padding: 0 24px;
     flex-direction: column;
     gap: 24px;
   }
@@ -229,11 +235,16 @@ const summaryData = computed(() => summaryConfigs[props.storyId]);
 
 @media (min-width: 768px) and (max-width: 900px) {
   .summary-content {
-    padding: 50px 16px;
+    padding: 50px 0;
     gap: 48px;
   }
 
+  .summary-header {
+    padding: 0 16px;
+  }
+
   .summary-details-wrapper {
+    padding: 0 16px;
     gap: 24px 32px;
   }
 }
