@@ -124,7 +124,7 @@ const route = useRoute();
 const shouldSkipAnimation = computed(() => route.meta?.skipNavIntro === true);
 
 // Content data
-const title = "Field Operations App for Oil Terminals";
+const title = "Field Operations App for\u00A0Oil\u00A0Terminals";
 const tags = ["Consultancy", "Redesign", "Mentorship"];
 const description =
   "A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.";
@@ -286,9 +286,10 @@ defineExpose({
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: clamp(28px, 3.5vh, 45px);
-  padding-bottom: 0;
+  padding-top: clamp(60px, 10vh, 120px);
+  padding-bottom: clamp(30px, 5vh, 60px);
 }
 
 /* Company and Title Group Container */
@@ -297,7 +298,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: clamp(16px, 2.5vh, 32px);
 }
 
 /* Tags container */
@@ -308,7 +309,7 @@ defineExpose({
   gap: 8px;
   width: 100%;
   opacity: 0; /* Initial state for GSAP */
-  margin-bottom: -36px;
+  margin-bottom: 0;
 }
 
 /* Individual tag styling */
@@ -317,11 +318,11 @@ defineExpose({
   font-family: "Neue Haas Grotesk Display Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
-  font-weight: 700;
-  font-size: clamp(15px, 1.06vw, 17px);
+  font-weight: 600;
+  font-size: clamp(16.5px, 1.1vw, 23px);
   line-height: 1.23;
   text-align: center;
-  color: #143154;
+  color: rgba(20, 49, 84, 0.75);
 }
 
 /* Tag separator - anchor icon */
@@ -346,8 +347,8 @@ defineExpose({
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-style: normal;
   font-weight: 600;
-  font-size: clamp(36px, 3.2vw, 78px);
-  line-height: 1.21;
+  font-size: clamp(30px, 3.2vw, 70px);
+  line-height: 1.2;
   text-align: center;
   width: 100%;
   max-width: 100%;
@@ -359,7 +360,7 @@ defineExpose({
   position: absolute;
   top: 4px;
   left: 5px;
-  color: rgba(10, 49, 74, 0.21);
+  color: rgba(10, 49, 74, 0.15);
   z-index: 0;
 }
 
@@ -395,7 +396,7 @@ defineExpose({
   font-size: clamp(16.5px, 1.1vw, 23px);
   line-height: 1.23;
   text-align: center;
-  color: #143154;
+  color: rgba(20, 49, 84, 0.75);
   width: 100%;
   max-width: 100%;
   opacity: 0; /* Initial state for GSAP */
@@ -548,54 +549,6 @@ defineExpose({
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Large Desktop - increase all element sizes */
-@media (min-width: 1920px) {
-  .story3-title {
-    font-size: clamp(78px, 5.12vw, 92px);
-    line-height: 1.19;
-  }
-
-  .story3-company {
-    font-size: clamp(19px, 1.3vw, 22px);
-  }
-
-  .story3-tag {
-    font-size: clamp(17px, 1.15vw, 20px);
-  }
-
-  .story3-tag-separator {
-    width: clamp(10.5px, 0.7vw, 12px);
-  }
-
-  .story3-description {
-    font-size: clamp(23px, 1.54vw, 27.5px);
-  }
-
-  .story3-button-wrapper {
-    width: clamp(380px, 25vw, 435px);
-    height: clamp(67px, 4.2vw, 78px);
-  }
-
-  .story3-button {
-    font-size: clamp(21px, 1.4vw, 24px);
-  }
-
-  .story3-button-icon {
-    width: clamp(24px, 1.6vw, 28px);
-    left: clamp(24px, 1.6vw, 28px);
-  }
-
-  .story3-title-shadow {
-    top: 5px;
-    left: 6px;
-  }
-
-  .story3-button-shadow {
-    top: 11px;
-    left: 9px;
   }
 }
 
