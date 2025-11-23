@@ -239,8 +239,20 @@ function startIntroAnimation() {
   animateNext();
 }
 
+// Listen for custom section events from ScrollTrigger-based sections
+function handleStorySectionActive(event) {
+  const { sectionId } = event.detail;
+  if (sectionId && introFinished.value) {
+    activeSection.value = sectionId;
+    emit("activeSectionChange", sectionId);
+  }
+}
+
 onMounted(() => {
   setupIntersectionObserver();
+
+  // Listen for custom events from ScrollTrigger-controlled sections
+  window.addEventListener('story-section-active', handleStorySectionActive);
 
   // Intro animation disabled - skip directly to finished state
   introHighlightIndex.value = -1;
@@ -258,6 +270,8 @@ onUnmounted(() => {
   if (observer) {
     observer.disconnect();
   }
+  // Remove custom event listener
+  window.removeEventListener('story-section-active', handleStorySectionActive);
 });
 </script>
 

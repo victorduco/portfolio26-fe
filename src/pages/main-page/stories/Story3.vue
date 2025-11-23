@@ -101,9 +101,6 @@
           </div>
         </div>
       </div>
-
-      <!-- section-2: буфер для дополнительного пространства после анимации -->
-      <div class="section-2"></div>
     </div>
   </div>
 </template>
@@ -225,7 +222,7 @@ defineExpose({
 }
 
 /* ========================================
-   section-1, section-2: триггеры
+   section-1: триггер
    ======================================== */
 .section-1 {
   width: 100%;
@@ -235,16 +232,6 @@ defineExpose({
   align-items: center;
   justify-content: center;
   z-index: 1;
-}
-
-.section-2 {
-  width: 100%;
-  height: 50vh;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 0;
 }
 
 /* ========================================

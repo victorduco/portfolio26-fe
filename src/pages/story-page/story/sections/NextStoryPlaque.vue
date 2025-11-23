@@ -1,6 +1,8 @@
 <template>
   <div class="next-story-plaque">
-    <p class="next-story-text">Next: Story {{ storyNumber }}</p>
+    <p class="next-story-text">
+      <span class="next-label">Next:</span> Story {{ storyNumber }}
+    </p>
   </div>
 </template>
 
@@ -16,14 +18,15 @@ const props = defineProps({
 <style scoped>
 .next-story-plaque {
   width: 100%;
-  height: 60px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px) brightness(0.7);
-  -webkit-backdrop-filter: blur(10px) brightness(0.7);
+  background-color: rgb(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: none;
+  border-bottom: 1px solid #dddddd;
   outline: none;
   margin: 0;
   padding: 0;
@@ -36,7 +39,11 @@ const props = defineProps({
   font-family: var(--font-family-base);
   font-size: 18px;
   font-weight: var(--font-weight-medium);
-  color: #ffffff;
+  color: #666666;
   text-align: center;
+}
+
+.next-label {
+  opacity: 0.7;
 }
 </style>

@@ -38,17 +38,23 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
 
   // Find sections inside pinContainer
   const section1 = pinContainer.querySelector(".section-1");
-  const section2 = pinContainer.querySelector(".section-2");
 
   // Main pin: пинит .content на всё время прохождения секции
   ScrollTrigger.create({
     trigger: section1,
     start: "top top",
-    endTrigger: section2,
     end: "bottom bottom",
     pin: ".content",
     id: "MAIN-PIN-STORY3",
     invalidateOnRefresh: true,
+    onEnter: () => {
+      // Dispatch custom event when entering story3
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story3' } }));
+    },
+    onEnterBack: () => {
+      // Dispatch custom event when scrolling back into story3
+      window.dispatchEvent(new CustomEvent('story-section-active', { detail: { sectionId: 'story3' } }));
+    },
   });
 
   // SCRUB timeline: анимация появления элементов
@@ -231,7 +237,6 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
   tl1.to({}, { duration: 2 });
 
   // Video playback control scrubbed to scroll (independent timeline)
-  // Extended to continue beyond section1 into section2
   let videoTrigger = null;
   if (videoElement) {
     // Load video metadata to get duration
@@ -241,12 +246,10 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
     const setVideoTime = gsap.quickSetter(videoElement, "currentTime");
 
     // Use scrub to tie video progress to scroll progress
-    // Extended to section2 so video continues after other animations finish
     // Video starts from 0 when section reaches center of viewport
     videoTrigger = ScrollTrigger.create({
       trigger: section1,
       start: "top center",
-      endTrigger: section2,
       end: "bottom bottom",
       scrub: 2,
       id: "VIDEO-CASE3",
