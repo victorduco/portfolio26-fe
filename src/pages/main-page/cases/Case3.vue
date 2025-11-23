@@ -134,7 +134,7 @@ const videoSrc = getVideoPath("case3-video.mp4");
 // Video positioning (relative to media container)
 const videoPositionX = "62.5%";
 const videoPositionY = "54.5%";
-const videoScale = 0.33;
+const videoScale = 0.495;
 
 // Refs
 const scrollContainerRef = ref(null);
@@ -516,7 +516,7 @@ defineExpose({
 /* Video container */
 .case3-video-container {
   position: absolute;
-  aspect-ratio: 574 / 304; /* Match actual video dimensions */
+  aspect-ratio: 1488 / 592; /* Match actual video dimensions */
   border-radius: 15px;
   overflow: hidden;
   /* Use percentage of parent container */

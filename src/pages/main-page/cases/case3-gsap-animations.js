@@ -244,8 +244,9 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
       onUpdate: (self) => {
         if (videoElement.readyState >= 2) {
           // HAVE_CURRENT_DATA
-          // Map scroll progress (0-1) to full video duration
-          const targetTime = self.progress * videoElement.duration;
+          // Map scroll progress (0-1) to video duration minus last 2 seconds
+          const effectiveDuration = Math.max(0, videoElement.duration - 1);
+          const targetTime = self.progress * effectiveDuration;
 
           // Set video current time using quickSetter for smoother performance
           setVideoTime(targetTime);
