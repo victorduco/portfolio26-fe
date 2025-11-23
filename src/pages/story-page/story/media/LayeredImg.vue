@@ -6,7 +6,7 @@
     ref="containerRef"
     :style="{ ...shadowVars, ...cardSizeStyles }"
   >
-    <!-- Left card -->
+    <!-- Left card (визуально слева) -->
     <div class="card card-left" ref="cardLeftRef" :style="{ zIndex: zIndexLeft }">
       <div class="card-inner">
         <img
@@ -17,23 +17,23 @@
       </div>
     </div>
 
-    <!-- Center card (main) -->
-    <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexCenter }">
+    <!-- Center card (визуально в центре) -->
+    <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexRight }">
       <div class="card-inner">
         <img
-          :src="imageCenter"
-          :alt="altCenter || 'Center card'"
+          :src="imageRight"
+          :alt="altRight || 'Center card'"
           loading="lazy"
         />
       </div>
     </div>
 
-    <!-- Right card -->
-    <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexRight }">
+    <!-- Right card (визуально справа) -->
+    <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexCenter }">
       <div class="card-inner">
         <img
-          :src="imageRight"
-          :alt="altRight || 'Right card'"
+          :src="imageCenter"
+          :alt="altCenter || 'Right card'"
           loading="lazy"
         />
       </div>
@@ -67,8 +67,8 @@
       <div class="slider-slide">
         <div class="slide-inner" :style="shadowVars">
           <img
-            :src="imageCenter"
-            :alt="altCenter || 'Image 2'"
+            :src="imageRight"
+            :alt="altRight || 'Image 2'"
             loading="lazy"
           />
         </div>
@@ -76,8 +76,8 @@
       <div class="slider-slide">
         <div class="slide-inner" :style="shadowVars">
           <img
-            :src="imageRight"
-            :alt="altRight || 'Image 3'"
+            :src="imageCenter"
+            :alt="altCenter || 'Image 3'"
             loading="lazy"
           />
         </div>
@@ -270,10 +270,11 @@ let animationFrameId = null;
 const updateParallax = () => {
   if (!containerRef.value || isMobile.value) return;
 
+  // Массив карточек в порядке слева-направо (визуально)
   const cards = [
-    cardLeftRef.value,
-    cardCenterRef.value,
-    cardRightRef.value,
+    cardLeftRef.value,    // Левая карточка - speeds[0] = 0.2
+    cardCenterRef.value,  // Центральная карточка - speeds[1] = 1.0
+    cardRightRef.value,   // Правая карточка - speeds[2] = 2.5
   ];
 
   const rect = containerRef.value.getBoundingClientRect();
@@ -367,13 +368,13 @@ onUnmounted(() => {
 }
 
 .card-center {
-  left: calc(50% + 5vw);
-  top: calc(50% - 25vh);
+  left: calc(50% - 25vw);
+  top: calc(50% - 10vh);
 }
 
 .card-right {
-  left: calc(50% - 25vw);
-  top: calc(50% - 10vh);
+  left: calc(50% + 5vw);
+  top: calc(50% - 25vh);
 }
 
 /* Tablet adjustments */
@@ -388,13 +389,13 @@ onUnmounted(() => {
   }
 
   .card-center {
-    left: calc(50% - 0vw);
-    top: calc(50% - 26vh);
+    left: calc(50% - 30vw);
+    top: calc(50% - 12vh);
   }
 
   .card-right {
-    left: calc(50% - 30vw);
-    top: calc(50% - 12vh);
+    left: calc(50% - 0vw);
+    top: calc(50% - 26vh);
   }
 }
 
