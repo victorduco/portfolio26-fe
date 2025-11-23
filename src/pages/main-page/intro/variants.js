@@ -380,7 +380,7 @@ export const activeContentVariants = {
     opacity: 1,
     scale: 1,
     rotate: -45,
-    x: -21,
-    y: -21,
+    x: 0,
+    y: 0,
   },
 };
