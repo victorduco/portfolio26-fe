@@ -11,6 +11,7 @@ import directivesPlugin from "./plugins/directives.js";
 import mixpanelPlugin from "./plugins/mixpanel.js";
 import router from "./router/index.js";
 import { initMediaResolver } from "./utils/mediaResolver.js";
+import { loadFonts } from "./utils/fontLoader.js";
 
 // Disable browser's automatic scroll restoration
 if ("scrollRestoration" in window.history) {
@@ -19,6 +20,9 @@ if ("scrollRestoration" in window.history) {
 
 // Initialize media resolver (loads manifest for CDN path resolution)
 initMediaResolver();
+
+// Load fonts from CDN in production
+loadFonts();
 
 const app = createApp(App);
 app.use(directivesPlugin);

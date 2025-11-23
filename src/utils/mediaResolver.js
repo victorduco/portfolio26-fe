@@ -99,6 +99,43 @@ export function getVideoPath(filename) {
 }
 
 /**
+ * Get the resolved path for a font
+ * @param {string} filename - Original filename (e.g., 'noto-sans-latin.woff2')
+ * @returns {string} Resolved path (CDN URL in prod, local path in dev)
+ */
+export function getFontPath(filename) {
+  // Handle full paths (e.g., '/fonts/noto-sans.woff2')
+  if (filename.startsWith("/fonts/")) {
+    filename = filename.replace("/fonts/", "");
+  }
+
+  // In dev mode, use local path
+  if (import.meta.env.DEV) {
+    return `/fonts/${filename}`;
+  }
+
+  // In prod, get hashed filename from manifest (fonts don't need hashing, but support it)
+  const hashedName = manifest?.fonts?.[filename] || filename;
+
+  if (USE_CDN) {
+    return `${CDN_BASE_URL}/fonts/${hashedName}`;
+  }
+
+  return `/fonts/${hashedName}`;
+}
+
+/**
+ * Get CDN base URL for fonts (for CSS usage)
+ * @returns {string} Base URL for fonts
+ */
+export function getFontBaseUrl() {
+  if (USE_CDN) {
+    return `${CDN_BASE_URL}/fonts`;
+  }
+  return '/fonts';
+}
+
+/**
  * Resolve any media path (auto-detects type)
  * @param {string} path - Path like '/images/foo.png' or '/videos/bar.mp4'
  * @returns {string} Resolved path

@@ -232,10 +232,10 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
 
     // Use scrub to tie video progress to scroll progress
     // Extended to section2 so video continues after other animations finish
-    // Starts earlier (top bottom) so video begins playing as user scrolls toward section
+    // Video starts from 0 when section reaches center of viewport
     videoTrigger = ScrollTrigger.create({
       trigger: section1,
-      start: "top bottom",
+      start: "top center",
       endTrigger: section2,
       end: "bottom bottom",
       scrub: 2,
@@ -244,10 +244,8 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
       onUpdate: (self) => {
         if (videoElement.readyState >= 2) {
           // HAVE_CURRENT_DATA
-          // Map scroll progress (0-1) to video time (3-9 seconds)
-          const videoDuration = 6; // 9 - 3 = 6 seconds of playback (extended)
-          const startTime = 3;
-          const targetTime = startTime + self.progress * videoDuration;
+          // Map scroll progress (0-1) to full video duration
+          const targetTime = self.progress * videoElement.duration;
 
           // Set video current time using quickSetter for smoother performance
           setVideoTime(targetTime);
