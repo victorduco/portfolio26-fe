@@ -45,6 +45,7 @@ import FullscreenVideo from '../media/FullscreenVideo.vue'
 import ParallaxImg from '../media/ParallaxImg.vue'
 import HorizontalParallaxImg from '../media/HorizontalParallaxImg.vue'
 import ChapteredVideo from '../media/ChapteredVideo.vue'
+import TabbedVideo from '../media/TabbedVideo.vue'
 import LayeredImg from '../media/LayeredImg.vue'
 import { resolveMediaPath } from '@/utils/mediaResolver.js'
 
@@ -54,7 +55,7 @@ interface Heading {
 }
 
 interface Media {
-  type: 'image' | 'video' | 'parallax' | 'horizontalParallax' | 'chaptered-video' | 'layered-cards'
+  type: 'image' | 'video' | 'parallax' | 'horizontalParallax' | 'chaptered-video' | 'tabbed-video' | 'layered-cards'
   props: Record<string, any>
 }
 
@@ -74,6 +75,7 @@ const mediaComponents: Record<string, Component> = {
   'parallax': ParallaxImg,
   'horizontalParallax': HorizontalParallaxImg,
   'chaptered-video': ChapteredVideo,
+  'tabbed-video': TabbedVideo,
   'layered-cards': LayeredImg,
 }
 
@@ -110,6 +112,7 @@ function getWrapperClass(mediaType: string): string {
     'parallax': 'parallax-wrapper',
     'horizontalParallax': 'horizontal-parallax-wrapper',
     'chaptered-video': 'chaptered-video-wrapper',
+    'tabbed-video': 'tabbed-video-wrapper',
     'layered-cards': 'layered-cards-wrapper',
   }
   return classMap[mediaType] || ''
@@ -132,6 +135,12 @@ function getMediaProps(props: Record<string, any>): Record<string, any> {
   for (const [key, value] of Object.entries(rest)) {
     if (typeof value === 'string' && (value.startsWith('/images/') || value.startsWith('/videos/'))) {
       resolved[key] = resolveMediaPath(value)
+    } else if (key === 'tabs' && Array.isArray(value)) {
+      // Handle tabs array for tabbed-video component
+      resolved[key] = value.map((tab: Record<string, any>) => ({
+        ...tab,
+        videoSrc: tab.videoSrc ? resolveMediaPath(tab.videoSrc) : tab.videoSrc,
+      }))
     } else {
       resolved[key] = value
     }

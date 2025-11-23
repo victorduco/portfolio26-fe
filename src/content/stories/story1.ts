@@ -55,6 +55,29 @@ export const story1Content = {
     sections: [
       {
         heading: {
+          main: 'Pairing Natural Dialogue with Heavy Data Workflows',
+          subtitle: 'Conversational & Classic UI',
+        },
+        textBefore: 'Our hybrid approach seamlessly integrates AI-powered conversational interfaces with traditional UI components. Users can switch between chat-based interactions and classic forms based on their preference and task complexity, ensuring flexibility without sacrificing efficiency.',
+        media: {
+          type: 'tabbed-video' as const,
+          props: {
+            mediaLabel: 'Two workflows, one unified experience. Users pick what fits best.',
+            tabs: [
+              {
+                title: 'AI-Based User Flow',
+                videoSrc: '/videos/story1-ai-flow.mp4',
+              },
+              {
+                title: 'Classic User Flow',
+                videoSrc: '/videos/story1-classic-flow.mp4',
+              },
+            ],
+          },
+        },
+      },
+      {
+        heading: {
           main: 'Consistent Experience Across Variable Inputs',
           subtitle: 'Product Vision & Design System',
         },
@@ -66,40 +89,6 @@ export const story1Content = {
             image2: '/images/story1-framework-2.png',
             image3: '/images/story1-framework-3.png',
             mediaLabel: 'Input & Output Elements for Chat and Classic UI',
-          },
-        },
-      },
-      {
-        heading: {
-          main: 'Pairing Natural Dialogue with Heavy Data Workflows',
-          subtitle: 'Conversational & Classic UI',
-        },
-        textBefore: 'Our hybrid approach seamlessly integrates AI-powered conversational interfaces with traditional UI components. Users can switch between chat-based interactions and classic forms based on their preference and task complexity, ensuring flexibility without sacrificing efficiency.',
-        media: {
-          type: 'chaptered-video' as const,
-          props: {
-            videoSrc: '/videos/story1-chaptered-test.mp4',
-            mediaLabel: 'Two workflows, one unified experience. Users pick what fits best.',
-            chapterGroups: [
-              {
-                groupTitle: 'Interface Design',
-                chapters: [
-                  { title: 'Chat Interface', time: 0 },
-                  { title: 'Form Interface', time: 3 },
-                  { title: 'Hybrid Approach', time: 6 },
-                  { title: 'Component Library', time: 9 },
-                ],
-              },
-              {
-                groupTitle: 'User Experience',
-                chapters: [
-                  { title: 'Interaction Flow', time: 12 },
-                  { title: 'Context Switching', time: 15 },
-                  { title: 'Progress Tracking', time: 17 },
-                  { title: 'Adaptive UI', time: 19 },
-                ],
-              },
-            ],
           },
         },
       },
