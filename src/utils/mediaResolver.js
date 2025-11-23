@@ -57,7 +57,12 @@ export function getImagePath(filename) {
     filename = filename.replace("/images/", "");
   }
 
-  // Get hashed filename from manifest
+  // In dev mode, use original filename directly (no manifest needed)
+  if (import.meta.env.DEV) {
+    return `/images/${filename}`;
+  }
+
+  // In prod, get hashed filename from manifest
   const hashedName = manifest?.images?.[filename] || filename;
 
   if (USE_CDN) {
@@ -78,7 +83,12 @@ export function getVideoPath(filename) {
     filename = filename.replace("/videos/", "");
   }
 
-  // Get hashed filename from manifest
+  // In dev mode, use original filename directly (no manifest needed)
+  if (import.meta.env.DEV) {
+    return `/videos/${filename}`;
+  }
+
+  // In prod, get hashed filename from manifest
   const hashedName = manifest?.videos?.[filename] || filename;
 
   if (USE_CDN) {
