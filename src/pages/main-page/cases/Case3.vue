@@ -132,9 +132,9 @@ const imageSrc = getImagePath("case3-ipad.png");
 const videoSrc = getVideoPath("case3-video.mp4");
 
 // Video positioning (relative to media container)
-const videoPositionX = "62.5%";
-const videoPositionY = "54.5%";
-const videoScale = 0.495;
+const videoPositionX = "4.5%";
+const videoPositionY = "44%";
+const videoScale = 0.45;
 
 // Refs
 const scrollContainerRef = ref(null);

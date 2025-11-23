@@ -18,8 +18,18 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
   if (skipAnimation) {
     gsap.set(imageContainer, { scale: 1, clearProps: "all" });
     gsap.set(tagsElement, { opacity: 1, scale: 1, clearProps: "transform" });
-    gsap.set(titleElement, { opacity: 1, scale: 1, x: 0, y: 0, clearProps: "transform" });
-    gsap.set(descriptionElement, { opacity: 1, scale: 1, clearProps: "transform" });
+    gsap.set(titleElement, {
+      opacity: 1,
+      scale: 1,
+      x: 0,
+      y: 0,
+      clearProps: "transform",
+    });
+    gsap.set(descriptionElement, {
+      opacity: 1,
+      scale: 1,
+      clearProps: "transform",
+    });
     gsap.set(buttonElement, { opacity: 1, scale: 1, clearProps: "transform" });
     if (cloudCorners?.$el) {
       gsap.set(cloudCorners.$el, { opacity: 1, clearProps: "all" });
@@ -89,7 +99,7 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
   );
 
   // Animate title shadow from 0 to final position
-  const titleShadow = titleElement.querySelector('.case3-title-shadow');
+  const titleShadow = titleElement.querySelector(".case3-title-shadow");
   if (titleShadow) {
     tl1.fromTo(
       titleShadow,
@@ -98,8 +108,8 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
         left: 0,
       },
       {
-        top: '4px',
-        left: '5px',
+        top: "4px",
+        left: "5px",
         duration: 3,
       },
       1 // Same timing as title
@@ -245,7 +255,7 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
         if (videoElement.readyState >= 2) {
           // HAVE_CURRENT_DATA
           // Map scroll progress (0-1) to video duration minus last 2 seconds
-          const effectiveDuration = Math.max(0, videoElement.duration - 1);
+          const effectiveDuration = Math.max(0, videoElement.duration - 0);
           const targetTime = self.progress * effectiveDuration;
 
           // Set video current time using quickSetter for smoother performance
