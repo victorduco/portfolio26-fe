@@ -200,7 +200,7 @@ const storyConfigs = {
     font: "'Neue Haas Grotesk Display Pro', sans-serif",
     theme: "light",
     summaryImage: getImagePath("story3-summary.png"),
-    videoBackground: "#f5f5f7", // Light gray background for all media elements
+    videoBackground: "rgb(213, 241, 255)", // Light blue background matching Story3 on main page
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     simpleResults: {
       title: "Redesign Results",
