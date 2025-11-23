@@ -1,4 +1,4 @@
-export const case3Content = {
+export const story3Content = {
   background: {
     heading: {
       main: "Background",
@@ -15,9 +15,9 @@ export const case3Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case3-challenge-1.png',
-            imageCenter: '/images/case3-challenge-2.png',
-            imageRight: '/images/case3-challenge-3.png',
+            imageLeft: '/images/story3-challenge-1.png',
+            imageCenter: '/images/story3-challenge-2.png',
+            imageRight: '/images/story3-challenge-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -38,7 +38,7 @@ export const case3Content = {
         media: {
           type: "image" as const,
           props: {
-            imageSrc: "/images/case3-task.png",
+            imageSrc: "/images/story3-task.png",
             mediaLabel: "Previous version: Home screen, My Tasks (two views), and user profile.",
           },
         },
@@ -62,9 +62,9 @@ export const case3Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case3-ground-1.png',
-            imageCenter: '/images/case3-ground-2.png',
-            imageRight: '/images/case3-ground-3.png',
+            imageLeft: '/images/story3-ground-1.png',
+            imageCenter: '/images/story3-ground-2.png',
+            imageRight: '/images/story3-ground-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -85,9 +85,9 @@ export const case3Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case3-audit-1.png',
-            imageCenter: '/images/case3-audit-2.png',
-            imageRight: '/images/case3-audit-3.png',
+            imageLeft: '/images/story3-audit-1.png',
+            imageCenter: '/images/story3-audit-2.png',
+            imageRight: '/images/story3-audit-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -119,9 +119,9 @@ export const case3Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case3-home-1-1.png',
-            imageCenter: '/images/case3-home-1-2.png',
-            imageRight: '/images/case3-home-1-3.png',
+            imageLeft: '/images/story3-home-1-1.png',
+            imageCenter: '/images/story3-home-1-2.png',
+            imageRight: '/images/story3-home-1-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -139,9 +139,9 @@ export const case3Content = {
         media: {
           type: "horizontalParallax" as const,
           props: {
-            image1: "/images/case3-illustr-1.png",
-            image2: "/images/case3-illustr-2.png",
-            image3: "/images/case3-illustr-3.png",
+            image1: "/images/story3-illustr-1.png",
+            image2: "/images/story3-illustr-2.png",
+            image3: "/images/story3-illustr-3.png",
             speed1: 1,
             speed2: 0.7,
             speed3: 1.3,
@@ -164,9 +164,9 @@ export const case3Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case3-nav-1-1.png',
-            imageCenter: '/images/case3-nav-1-2.png',
-            imageRight: '/images/case3-nav-1-3.png',
+            imageLeft: '/images/story3-nav-1-1.png',
+            imageCenter: '/images/story3-nav-1-2.png',
+            imageRight: '/images/story3-nav-1-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -188,9 +188,9 @@ export const case3Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case3-order-1-1.png',
-            imageCenter: '/images/case3-order-1-2.png',
-            imageRight: '/images/case3-order-1-3.png',
+            imageLeft: '/images/story3-order-1-1.png',
+            imageCenter: '/images/story3-order-1-2.png',
+            imageRight: '/images/story3-order-1-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -208,9 +208,9 @@ export const case3Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case3-nav-2-1.png',
-            imageCenter: '/images/case3-nav-2-2.png',
-            imageRight: '/images/case3-nav-2-3.png',
+            imageLeft: '/images/story3-nav-2-1.png',
+            imageCenter: '/images/story3-nav-2-2.png',
+            imageRight: '/images/story3-nav-2-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,

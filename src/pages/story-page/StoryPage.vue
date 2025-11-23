@@ -1,46 +1,46 @@
 <template>
   <div
-    :class="`case${caseId}-page`"
+    :class="`story${storyId}-page`"
     :style="{
-      backgroundColor: caseConfig.background,
-      color: caseConfig.textColor,
+      backgroundColor: storyConfig.background,
+      color: storyConfig.textColor,
       transition: 'background-color 0.5s ease, color 0.5s ease',
-      '--case-title-font': caseConfig.font || 'var(--font-family-base)',
-      '--case-primary-color': caseConfig.primary,
-      '--case-secondary-color': caseConfig.secondary || caseConfig.primary,
-      '--case-subtitle-color': caseConfig.subtitleColor || '#007aff',
+      '--story-title-font': storyConfig.font || 'var(--font-family-base)',
+      '--story-primary-color': storyConfig.primary,
+      '--story-secondary-color': storyConfig.secondary || storyConfig.primary,
+      '--story-subtitle-color': storyConfig.subtitleColor || '#007aff',
     }"
   >
-    <div class="case-main-content">
+    <div class="story-main-content">
       <NavigationChevron
-        class="case-page-back"
+        class="story-page-back"
         type="route"
         to="/"
         direction="back"
         aria-label="Back to home"
-        :dark-mode="caseConfig.darkMode"
+        :dark-mode="storyConfig.darkMode"
       />
       <PageNavigation
         :sections="navigationSections"
         :enable-intro-animation="false"
-        :dark-mode="caseConfig.darkMode"
+        :dark-mode="storyConfig.darkMode"
       />
-      <section :id="`case${caseId}-summary`">
-        <SummarySection :case-id="caseId" :case-config="caseConfig" />
+      <section :id="`story${storyId}-summary`">
+        <SummarySection :story-id="storyId" :story-config="storyConfig" />
       </section>
       <section
-        v-for="(contentSection, sectionKey) in caseContent"
+        v-for="(contentSection, sectionKey) in storyContent"
         :key="sectionKey"
-        :id="`case${caseId}-${sectionKey}`"
+        :id="`story${storyId}-${sectionKey}`"
         class="content-section"
       >
         <div v-if="contentSection.heading" class="section-title">
-          <h3 v-if="!contentSection.heading.subtitle" class="case-heading-single">
+          <h3 v-if="!contentSection.heading.subtitle" class="story-heading-single">
             {{ contentSection.heading.main }}
           </h3>
-          <h3 v-else class="case-heading-two-level">
-            <span class="case-heading-subtitle">{{ contentSection.heading.subtitle }}</span>
-            <span class="case-heading-main">{{ contentSection.heading.main }}</span>
+          <h3 v-else class="story-heading-two-level">
+            <span class="story-heading-subtitle">{{ contentSection.heading.subtitle }}</span>
+            <span class="story-heading-main">{{ contentSection.heading.main }}</span>
           </h3>
         </div>
         <ContentSection
@@ -50,34 +50,34 @@
           :text-before="section.textBefore"
           :media="section.media"
           :text-after="section.textAfter"
-          :background-color="caseConfig.videoBackground"
+          :background-color="storyConfig.videoBackground"
         />
       </section>
-      <section v-if="caseConfig.results" :id="`case${caseId}-results`">
+      <section v-if="storyConfig.results" :id="`story${storyId}-results`">
         <ResultsCardsSection
-          v-if="caseId === '2'"
-          :results="caseConfig.results"
-          :intro-text="caseConfig.resultsIntro"
-          :conclusion-text="caseConfig.resultsConclusion"
-          :card-background="caseConfig.videoBackground"
+          v-if="storyId === '2'"
+          :results="storyConfig.results"
+          :intro-text="storyConfig.resultsIntro"
+          :conclusion-text="storyConfig.resultsConclusion"
+          :card-background="storyConfig.videoBackground"
         />
         <ResultsGridSection
           v-else
-          :results="caseConfig.results"
-          :results-note="caseConfig.resultsNote"
+          :results="storyConfig.results"
+          :results-note="storyConfig.resultsNote"
         />
       </section>
-      <section v-if="caseConfig.simpleResults" :id="`case${caseId}-results`">
+      <section v-if="storyConfig.simpleResults" :id="`story${storyId}-results`">
         <SimpleResultsSection
-          :title="caseConfig.simpleResults.title"
-          :text="caseConfig.simpleResults.text"
+          :title="storyConfig.simpleResults.title"
+          :text="storyConfig.simpleResults.text"
         />
       </section>
     </div>
-    <NextStoryPlaque v-if="caseConfig.nextProject" :story-number="nextStoryNumber" />
-    <NextProjectSection
-      v-if="caseConfig.nextProject"
-      :content-component="nextProjectContentComponent"
+    <NextStoryPlaque v-if="storyConfig.nextStory" :story-number="nextStoryNumber" />
+    <NextStorySection
+      v-if="storyConfig.nextStory"
+      :content-component="nextStoryContentComponent"
     />
   </div>
 </template>
@@ -86,41 +86,41 @@
 import { computed, onMounted, nextTick } from "vue";
 import NavigationChevron from "@/components/navigation-chevron/NavigationChevron.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
-import ContentSection from "./case/sections/ContentSection.vue";
-import SummarySection from "./case/sections/SummarySection.vue";
-import ResultsGridSection from "./case/sections/ResultsGridSection.vue";
-import ResultsCardsSection from "./case/sections/ResultsCardsSection.vue";
-import SimpleResultsSection from "./case/sections/SimpleResultsSection.vue";
-import NextStoryPlaque from "./case/sections/NextStoryPlaque.vue";
-import NextProjectSection from "./case/sections/next-project/NextProjectSection.vue";
-import Case1NextProject from "./case/sections/next-project/Case1NextProject.vue";
-import Case2NextProject from "./case/sections/next-project/Case2NextProject.vue";
-import Case3NextProject from "./case/sections/next-project/Case3NextProject.vue";
+import ContentSection from "./story/sections/ContentSection.vue";
+import SummarySection from "./story/sections/SummarySection.vue";
+import ResultsGridSection from "./story/sections/ResultsGridSection.vue";
+import ResultsCardsSection from "./story/sections/ResultsCardsSection.vue";
+import SimpleResultsSection from "./story/sections/SimpleResultsSection.vue";
+import NextStoryPlaque from "./story/sections/NextStoryPlaque.vue";
+import NextStorySection from "./story/sections/next-story/NextStorySection.vue";
+import Story1NextStory from "./story/sections/next-story/Story1NextStory.vue";
+import Story2NextStory from "./story/sections/next-story/Story2NextStory.vue";
+import Story3NextStory from "./story/sections/next-story/Story3NextStory.vue";
 import { useMeta } from "@/composables/useMeta.js";
-import { casesContent } from "@/content/cases";
+import { storiesContent } from "@/content/stories";
 import { getImagePath, getVideoPath } from "@/utils/mediaResolver.js";
 
 const props = defineProps({
-  caseId: {
+  storyId: {
     type: String,
     required: true,
     validator: (value) => ["1", "2", "3"].includes(value),
   },
 });
 
-useMeta(`case${props.caseId}`);
+useMeta(`story${props.storyId}`);
 
-// Get case content
-const caseContent = computed(() => casesContent[props.caseId] || {});
+// Get story content
+const storyContent = computed(() => storiesContent[props.storyId] || {});
 
-// Always scroll to top when case page is mounted
+// Always scroll to top when story page is mounted
 onMounted(() => {
   window.scrollTo(0, 0);
   nextTick(() => window.scrollTo(0, 0));
 });
 
-// Configuration for each case
-const caseConfigs = {
+// Configuration for each story
+const storyConfigs = {
   1: {
     background: "#ffffff",
     primary: "#007aff",
@@ -128,7 +128,7 @@ const caseConfigs = {
     subtitleColor: "#007aff", // Color for subtitle in two-level headings
     font: null, // optional, uses global font if null
     theme: "light", // light or dark
-    summaryVideo: getVideoPath("case1-summary.mp4"),
+    summaryVideo: getVideoPath("story1-summary.mp4"),
     videoBackground: "#f5f5f7", // Apple gray background
     autoplayThreshold: 0.75, // 75% visibility to trigger autoplay
     mediaLabel: "Product Overview Video", // Label above video
@@ -146,8 +146,8 @@ const caseConfigs = {
         description: "Workload management during peak financial periods has improved, resulting in smoother operations and reduced stress for users."
       }
     ],
-    nextProject: {
-      caseId: "2",
+    nextStory: {
+      storyId: "2",
       title: "Relaunching the Employee Comms App",
       backgroundColor: "#ffffff", // White background
     },
@@ -159,7 +159,7 @@ const caseConfigs = {
     subtitleColor: "#B14127", // Coral red color for two-level headings
     font: "'Hanken Grotesk', sans-serif",
     theme: "light",
-    summaryImage: getImagePath("case2-summary.png"),
+    summaryImage: getImagePath("story2-summary.png"),
     videoBackground: "#F7E7E7", // Same as button color on main page
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     results: [
@@ -184,8 +184,8 @@ const caseConfigs = {
     ],
     resultsIntro: "The results show impact 11 months post-launch. Metrics were measured and validated by the marketing team through comprehensive analytics tracking across App Store, Google Play, and internal user engagement platforms.",
     resultsConclusion: "These improvements demonstrate the significant impact of the redesign on user engagement and satisfaction. The mobile experience transformation led to measurable business outcomes and validated our design decisions through real-world usage data.",
-    nextProject: {
-      caseId: "3",
+    nextStory: {
+      storyId: "3",
       title: "A Full Redesign of an Oil Terminal Operations App",
       backgroundColor: "#ffffff", // White background
     },
@@ -194,26 +194,26 @@ const caseConfigs = {
     background: "#ffffff",
     primary: "#ca4034",
     secondary: null,
-    subtitleColor: "#ca4034", // Red color matching case3 button
+    subtitleColor: "#ca4034", // Red color matching story3 button
     font: "'Neue Haas Grotesk Display Pro', sans-serif",
     theme: "light",
-    summaryImage: getImagePath("case3-summary.png"),
+    summaryImage: getImagePath("story3-summary.png"),
     videoBackground: "#f5f5f7", // Light gray background for all media elements
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     simpleResults: {
       title: "Redesign Results",
       text: "The comprehensive redesign transformed the platform from a struggling e-commerce experience into a high-performing solution. Load times dropped 79%, cart abandonment fell from 73% to 34%, and revenue increased 142% in six months. Within 12 months, the user base grew from 2M to 4.2M users, the platform moved from #7 to #2 in market rankings, and won Awwwards Site of the Day while being featured in TechCrunch and Smashing Magazine.",
     },
-    nextProject: {
-      caseId: "1",
+    nextStory: {
+      storyId: "1",
       title: "Transforming Account Reconciliation with AI-Driven User Experience",
       backgroundColor: "#ffffff", // White background
     },
   },
 };
 
-const caseConfig = computed(() => {
-  const config = caseConfigs[props.caseId];
+const storyConfig = computed(() => {
+  const config = storyConfigs[props.storyId];
   const isLightTheme = config.theme === "light";
   return {
     ...config,
@@ -222,30 +222,30 @@ const caseConfig = computed(() => {
   };
 });
 
-const nextProjectContentComponent = computed(() => {
-  const nextProjectCaseId = caseConfig.value.nextProject?.caseId;
+const nextStoryContentComponent = computed(() => {
+  const nextStoryId = storyConfig.value.nextStory?.storyId;
   const components = {
-    "1": Case1NextProject,
-    "2": Case2NextProject,
-    "3": Case3NextProject,
+    "1": Story1NextStory,
+    "2": Story2NextStory,
+    "3": Story3NextStory,
   };
-  return components[nextProjectCaseId] || Case1NextProject;
+  return components[nextStoryId] || Story1NextStory;
 });
 
 const nextStoryNumber = computed(() => {
-  const caseIdToStory = {
+  const storyIdToName = {
     "1": "One",
     "2": "Two",
     "3": "Three",
   };
-  const nextProjectCaseId = caseConfig.value.nextProject?.caseId;
-  return caseIdToStory[nextProjectCaseId] || "One";
+  const nextStoryId = storyConfig.value.nextStory?.storyId;
+  return storyIdToName[nextStoryId] || "One";
 });
 
 const navigationSections = computed(() => {
-  const content = caseContent.value;
+  const content = storyContent.value;
   const navSections = [
-    { id: `case${props.caseId}-summary`, label: "Summary" },
+    { id: `story${props.storyId}-summary`, label: "Summary" },
   ];
 
   // Add sections from content
@@ -264,14 +264,14 @@ const navigationSections = computed(() => {
   Object.keys(content).forEach(key => {
     const label = sectionLabels[key] || key.charAt(0).toUpperCase() + key.slice(1);
     navSections.push({
-      id: `case${props.caseId}-${key}`,
+      id: `story${props.storyId}-${key}`,
       label: label
     });
   });
 
   // Add Results if it exists
-  if (caseConfig.value.results || caseConfig.value.simpleResults) {
-    navSections.push({ id: `case${props.caseId}-results`, label: "Results" });
+  if (storyConfig.value.results || storyConfig.value.simpleResults) {
+    navSections.push({ id: `story${props.storyId}-results`, label: "Results" });
   }
 
   return navSections;
@@ -279,15 +279,15 @@ const navigationSections = computed(() => {
 </script>
 
 <style scoped>
-.case1-page,
-.case2-page,
-.case3-page {
+.story1-page,
+.story2-page,
+.story3-page {
   width: 100%;
   position: relative;
   overflow-x: hidden;
 }
 
-.case-main-content {
+.story-main-content {
   position: relative;
   z-index: 10;
   background-color: inherit;
@@ -298,7 +298,7 @@ section {
   background-color: inherit;
 }
 
-.case-page-back {
+.story-page-back {
   position: fixed;
   top: 48px;
   left: 48px;
@@ -324,7 +324,7 @@ section {
 }
 
 @media (max-width: 899px) {
-  .case-page-back {
+  .story-page-back {
     top: 24px;
     left: 24px;
   }
@@ -339,7 +339,7 @@ section {
     padding: 0 24px;
   }
 
-  section:has(+ .case-next-project) {
+  section:has(+ .story-next-story) {
     padding-bottom: 120px;
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <!-- scroll-container: внешний контейнер для скролла -->
-  <div id="case1" class="scroll-container" ref="scrollContainerRef">
+  <div id="story1" class="scroll-container" ref="scrollContainerRef">
     <!-- pin-container: pinned элемент на 200vh -->
     <div class="pin-container" ref="pinContainerRef">
       <!-- section-1: animation trigger -->
@@ -42,7 +42,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
-import { initAnimations } from "./case1-gsap-animations.js";
+import { initAnimations } from "./story1-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
 
 const router = useRouter();

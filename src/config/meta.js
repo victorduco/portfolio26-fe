@@ -17,17 +17,17 @@ export const META_CONFIG = {
       title: "Victor Diukov",
       description: "UX Designer Portfolio - Rectangles That Rules Numbers",
     },
-    case1: {
+    story1: {
       title: "Story One",
       description:
         "Design System Architecture - Building consistent and scalable UI components",
     },
-    case2: {
+    story2: {
       title: "Story Two",
       description:
         "User Experience Design - Creating intuitive and delightful interactions",
     },
-    case3: {
+    story3: {
       title: "Story Three",
       description: "Performance Optimization - Maximizing speed and efficiency",
     },

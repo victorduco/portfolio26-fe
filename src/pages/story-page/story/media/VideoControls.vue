@@ -1,5 +1,5 @@
 <template>
-  <div class="case-video-controls">
+  <div class="story-video-controls">
     <!-- Mute/Unmute Button -->
     <button
       v-if="!hideMute"
@@ -132,7 +132,7 @@ defineEmits(['toggle-mute', 'toggle-play-pause', 'restart', 'toggle-fullscreen']
 </script>
 
 <style scoped>
-.case-video-controls {
+.story-video-controls {
   position: absolute;
   bottom: 16px;
   right: 20px;

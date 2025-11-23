@@ -7,9 +7,9 @@
  * Usage:
  *   import { getImagePath, getVideoPath } from '@/utils/mediaResolver'
  *
- *   const src = getImagePath('case1-domain-tree.png')
- *   // Dev:  /images/case1-domain-tree.abc12345.png
- *   // Prod: https://cdn.example.com/images/case1-domain-tree.abc12345.png
+ *   const src = getImagePath('story1-domain-tree.png')
+ *   // Dev:  /images/story1-domain-tree.abc12345.png
+ *   // Prod: https://cdn.example.com/images/story1-domain-tree.abc12345.png
  */
 
 // CDN configuration
@@ -48,11 +48,11 @@ async function loadManifest() {
 
 /**
  * Get the resolved path for an image
- * @param {string} filename - Original filename (e.g., 'case1-domain-tree.png')
+ * @param {string} filename - Original filename (e.g., 'story1-domain-tree.png')
  * @returns {string} Resolved path (CDN URL in prod, local path in dev)
  */
 export function getImagePath(filename) {
-  // Handle full paths (e.g., '/images/case1.png')
+  // Handle full paths (e.g., '/images/story1.png')
   if (filename.startsWith("/images/")) {
     filename = filename.replace("/images/", "");
   }
@@ -74,11 +74,11 @@ export function getImagePath(filename) {
 
 /**
  * Get the resolved path for a video
- * @param {string} filename - Original filename (e.g., 'case1-summary.mp4')
+ * @param {string} filename - Original filename (e.g., 'story1-summary.mp4')
  * @returns {string} Resolved path (CDN URL in prod, local path in dev)
  */
 export function getVideoPath(filename) {
-  // Handle full paths (e.g., '/videos/case1.mp4')
+  // Handle full paths (e.g., '/videos/story1.mp4')
   if (filename.startsWith("/videos/")) {
     filename = filename.replace("/videos/", "");
   }

@@ -1,7 +1,7 @@
 <template>
-  <section class="case-results-2">
+  <section class="story-results-2">
     <div class="results-content">
-      <h3 class="case-results-title">Results</h3>
+      <h3 class="story-results-title">Results</h3>
       <p class="results-intro">
         {{ introText }}
       </p>
@@ -129,7 +129,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.case-results-2 {
+.story-results-2 {
   width: 100%;
   padding: 80px 0 168px;
   overflow-x: hidden;
@@ -295,11 +295,11 @@ onUnmounted(() => {
 
 
 @media (max-width: 768px) {
-  .case-results-2 {
+  .story-results-2 {
     padding: 60px 0 24px;
   }
 
-  .case-results-title {
+  .story-results-title {
     margin-bottom: 16px;
   }
 

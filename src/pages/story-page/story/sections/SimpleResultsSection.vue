@@ -1,7 +1,7 @@
 <template>
-  <section class="case-results-simple">
+  <section class="story-results-simple">
     <div class="results-content">
-      <h3 class="case-results-title">{{ title }}</h3>
+      <h3 class="story-results-title">{{ title }}</h3>
       <p class="results-text">{{ text }}</p>
     </div>
   </section>
@@ -21,7 +21,7 @@ defineProps({
 </script>
 
 <style scoped>
-.case-results-simple {
+.story-results-simple {
   width: 100%;
   padding: 80px 0 168px;
   overflow-x: hidden;
@@ -47,7 +47,7 @@ defineProps({
 }
 
 @media (max-width: 768px) {
-  .case-results-simple {
+  .story-results-simple {
     padding: 60px 0 24px;
   }
 

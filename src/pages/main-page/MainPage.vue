@@ -9,9 +9,9 @@
   </Teleport>
   <div class="main-page" :class="{ 'fade-in': shouldFadeIn }">
     <Intro ref="introRef" />
-    <Case1 />
-    <Case2 />
-    <Case3 />
+    <Story1 />
+    <Story2 />
+    <Story3 />
     <AiPlay :dark-mode="isDarkMode" />
     <Contacts :dark-mode="isDarkMode" />
   </div>
@@ -20,9 +20,9 @@
 <script setup>
 import { nextTick, ref, watch, onMounted } from "vue";
 import Intro from "./intro/Intro.vue";
-import Case1 from "./cases/Case1.vue";
-import Case2 from "./cases/Case2.vue";
-import Case3 from "./cases/Case3.vue";
+import Story1 from "./stories/Story1.vue";
+import Story2 from "./stories/Story2.vue";
+import Story3 from "./stories/Story3.vue";
 import AiPlay from "./ai-play/AiPlay.vue";
 import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
@@ -32,9 +32,9 @@ import { useLenis } from "../../composables/useLenis.js";
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
-  { id: "case1", label: "Story One" },
-  { id: "case2", label: "Story Two" },
-  { id: "case3", label: "Story Three" },
+  { id: "story1", label: "Story One" },
+  { id: "story2", label: "Story Two" },
+  { id: "story3", label: "Story Three" },
   { id: "ai-play", label: "AI Play" },
   { id: "contacts", label: "Contact" },
 ];
@@ -95,10 +95,10 @@ function handleNavAnimationComplete() {
 }
 
 function handleActiveSectionChange(sectionId) {
-  if (sectionId === "case2") {
-    isDarkMode.value = true; // White menu for case2
-  } else if (sectionId === "case1" || sectionId === "case3") {
-    isDarkMode.value = false; // Black menu for case1 and case3
+  if (sectionId === "story2") {
+    isDarkMode.value = true; // White menu for story2
+  } else if (sectionId === "story1" || sectionId === "story3") {
+    isDarkMode.value = false; // Black menu for story1 and story3
   } else {
     isDarkMode.value = true; // White menu for intro, ai-play, contacts (dark backgrounds)
   }

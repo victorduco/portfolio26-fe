@@ -1,5 +1,5 @@
 <template>
-  <section class="case-summary">
+  <section class="story-summary">
     <div class="summary-content">
       <!-- Part 1: Title -->
       <div class="summary-header">
@@ -44,28 +44,28 @@
       </div>
     </div>
     <MediaContainer
-      v-if="caseConfig.summaryImage"
+      v-if="storyConfig.summaryImage"
       type="fullheight"
-      :background-color="caseConfig.videoBackground || 'transparent'"
-      :label="caseConfig.mediaLabel || ''"
+      :background-color="storyConfig.videoBackground || 'transparent'"
+      :label="storyConfig.mediaLabel || ''"
       wrapper-class="fullscreen-image-wrapper"
     >
       <FullscreenImg
-        :image-src="caseConfig.summaryImage"
+        :image-src="storyConfig.summaryImage"
         :alt="`${summaryData.title} preview`"
       />
     </MediaContainer>
     <MediaContainer
-      v-if="caseConfig.summaryVideo"
+      v-if="storyConfig.summaryVideo"
       type="fullheight"
-      :background-color="caseConfig.videoBackground || caseConfig.primary"
-      :label="caseConfig.mediaLabel || ''"
+      :background-color="storyConfig.videoBackground || storyConfig.primary"
+      :label="storyConfig.mediaLabel || ''"
       wrapper-class="fullscreen-video-wrapper"
       container-class="fullscreen-video"
     >
       <FullscreenVideo
-        :video-src="caseConfig.summaryVideo"
-        :autoplay-threshold="caseConfig.autoplayThreshold || 0.75"
+        :video-src="storyConfig.summaryVideo"
+        :autoplay-threshold="storyConfig.autoplayThreshold || 0.75"
       />
     </MediaContainer>
   </section>
@@ -78,11 +78,11 @@ import FullscreenImg from '../media/FullscreenImg.vue';
 import FullscreenVideo from '../media/FullscreenVideo.vue';
 
 const props = defineProps({
-  caseId: {
+  storyId: {
     type: String,
     required: true,
   },
-  caseConfig: {
+  storyConfig: {
     type: Object,
     default: () => ({}),
   },
@@ -121,11 +121,11 @@ const summaryConfigs = {
   }
 };
 
-const summaryData = computed(() => summaryConfigs[props.caseId]);
+const summaryData = computed(() => summaryConfigs[props.storyId]);
 </script>
 
 <style scoped>
-.case-summary {
+.story-summary {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -152,7 +152,7 @@ const summaryData = computed(() => summaryConfigs[props.caseId]);
 }
 
 .summary-title {
-  font-family: var(--case-title-font, var(--font-family-base));
+  font-family: var(--story-title-font, var(--font-family-base));
   margin: 0;
   color: inherit;
   text-align: left;

@@ -1,5 +1,5 @@
 <template>
-  <div class="case1-next-project">
+  <div class="story1-next-story">
     <!-- Text Container (positioned above) -->
     <div class="text-container">
       <p class="company-text">Apple</p>
@@ -34,7 +34,7 @@ const handleClick = (event) => {
 </script>
 
 <style scoped>
-.case1-next-project {
+.story1-next-story {
   position: relative;
   width: 100%;
   min-height: 100vh;

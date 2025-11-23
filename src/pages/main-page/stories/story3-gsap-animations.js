@@ -1,4 +1,4 @@
-// case3-gsap-animations.js
+// story3-gsap-animations.js
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
@@ -47,7 +47,7 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
     endTrigger: section2,
     end: "bottom bottom",
     pin: ".content",
-    id: "MAIN-PIN-CASE3",
+    id: "MAIN-PIN-STORY3",
     invalidateOnRefresh: true,
   });
 
@@ -67,7 +67,7 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
       //   inertia: false,
       //   directional: true,
       // },
-      id: "TL1-CASE3",
+      id: "TL1-STORY3",
       invalidateOnRefresh: true,
     },
   });
@@ -99,7 +99,7 @@ export function initAnimations(pinContainer, refs, skipAnimation = false) {
   );
 
   // Animate title shadow from 0 to final position
-  const titleShadow = titleElement.querySelector(".case3-title-shadow");
+  const titleShadow = titleElement.querySelector(".story3-title-shadow");
   if (titleShadow) {
     tl1.fromTo(
       titleShadow,

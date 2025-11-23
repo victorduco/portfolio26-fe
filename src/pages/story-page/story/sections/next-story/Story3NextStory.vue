@@ -1,15 +1,15 @@
 <template>
-  <section class="case3-next-project">
+  <section class="story3-next-story">
     <div class="content">
-      <div class="case3-container">
-        <div class="case3-text-section">
-          <div class="case3-company-title-group">
-            <div class="case3-tags-container">
+      <div class="story3-container">
+        <div class="story3-text-section">
+          <div class="story3-company-title-group">
+            <div class="story3-tags-container">
               <template v-for="(tag, index) in tags" :key="tag">
-                <span class="case3-tag">{{ tag }}</span>
+                <span class="story3-tag">{{ tag }}</span>
                 <svg
                   v-if="index < tags.length - 1"
-                  class="case3-tag-separator"
+                  class="story3-tag-separator"
                   width="12"
                   height="14"
                   viewBox="0 0 24 29"
@@ -25,27 +25,27 @@
                 </svg>
               </template>
             </div>
-            <div class="case3-title-wrapper">
-              <h2 class="case3-title case3-title-shadow">
+            <div class="story3-title-wrapper">
+              <h2 class="story3-title story3-title-shadow">
                 {{ title }}
               </h2>
-              <h2 class="case3-title case3-title-main" aria-hidden="true">
+              <h2 class="story3-title story3-title-main" aria-hidden="true">
                 {{ title }}
               </h2>
             </div>
-            <p class="case3-description">
+            <p class="story3-description">
               {{ description }}
             </p>
           </div>
           <a
             href="/story/three"
-            class="case3-button-wrapper"
+            class="story3-button-wrapper"
             @click.prevent="handleStoryLinkClick"
           >
-            <div class="case3-button case3-button-shadow"></div>
-            <div class="case3-button case3-button-main">
+            <div class="story3-button story3-button-shadow"></div>
+            <div class="story3-button story3-button-main">
               <svg
-                class="case3-button-icon"
+                class="story3-button-icon"
                 width="24"
                 height="29"
                 viewBox="0 0 24 29"
@@ -59,14 +59,14 @@
                   stroke-width="0.2"
                 />
               </svg>
-              <span class="case3-button-text">Open Story</span>
+              <span class="story3-button-text">Open Story</span>
             </div>
           </a>
         </div>
 
-        <div class="case3-image-section">
+        <div class="story3-image-section">
           <div
-            class="case3-media-container"
+            class="story3-media-container"
             :style="{ backgroundImage: `url(${imageSrc})` }"
           >
           </div>
@@ -87,7 +87,7 @@ const title = "Field Operations App for Oil Terminals";
 const tags = ["Consultancy", "Redesign", "Mentorship"];
 const description =
   "A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.";
-const imageSrc = getImagePath("case3-ipad.png");
+const imageSrc = getImagePath("story3-ipad.png");
 
 const handleStoryLinkClick = (event) => {
   event.preventDefault();
@@ -96,7 +96,7 @@ const handleStoryLinkClick = (event) => {
 </script>
 
 <style scoped>
-.case3-next-project {
+.story3-next-story {
   position: relative;
   width: 100%;
   min-height: 100vh;
@@ -124,7 +124,7 @@ const handleStoryLinkClick = (event) => {
   pointer-events: auto;
 }
 
-.case3-container {
+.story3-container {
   width: 48%;
   height: 100%;
   display: flex;
@@ -135,7 +135,7 @@ const handleStoryLinkClick = (event) => {
   gap: 0;
 }
 
-.case3-text-section {
+.story3-text-section {
   width: 100%;
   flex: 1 1 auto;
   display: flex;
@@ -146,7 +146,7 @@ const handleStoryLinkClick = (event) => {
   padding-bottom: 0;
 }
 
-.case3-company-title-group {
+.story3-company-title-group {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -154,7 +154,7 @@ const handleStoryLinkClick = (event) => {
   gap: 32px;
 }
 
-.case3-tags-container {
+.story3-tags-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,7 +163,7 @@ const handleStoryLinkClick = (event) => {
   margin-bottom: -36px;
 }
 
-.case3-tag {
+.story3-tag {
   margin: 0;
   font-family: "Neue Haas Grotesk Display Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -175,19 +175,19 @@ const handleStoryLinkClick = (event) => {
   color: #ffffff;
 }
 
-.case3-tag-separator {
+.story3-tag-separator {
   width: clamp(8px, 0.65vw, 10.5px);
   height: auto;
   flex-shrink: 0;
 }
 
-.case3-title-wrapper {
+.story3-title-wrapper {
   position: relative;
   width: 100%;
   max-width: 100%;
 }
 
-.case3-title {
+.story3-title {
   margin: 0;
   font-family: "Neue Haas Grotesk Display Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -201,7 +201,7 @@ const handleStoryLinkClick = (event) => {
   padding: 0 20px;
 }
 
-.case3-title-shadow {
+.story3-title-shadow {
   position: absolute;
   top: 4px;
   left: 5px;
@@ -209,13 +209,13 @@ const handleStoryLinkClick = (event) => {
   z-index: 0;
 }
 
-.case3-title-main {
+.story3-title-main {
   position: relative;
   color: #ffffff;
   z-index: 1;
 }
 
-.case3-description {
+.story3-description {
   margin: 0;
   font-family: "Neue Haas Grotesk Display Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -229,7 +229,7 @@ const handleStoryLinkClick = (event) => {
   max-width: 100%;
 }
 
-.case3-button-wrapper {
+.story3-button-wrapper {
   position: relative;
   width: clamp(290px, 24vw, 380px);
   height: clamp(48px, 4vw, 67px);
@@ -245,15 +245,15 @@ const handleStoryLinkClick = (event) => {
   z-index: 10;
 }
 
-.case3-button-wrapper:hover .case3-button-main {
+.story3-button-wrapper:hover .story3-button-main {
   transform: translate(2px, 2.5px);
 }
 
-.case3-button-wrapper:active .case3-button-main {
+.story3-button-wrapper:active .story3-button-main {
   transform: translate(4px, 5px);
 }
 
-.case3-button {
+.story3-button {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -270,14 +270,14 @@ const handleStoryLinkClick = (event) => {
   pointer-events: none;
 }
 
-.case3-button-shadow {
+.story3-button-shadow {
   top: 10px;
   left: 8px;
   background: #2a2a2a;
   z-index: 0;
 }
 
-.case3-button-main {
+.story3-button-main {
   top: 0;
   left: 0;
   background: linear-gradient(91.24deg, #ca4034 1.06%, #992c28 74.69%);
@@ -287,7 +287,7 @@ const handleStoryLinkClick = (event) => {
   transition: transform 0.25s ease;
 }
 
-.case3-button-icon {
+.story3-button-icon {
   position: absolute;
   left: clamp(18px, 1.5vw, 24px);
   width: clamp(18px, 1.5vw, 24px);
@@ -296,12 +296,12 @@ const handleStoryLinkClick = (event) => {
   pointer-events: none;
 }
 
-.case3-button-text {
+.story3-button-text {
   flex-shrink: 0;
   pointer-events: none;
 }
 
-.case3-image-section {
+.story3-image-section {
   width: 100%;
   flex: 0 0 auto;
   max-height: 50vh;
@@ -314,7 +314,7 @@ const handleStoryLinkClick = (event) => {
   margin-bottom: 0;
 }
 
-.case3-media-container {
+.story3-media-container {
   position: relative;
   width: 100%;
   aspect-ratio: 2550 / 1912;
@@ -328,129 +328,129 @@ const handleStoryLinkClick = (event) => {
 }
 
 @media (min-width: 1920px) {
-  .case3-title {
+  .story3-title {
     font-size: clamp(78px, 5.12vw, 92px);
     line-height: 1.19;
   }
 
-  .case3-tag {
+  .story3-tag {
     font-size: clamp(17px, 1.15vw, 20px);
   }
 
-  .case3-tag-separator {
+  .story3-tag-separator {
     width: clamp(10.5px, 0.7vw, 12px);
   }
 
-  .case3-description {
+  .story3-description {
     font-size: clamp(23px, 1.54vw, 27.5px);
   }
 
-  .case3-button-wrapper {
+  .story3-button-wrapper {
     width: clamp(380px, 25vw, 435px);
     height: clamp(67px, 4.2vw, 78px);
   }
 
-  .case3-button {
+  .story3-button {
     font-size: clamp(21px, 1.4vw, 24px);
   }
 
-  .case3-button-icon {
+  .story3-button-icon {
     width: clamp(24px, 1.6vw, 28px);
     left: clamp(24px, 1.6vw, 28px);
   }
 
-  .case3-title-shadow {
+  .story3-title-shadow {
     top: 5px;
     left: 6px;
   }
 
-  .case3-button-shadow {
+  .story3-button-shadow {
     top: 11px;
     left: 9px;
   }
 }
 
 @media (max-width: 767px) {
-  .case3-container {
+  .story3-container {
     width: calc(100vw - 48px);
     max-width: calc(100vw - 48px);
     padding: 0 24px;
     justify-content: center;
   }
 
-  .case3-text-section {
+  .story3-text-section {
     width: 100%;
     height: auto;
     flex: none;
     gap: clamp(16px, 3vh, 24px);
   }
 
-  .case3-company-title-group {
+  .story3-company-title-group {
     width: 100%;
   }
 
-  .case3-tags-container {
+  .story3-tags-container {
     width: 100%;
   }
 
-  .case3-title-wrapper {
+  .story3-title-wrapper {
     width: 100%;
   }
 
-  .case3-title {
+  .story3-title {
     width: 100%;
     padding: 0;
   }
 
-  .case3-description {
+  .story3-description {
     width: 100%;
   }
 
-  .case3-button-wrapper {
+  .story3-button-wrapper {
     width: 100%;
     max-width: 100%;
   }
 
-  .case3-image-section {
+  .story3-image-section {
     display: none;
   }
 }
 
 @media (min-width: 768px) and (max-width: 899px) {
-  .case3-container {
+  .story3-container {
     width: 90%;
   }
 
-  .case3-text-section {
+  .story3-text-section {
     gap: clamp(10px, 1.2vh, 16px);
   }
 
-  .case3-title {
+  .story3-title {
     font-size: clamp(28px, 5vw, 40px);
   }
 
-  .case3-tag {
+  .story3-tag {
     font-size: clamp(13px, 2.6vw, 15px);
   }
 
-  .case3-tag-separator {
+  .story3-tag-separator {
     width: clamp(7px, 1.5vw, 9px);
   }
 
-  .case3-description {
+  .story3-description {
     font-size: clamp(14.3px, 2.86vw, 19.8px);
   }
 
-  .case3-button-wrapper {
+  .story3-button-wrapper {
     width: clamp(250px, 72vw, 330px);
     height: clamp(42px, 10vw, 58px);
   }
 
-  .case3-button {
+  .story3-button {
     font-size: clamp(14px, 3.5vw, 18px);
   }
 
-  .case3-button-icon {
+  .story3-button-icon {
     width: clamp(16px, 4vw, 20px);
   }
 }

@@ -4,7 +4,7 @@
       <video
         ref="videoElement"
         :src="videoSrc"
-        class="case-video"
+        class="story-video"
         :class="{
           'video-paused-blur': !isPlaying && hasStartedPlayback,
         }"
@@ -17,7 +17,7 @@
       <!-- Pause Overlay (Play button when paused) -->
       <div
         v-if="!isPlaying && hasStartedPlayback"
-        class="case-video-pause-overlay"
+        class="story-video-pause-overlay"
       >
         <svg
           viewBox="0 0 100 100"
@@ -210,7 +210,7 @@ onUnmounted(() => {
   line-height: 0;
 }
 
-.case-video {
+.story-video {
   width: 100%;
   height: auto;
   display: block;
@@ -218,12 +218,12 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-.case-video.video-paused-blur {
+.story-video.video-paused-blur {
   filter: blur(10px);
   transform: scale(1.05);
 }
 
-.case-video-pause-overlay {
+.story-video-pause-overlay {
   position: absolute;
   top: 0;
   left: 0;

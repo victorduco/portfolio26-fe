@@ -8,11 +8,11 @@
  *   const { image, video } = useMedia()
  *
  *   // In template:
- *   <img :src="image('case1-domain-tree.png')" />
- *   <video :src="video('case1-summary.mp4')" />
+ *   <img :src="image('story1-domain-tree.png')" />
+ *   <video :src="video('story1-summary.mp4')" />
  *
  *   // Or with full paths:
- *   <img :src="image('/images/case1-domain-tree.png')" />
+ *   <img :src="image('/images/story1-domain-tree.png')" />
  */
 
 import { ref, onMounted } from "vue";

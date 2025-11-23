@@ -1,4 +1,4 @@
-// case1-gsap-animations.js
+// story1-gsap-animations.js
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);

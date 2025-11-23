@@ -1,10 +1,10 @@
 <template>
-  <section id="case2" class="case2" ref="containerRef">
-    <div class="case2-content">
-      <div class="case2-content-inner">
-        <div class="case2-company">Smarp</div>
+  <section id="story2" class="story2" ref="containerRef">
+    <div class="story2-content">
+      <div class="story2-content-inner">
+        <div class="story2-company">Smarp</div>
 
-        <h2 class="case2-title">
+        <h2 class="story2-title">
           <span
             v-for="(word, index) in titlePart1Words"
             :key="'title1-' + index"
@@ -23,33 +23,33 @@
           </span>
         </h2>
 
-        <div class="case2-paragraph">
-          <span class="case2-paragraph-part1">
+        <div class="story2-paragraph">
+          <span class="story2-paragraph-part1">
             {{ descriptionPart1 }}<img :src="googleLogo" alt="Google" class="client-logo client-logo-google" /><img :src="cocaColaLogo" alt="Coca-Cola" class="client-logo" /><img :src="lorealLogo" alt="L'Oreal" class="client-logo client-logo-loreal" />
-          </span><span class="case2-paragraph-part2">{{ descriptionPart2 }}<img :src="g2Badge" alt="G2 Awards" class="awards-badge" />{{ descriptionPart3 }}.</span>
+          </span><span class="story2-paragraph-part2">{{ descriptionPart2 }}<img :src="g2Badge" alt="G2 Awards" class="awards-badge" />{{ descriptionPart3 }}.</span>
         </div>
 
         <a
           href="/story/two"
-          class="case2-open-story"
+          class="story2-open-story"
           @click.prevent="handleStoryLinkClick"
         >
           Open Story
-          <img src="@/assets/icons/rocket.svg" alt="" class="case2-icon" />
+          <img src="@/assets/icons/rocket.svg" alt="" class="story2-icon" />
         </a>
       </div>
     </div>
 
-    <div class="case2-image-container">
+    <div class="story2-image-container">
       <video
-        class="case2-video"
+        class="story2-video"
         :src="videoSrc"
         muted
         playsinline
         preload="auto"
       ></video>
       <img
-        class="case2-final-image"
+        class="story2-final-image"
         :src="finalImageSrc"
         alt="Final frame"
       />
@@ -60,15 +60,15 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import { initAnimations } from "./case2-gsap-animations.js";
+import { initAnimations } from "./story2-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
 import { getImagePath, getVideoPath } from "@/utils/mediaResolver.js";
 
 const router = useRouter();
 
-const videoSrc = getVideoPath("case2-video.mp4");
+const videoSrc = getVideoPath("story2-video.mp4");
 
-const finalImageSrc = getImagePath("case2-comparison.png");
+const finalImageSrc = getImagePath("story2-comparison.png");
 
 const containerRef = ref(null);
 
@@ -79,10 +79,10 @@ const descriptionPart1 = "Redesigning the Employee Comms mobile experience used 
 const descriptionPart2 = " and improving content variety, information discoverability, and overall usability with recognized excellence ";
 const descriptionPart3 = " by G2";
 
-const googleLogo = getImagePath("case2-logo-google.svg");
-const cocaColaLogo = getImagePath("case2-logo-coca-cola.svg");
-const lorealLogo = getImagePath("case2-logo-loreal.svg");
-const g2Badge = getImagePath("case2-badge-g2.png");
+const googleLogo = getImagePath("story2-logo-google.svg");
+const cocaColaLogo = getImagePath("story2-logo-coca-cola.svg");
+const lorealLogo = getImagePath("story2-logo-loreal.svg");
+const g2Badge = getImagePath("story2-badge-g2.png");
 
 let animationInstance = null;
 
@@ -105,7 +105,7 @@ const handleStoryLinkClick = (event) => {
 </script>
 
 <style scoped>
-.case2 {
+.story2 {
   position: relative;
   width: 100%;
   height: 300vh;
@@ -113,7 +113,7 @@ const handleStoryLinkClick = (event) => {
   overflow: hidden;
 }
 
-.case2-content {
+.story2-content {
   position: absolute;
   left: 0;
   top: 0;
@@ -124,7 +124,7 @@ const handleStoryLinkClick = (event) => {
   justify-content: center;
 }
 
-.case2-content-inner {
+.story2-content-inner {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -138,7 +138,7 @@ const handleStoryLinkClick = (event) => {
   z-index: 1;
 }
 
-.case2-company {
+.story2-company {
   font-family: 'Hanken Grotesk', sans-serif;
   font-style: normal;
   font-weight: 590;
@@ -150,7 +150,7 @@ const handleStoryLinkClick = (event) => {
   opacity: 0;
 }
 
-.case2-title {
+.story2-title {
   margin: 0;
   font-family: 'Hanken Grotesk', sans-serif;
   font-weight: 500;
@@ -161,13 +161,13 @@ const handleStoryLinkClick = (event) => {
   text-align: left;
 }
 
-.case2-title .word {
+.story2-title .word {
   display: inline-block;
   margin-right: 0.25em;
   opacity: 0;
 }
 
-.case2-paragraph {
+.story2-paragraph {
   margin: 0;
   margin-top: clamp(7px, 2vh, 23px);
   margin-bottom: clamp(17px, 3vh, 33px);
@@ -178,8 +178,8 @@ const handleStoryLinkClick = (event) => {
   text-align: left;
 }
 
-.case2-paragraph-part1,
-.case2-paragraph-part2 {
+.story2-paragraph-part1,
+.story2-paragraph-part2 {
   opacity: 0;
 }
 
@@ -210,7 +210,7 @@ const handleStoryLinkClick = (event) => {
   margin-left: 0;
 }
 
-.case2-open-story {
+.story2-open-story {
   background: #F7E7E7;
   border: none;
   font-family: 'Hanken Grotesk', sans-serif;
@@ -231,18 +231,18 @@ const handleStoryLinkClick = (event) => {
   text-decoration: none;
 }
 
-.case2-open-story:hover {
+.story2-open-story:hover {
   background: rgba(247, 231, 231, 0.8);
 }
 
-.case2-icon {
+.story2-icon {
   height: 23px;
   width: auto;
   display: block;
   transform: translateY(0px);
 }
 
-.case2-image-container {
+.story2-image-container {
   position: absolute;
   top: 0;
   right: 0;
@@ -253,7 +253,7 @@ const handleStoryLinkClick = (event) => {
   padding: 16px;
 }
 
-.case2-video {
+.story2-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -261,7 +261,7 @@ const handleStoryLinkClick = (event) => {
   border-radius: 12px;
 }
 
-.case2-final-image {
+.story2-final-image {
   position: absolute;
   top: 16px;
   left: 16px;
@@ -277,12 +277,12 @@ const handleStoryLinkClick = (event) => {
 }
 
 @media (max-width: 767px) {
-  .case2 {
+  .story2 {
     height: auto;
     min-height: 100vh;
   }
 
-  .case2-content {
+  .story2-content {
     width: 100%;
     padding: 0;
     position: relative;
@@ -292,7 +292,7 @@ const handleStoryLinkClick = (event) => {
     min-height: 100vh;
   }
 
-  .case2-content-inner {
+  .story2-content-inner {
     width: 100%;
     max-width: 100%;
     padding-left: clamp(16px, 4vw, 32px);
@@ -303,49 +303,49 @@ const handleStoryLinkClick = (event) => {
     gap: clamp(16px, 3vh, 24px);
   }
 
-  .case2-company {
+  .story2-company {
     text-align: center;
   }
 
-  .case2-title {
-    text-align: center;
-    width: 100%;
-  }
-
-  .case2-paragraph {
+  .story2-title {
     text-align: center;
     width: 100%;
   }
 
-  .case2-open-story {
+  .story2-paragraph {
+    text-align: center;
     width: 100%;
   }
 
-  .case2-image-container {
+  .story2-open-story {
+    width: 100%;
+  }
+
+  .story2-image-container {
     display: none;
   }
 
-  .case2-video {
+  .story2-video {
     display: none;
   }
 
-  .case2-final-image {
+  .story2-final-image {
     display: none;
   }
 }
 
 @media (min-width: 768px) and (max-width: 899px) {
-  .case2 {
+  .story2 {
     height: auto;
     min-height: 100dvh;
   }
 
-  .case2-content {
+  .story2-content {
     padding: clamp(32px, 8vh, 64px) clamp(24px, 6vw, 48px);
     max-width: 100%;
   }
 
-  .case2-content-inner {
+  .story2-content-inner {
     padding: 0;
     max-width: 100%;
     align-items: center;
@@ -353,35 +353,35 @@ const handleStoryLinkClick = (event) => {
     gap: clamp(20px, 3vh, 32px);
   }
 
-  .case2-title {
+  .story2-title {
     text-align: center;
     font-size: clamp(28px, 6vw, 40px);
   }
 
-  .case2-paragraph {
+  .story2-paragraph {
     text-align: center;
     font-size: clamp(14px, 3.5vw, 16px);
   }
 
-  .case2-open-story {
+  .story2-open-story {
     font-size: 20px;
   }
 
-  .case2-icon {
+  .story2-icon {
     height: 23px;
     width: auto;
     transform: translateY(-1px);
   }
 
-  .case2-image-container {
+  .story2-image-container {
     min-height: 50vh;
   }
 
-  .case2-video {
+  .story2-video {
     object-fit: contain;
   }
 
-  .case2-final-image {
+  .story2-final-image {
     object-fit: contain;
   }
 }

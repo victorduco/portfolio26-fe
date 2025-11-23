@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function initAnimations(trigger) {
-  const videoElement = document.querySelector(".case2-video");
+  const videoElement = document.querySelector(".story2-video");
 
   // Create pin ScrollTrigger separately (starts at top top)
   ScrollTrigger.create({
@@ -11,7 +11,7 @@ export function initAnimations(trigger) {
     end: "bottom bottom",
     pin: true,
     pinSpacing: false,
-    id: "case2-pin",
+    id: "story2-pin",
   });
 
   // Animation timeline starts earlier (top bottom) for text fade-in
@@ -24,7 +24,7 @@ export function initAnimations(trigger) {
       start: "top bottom",
       end: "bottom bottom",
       scrub: 1,
-      id: "case2-main",
+      id: "story2-main",
     },
   });
 
@@ -32,11 +32,11 @@ export function initAnimations(trigger) {
   // Timeline is normalized 0-1, so snap points are at: 0, 0.2, 0.4, 0.6, 0.8, 1.0
 
   // Calculate vertical center position
-  const contentElement = document.querySelector(".case2-content");
-  const titleElement = document.querySelector(".case2-title");
+  const contentElement = document.querySelector(".story2-content");
+  const titleElement = document.querySelector(".story2-title");
 
   // Set initial state - content starts with opacity 0 (before scroll trigger)
-  gsap.set(".case2-content", {
+  gsap.set(".story2-content", {
     opacity: 0,
     y: () => {
       // Position so title is roughly centered at start
@@ -47,7 +47,7 @@ export function initAnimations(trigger) {
 
   // -0.3 to -0.1 - Fade in content as user approaches the trigger (earlier)
   tl.fromTo(
-    ".case2-content",
+    ".story2-content",
     {
       opacity: 0,
     },
@@ -60,7 +60,7 @@ export function initAnimations(trigger) {
 
   // -0.3 - Company name appears
   tl.to(
-    ".case2-company",
+    ".story2-company",
     {
       opacity: 1,
       duration: 0.1,
@@ -70,7 +70,7 @@ export function initAnimations(trigger) {
 
   // -0.25 to -0.15 - Title words appear before reaching top top (earlier)
   tl.to(
-    ".case2-title .word[data-word-part1]",
+    ".story2-title .word[data-word-part1]",
     {
       opacity: 1,
       duration: 0.05,
@@ -80,7 +80,7 @@ export function initAnimations(trigger) {
   );
 
   tl.to(
-    ".case2-title .word[data-word-part2]",
+    ".story2-title .word[data-word-part2]",
     {
       opacity: 1,
       duration: 0.05,
@@ -91,7 +91,7 @@ export function initAnimations(trigger) {
 
   // 0-100% - Container moves to center full content at the end
   tl.to(
-    ".case2-content",
+    ".story2-content",
     {
       y: () => {
         // Calculate center: 50vh - half of full content height - 50px offset
@@ -106,7 +106,7 @@ export function initAnimations(trigger) {
 
   // 45% - Paragraph part 1 appears (text + logos)
   tl.to(
-    ".case2-paragraph-part1",
+    ".story2-paragraph-part1",
     {
       opacity: 1,
       duration: 0.15,
@@ -116,7 +116,7 @@ export function initAnimations(trigger) {
 
   // 67.5% - Paragraph part 2 appears (text + badges)
   tl.to(
-    ".case2-paragraph-part2",
+    ".story2-paragraph-part2",
     {
       opacity: 1,
       duration: 0.15,
@@ -126,7 +126,7 @@ export function initAnimations(trigger) {
 
   // 90% - Button appears
   tl.to(
-    ".case2-open-story",
+    ".story2-open-story",
     {
       opacity: 1,
       duration: 0.15,
@@ -136,7 +136,7 @@ export function initAnimations(trigger) {
 
   // 75% - Final image fades in, replacing video (when video completes)
   tl.to(
-    ".case2-final-image",
+    ".story2-final-image",
     {
       opacity: 1,
       duration: 0.05,
@@ -157,7 +157,7 @@ export function initAnimations(trigger) {
       start: "top bottom", // Start playing when section enters viewport
       end: "bottom bottom",
       scrub: 2,
-      id: "case2-video-scrub",
+      id: "story2-video-scrub",
       onUpdate: (self) => {
         if (videoElement.duration && !isNaN(videoElement.duration)) {
           // Map 0-75% scroll to 0-100% video

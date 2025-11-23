@@ -1,6 +1,6 @@
 <template>
   <!-- scroll-container: внешний контейнер для скролла -->
-  <div id="case3" class="scroll-container" ref="scrollContainerRef">
+  <div id="story3" class="scroll-container" ref="scrollContainerRef">
     <!-- pin-container: pinned элемент -->
     <div class="pin-container" ref="pinContainerRef">
       <!-- section-1: основная секция с контентом -->
@@ -9,15 +9,15 @@
         <div class="content">
           <CloudCorners ref="cloudCornersRef" />
 
-          <div class="case3-container">
-            <div class="case3-text-section" ref="textSection">
-              <div class="case3-company-title-group">
-                <div class="case3-tags-container" ref="tagsElement">
+          <div class="story3-container">
+            <div class="story3-text-section" ref="textSection">
+              <div class="story3-company-title-group">
+                <div class="story3-tags-container" ref="tagsElement">
                   <template v-for="(tag, index) in tags" :key="tag">
-                    <span class="case3-tag">{{ tag }}</span>
+                    <span class="story3-tag">{{ tag }}</span>
                     <svg
                       v-if="index < tags.length - 1"
-                      class="case3-tag-separator"
+                      class="story3-tag-separator"
                       width="12"
                       height="14"
                       viewBox="0 0 24 29"
@@ -33,28 +33,28 @@
                     </svg>
                   </template>
                 </div>
-                <div class="case3-title-wrapper" ref="titleElement">
-                  <h2 class="case3-title case3-title-shadow">
+                <div class="story3-title-wrapper" ref="titleElement">
+                  <h2 class="story3-title story3-title-shadow">
                     {{ title }}
                   </h2>
-                  <h2 class="case3-title case3-title-main" aria-hidden="true">
+                  <h2 class="story3-title story3-title-main" aria-hidden="true">
                     {{ title }}
                   </h2>
                 </div>
-                <p class="case3-description" ref="descriptionElement">
+                <p class="story3-description" ref="descriptionElement">
                   {{ description }}
                 </p>
               </div>
               <a
                 href="/story/three"
-                class="case3-button-wrapper"
+                class="story3-button-wrapper"
                 ref="buttonElement"
                 @click.prevent="handleStoryLinkClick"
               >
-                <div class="case3-button case3-button-shadow"></div>
-                <div class="case3-button case3-button-main">
+                <div class="story3-button story3-button-shadow"></div>
+                <div class="story3-button story3-button-main">
                   <svg
-                    class="case3-button-icon"
+                    class="story3-button-icon"
                     width="24"
                     height="29"
                     viewBox="0 0 24 29"
@@ -68,20 +68,20 @@
                       stroke-width="0.2"
                     />
                   </svg>
-                  <span class="case3-button-text">Open Story</span>
+                  <span class="story3-button-text">Open Story</span>
                 </div>
               </a>
             </div>
 
-            <div class="case3-image-section" ref="imageContainer">
+            <div class="story3-image-section" ref="imageContainer">
               <div
-                class="case3-media-container"
+                class="story3-media-container"
                 :style="{ backgroundImage: `url(${imageSrc})` }"
                 ref="mediaContainer"
               >
                 <div
                   v-if="videoSrc"
-                  class="case3-video-container"
+                  class="story3-video-container"
                   :style="{
                     left: videoPositionX,
                     top: videoPositionY,
@@ -90,7 +90,7 @@
                 >
                   <video
                     :src="videoSrc"
-                    class="case3-video"
+                    class="story3-video"
                     muted
                     playsinline
                     ref="videoElement"
@@ -113,7 +113,7 @@ import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { gsap } from "gsap";
 import CloudCorners from "./CloudCorners.vue";
-import { initAnimations } from "./case3-gsap-animations.js";
+import { initAnimations } from "./story3-gsap-animations.js";
 import { cleanupAnimations } from "./gsap-utils.js";
 import { getImagePath, getVideoPath } from "@/utils/mediaResolver.js";
 
@@ -128,8 +128,8 @@ const title = "Field Operations App for Oil Terminals";
 const tags = ["Consultancy", "Redesign", "Mentorship"];
 const description =
   "A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience.";
-const imageSrc = getImagePath("case3-ipad.png");
-const videoSrc = getVideoPath("case3-video.mp4");
+const imageSrc = getImagePath("story3-ipad.png");
+const videoSrc = getVideoPath("story3-video.mp4");
 
 // Video positioning (relative to media container)
 const videoPositionX = "4.5%";
@@ -268,7 +268,7 @@ defineExpose({
 }
 
 /* Container with 80% width */
-.case3-container {
+.story3-container {
   width: 48%;
   height: 100%;
   display: flex;
@@ -280,7 +280,7 @@ defineExpose({
 }
 
 /* Text Section: 60% height */
-.case3-text-section {
+.story3-text-section {
   width: 100%;
   flex: 1 1 auto;
   display: flex;
@@ -292,7 +292,7 @@ defineExpose({
 }
 
 /* Company and Title Group Container */
-.case3-company-title-group {
+.story3-company-title-group {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -301,7 +301,7 @@ defineExpose({
 }
 
 /* Tags container */
-.case3-tags-container {
+.story3-tags-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -312,7 +312,7 @@ defineExpose({
 }
 
 /* Individual tag styling */
-.case3-tag {
+.story3-tag {
   margin: 0;
   font-family: "Neue Haas Grotesk Display Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -325,14 +325,14 @@ defineExpose({
 }
 
 /* Tag separator - anchor icon */
-.case3-tag-separator {
+.story3-tag-separator {
   width: clamp(8px, 0.65vw, 10.5px);
   height: auto;
   flex-shrink: 0;
 }
 
 /* Title wrapper with hard shadow effect */
-.case3-title-wrapper {
+.story3-title-wrapper {
   position: relative;
   width: 100%;
   max-width: 100%;
@@ -340,7 +340,7 @@ defineExpose({
 }
 
 /* Base title styling */
-.case3-title {
+.story3-title {
   margin: 0;
   font-family: "Neue Haas Grotesk Display Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -355,7 +355,7 @@ defineExpose({
 }
 
 /* Shadow layer (back) */
-.case3-title-shadow {
+.story3-title-shadow {
   position: absolute;
   top: 4px;
   left: 5px;
@@ -364,14 +364,14 @@ defineExpose({
 }
 
 /* Main layer (front) */
-.case3-title-main {
+.story3-title-main {
   position: relative;
   color: #143154;
   z-index: 1;
 }
 
 /* Company/Subtitle Styling from Figma */
-.case3-company {
+.story3-company {
   margin: 0;
   font-family: var(--font-family-base);
   font-style: normal;
@@ -386,7 +386,7 @@ defineExpose({
 }
 
 /* Description Styling */
-.case3-description {
+.story3-description {
   margin: 0;
   font-family: "Neue Haas Grotesk Display Pro", -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -402,7 +402,7 @@ defineExpose({
 }
 
 /* Button wrapper with hard shadow effect */
-.case3-button-wrapper {
+.story3-button-wrapper {
   position: relative;
   width: clamp(290px, 24vw, 380px);
   height: clamp(48px, 4vw, 67px);
@@ -419,16 +419,16 @@ defineExpose({
   z-index: 10; /* Ensure it's on top */
 }
 
-.case3-button-wrapper:hover .case3-button-main {
+.story3-button-wrapper:hover .story3-button-main {
   transform: translate(2px, 2.5px);
 }
 
-.case3-button-wrapper:active .case3-button-main {
+.story3-button-wrapper:active .story3-button-main {
   transform: translate(4px, 5px);
 }
 
 /* Base button styling */
-.case3-button {
+.story3-button {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -446,7 +446,7 @@ defineExpose({
 }
 
 /* Shadow layer (back) */
-.case3-button-shadow {
+.story3-button-shadow {
   top: 10px;
   left: 8px;
   background: #1e426d;
@@ -454,7 +454,7 @@ defineExpose({
 }
 
 /* Main layer (front) */
-.case3-button-main {
+.story3-button-main {
   top: 0;
   left: 0;
   background: linear-gradient(91.24deg, #ca4034 1.06%, #992c28 74.69%);
@@ -465,7 +465,7 @@ defineExpose({
 }
 
 /* Button icon */
-.case3-button-icon {
+.story3-button-icon {
   position: absolute;
   left: clamp(18px, 1.5vw, 24px);
   width: clamp(18px, 1.5vw, 24px);
@@ -475,13 +475,13 @@ defineExpose({
 }
 
 /* Button text */
-.case3-button-text {
+.story3-button-text {
   flex-shrink: 0;
   pointer-events: none;
 }
 
 /* Image Section: 40% height */
-.case3-image-section {
+.story3-image-section {
   width: 100%;
   flex: 0 0 auto;
   max-height: 50vh;
@@ -499,7 +499,7 @@ defineExpose({
 }
 
 /* Media container - holds both image and video */
-.case3-media-container {
+.story3-media-container {
   position: relative;
   width: 100%;
   aspect-ratio: 2550 / 1912; /* Match image dimensions */
@@ -514,7 +514,7 @@ defineExpose({
 }
 
 /* Video container */
-.case3-video-container {
+.story3-video-container {
   position: absolute;
   aspect-ratio: 1488 / 592; /* Match actual video dimensions */
   border-radius: 15px;
@@ -527,7 +527,7 @@ defineExpose({
 }
 
 /* Video overlay */
-.case3-video {
+.story3-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -553,47 +553,47 @@ defineExpose({
 
 /* Large Desktop - increase all element sizes */
 @media (min-width: 1920px) {
-  .case3-title {
+  .story3-title {
     font-size: clamp(78px, 5.12vw, 92px);
     line-height: 1.19;
   }
 
-  .case3-company {
+  .story3-company {
     font-size: clamp(19px, 1.3vw, 22px);
   }
 
-  .case3-tag {
+  .story3-tag {
     font-size: clamp(17px, 1.15vw, 20px);
   }
 
-  .case3-tag-separator {
+  .story3-tag-separator {
     width: clamp(10.5px, 0.7vw, 12px);
   }
 
-  .case3-description {
+  .story3-description {
     font-size: clamp(23px, 1.54vw, 27.5px);
   }
 
-  .case3-button-wrapper {
+  .story3-button-wrapper {
     width: clamp(380px, 25vw, 435px);
     height: clamp(67px, 4.2vw, 78px);
   }
 
-  .case3-button {
+  .story3-button {
     font-size: clamp(21px, 1.4vw, 24px);
   }
 
-  .case3-button-icon {
+  .story3-button-icon {
     width: clamp(24px, 1.6vw, 28px);
     left: clamp(24px, 1.6vw, 28px);
   }
 
-  .case3-title-shadow {
+  .story3-title-shadow {
     top: 5px;
     left: 6px;
   }
 
-  .case3-button-shadow {
+  .story3-button-shadow {
     top: 11px;
     left: 9px;
   }
@@ -614,7 +614,7 @@ defineExpose({
     justify-content: center;
   }
 
-  .case3-container {
+  .story3-container {
     width: 100%;
     max-width: 100%;
     padding-left: clamp(16px, 4vw, 32px);
@@ -623,58 +623,58 @@ defineExpose({
     justify-content: center;
   }
 
-  .case3-text-section {
+  .story3-text-section {
     width: 100%;
     height: auto;
     flex: none;
     gap: 32px;
   }
 
-  .case3-company-title-group {
+  .story3-company-title-group {
     width: 100%;
     gap: 32px;
   }
 
-  .case3-tags-container {
+  .story3-tags-container {
     width: 100%;
     margin-bottom: 0;
   }
 
-  .case3-button-wrapper {
+  .story3-button-wrapper {
     margin-top: 32px;
   }
 
-  .case3-title-wrapper {
+  .story3-title-wrapper {
     width: 100%;
   }
 
-  .case3-title {
+  .story3-title {
     width: 100%;
     padding: 0;
   }
 
-  .case3-description {
+  .story3-description {
     width: 100%;
   }
 
-  .case3-button-wrapper {
+  .story3-button-wrapper {
     width: 100%;
     max-width: 100%;
   }
 
-  .case3-image-section {
+  .story3-image-section {
     display: none;
   }
 
-  .case3-media-container {
+  .story3-media-container {
     display: none;
   }
 
-  .case3-video-container {
+  .story3-video-container {
     display: none;
   }
 
-  .case3-video {
+  .story3-video {
     display: none;
   }
 
@@ -685,49 +685,49 @@ defineExpose({
 }
 
 @media (min-width: 768px) and (max-width: 899px) {
-  .case3-container {
+  .story3-container {
     width: 90%;
   }
 
-  .case3-text-section {
+  .story3-text-section {
     height: 25%;
     gap: clamp(10px, 1.2vh, 16px);
   }
 
-  .case3-image-section {
+  .story3-image-section {
     height: 75%;
   }
 
-  .case3-title {
+  .story3-title {
     font-size: clamp(28px, 5vw, 40px);
   }
 
-  .case3-company {
+  .story3-company {
     font-size: clamp(12px, 2.5vw, 16px);
   }
 
-  .case3-tag {
+  .story3-tag {
     font-size: clamp(13px, 2.6vw, 15px);
   }
 
-  .case3-tag-separator {
+  .story3-tag-separator {
     width: clamp(7px, 1.5vw, 9px);
   }
 
-  .case3-description {
+  .story3-description {
     font-size: clamp(14.3px, 2.86vw, 19.8px);
   }
 
-  .case3-button-wrapper {
+  .story3-button-wrapper {
     width: clamp(250px, 72vw, 330px);
     height: clamp(42px, 10vw, 58px);
   }
 
-  .case3-button {
+  .story3-button {
     font-size: clamp(14px, 3.5vw, 18px);
   }
 
-  .case3-button-icon {
+  .story3-button-icon {
     width: clamp(16px, 4vw, 20px);
   }
 }

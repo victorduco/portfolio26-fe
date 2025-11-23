@@ -1,10 +1,10 @@
 <template>
-  <div ref="triggerRef" class="next-project-trigger">
+  <div ref="triggerRef" class="next-story-trigger">
     <section
       ref="sectionRef"
-      class="case-next-project"
+      class="story-next-story"
     >
-      <div class="next-project-wrapper">
+      <div class="next-story-wrapper">
         <component :is="contentComponent" />
       </div>
     </section>
@@ -70,13 +70,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.next-project-trigger {
+.next-story-trigger {
   width: 100%;
   position: relative;
   z-index: 0;
 }
 
-.case-next-project {
+.story-next-story {
   width: 100%;
   box-sizing: border-box;
   color: #ffffff;
@@ -84,7 +84,7 @@ onUnmounted(() => {
   z-index: 0;
 }
 
-.next-project-wrapper {
+.next-story-wrapper {
   width: 100%;
   min-height: 100vh;
   display: flex;

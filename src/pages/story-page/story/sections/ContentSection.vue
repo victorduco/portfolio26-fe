@@ -1,13 +1,13 @@
 <template>
-  <section class="case-section">
+  <section class="story-section">
     <!-- Heading -->
     <div v-if="heading" class="section-heading">
-      <h4 v-if="!heading.subtitle" class="case-section-heading-single">
+      <h4 v-if="!heading.subtitle" class="story-section-heading-single">
         {{ heading.main }}
       </h4>
-      <div v-else class="case-section-heading-two-level">
-        <div class="case-section-heading-subtitle">{{ heading.subtitle }}</div>
-        <h4 class="case-section-heading-main">{{ heading.main }}</h4>
+      <div v-else class="story-section-heading-two-level">
+        <div class="story-section-heading-subtitle">{{ heading.subtitle }}</div>
+        <h4 class="story-section-heading-main">{{ heading.main }}</h4>
       </div>
     </div>
 
@@ -142,7 +142,7 @@ function getMediaProps(props: Record<string, any>): Record<string, any> {
 </script>
 
 <style scoped>
-.case-section {
+.story-section {
   width: 100%;
   display: flex;
   flex-direction: column;

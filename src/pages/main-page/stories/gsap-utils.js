@@ -42,7 +42,7 @@ export function cleanupAnimations(animationInstance) {
       animationInstance.scrollTrigger2.kill();
     }
 
-    // Handle video trigger (Case3)
+    // Handle video trigger (Story3)
     if (animationInstance.videoTrigger) {
       animationInstance.videoTrigger.kill();
     }

@@ -1,7 +1,7 @@
 <template>
-  <section class="case-results">
+  <section class="story-results">
     <div class="results-content">
-      <h3 class="case-results-title">Results</h3>
+      <h3 class="story-results-title">Results</h3>
       <div class="results-grid">
         <div
           v-for="(result, index) in results"
@@ -38,7 +38,7 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.case-results {
+.story-results {
   width: 100%;
   padding: 80px 0 168px;
   overflow-x: hidden;
@@ -104,11 +104,11 @@ const props = defineProps({
 
 
 @media (max-width: 768px) {
-  .case-results {
+  .story-results {
     padding: 60px 0 24px;
   }
 
-  .case-results-title {
+  .story-results-title {
     margin-bottom: 16px;
   }
 }

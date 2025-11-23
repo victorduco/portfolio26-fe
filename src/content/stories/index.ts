@@ -1,6 +1,6 @@
-import { case1Content } from './case1'
-import { case2Content } from './case2'
-import { case3Content } from './case3'
+import { story1Content } from './story1'
+import { story2Content } from './story2'
+import { story3Content } from './story3'
 
 export interface Heading {
   main: string
@@ -24,12 +24,12 @@ export interface ContentGroup {
   sections: Section[]
 }
 
-export interface CaseContent {
+export interface StoryContent {
   [key: string]: ContentGroup
 }
 
-export const casesContent: Record<string, CaseContent> = {
-  '1': case1Content,
-  '2': case2Content,
-  '3': case3Content,
+export const storiesContent: Record<string, StoryContent> = {
+  '1': story1Content,
+  '2': story2Content,
+  '3': story3Content,
 }

@@ -1,4 +1,4 @@
-export const case1Content = {
+export const story1Content = {
   challenge: {
     heading: {
       main: 'User Challenge',
@@ -14,7 +14,7 @@ export const case1Content = {
         media: {
           type: 'image' as const,
           props: {
-            imageSrc: '/images/case1-domain-tree.png',
+            imageSrc: '/images/story1-domain-tree.png',
             enableMagnifier: true,
             mediaLabel: 'Users must grasp multiple subdomains to resolve problems.',
           },
@@ -34,9 +34,9 @@ export const case1Content = {
         media: {
           type: 'layered-cards' as const,
           props: {
-            imageLeft: '/images/case1-scale-1.png',
-            imageCenter: '/images/case1-scale-2.png',
-            imageRight: '/images/case1-scale-3.png',
+            imageLeft: '/images/story1-scale-1.png',
+            imageCenter: '/images/story1-scale-2.png',
+            imageRight: '/images/story1-scale-3.png',
             speedLeft: 0.5,
             speedCenter: 1.0,
             speedRight: 1.5,
@@ -62,9 +62,9 @@ export const case1Content = {
         media: {
           type: 'parallax' as const,
           props: {
-            image1: '/images/case1-framework-1.png',
-            image2: '/images/case1-framework-2.png',
-            image3: '/images/case1-framework-3.png',
+            image1: '/images/story1-framework-1.png',
+            image2: '/images/story1-framework-2.png',
+            image3: '/images/story1-framework-3.png',
             mediaLabel: 'Input & Output Elements for Chat and Classic UI',
           },
         },
@@ -78,7 +78,7 @@ export const case1Content = {
         media: {
           type: 'chaptered-video' as const,
           props: {
-            videoSrc: '/videos/case1-chaptered-test.mp4',
+            videoSrc: '/videos/story1-chaptered-test.mp4',
             mediaLabel: 'Two workflows, one unified experience. Users pick what fits best.',
             chapterGroups: [
               {
