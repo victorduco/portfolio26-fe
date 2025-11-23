@@ -8,7 +8,7 @@ export const story2Content = {
       {
         heading: {
           main: 'Leader in Employee Communications',
-          subtitle: 'About Smarp',
+          subtitle: 'About Smarp / Haiilo',
         },
         textBefore: 'Smarp is the leading employee communication platform trusted by global enterprises including Google, Coca-Cola, and L\'Oréal. With over 50,000 active users across Fortune 500 companies, Smarp empowers organizations to connect teams, share knowledge, and build stronger company culture.',
         media: {
@@ -20,7 +20,7 @@ export const story2Content = {
             zIndexLeft: 2,
             zIndexCenter: 1,
             zIndexRight: 3,
-            mediaLabel: 'Key Features of Smarp Employee Communications Platform',
+            mediaLabel: 'Key Highlights from Smarp (now Haiilo) with major clients, core features, and results',
           },
         },
       },

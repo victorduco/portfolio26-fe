@@ -107,7 +107,7 @@ const summaryConfigs = {
     role: 'Senior Product Designer',
     contribution: ['User Research', 'Interface Design', 'Interaction Design', 'Design System'],
     organizationType: 'Company',
-    organizationName: 'Smarp (Haiilo)'
+    organizationName: 'Smarp (now Haiilo)'
   },
   '3': {
     title: 'A Full Redesign of an Oil Terminal Operations App',
