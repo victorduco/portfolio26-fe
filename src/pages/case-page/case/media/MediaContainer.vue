@@ -130,7 +130,7 @@ const containerStyle = computed(() => {
   left: 50%;
   transform: translateX(-50%);
   margin-top: 48px;
-  margin-bottom: 0;
+  margin-bottom: 48px;
   overflow: visible;
 }
 

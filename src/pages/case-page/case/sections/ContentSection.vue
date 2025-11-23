@@ -167,7 +167,8 @@ function getMediaProps(props: Record<string, any>): Record<string, any> {
 }
 
 .text-after {
-  margin-top: 64px;
+  margin-top: 0;
+  margin-bottom: 0;
   width: 100%;
   max-width: 1200px;
   padding: 0 16px;

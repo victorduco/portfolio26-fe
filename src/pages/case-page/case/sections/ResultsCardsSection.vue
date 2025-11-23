@@ -131,7 +131,7 @@ onUnmounted(() => {
 <style scoped>
 .case-results-2 {
   width: 100%;
-  padding: 80px 0 48px;
+  padding: 80px 0 168px;
   overflow-x: hidden;
   display: flex;
   justify-content: center;

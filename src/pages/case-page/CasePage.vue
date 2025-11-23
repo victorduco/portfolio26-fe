@@ -67,6 +67,12 @@
           :results-note="caseConfig.resultsNote"
         />
       </section>
+      <section v-if="caseConfig.simpleResults" :id="`case${caseId}-results`">
+        <SimpleResultsSection
+          :title="caseConfig.simpleResults.title"
+          :text="caseConfig.simpleResults.text"
+        />
+      </section>
     </div>
     <NextStoryPlaque v-if="caseConfig.nextProject" :story-number="nextStoryNumber" />
     <NextProjectSection
@@ -84,6 +90,7 @@ import ContentSection from "./case/sections/ContentSection.vue";
 import SummarySection from "./case/sections/SummarySection.vue";
 import ResultsGridSection from "./case/sections/ResultsGridSection.vue";
 import ResultsCardsSection from "./case/sections/ResultsCardsSection.vue";
+import SimpleResultsSection from "./case/sections/SimpleResultsSection.vue";
 import NextStoryPlaque from "./case/sections/NextStoryPlaque.vue";
 import NextProjectSection from "./case/sections/next-project/NextProjectSection.vue";
 import Case1NextProject from "./case/sections/next-project/Case1NextProject.vue";
@@ -193,6 +200,10 @@ const caseConfigs = {
     summaryImage: getImagePath("case3-summary.png"),
     videoBackground: "#f5f5f7", // Light gray background for all media elements
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
+    simpleResults: {
+      title: "Redesign Results",
+      text: "The comprehensive redesign transformed the platform from a struggling e-commerce experience into a high-performing solution. Load times dropped 79%, cart abandonment fell from 73% to 34%, and revenue increased 142% in six months. Within 12 months, the user base grew from 2M to 4.2M users, the platform moved from #7 to #2 in market rankings, and won Awwwards Site of the Day while being featured in TechCrunch and Smashing Magazine.",
+    },
     nextProject: {
       caseId: "1",
       title: "Transforming Account Reconciliation with AI-Driven User Experience",
@@ -259,7 +270,7 @@ const navigationSections = computed(() => {
   });
 
   // Add Results if it exists
-  if (caseConfig.value.results) {
+  if (caseConfig.value.results || caseConfig.value.simpleResults) {
     navSections.push({ id: `case${props.caseId}-results`, label: "Results" });
   }
 
@@ -306,15 +317,10 @@ section {
 .section-title {
   width: 100%;
   max-width: 1200px;
-  margin-top: 24px;
-  margin-bottom: 24px;
+  margin-top: 12px;
+  margin-bottom: 0;
   padding: 0 16px;
   box-sizing: border-box;
-}
-
-/* Add extra padding to the last section before Next Project */
-section:has(+ .case-next-project) {
-  padding-bottom: 180px;
 }
 
 @media (max-width: 899px) {
