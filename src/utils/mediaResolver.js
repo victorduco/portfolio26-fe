@@ -1,15 +1,20 @@
 /**
  * Media Path Resolver
  *
- * Resolves media paths to CDN URLs in production or local paths in development.
- * Uses a manifest file to map original filenames to content-hashed versions.
+ * Resolves media paths using a manifest file that maps original filenames to content-hashed versions.
+ * In production, can optionally use CDN URLs.
+ *
+ * Dev mode behavior:
+ * - If file is in manifest: returns hashed version (/images/file.abc123.png)
+ * - If file NOT in manifest: returns original name (/images/file.png)
+ * - This allows working with new files before running the hash script
  *
  * Usage:
  *   import { getImagePath, getVideoPath } from '@/utils/mediaResolver'
  *
  *   const src = getImagePath('story1-domain-tree.png')
- *   // Dev:  /images/story1-domain-tree.abc12345.png
- *   // Prod: https://cdn.example.com/images/story1-domain-tree.abc12345.png
+ *   // Dev:  /images/story1-domain-tree.abc12345.png (if in manifest) OR /images/story1-domain-tree.png (if not)
+ *   // Prod: https://cdn.example.com/images/story1-domain-tree.abc12345.png (if CDN configured)
  */
 
 // CDN configuration
@@ -57,12 +62,14 @@ export function getImagePath(filename) {
     filename = filename.replace("/images/", "");
   }
 
-  // In dev mode, use original filename directly (no manifest needed)
+  // In dev mode, try hashed name first, fallback to original if not in manifest
+  // This allows working with new files before they're hashed
   if (import.meta.env.DEV) {
-    return `/images/${filename}`;
+    const hashedName = manifest?.images?.[filename];
+    return hashedName ? `/images/${hashedName}` : `/images/${filename}`;
   }
 
-  // In prod, get hashed filename from manifest
+  // In prod, always use manifest (or original as fallback)
   const hashedName = manifest?.images?.[filename] || filename;
 
   if (USE_CDN) {
@@ -83,12 +90,14 @@ export function getVideoPath(filename) {
     filename = filename.replace("/videos/", "");
   }
 
-  // In dev mode, use original filename directly (no manifest needed)
+  // In dev mode, try hashed name first, fallback to original if not in manifest
+  // This allows working with new files before they're hashed
   if (import.meta.env.DEV) {
-    return `/videos/${filename}`;
+    const hashedName = manifest?.videos?.[filename];
+    return hashedName ? `/videos/${hashedName}` : `/videos/${filename}`;
   }
 
-  // In prod, get hashed filename from manifest
+  // In prod, always use manifest (or original as fallback)
   const hashedName = manifest?.videos?.[filename] || filename;
 
   if (USE_CDN) {

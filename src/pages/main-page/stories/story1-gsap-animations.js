@@ -38,7 +38,7 @@ export function initAnimations(pinContainer) {
 
   // Main timeline: simplified animation for line to button transformation
   const mainTimeline = gsap.timeline({
-    defaults: { ease: "power1.inOut", force3D: false },
+    defaults: { ease: "power1.inOut" },
     scrollTrigger: {
       trigger: section1,
       start: "top top",
