@@ -21,6 +21,7 @@
 <script setup>
 import { computed } from 'vue';
 import { summaryConfigs } from '@/content/storyConfigs.js';
+import { getImagePath, getVideoPath } from '@/utils/mediaResolver.js';
 import MediaContainer from '../media/MediaContainer.vue';
 import FullscreenImg from '../media/FullscreenImg.vue';
 import FullscreenVideo from '../media/FullscreenVideo.vue';
@@ -40,11 +41,11 @@ const media = computed(() => {
   const cfg = props.storyConfig;
   if (cfg.summaryImage) return {
     container: { type: 'fullheight', backgroundColor: cfg.videoBackground || 'transparent', label: cfg.mediaLabel || '', wrapperClass: 'fullscreen-image-wrapper' },
-    component: FullscreenImg, props: { imageSrc: cfg.summaryImage, alt: `${data.value.title} preview` }
+    component: FullscreenImg, props: { imageSrc: getImagePath(cfg.summaryImage), alt: `${data.value.title} preview` }
   };
   if (cfg.summaryVideo) return {
     container: { type: 'fullheight', backgroundColor: cfg.videoBackground || cfg.primary, label: cfg.mediaLabel || '', wrapperClass: 'fullscreen-video-wrapper', containerClass: 'fullscreen-video' },
-    component: FullscreenVideo, props: { videoSrc: cfg.summaryVideo, autoplayThreshold: cfg.autoplayThreshold || 0.75 }
+    component: FullscreenVideo, props: { videoSrc: getVideoPath(cfg.summaryVideo), autoplayThreshold: cfg.autoplayThreshold || 0.75 }
   };
   return null;
 });
@@ -53,7 +54,7 @@ const media = computed(() => {
 <style scoped>
 .story-summary { display: flex; flex-direction: column; }
 .summary-content { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 75px 0; gap: 32px; }
-.summary-header, .summary-details { max-width: 1200px; padding: 0 16px; box-sizing: border-box; }
+.summary-header, .summary-details { width: 100%; max-width: 1200px; padding: 0 16px; box-sizing: border-box; }
 .summary-header { display: flex; flex-direction: column; gap: 16px; }
 .summary-title { font-family: var(--story-title-font, var(--font-family-base)); margin: 0; color: inherit; text-align: left; }
 .summary-details { display: flex; flex-wrap: wrap; gap: 32px 128px; align-items: flex-start; }

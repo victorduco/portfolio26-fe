@@ -192,7 +192,10 @@ onUnmounted(() => {
   flex: 1;
 }
 .result-value {
-  font: var(--font-weight-semibold) clamp(32px, 4vw, 48px)/1.2 inherit;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  color: inherit;
 }
 .result-value :deep(.rocket-icon) {
   display: inline-block;

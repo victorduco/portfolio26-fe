@@ -1,13 +1,9 @@
-import { getImagePath, getVideoPath } from "@/utils/mediaResolver.js";
-
-const icon = (name) => new URL(`@/assets/icons/${name}.svg`, import.meta.url).href;
-
 export const storyConfigs = {
   1: {
     background: "#ffffff",
     primary: "#007aff",
     subtitleColor: "#007aff",
-    summaryVideo: getVideoPath("story1-summary.mp4"),
+    summaryVideo: "story1-summary.mp4",
     videoBackground: "#f5f5f7",
     results: [
       { title: "Noticeable Time Reduction", description: "Task completion times improved significantly, with reductions in time required depending on task complexity." },
@@ -21,13 +17,13 @@ export const storyConfigs = {
     primary: "#000000",
     subtitleColor: "#B14127",
     font: "'Hanken Grotesk', sans-serif",
-    summaryImage: getImagePath("story2-summary.png"),
+    summaryImage: "story2-summary.png",
     videoBackground: "#F7E7E7",
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     results: [
-      { label: "App Rating", iconSrc: icon("results-star"), title: "3.2 → 4.6", description: "Average rating in the App Store and Google Play Store." },
-      { label: "Installation Rate", iconSrc: icon("results-download"), title: "4.5% → 32%", description: "Percentage of users who installed the app out of the total user base." },
-      { label: "Active Users", iconSrc: icon("results-user"), title: "0.5% → 14%", description: "Percentage of users who became regular mobile app users out of the total user base." }
+      { label: "App Rating", iconSrc: new URL('@/assets/icons/results-star.svg', import.meta.url).href, title: "3.2 → 4.6", description: "Average rating in the App Store and Google Play Store." },
+      { label: "Installation Rate", iconSrc: new URL('@/assets/icons/results-download.svg', import.meta.url).href, title: "4.5% → 32%", description: "Percentage of users who installed the app out of the total user base." },
+      { label: "Active Users", iconSrc: new URL('@/assets/icons/results-user.svg', import.meta.url).href, title: "0.5% → 14%", description: "Percentage of users who became regular mobile app users out of the total user base." }
     ],
     resultsIntro: "The results show impact 11 months post-launch. Metrics were measured and validated by the marketing team through comprehensive analytics tracking across App Store, Google Play, and internal user engagement platforms.",
     resultsMediaLabel: "Redesign results showing impact 11 months post-launch",
@@ -39,7 +35,7 @@ export const storyConfigs = {
     primary: "#ca4034",
     subtitleColor: "#ca4034",
     font: "'Neue Haas Grotesk Display Pro', sans-serif",
-    summaryImage: getImagePath("story3-summary.png"),
+    summaryImage: "story3-summary.png",
     videoBackground: "rgb(213, 241, 255)",
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     simpleResults: {
