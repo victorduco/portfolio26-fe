@@ -1,5 +1,6 @@
 <template>
   <div class="fullscreen-image__container" ref="containerRef"
+    :data-magnifier="enableMagnifier ? 'true' : undefined"
     @mousemove="handleMouseMove" @mouseenter="handleMouseEnter" @mouseleave="showMagnifier = false">
     <img :src="imageSrc" :alt="alt" class="fullscreen-image__img" loading="lazy" ref="imageRef" />
     <div v-if="enableMagnifier && showMagnifier" class="magnifier" :style="magnifierStyle">
@@ -63,9 +64,9 @@ const magnifierImageStyle = computed(() => {
 }
 .fullscreen-image__img {
   max-width: 100%; max-height: 100vh; width: auto; height: auto;
-  object-fit: contain; display: block; cursor: none; margin: auto;
+  object-fit: contain; display: block; cursor: default; margin: auto;
 }
-.fullscreen-image__container:not(:hover) .fullscreen-image__img { cursor: default; }
+.fullscreen-image__container[data-magnifier="true"]:hover .fullscreen-image__img { cursor: none; }
 .magnifier {
   position: absolute; border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 50%;
   pointer-events: none; z-index: 10; overflow: hidden; transition: opacity 0.15s ease;
