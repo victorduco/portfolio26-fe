@@ -3,122 +3,55 @@ import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
-// Global instances
 let lenisInstance = null;
+let rafCallback = null;
 
-/**
- * Vue composable for Lenis smooth scroll
- * Integrates with GSAP ScrollTrigger for animations
- */
 export function useLenis() {
   const lenis = ref(null);
 
-  /**
-   * Initialize Lenis with GSAP integration
-   * @param {Object} options - Lenis configuration options
-   */
-  function setupLenis(options = {}) {
-    // Configure GSAP
-    gsap.config({
-      nullTargetWarn: false,
-      force3D: true,
-    });
+  /** Setup Lenis smooth scroll with GSAP ticker. Options: lerp, duration, smoothWheel, etc */
+  const setupLenis = (options = {}) => {
+    gsap.config({ nullTargetWarn: false, force3D: true });
 
-    // Default Lenis options for smooth scroll
-    const defaultOptions = {
-      lerp: 0.1, // smoothness (0-1)
-      duration: 1.2, // scroll duration
-      smoothWheel: true,
-      syncTouch: false, // disable on touch devices for better performance
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-      infinite: false,
-      autoResize: true,
+    lenisInstance = new Lenis({
+      lerp: 0.1, duration: 1.2, smoothWheel: true, syncTouch: false,
+      wheelMultiplier: 1, touchMultiplier: 2, infinite: false, autoResize: true,
       ...options,
-    };
-
-    // Create Lenis instance
-    lenisInstance = new Lenis(defaultOptions);
+    });
     lenis.value = lenisInstance;
 
-    // Integrate Lenis with GSAP ScrollTrigger
     lenisInstance.on("scroll", ScrollTrigger.update);
-
-    // Use GSAP ticker for smooth integration
-    gsap.ticker.add((time) => {
-      lenisInstance.raf(time * 1000);
-    });
-
-    // Disable GSAP's default lag smoothing
+    rafCallback = (time) => lenisInstance.raf(time * 1000);
+    gsap.ticker.add(rafCallback);
     gsap.ticker.lagSmoothing(0);
 
     return lenisInstance;
-  }
+  };
 
-  /**
-   * Start Lenis
-   */
-  function start() {
-    lenisInstance?.start();
-  }
+  /** Scroll to target. target: string|number|Element, options: { offset?, duration?, easing? } */
+  const scrollTo = (target, options = {}) => {
+    lenisInstance?.scrollTo(target, {
+      offset: 0, duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      ...options,
+    });
+  };
 
-  /**
-   * Stop Lenis
-   */
-  function stop() {
-    lenisInstance?.stop();
-  }
-
-  /**
-   * Scroll to a target element or position
-   * @param {string|number|HTMLElement} target - Target to scroll to
-   * @param {Object} options - Scroll options
-   */
-  function scrollTo(target, options = {}) {
-    if (lenisInstance) {
-      lenisInstance.scrollTo(target, {
-        offset: 0,
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        ...options,
-      });
-    }
-  }
-
-  /**
-   * Destroy Lenis and cleanup
-   */
-  function destroy() {
-    if (lenisInstance) {
-      // Remove GSAP ticker
-      gsap.ticker.remove((time) => {
-        lenisInstance.raf(time * 1000);
-      });
-
-      // Destroy instance
-      lenisInstance.destroy();
-
-      lenisInstance = null;
-      lenis.value = null;
-    }
-  }
+  const destroy = () => {
+    if (!lenisInstance) return;
+    if (rafCallback) gsap.ticker.remove(rafCallback);
+    lenisInstance.destroy();
+    lenisInstance = null;
+    lenis.value = null;
+  };
 
   return {
-    lenis,
-    setupLenis,
-    start,
-    stop,
-    scrollTo,
-    destroy,
+    lenis, setupLenis, scrollTo, destroy,
+    start: () => lenisInstance?.start(),
+    stop: () => lenisInstance?.stop(),
   };
 }
 
-/**
- * Get current Lenis instance (for use outside of composable)
- */
-export function getLenisInstance() {
-  return lenisInstance;
-}
+export const getLenisInstance = () => lenisInstance;

@@ -5,27 +5,14 @@
 }
 
 .mask-element-inner {
-  transform: rotate(var(--rotation, 0deg)) scale(var(--scale, 1))
-    translateX(var(--x-offset, 0px)) translateY(var(--y-offset, 0px));
-  transform-origin: center center;
+  position: absolute;
   width: 100vw;
   height: 100vh;
-
-  /* Use sharp background with CSS blur */
-  background-image: var(--global-keypad-bg);
-  background-position: center center;
-  background-size: 150%;
-  background-repeat: no-repeat;
-  pointer-events: none;
-  opacity: 1;
-  /* CSS blur applied */
+  transform: rotate(var(--rotation, 0deg)) scale(var(--scale, 1)) translate(var(--x-offset, 0px), var(--y-offset, 0px));
+  background: var(--global-keypad-bg) center/150% no-repeat;
   filter: var(--glass-filter);
-  position: absolute;
-  overflow: visible;
+  pointer-events: none;
   z-index: 1;
 }
 
-.mask-element-inner.no-background,
-.keypad-no-bg .mask-element-inner {
-  background-image: none !important;
-}
+.mask-element-inner.no-background, .keypad-no-bg .mask-element-inner { background-image: none !important; }

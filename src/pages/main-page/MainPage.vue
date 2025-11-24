@@ -3,7 +3,7 @@
     <PageNavigation
       :sections="navigationSections"
       :dark-mode="isDarkMode"
-      @animation-complete="handleNavAnimationComplete"
+      @animation-complete="introRef?.handleNavAnimationComplete()"
       @active-section-change="handleActiveSectionChange"
     />
   </Teleport>
@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch, onMounted } from "vue";
+import { nextTick, ref, watch } from "vue";
 import Intro from "./intro/Intro.vue";
 import Story1 from "./stories/Story1.vue";
 import Story2 from "./stories/Story2.vue";
@@ -28,7 +28,6 @@ import Contacts from "./contacts/Contacts.vue";
 import PageNavigation from "@/components/page-navigation/PageNavigation.vue";
 import { useRoute } from "vue-router";
 import { useMeta } from "../../composables/useMeta.js";
-import { useLenis } from "../../composables/useLenis.js";
 
 const navigationSections = [
   { id: "intro", label: "Intro" },
@@ -42,66 +41,36 @@ const navigationSections = [
 useMeta("home");
 const route = useRoute();
 const introRef = ref(null);
-// const { registerSnapPoints, registerMandatoryTriggerSnaps } = useLenis();
-
 const isDarkMode = ref(true);
 const shouldFadeIn = ref(false);
 
-// Register snap points after all sections are mounted
-// onMounted(() => {
-//   nextTick(() => {
-//     registerSnapPoints();
-
-//     // Register trigger-based mandatory snaps after a short delay
-//     // to ensure all GSAP ScrollTriggers are initialized
-//     setTimeout(() => {
-//       registerMandatoryTriggerSnaps();
-//     }, 100);
-//   });
-// });
+const lightSections = new Set(["story1", "story3"]);
 
 watch(
   () => route.meta?.restoreScrollTop,
   (scrollTop) => {
-    if (scrollTop != null && typeof window !== "undefined") {
-      nextTick().then(() => {
-        requestAnimationFrame(() => {
-          window.scrollTo({ top: scrollTop, behavior: "auto" });
-        });
-      });
+    if (scrollTop != null) {
+      nextTick(() => requestAnimationFrame(() =>
+        window.scrollTo({ top: scrollTop, behavior: "auto" })
+      ));
     }
   },
   { immediate: true }
 );
 
-// Trigger fade-in when returning from story page
 watch(
   () => route.meta?.skipNavIntro,
   (shouldSkip) => {
     if (shouldSkip) {
       shouldFadeIn.value = true;
-
-      // Remove the class after animation completes (0.3s delay + 0.3s fade = 600ms)
-      setTimeout(() => {
-        shouldFadeIn.value = false;
-      }, 600);
+      setTimeout(() => shouldFadeIn.value = false, 600);
     }
   },
   { immediate: true }
 );
 
-function handleNavAnimationComplete() {
-  introRef.value?.handleNavAnimationComplete();
-}
-
 function handleActiveSectionChange(sectionId) {
-  if (sectionId === "story2") {
-    isDarkMode.value = true; // White menu for story2
-  } else if (sectionId === "story1" || sectionId === "story3") {
-    isDarkMode.value = false; // Black menu for story1 and story3
-  } else {
-    isDarkMode.value = true; // White menu for intro, ai-play, contacts (dark backgrounds)
-  }
+  isDarkMode.value = !lightSections.has(sectionId);
 }
 </script>
 
@@ -109,21 +78,13 @@ function handleActiveSectionChange(sectionId) {
 .main-page {
   width: 100%;
   min-height: 100vh;
-  background-color: #171717; /* Default dark background */
-}
-
-/* Fade-in animation when returning from story page */
-.main-page.fade-in {
-  position: relative;
+  background-color: #171717;
 }
 
 .main-page.fade-in::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background-color: #ffffff;
   z-index: 9999;
   pointer-events: none;
@@ -131,18 +92,7 @@ function handleActiveSectionChange(sectionId) {
 }
 
 @keyframes fadeOutDelayed {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 1; /* Hold white screen for 0.3 seconds */
-  }
-  100% {
-    opacity: 0; /* Fade out in last 0.3 seconds */
-  }
-}
-
-.scroll-container {
-  width: 100%;
+  0%, 50% { opacity: 1; }
+  100% { opacity: 0; }
 }
 </style>

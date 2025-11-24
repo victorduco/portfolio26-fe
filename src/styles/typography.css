@@ -1,8 +1,7 @@
 @import "./fonts.css";
 
 :root {
-  --font-family-base: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  --font-family-base: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -18,85 +17,27 @@
   --line-height-relaxed: 1.35;
 }
 
-h1,
-.h1 {
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6, p, .body1 {
   font-family: var(--font-family-base);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h1);
-  line-height: var(--line-height-tight);
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
   margin: 0;
 }
 
-h2,
-.h2 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h2);
-  line-height: var(--line-height-snug);
-  letter-spacing: -0.01em;
-  color: var(--color-text-primary);
-  margin: 0;
-}
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5 { color: var(--color-text-primary); }
+h6, .h6, p, .body1 { color: var(--color-text-secondary); }
 
-h3,
-.h3 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h3);
-  line-height: var(--line-height-snug);
-  color: var(--color-text-primary);
-  margin: 0;
-}
+h1, .h1, h2, .h2 { letter-spacing: -0.01em; }
+h1, .h1, h2, .h2, h3, .h3 { font-weight: var(--font-weight-semibold); }
+h4, .h4 { font-weight: var(--font-weight-medium); }
+h5, .h5, h6, .h6, p { font-weight: var(--font-weight-regular); }
 
-h4,
-.h4 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h4);
-  line-height: var(--line-height-relaxed);
-  color: var(--color-text-primary);
-  margin: 0;
-}
+h1, .h1 { font-size: var(--font-size-h1); line-height: var(--line-height-tight); }
+h2, .h2, h3, .h3 { line-height: var(--line-height-snug); }
+h2, .h2 { font-size: var(--font-size-h2); }
+h3, .h3 { font-size: var(--font-size-h3); }
+h4, .h4, h5, .h5 { line-height: var(--line-height-relaxed); }
+h4, .h4 { font-size: var(--font-size-h4); }
+h5, .h5 { font-size: var(--font-size-h5); }
+h6, .h6 { font-size: var(--font-size-h6); line-height: var(--line-height-relaxed); text-transform: uppercase; letter-spacing: 0.08em; }
 
-h5,
-.h5 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
-  font-size: var(--font-size-h5);
-  line-height: var(--line-height-relaxed);
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
-h6,
-.h6 {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
-  font-size: var(--font-size-h6);
-  line-height: var(--line-height-relaxed);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-p {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-regular);
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  color: var(--color-text-secondary);
-  margin: 0;
-  max-width: 70ch;
-}
-
-.body1 {
-  font-family: var(--font-family-base);
-  font-weight: 300;
-  font-size: clamp(20px, 2.2vw, 34px);
-  line-height: 1.7;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
+p { font-size: var(--fs-body); line-height: var(--lh-body); max-width: 70ch; }
+.body1 { font-weight: 300; font-size: clamp(20px, 2.2vw, 34px); line-height: 1.7; }

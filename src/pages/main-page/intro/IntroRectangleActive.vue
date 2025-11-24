@@ -1,135 +1,63 @@
 <template>
   <motion.div
     class="intro-active-diamond"
-    :class="{
-      'intro-active-diamond--mobile': isMobileLayout || isSmallestBreakpoints,
-      'intro-active-diamond--mobile-active':
-        (isMobileLayout || isSmallestBreakpoints) && isActive,
-      'intro-active-diamond--smallest': isSmallestBreakpoints,
-    }"
+    :class="{ 'intro-active-diamond--mobile': isMobile, 'intro-active-diamond--active': isMobile && isActive, 'intro-active-diamond--smallest': isSmallestBreakpoints }"
     :variants="activeDiamondVariants"
     :animate="isActive ? 'active' : 'hidden'"
     :transition="spring"
     :custom="index"
-    @click.self="handleBackdropClick"
+    @click.self="isMobile && emit('close')"
   >
     <motion.div
       class="intro-active-content"
-      :class="{
-        'intro-active-content--mobile': isMobileLayout || isSmallestBreakpoints,
-        'intro-active-content--smallest': isSmallestBreakpoints,
-      }"
+      :class="{ 'intro-active-content--mobile': isMobile, 'intro-active-content--smallest': isSmallestBreakpoints }"
       :variants="activeContentVariants"
       initial="hidden"
       :animate="isActive ? 'active' : 'hidden'"
       :transition="spring"
-      :custom="{ isMobileLayout: isMobileLayout || isSmallestBreakpoints }"
+      :custom="{ isMobileLayout: isMobile }"
     >
-      <i class="intro-active-number" :class="getIconClass(index)"></i>
-      <h3 class="intro-active-title">{{ contentData[index]?.title }}</h3>
-      <p class="intro-active-description">
-        {{ contentData[index]?.description }}
-      </p>
+      <i class="intro-active-number" :class="['icon-d', 'icon-a', 'icon-c', 'icon-b'][index]"></i>
+      <h3 class="intro-active-title">{{ introContent[index]?.title }}</h3>
+      <p class="intro-active-description">{{ introContent[index]?.description }}</p>
     </motion.div>
-    <button
-      v-if="isMobileLayout || isSmallestBreakpoints"
-      class="intro-active-close"
-      type="button"
-      aria-label="Close"
-      @click.stop="emitClose"
-    >
+    <button v-if="isMobile" class="intro-active-close" type="button" aria-label="Close" @click.stop="emit('close')">
       <span class="intro-active-close-icon" aria-hidden="true"></span>
     </button>
   </motion.div>
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { motion } from "motion-v";
-import {
-  spring,
-  activeDiamondVariants,
-  activeContentVariants,
-} from "./variants.js";
+import { spring, activeDiamondVariants, activeContentVariants } from "./variants.js";
+import { introContent } from "@/content/storyConfigs.js";
 
 const props = defineProps({
-  index: {
-    type: Number,
-    required: true,
-  },
-  isActive: {
-    type: Boolean,
-    default: false,
-  },
-  isMobileLayout: {
-    type: Boolean,
-    default: false,
-  },
-  isSmallestBreakpoints: {
-    type: Boolean,
-    default: false,
-  },
+  index: { type: Number, required: true },
+  isActive: { type: Boolean, default: false },
+  isMobileLayout: { type: Boolean, default: false },
+  isSmallestBreakpoints: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["close"]);
-
-
-const contentData = [
-  {
-    title: "Vision",
-    description:
-      "Strong vision means understanding the real problem. I know how to guide teams toward aligned direction and keep the product focused on meaningful outcomes.",
-  },
-  {
-    title: "Connection",
-    description:
-      "Great projects are built by people. I love bringing different perspectives together and turning collaboration into real progress.",
-  },
-  {
-    title: "Technology",
-    description:
-      "Continuous learning and hands-on tech experience help me create solutions that are both innovative and practical, grounded in real engineering constraints.",
-  },
-  {
-    title: "Scale",
-    description:
-      "I shape and build large-scale enterprise experiences used internationally, ensuring the UX stays consistent, predictable, and easy to operate.",
-  },
-];
-
-
-
-function getIconClass(index) {
-  const iconNames = ["icon-d", "icon-a", "icon-c", "icon-b"];
-  return iconNames[index] || "icon-a";
-}
-
-function emitClose() {
-  emit("close");
-}
-
-function handleBackdropClick() {
-  
-  if (!props.isMobileLayout && !props.isSmallestBreakpoints) return;
-  emitClose();
-}
+const isMobile = computed(() => props.isMobileLayout || props.isSmallestBreakpoints);
 </script>
 
 <style scoped>
 .intro-active-diamond {
+  --radius: 26px;
   position: absolute;
   inset: 0;
   margin: auto;
   width: 97%;
   height: 97%;
-  border-radius: 26px;
+  border-radius: var(--radius);
   display: grid;
   place-items: center;
   z-index: 10;
   pointer-events: none;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
 .intro-active-content {
@@ -142,26 +70,16 @@ function handleBackdropClick() {
   padding: 32px;
   max-width: 480px;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
 .intro-active-number {
   font-size: clamp(48px, 3vw, 64px);
   font-weight: 800;
   line-height: 1;
-  color: #000000;
-  text-align: center;
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.intro-active-number::before {
-  margin: 0;
-  width: auto;
-  display: block;
 }
 
 .intro-active-title {
@@ -169,15 +87,14 @@ function handleBackdropClick() {
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
-  color: #000000;
+  color: #000;
 }
 
 .intro-active-description {
   font-size: clamp(14px, 1.5vw, 18px);
-  font-weight: 400;
   line-height: 1.4;
   margin: 0;
-  color: #000000;
+  color: #000;
   opacity: 0.9;
 }
 
@@ -195,35 +112,18 @@ function handleBackdropClick() {
     justify-content: center;
     align-items: center;
     gap: 24px;
-    pointer-events: none;
     z-index: 10010;
-    overflow: hidden;
   }
-
-  .intro-active-diamond--mobile.intro-active-diamond--mobile-active {
-    pointer-events: auto;
-  }
-
+  .intro-active-diamond--active { pointer-events: auto; }
   .intro-active-content--mobile {
     max-width: min(520px, 100%);
     width: 100%;
     background: rgba(255, 255, 255, 0.85);
-    border-radius: 26px;
+    border-radius: var(--radius);
     padding: 40px 24px calc(72px + 100px);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
-    color: #000000;
   }
-
-  .intro-active-number {
-    font-size: clamp(48px, 20vw, 72px);
-  }
-
-  .intro-active-number,
-  .intro-active-title,
-  .intro-active-description {
-    color: #000000;
-  }
-
+  .intro-active-number { font-size: clamp(48px, 20vw, 72px); }
   .intro-active-close {
     position: absolute;
     bottom: max(24px, env(safe-area-inset-bottom));
@@ -240,22 +140,9 @@ function handleBackdropClick() {
     cursor: pointer;
     transition: background 0.2s ease;
   }
-
-  .intro-active-close:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 2px;
-  }
-
-  .intro-active-close:hover {
-    background: rgba(0, 0, 0, 0.7);
-  }
-
-  .intro-active-close-icon {
-    position: relative;
-    width: 18px;
-    height: 18px;
-  }
-
+  .intro-active-close:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.8); outline-offset: 2px; }
+  .intro-active-close:hover { background: rgba(0, 0, 0, 0.7); }
+  .intro-active-close-icon { position: relative; width: 18px; height: 18px; }
   .intro-active-close-icon::before,
   .intro-active-close-icon::after {
     content: "";
@@ -264,44 +151,26 @@ function handleBackdropClick() {
     left: 50%;
     width: 2px;
     height: 100%;
-    background: #ffffff;
+    background: #fff;
     transform: translateX(-50%) rotate(45deg);
   }
-
-  .intro-active-close-icon::after {
-    transform: translateX(-50%) rotate(-45deg);
-  }
+  .intro-active-close-icon::after { transform: translateX(-50%) rotate(-45deg); }
 }
 
-/* Дополнительные стили для двух наименьших брейкпоинтов (xs + sm: 360-600px) */
 @media (max-width: 600px) {
   .intro-active-diamond--smallest {
-    /* Fullscreen поведение - ромб по центру экрана */
     position: fixed;
     inset: 0;
     margin: auto;
     width: min(90vw, 90vh);
     height: min(90vw, 90vh);
-    border-radius: 26px;
+    border-radius: var(--radius);
     z-index: 10010;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-
-  .intro-active-content--smallest {
-    /* Контент внутри ромба */
-    padding: 40px 20px calc(80px + 100px);
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .intro-active-close {
-    /* Кнопка закрытия внизу экрана */
-    position: fixed;
-    width: 56px;
-    height: 56px;
-    bottom: max(32px, env(safe-area-inset-bottom));
-  }
+  .intro-active-content--smallest { padding: 40px 20px calc(80px + 100px); max-width: 100%; width: 100%; }
+  .intro-active-close { position: fixed; width: 56px; height: 56px; bottom: max(32px, env(safe-area-inset-bottom)); }
 }
 </style>

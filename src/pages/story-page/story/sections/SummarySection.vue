@@ -1,251 +1,76 @@
 <template>
   <section class="story-summary">
     <div class="summary-content">
-      <!-- Part 1: Title -->
-      <div class="summary-header">
-        <h2 class="summary-title">{{ summaryData.title }}</h2>
-      </div>
-
-      <!-- Part 2: All details in horizontal flow -->
-      <div class="summary-details-wrapper">
-        <!-- Organization -->
-        <div class="detail-group">
-          <h4 class="detail-label">{{ summaryData.organizationType }}</h4>
-          <p class="detail-value">{{ summaryData.organizationName }}</p>
-        </div>
-
-        <!-- Timeline -->
-        <div class="detail-group">
-          <h4 class="detail-label">Timeline</h4>
-          <p class="detail-value">{{ summaryData.timeline }}</p>
-        </div>
-
-        <!-- Project Type -->
-        <div class="detail-group">
-          <h4 class="detail-label">Project Type</h4>
-          <p class="detail-value">{{ summaryData.projectType }}</p>
-        </div>
-
-        <!-- Role -->
-        <div class="detail-group">
-          <h4 class="detail-label">Role</h4>
-          <p class="detail-value">{{ summaryData.role }}</p>
-        </div>
-
-        <!-- Contribution -->
-        <div class="detail-group">
-          <h4 class="detail-label">Contribution</h4>
-          <div class="detail-value">
-            <span v-for="(item, index) in summaryData.contribution" :key="item">
-              {{ item }}<span v-if="index < summaryData.contribution.length - 1"> → </span>
-            </span>
+      <div class="summary-header"><h2 class="summary-title">{{ data.title }}</h2></div>
+      <div class="summary-details">
+        <div v-for="d in details" :key="d.label" class="detail-group">
+          <h4 class="detail-label">{{ d.label }}</h4>
+          <p v-if="!d.isArray" class="detail-value">{{ d.value }}</p>
+          <div v-else class="detail-value">
+            <span v-for="(item, i) in d.value" :key="item">{{ item }}<span v-if="i < d.value.length - 1"> → </span></span>
           </div>
         </div>
       </div>
     </div>
-    <MediaContainer
-      v-if="storyConfig.summaryImage"
-      type="fullheight"
-      :background-color="storyConfig.videoBackground || 'transparent'"
-      :label="storyConfig.mediaLabel || ''"
-      wrapper-class="fullscreen-image-wrapper"
-    >
-      <FullscreenImg
-        :image-src="storyConfig.summaryImage"
-        :alt="`${summaryData.title} preview`"
-      />
-    </MediaContainer>
-    <MediaContainer
-      v-if="storyConfig.summaryVideo"
-      type="fullheight"
-      :background-color="storyConfig.videoBackground || storyConfig.primary"
-      :label="storyConfig.mediaLabel || ''"
-      wrapper-class="fullscreen-video-wrapper"
-      container-class="fullscreen-video"
-    >
-      <FullscreenVideo
-        :video-src="storyConfig.summaryVideo"
-        :autoplay-threshold="storyConfig.autoplayThreshold || 0.75"
-      />
+    <MediaContainer v-if="media" v-bind="media.container">
+      <component :is="media.component" v-bind="media.props" />
     </MediaContainer>
   </section>
 </template>
 
 <script setup>
 import { computed } from 'vue';
+import { summaryConfigs } from '@/content/storyConfigs.js';
 import MediaContainer from '../media/MediaContainer.vue';
 import FullscreenImg from '../media/FullscreenImg.vue';
 import FullscreenVideo from '../media/FullscreenVideo.vue';
 
-const props = defineProps({
-  storyId: {
-    type: String,
-    required: true,
-  },
-  storyConfig: {
-    type: Object,
-    default: () => ({}),
-  },
+const props = defineProps({ storyId: { type: String, required: true }, storyConfig: { type: Object, default: () => ({}) } });
+
+const data = computed(() => summaryConfigs[props.storyId]);
+const details = computed(() => [
+  { label: data.value.organizationType, value: data.value.organizationName },
+  { label: 'Timeline', value: data.value.timeline },
+  { label: 'Project Type', value: data.value.projectType },
+  { label: 'Role', value: data.value.role },
+  { label: 'Contribution', value: data.value.contribution, isArray: true }
+]);
+
+const media = computed(() => {
+  const cfg = props.storyConfig;
+  if (cfg.summaryImage) return {
+    container: { type: 'fullheight', backgroundColor: cfg.videoBackground || 'transparent', label: cfg.mediaLabel || '', wrapperClass: 'fullscreen-image-wrapper' },
+    component: FullscreenImg, props: { imageSrc: cfg.summaryImage, alt: `${data.value.title} preview` }
+  };
+  if (cfg.summaryVideo) return {
+    container: { type: 'fullheight', backgroundColor: cfg.videoBackground || cfg.primary, label: cfg.mediaLabel || '', wrapperClass: 'fullscreen-video-wrapper', containerClass: 'fullscreen-video' },
+    component: FullscreenVideo, props: { videoSrc: cfg.summaryVideo, autoplayThreshold: cfg.autoplayThreshold || 0.75 }
+  };
+  return null;
 });
-
-const summaryConfigs = {
-  '1': {
-    title: 'Transforming Account Reconciliation with AI-Driven User Experience',
-    description: 'Building intelligent automation for enterprise financial operations from ground up. Designed and developed a comprehensive AI-driven reconciliation system that streamlines complex financial workflows, reduces manual processing time by 85%, and improves accuracy across multiple business units. Led the product vision from initial concept through successful enterprise deployment.',
-    timeline: 'Feb 2022 - Present',
-    projectType: '0-1 Product',
-    role: 'Senior Product Designer & Product Manager',
-    contribution: ['User Research', 'Interface Design', 'Interaction Design', 'Product Strategy'],
-    organizationType: 'Team',
-    organizationName: 'Apple Financial Services'
-  },
-  '2': {
-    title: 'Relaunching the Employee Comms App',
-    description: 'Complete redesign of enterprise communication platform serving 50,000+ users. Transformed the entire user experience by conducting extensive research, reimagining core interaction patterns, and establishing a cohesive design system that improved engagement by 40% and reduced support tickets by 60%. Created a scalable foundation for future product evolution.',
-    timeline: 'Jan 2021 - Dec 2021',
-    projectType: 'Redesign',
-    role: 'Senior Product Designer',
-    contribution: ['User Research', 'Interface Design', 'Interaction Design', 'Design System'],
-    organizationType: 'Company',
-    organizationName: 'Smarp (now Haiilo)'
-  },
-  '3': {
-    title: 'A Full Redesign of an Oil Terminal Operations App',
-    description: 'A full redesign focused on improving app usability in the field and creating a more pleasant, smooth experience for oil terminal operations.',
-    timeline: 'Feb 2025 - Jun 2025',
-    projectType: 'UX Audit, Redesign, Mentorship',
-    role: 'External UX Expert',
-    contribution: ['UX Audit', 'User Research', 'Product Design', 'Team Support'],
-    organizationType: 'Company',
-    organizationName: 'Digineox (Houston, TX)'
-  }
-};
-
-const summaryData = computed(() => summaryConfigs[props.storyId]);
 </script>
 
 <style scoped>
-.story-summary {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 75px 0;
-  box-sizing: border-box;
-  gap: 32px;
-}
-
-/* Part 1: Header */
-.summary-header {
-  width: 100%;
-  max-width: 1200px;
-  padding: 0 16px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.summary-title {
-  font-family: var(--story-title-font, var(--font-family-base));
-  margin: 0;
-  color: inherit;
-  text-align: left;
-}
-
-/* Part 2: All details wrapper */
-.summary-details-wrapper {
-  width: 100%;
-  max-width: 1200px;
-  padding: 0 16px;
-  box-sizing: border-box;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 32px 128px;
-  align-items: flex-start;
-}
-
-.detail-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.detail-label {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 16px;
-  line-height: 1.5;
-  margin: 0;
-  color: inherit;
-  opacity: 0.5;
-}
-
-.detail-value {
-  margin: 0;
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: 16px;
-  line-height: 1.5;
-  color: inherit;
-}
-
-.detail-value span span {
-  opacity: 0.5;
-}
+.story-summary { display: flex; flex-direction: column; }
+.summary-content { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 75px 0; gap: 32px; }
+.summary-header, .summary-details { max-width: 1200px; padding: 0 16px; box-sizing: border-box; }
+.summary-header { display: flex; flex-direction: column; gap: 16px; }
+.summary-title { font-family: var(--story-title-font, var(--font-family-base)); margin: 0; color: inherit; text-align: left; }
+.summary-details { display: flex; flex-wrap: wrap; gap: 32px 128px; align-items: flex-start; }
+.detail-group { display: flex; flex-direction: column; gap: 8px; }
+.detail-label, .detail-value { margin: 0; font-family: var(--font-family-base); font-weight: var(--font-weight-medium); font-size: 16px; line-height: 1.5; color: inherit; }
+.detail-label { opacity: 0.5; }
+.detail-value span span { opacity: 0.5; }
 
 @media (max-width: 767px) {
-  .summary-content {
-    padding: 40px 0;
-    gap: 40px;
-  }
-
-  .summary-header {
-    max-width: 100%;
-    padding: 0 24px;
-  }
-
-  .summary-details-wrapper {
-    max-width: 100%;
-    padding: 0 24px;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .detail-group {
-    width: 100%;
-  }
-
-  /* Make contribution items stack vertically */
-  .detail-value span {
-    display: block;
-  }
-
-  .detail-value span span {
-    display: none; /* Hide the arrow separator */
-  }
+  .summary-content { padding: 40px 0; gap: 40px; }
+  .summary-header, .summary-details { max-width: 100%; padding: 0 24px; }
+  .summary-details { flex-direction: column; gap: 24px; }
+  .detail-value span { display: block; }
+  .detail-value span span { display: none; }
 }
-
 @media (min-width: 768px) and (max-width: 900px) {
-  .summary-content {
-    padding: 50px 0;
-    gap: 48px;
-  }
-
-  .summary-header {
-    padding: 0 16px;
-  }
-
-  .summary-details-wrapper {
-    padding: 0 16px;
-    gap: 24px 32px;
-  }
+  .summary-content { padding: 50px 0; gap: 48px; }
+  .summary-details { gap: 24px 32px; }
 }
 </style>

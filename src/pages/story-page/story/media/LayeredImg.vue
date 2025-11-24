@@ -1,302 +1,126 @@
 <template>
   <!-- Desktop: Layered cards view -->
-  <div
-    v-if="!isMobile"
-    class="cards-container"
-    ref="containerRef"
-    :style="{ ...shadowVars, ...cardSizeStyles }"
-  >
-    <!-- Left card (визуально слева) -->
-    <div class="card card-left" ref="cardLeftRef" :style="{ zIndex: zIndexLeft }">
+  <div v-if="!isMobile" class="cards-container" ref="containerRef" :style="{ ...shadowVars, ...cardSizeStyles }">
+    <div v-for="card in cards" :key="card.position" class="card" :class="`card-${card.position}`" :ref="el => card.ref.value = el" :style="{ zIndex: card.zIndex }">
       <div class="card-inner">
-        <img
-          :src="imageLeft"
-          :alt="altLeft || 'Left card'"
-          loading="lazy"
-        />
-      </div>
-    </div>
-
-    <!-- Center card (визуально в центре) -->
-    <div class="card card-center" ref="cardCenterRef" :style="{ zIndex: zIndexCenter }">
-      <div class="card-inner">
-        <img
-          :src="imageCenter"
-          :alt="altCenter || 'Center card'"
-          loading="lazy"
-        />
-      </div>
-    </div>
-
-    <!-- Right card (визуально справа) -->
-    <div class="card card-right" ref="cardRightRef" :style="{ zIndex: zIndexRight }">
-      <div class="card-inner">
-        <img
-          :src="imageRight"
-          :alt="altRight || 'Right card'"
-          loading="lazy"
-        />
+        <img :src="card.image" :alt="card.alt || `${card.position} card`" loading="lazy" />
       </div>
     </div>
   </div>
 
   <!-- Mobile: Slider view -->
-  <div
-    v-else
-    class="slider-container"
-    :style="cardSizeStyles"
-  >
-    <div
-      class="slider-track"
-      ref="sliderTrackRef"
-      @touchstart="handleTouchStart"
-      @touchmove="handleTouchMove"
-      @touchend="handleTouchEnd"
-      :class="{ dragging: isDragging }"
-      :style="{ transform: `translateX(${sliderOffset}px)` }"
-    >
-      <div class="slider-slide">
+  <div v-else class="slider-container" :style="cardSizeStyles">
+    <div class="slider-track" ref="sliderTrackRef" @touchstart="touch.start" @touchmove="touch.move" @touchend="touch.end" :class="{ dragging: slider.isDragging }" :style="{ transform: `translateX(${-(slider.current * (slider.width + GAP)) + slider.dragOffset}px)` }">
+      <div v-for="card in cards" :key="card.position" class="slider-slide">
         <div class="slide-inner" :style="shadowVars">
-          <img
-            :src="imageLeft"
-            :alt="altLeft || 'Image 1'"
-            loading="lazy"
-          />
-        </div>
-      </div>
-      <div class="slider-slide">
-        <div class="slide-inner" :style="shadowVars">
-          <img
-            :src="imageCenter"
-            :alt="altCenter || 'Image 2'"
-            loading="lazy"
-          />
-        </div>
-      </div>
-      <div class="slider-slide">
-        <div class="slide-inner" :style="shadowVars">
-          <img
-            :src="imageRight"
-            :alt="altRight || 'Image 3'"
-            loading="lazy"
-          />
+          <img :src="card.image" :alt="card.alt || `Image ${card.position}`" loading="lazy" />
         </div>
       </div>
     </div>
-
-    <!-- Dots indicator -->
     <div class="slider-dots">
-      <button
-        v-for="(_, index) in 3"
-        :key="index"
-        class="slider-dot"
-        :class="{ active: currentSlide === index }"
-        @click="goToSlide(index)"
-        :aria-label="`Go to slide ${index + 1}`"
-      />
+      <button v-for="(_, i) in 3" :key="i" class="slider-dot" :class="{ active: slider.current === i }" @click="slider.current = i" :aria-label="`Go to slide ${i + 1}`" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch, nextTick, reactive } from 'vue';
 import { parallaxSpeeds } from './layeredCardsVariants.js';
 import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
 
 const props = defineProps({
-  imageLeft: {
-    type: String,
-    required: true,
-  },
-  imageCenter: {
-    type: String,
-    required: true,
-  },
-  imageRight: {
-    type: String,
-    required: true,
-  },
-  altLeft: {
-    type: String,
-    default: '',
-  },
-  altCenter: {
-    type: String,
-    default: '',
-  },
-  altRight: {
-    type: String,
-    default: '',
-  },
-  speedLeft: {
-    type: Number,
-    default: null,
-  },
-  speedCenter: {
-    type: Number,
-    default: null,
-  },
-  speedRight: {
-    type: Number,
-    default: null,
-  },
-  zIndexLeft: {
-    type: Number,
-    default: 3,
-  },
-  zIndexCenter: {
-    type: Number,
-    default: 2,
-  },
-  zIndexRight: {
-    type: Number,
-    default: 1,
-  },
-  containRatioWidth: {
-    type: Number,
-    default: null,
-  },
-  containRatioHeight: {
-    type: Number,
-    default: null,
-  },
-  borderRadius: {
-    type: Number,
-    default: 24,
-  },
+  imageLeft: { type: String, required: true },
+  imageCenter: { type: String, required: true },
+  imageRight: { type: String, required: true },
+  altLeft: { type: String, default: '' },
+  altCenter: { type: String, default: '' },
+  altRight: { type: String, default: '' },
+  speedLeft: { type: Number, default: null },
+  speedCenter: { type: Number, default: null },
+  speedRight: { type: Number, default: null },
+  zIndexLeft: { type: Number, default: 3 },
+  zIndexCenter: { type: Number, default: 2 },
+  zIndexRight: { type: Number, default: 1 },
+  borderRadius: { type: Number, default: 24 },
 });
 
-// Mobile detection
 const isMobile = ref(false);
 const MOBILE_BREAKPOINT = 767;
+const GAP = 16;
 
-const checkMobile = () => {
-  isMobile.value = window.innerWidth <= MOBILE_BREAKPOINT;
-};
+const checkMobile = () => { isMobile.value = window.innerWidth <= MOBILE_BREAKPOINT; };
 
-// Watch for mobile mode changes to recalculate slide width
-watch(isMobile, (newValue) => {
-  if (newValue) {
-    nextTick(() => {
-      updateSlideWidth();
-    });
-  }
-});
-
-// Desktop parallax refs
+// Desktop refs
 const containerRef = ref(null);
 const cardLeftRef = ref(null);
 const cardCenterRef = ref(null);
 const cardRightRef = ref(null);
 
+// Cards data array (reused for both desktop and mobile)
+const cards = computed(() => [
+  { position: 'left', ref: cardLeftRef, image: props.imageLeft, alt: props.altLeft, zIndex: props.zIndexLeft, speed: props.speedLeft ?? parallaxSpeeds[0] },
+  { position: 'center', ref: cardCenterRef, image: props.imageCenter, alt: props.altCenter, zIndex: props.zIndexCenter, speed: props.speedCenter ?? parallaxSpeeds[1] },
+  { position: 'right', ref: cardRightRef, image: props.imageRight, alt: props.altRight, zIndex: props.zIndexRight, speed: props.speedRight ?? parallaxSpeeds[2] },
+]);
+
 // Mobile slider state
 const sliderTrackRef = ref(null);
-const currentSlide = ref(0);
-const dragOffset = ref(0);
-const touchStartX = ref(0);
-const touchCurrentX = ref(0);
-const isDragging = ref(false);
-const slideWidth = ref(0);
-const GAP = 16; // gap between slides in px
+const slider = reactive({ current: 0, dragOffset: 0, isDragging: false, width: 0 });
+const touchState = reactive({ startX: 0, currentX: 0 });
 
-// Computed slider offset
-const sliderOffset = computed(() => {
-  const baseOffset = -(currentSlide.value * (slideWidth.value + GAP));
-  return baseOffset + dragOffset.value;
-});
-
-// Update slide width on resize
 const updateSlideWidth = () => {
   if (sliderTrackRef.value) {
     const firstSlide = sliderTrackRef.value.querySelector('.slider-slide');
-    if (firstSlide) {
-      slideWidth.value = firstSlide.offsetWidth;
-    }
+    if (firstSlide) slider.width = firstSlide.offsetWidth;
   }
 };
 
 const shadowVars = computed(() => useAdaptiveShadow());
+const cardSizeStyles = computed(() => ({ '--card-border-radius': `${props.borderRadius}px` }));
 
-// Desktop parallax speeds
-const speeds = computed(() => [
-  props.speedLeft ?? parallaxSpeeds[0],
-  props.speedCenter ?? parallaxSpeeds[1],
-  props.speedRight ?? parallaxSpeeds[2],
-]);
-
-// Border-radius styles
-const cardSizeStyles = computed(() => {
-  return {
-    '--card-border-radius': `${props.borderRadius}px`,
-  };
-});
-
-// Mobile slider methods
-const goToSlide = (index) => {
-  currentSlide.value = index;
-};
-
-const handleTouchStart = (e) => {
-  touchStartX.value = e.touches[0].clientX;
-  touchCurrentX.value = e.touches[0].clientX;
-  isDragging.value = true;
-};
-
-const handleTouchMove = (e) => {
-  if (!isDragging.value) return;
-  touchCurrentX.value = e.touches[0].clientX;
-  dragOffset.value = touchCurrentX.value - touchStartX.value;
-};
-
-const handleTouchEnd = () => {
-  if (!isDragging.value) return;
-  isDragging.value = false;
-
-  const threshold = 50;
-  const diff = touchCurrentX.value - touchStartX.value;
-
-  if (diff < -threshold && currentSlide.value < 2) {
-    currentSlide.value++;
-  } else if (diff > threshold && currentSlide.value > 0) {
-    currentSlide.value--;
+// Touch handlers
+const touch = {
+  start: (e) => {
+    touchState.startX = touchState.currentX = e.touches[0].clientX;
+    slider.isDragging = true;
+  },
+  move: (e) => {
+    if (!slider.isDragging) return;
+    touchState.currentX = e.touches[0].clientX;
+    slider.dragOffset = touchState.currentX - touchState.startX;
+  },
+  end: () => {
+    if (!slider.isDragging) return;
+    slider.isDragging = false;
+    const diff = touchState.currentX - touchState.startX;
+    const threshold = 50;
+    if (Math.abs(diff) > threshold) {
+      slider.current = Math.max(0, Math.min(2, slider.current + (diff < 0 ? 1 : -1)));
+    }
+    slider.dragOffset = 0;
   }
-
-  dragOffset.value = 0;
 };
 
-// Desktop parallax animation with IntersectionObserver optimization
+// Desktop parallax with IntersectionObserver
 let animationFrameId = null;
 let isInViewport = false;
 let observer = null;
 
 const updateParallax = () => {
-  // Stop RAF loop when not in viewport or on mobile
   if (!containerRef.value || isMobile.value || !isInViewport) {
     animationFrameId = null;
     return;
   }
 
-  // Массив карточек в порядке слева-направо (визуально)
-  const cards = [
-    cardLeftRef.value,    // Левая карточка - speeds[0] = 0.2
-    cardCenterRef.value,  // Центральная карточка - speeds[1] = 1.0
-    cardRightRef.value,   // Правая карточка - speeds[2] = 2.5
-  ];
-
   const rect = containerRef.value.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
-  const containerTop = rect.top;
-  const scrollProgress = (viewportHeight - containerTop) / (viewportHeight + rect.height);
+  const scrollProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
   const centeredProgress = scrollProgress - 0.5;
 
-  cards.forEach((card, index) => {
-    if (!card) return;
-
-    const speed = speeds.value[index];
-    const maxMovement = 60;
-    const offset = centeredProgress * maxMovement * speed;
-
-    card.style.transform = `translateY(${offset}px)`;
+  cards.value.forEach((card) => {
+    if (!card.ref.value) return;
+    const offset = centeredProgress * 60 * card.speed;
+    card.ref.value.style.transform = `translateY(${offset}px)`;
   });
 
   animationFrameId = requestAnimationFrame(updateParallax);
@@ -315,35 +139,29 @@ const stopParallax = () => {
   }
 };
 
+watch(isMobile, (newValue) => {
+  if (newValue) nextTick(updateSlideWidth);
+});
+
 onMounted(() => {
   checkMobile();
   window.addEventListener('resize', checkMobile);
   window.addEventListener('resize', updateSlideWidth);
 
   if (!isMobile.value && containerRef.value) {
-    // Setup IntersectionObserver to only run RAF when in viewport
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           isInViewport = entry.isIntersecting;
-          if (isInViewport) {
-            startParallax();
-          } else {
-            stopParallax();
-          }
+          if (isInViewport) startParallax();
+          else stopParallax();
         });
       },
-      {
-        rootMargin: '100px 0px', // Start slightly before entering viewport
-        threshold: 0,
-      }
+      { rootMargin: '100px 0px', threshold: 0 }
     );
     observer.observe(containerRef.value);
   } else if (isMobile.value) {
-    // Wait for DOM to render, then calculate slide width
-    requestAnimationFrame(() => {
-      updateSlideWidth();
-    });
+    requestAnimationFrame(updateSlideWidth);
   }
 });
 
@@ -359,7 +177,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Desktop: Layered cards */
 .cards-container {
   position: relative;
   width: 100%;
@@ -377,7 +194,7 @@ onUnmounted(() => {
   will-change: transform, opacity;
 }
 
-.card-inner {
+.card-inner, .slide-inner {
   position: relative;
   width: 100%;
   border-radius: var(--card-border-radius, 24px);
@@ -388,56 +205,24 @@ onUnmounted(() => {
   transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card-inner:hover {
-  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
-}
-
-.card-inner img {
+.card-inner img, .slide-inner img {
   width: 100%;
   height: auto;
   display: block;
   border-radius: var(--card-border-radius, 24px);
 }
 
-/* Card positions */
-.card-left {
-  left: calc(50% - 45vw);
-  top: calc(50% - 35vh);
-}
+.card-left { left: calc(50% - 45vw); top: calc(50% - 35vh); }
+.card-center { left: calc(50% - 25vw); top: calc(50% - 10vh); }
+.card-right { left: calc(50% + 5vw); top: calc(50% - 25vh); }
 
-.card-center {
-  left: calc(50% - 25vw);
-  top: calc(50% - 10vh);
-}
-
-.card-right {
-  left: calc(50% + 5vw);
-  top: calc(50% - 25vh);
-}
-
-/* Tablet adjustments */
 @media (min-width: 768px) and (max-width: 1024px) {
-  .card {
-    width: 50vw;
-  }
-
-  .card-left {
-    left: calc(50% - 50vw);
-    top: calc(50% - 38vh);
-  }
-
-  .card-center {
-    left: calc(50% - 30vw);
-    top: calc(50% - 12vh);
-  }
-
-  .card-right {
-    left: calc(50% - 0vw);
-    top: calc(50% - 26vh);
-  }
+  .card { width: 50vw; }
+  .card-left { left: calc(50% - 50vw); top: calc(50% - 38vh); }
+  .card-center { left: calc(50% - 30vw); top: calc(50% - 12vh); }
+  .card-right { left: calc(50% - 0vw); top: calc(50% - 26vh); }
 }
 
-/* Mobile: Slider */
 .slider-container {
   width: 100%;
   overflow: hidden;
@@ -452,30 +237,13 @@ onUnmounted(() => {
   user-select: none;
 }
 
-.slider-track.dragging {
-  transition: none;
-}
+.slider-track.dragging { transition: none; }
 
 .slider-slide {
   flex: 0 0 100%;
   min-width: 100%;
 }
 
-.slide-inner {
-  width: 100%;
-  border-radius: var(--card-border-radius, 16px);
-  overflow: hidden;
-  box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
-}
-
-.slide-inner img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: var(--card-border-radius, 16px);
-}
-
-/* Dots indicator */
 .slider-dots {
   display: flex;
   justify-content: center;
@@ -494,11 +262,6 @@ onUnmounted(() => {
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.slider-dot.active {
-  background-color: #000000;
-}
-
-.slider-dot:hover {
-  background-color: rgba(0, 0, 0, 0.4);
-}
+.slider-dot.active { background-color: #000000; }
+.slider-dot:hover { background-color: rgba(0, 0, 0, 0.4); }
 </style>

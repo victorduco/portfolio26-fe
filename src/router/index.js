@@ -4,104 +4,46 @@ import StoryPage from "../pages/story-page/StoryPage.vue";
 import NotFoundPage from "../pages/NotFoundPage.vue";
 import { mixpanel } from "../plugins/mixpanel.js";
 
-const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: MainPage,
-  },
-  {
-    path: "/story/one",
-    name: "StoryOne",
-    component: StoryPage,
-    props: { storyId: "1" },
-  },
-  {
-    path: "/story/two",
-    name: "StoryTwo",
-    component: StoryPage,
-    props: { storyId: "2" },
-  },
-  {
-    path: "/story/three",
-    name: "StoryThree",
-    component: StoryPage,
-    props: { storyId: "3" },
-  },
-  {
-    path: "/:pathMatch(.*)*",
-    name: "NotFound",
-    component: NotFoundPage,
-  },
-];
-
-// Store scroll position when navigating from home page
 const scrollPositions = new Map();
+
+const routes = [
+  { path: "/", name: "Home", component: MainPage },
+  ...["one", "two", "three"].map((id, i) => ({
+    path: `/story/${id}`,
+    name: `Story${["One", "Two", "Three"][i]}`,
+    component: StoryPage,
+    props: { storyId: String(i + 1) },
+  })),
+  { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFoundPage },
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    // Always scroll to top for story pages
-    if (to.path.startsWith("/story")) {
-      return { top: 0, behavior: "instant" };
-    }
-
-    // Restore saved scroll position when returning to home from story
+    if (to.path.startsWith("/story")) return { top: 0, behavior: "instant" };
     if (to.path === "/" && from.path?.startsWith("/story")) {
       const savedScroll = scrollPositions.get("/");
       if (savedScroll !== undefined) {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({ top: savedScroll, behavior: "instant" });
-          }, 50);
-        });
+        return new Promise((resolve) => setTimeout(() => resolve({ top: savedScroll, behavior: "instant" }), 50));
       }
     }
-
-    // Use browser's saved position for other back/forward navigation
-    if (savedPosition) {
-      return savedPosition;
-    }
-
-    // Default: scroll to top
-    return { top: 0, behavior: "instant" };
+    return savedPosition || { top: 0, behavior: "instant" };
   },
 });
 
-router.beforeEach(async (to, from, next) => {
-  // Save scroll position when leaving home page to story
+router.beforeEach((to, from, next) => {
   if (from.path === "/" && to.path.startsWith("/story")) {
-    const scrollTop = window.scrollY || window.pageYOffset;
-    scrollPositions.set("/", scrollTop);
+    scrollPositions.set("/", window.scrollY || window.pageYOffset);
   }
-
-  // Set meta for skipping intro animation when returning from story
-  if (to.path === "/") {
-    const cameFromStory = from.path?.startsWith("/story");
-    to.meta.skipNavIntro = Boolean(cameFromStory);
-
-    // Clear saved position if not coming from story (e.g., page reload)
-    if (!cameFromStory) {
-      scrollPositions.delete("/");
-    }
-  } else {
-    to.meta.skipNavIntro = false;
-  }
-
+  const cameFromStory = from.path?.startsWith("/story");
+  to.meta.skipNavIntro = to.path === "/" && Boolean(cameFromStory);
+  if (to.path === "/" && !cameFromStory) scrollPositions.delete("/");
   next();
 });
 
-// Track page views after navigation
 router.afterEach((to, from) => {
-  if (mixpanel) {
-    mixpanel.track("Page View", {
-      page: to.path,
-      page_name: to.name,
-      from_page: from.path,
-      from_page_name: from.name,
-    });
-  }
+  if (mixpanel) mixpanel.track("Page View", { page: to.path, page_name: to.name, from_page: from.path, from_page_name: from.name });
 });
 
 export default router;

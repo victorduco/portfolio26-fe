@@ -1,36 +1,17 @@
 import { layoutBatcher } from "./layoutBatcher";
 
-/**
- * Синхронизация фона - регистрирует задачу синхронно в batcher
- * READ и WRITE выполнятся в одном RAF
- */
 export function syncBackground(el, innerElement) {
   if (!el || !innerElement) return;
 
-  // 🔍 PROFILING: Track mask element sync
-  const profile = window.__keypadProfile;
-  const syncStartTime = profile?.cssUpdatedTime ? performance.now() : null;
-
-  window.__profile?.start?.("sync-background");
-
   layoutBatcher.scheduleTask(
-    // READ фаза - читаем layout
     () => {
-      // 🔍 PROFILING: Read phase started
-      if (syncStartTime && profile) {
-        profile.maskReadStartTime = performance.now();
-      }
-
       const rect = el.getBoundingClientRect();
       const style = getComputedStyle(el);
 
-      const center = {
-        x: (rect.left + rect.right) / 2,
-        y: (rect.top + rect.bottom) / 2,
-      };
+      const centerX = (rect.left + rect.right) / 2;
+      const centerY = (rect.top + rect.bottom) / 2;
 
-      let rotation = 0;
-      let scale = 1;
+      let rotation = 0, scale = 1;
 
       if (style.transform && style.transform !== "none") {
         const m = new DOMMatrixReadOnly(style.transform);
@@ -38,46 +19,19 @@ export function syncBackground(el, innerElement) {
         rotation = Math.atan2(m.b, m.a) * (180 / Math.PI);
       }
 
-      const pageCenter = {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2,
+      return {
+        x: Math.round(window.innerWidth / 2 - centerX),
+        y: Math.round(window.innerHeight / 2 - centerY),
+        rotation,
+        scale
       };
-
-      const offset = {
-        x: pageCenter.x - center.x,
-        y: pageCenter.y - center.y,
-      };
-
-      // 🔍 PROFILING: Read phase complete
-      if (profile?.maskReadStartTime) {
-        profile.maskReadCompleteTime = performance.now();
-      }
-
-      return { offset, rotation, scale };
     },
-    // WRITE фаза - применяем изменения
     (data) => {
       if (!data) return;
-
-      // 🔍 PROFILING: Write phase started
-      if (profile?.maskReadCompleteTime) {
-        profile.maskWriteStartTime = performance.now();
-      }
-
-      const { offset, rotation, scale } = data;
-
-      innerElement.style.setProperty("--x-offset", Math.round(offset.x) + "px");
-      innerElement.style.setProperty("--y-offset", Math.round(offset.y) + "px");
-      innerElement.style.setProperty("--rotation", -rotation + "deg");
-      innerElement.style.setProperty("--scale", String(1 / scale));
-
-      // 🔍 PROFILING: Write phase complete
-      if (profile?.maskWriteStartTime) {
-        profile.maskWriteCompleteTime = performance.now();
-      }
-
-      window.__profile?.end?.("sync-background");
-      window.__profile?.mark?.("sync-background-complete");
+      innerElement.style.setProperty("--x-offset", data.x + "px");
+      innerElement.style.setProperty("--y-offset", data.y + "px");
+      innerElement.style.setProperty("--rotation", -data.rotation + "deg");
+      innerElement.style.setProperty("--scale", String(1 / data.scale));
     }
   );
 }

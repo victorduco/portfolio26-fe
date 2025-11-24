@@ -15,7 +15,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { Motion } from "motion-v";
 import KeypadButton from "./KeypadButton.vue";
-import { keypadGridVariants, keypadGridTransition } from "./variants.js";
+import { keypadGridVariants, keypadGridTransition as gridTransition } from "./variants.js";
 import { getBackgroundPath, getBackgroundPathAsync, preloadInitialBackgrounds, prefetchNextDigits, initKeypadBackgrounds } from "@/utils/keypadBackgroundLoader.js";
 import { setBackgroundImage, hideBackgroundImage, hideBackgroundWithGlassEffect, showBackgroundWithGlassEffect } from "@/composables/useKeypadBackground.js";
 import { resetAnimationState, animateFadeSequence, delay } from "@/composables/useKeypadAnimation.js";

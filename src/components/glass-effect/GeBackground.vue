@@ -3,73 +3,28 @@
 </template>
 
 <script setup>
-import { onMounted, watch, nextTick, ref } from "vue";
+import { watch, nextTick, ref } from "vue";
 import { generateCompositeSVG } from "@/utils/svgBackgroundGenerator.js";
 
-const props = defineProps({
-  watchData: { type: [Array, Object, String, Number], default: null },
-});
-
+const props = defineProps({ watchData: { type: [Array, Object, String, Number], default: null } });
 const backgroundNumbers = ref(null);
 let isGenerating = false;
 
-/**
- * Generate background from SVG composition
- */
 async function generateBackgroundSVG() {
-  if (isGenerating) return;
+  if (isGenerating || !Array.isArray(props.watchData) || !props.watchData.length) return;
   isGenerating = true;
-
-  if (!Array.isArray(props.watchData) || props.watchData.length === 0) {
-    isGenerating = false;
-    return;
-  }
-
   try {
     const svgMarkup = generateCompositeSVG(props.watchData);
-
-    if (!svgMarkup) {
-      isGenerating = false;
-      return;
-    }
-
-    if (backgroundNumbers.value) {
-      backgroundNumbers.value.innerHTML = svgMarkup;
-    }
-  } catch (error) {
+    if (svgMarkup && backgroundNumbers.value) backgroundNumbers.value.innerHTML = svgMarkup;
   } finally {
     isGenerating = false;
   }
 }
 
-watch(
-  () => props.watchData,
-  () => {
-    nextTick().then(() => {
-      requestAnimationFrame(generateBackgroundSVG);
-    });
-  },
-  { deep: true }
-);
-
-onMounted(() => {
-  requestAnimationFrame(generateBackgroundSVG);
-});
+watch(() => props.watchData, () => nextTick().then(() => requestAnimationFrame(generateBackgroundSVG)), { deep: true, immediate: true });
 </script>
 
 <style scoped>
-.background-numbers {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.background-numbers svg {
-  width: 100%;
-  height: 100%;
-}
+.background-numbers { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.background-numbers svg { width: 100%; height: 100%; }
 </style>

@@ -1,18 +1,5 @@
 #!/usr/bin/env node
-
-/**
- * Fast Optimized Keypad Background Generator
- *
- * Strategy:
- * 1. Pre-render all digit glyphs once (0-9 in 4 colors) = 40 sharp PNGs
- * 2. For each combination, simply composite pre-rendered glyphs (fast blit operations)
- * 3. Process in parallel batches for maximum speed
- * 4. Generate content hashes for filenames (for CDN caching)
- *
- * Output:
- * - /keypad-backgrounds/sharp/*.png (with content hashes)
- * - /keypad-backgrounds/manifest.json (code -> filename mapping)
- */
+// Fast Optimized Keypad Background Generator - pre-renders digit glyphs, composites them with content hashes
 
 import sharp from "sharp";
 import cliProgress from "cli-progress";
@@ -21,292 +8,114 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createHash } from "crypto";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Configuration
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = path.join(__dirname, "../public/keypad-backgrounds");
 const SHARP_DIR = path.join(OUTPUT_DIR, "sharp");
-const GLYPHS_DIR = path.join(OUTPUT_DIR, ".glyphs");
+const GLYPHS_DIR = path.join(OUTPUT_DIR, ".glyphs/sharp");
 
 const COLORS = ["#27A9FF", "#FF83A2", "#00FFBC", "#FFFF78"];
-const IMAGE_WIDTH = 3840; // 2x for retina
-const IMAGE_HEIGHT = 2160; // 2x for retina
-const DIGIT_WIDTH = 700; // 2x for retina (reduced by 60px - 30px each side)
-const DIGIT_HEIGHT = 1300; // 2x for retina
-const DIGIT_SPACING = -50; // 2x for retina
-
+const [IMG_W, IMG_H, DIG_W, DIG_H, DIG_SP] = [3840, 2160, 700, 1300, -50];
 const FORCE = process.argv.includes("--force");
-const SINGLE_DIGITS_ONLY = process.argv.includes("--single-digits");
-const BATCH_SIZE = 100;
+const SINGLE_ONLY = process.argv.includes("--single-digits");
 
-// Manifest for code -> hashed filename mapping
 const manifest = {};
+const stats = { glyphs: 0, generated: 0, skipped: 0, totalSize: 0, start: Date.now() };
 
-// Statistics
-const stats = {
-  glyphsGenerated: 0,
-  generated: 0,
-  skipped: 0,
-  totalSize: 0,
-  startTime: Date.now(),
-};
+const exists = (p) => fs.access(p).then(() => true).catch(() => false);
+const fmtSize = (b) => b < 1024 ? b + " B" : b < 1048576 ? (b / 1024).toFixed(1) + " KB" : (b / 1048576).toFixed(1) + " MB";
+const hash = (buf) => createHash("sha256").update(buf).digest("hex").slice(0, 8);
 
-/**
- * Generate single SVG digit
- */
-function generateDigitSVG(digit, color) {
-  return `
-    <svg
-      viewBox="0 -100 1000 1800"
-      width="${DIGIT_WIDTH}"
-      height="${DIGIT_HEIGHT}"
-      xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <text
-        x="510"
-        y="900"
-        font-size="1650"
-        font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
-        font-weight="400"
-        text-anchor="middle"
-        dominant-baseline="central"
-        fill="${color}"
-      >
-        ${digit}
-      </text>
-    </svg>
-  `.trim();
-}
+const digitSVG = (d, c) => `<svg viewBox="0 -100 1000 1800" width="${DIG_W}" height="${DIG_H}" xmlns="http://www.w3.org/2000/svg"><text x="510" y="900" font-size="1650" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" fill="${c}">${d}</text></svg>`;
 
-async function fileExists(filepath) {
-  try {
-    await fs.access(filepath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function formatSize(bytes) {
-  if (bytes < 1024) return bytes + " B";
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-}
-
-/**
- * Step 1: Generate all digit glyphs
- */
 async function generateGlyphs() {
   console.log("\n📐 Generating digit glyphs...");
-
-  const glyphsSharpDir = path.join(GLYPHS_DIR, "sharp");
-
-  await fs.mkdir(glyphsSharpDir, { recursive: true });
+  await fs.mkdir(GLYPHS_DIR, { recursive: true });
 
   const tasks = [];
-
-  for (let digit = 0; digit <= 9; digit++) {
-    for (let colorIdx = 0; colorIdx < COLORS.length; colorIdx++) {
-      const color = COLORS[colorIdx];
-      const glyphName = `${digit}_${colorIdx}.png`;
-      const sharpPath = path.join(glyphsSharpDir, glyphName);
-
-      if (!FORCE && (await fileExists(sharpPath))) {
-        continue;
-      }
-
-      tasks.push({ digit, colorIdx, color, sharpPath });
+  for (let d = 0; d <= 9; d++) {
+    for (let c = 0; c < 4; c++) {
+      const p = path.join(GLYPHS_DIR, `${d}_${c}.png`);
+      if (!FORCE && await exists(p)) continue;
+      tasks.push({ d, c, p, color: COLORS[c] });
     }
   }
 
-  if (tasks.length === 0) {
-    console.log("✅ All glyphs already exist (use --force to regenerate)");
-    return;
-  }
+  if (!tasks.length) return console.log("✅ All glyphs exist (use --force to regenerate)");
 
   console.log(`Generating ${tasks.length} glyphs...`);
-
-  // Process all in parallel
-  await Promise.all(
-    tasks.map(async ({ digit, color, sharpPath }) => {
-      const svg = generateDigitSVG(digit, color);
-      const buffer = Buffer.from(svg);
-
-      // Sharp version only
-      const sharpBuffer = await sharp(buffer)
-        .png({ quality: 80, compressionLevel: 9 })
-        .toBuffer();
-      await fs.writeFile(sharpPath, sharpBuffer);
-
-      stats.glyphsGenerated++;
-    })
-  );
-
-  console.log(`✅ Generated ${stats.glyphsGenerated} glyphs`);
+  await Promise.all(tasks.map(async ({ d, color, p }) => {
+    await sharp(Buffer.from(digitSVG(d, color))).png({ quality: 80, compressionLevel: 9 }).toFile(p);
+    stats.glyphs++;
+  }));
+  console.log(`✅ Generated ${stats.glyphs} glyphs`);
 }
 
-/**
- * Step 2: Compose backgrounds
- */
-async function composeBackgrounds() {
-  console.log("\n🎨 Composing backgrounds...");
-
-  await fs.mkdir(SHARP_DIR, { recursive: true });
-
-  // Generate combinations
-  const combinations = [];
-
-  if (SINGLE_DIGITS_ONLY) {
-    // Only 0-9.png
-    for (let i = 0; i <= 9; i++) combinations.push(String(i));
-  } else {
-    // All combinations (0-9999)
-    for (let i = 0; i <= 9; i++) combinations.push(String(i));
-    for (let i = 0; i <= 99; i++) combinations.push(String(i).padStart(2, "0"));
-    for (let i = 0; i <= 999; i++)
-      combinations.push(String(i).padStart(3, "0"));
-    for (let i = 0; i <= 9999; i++)
-      combinations.push(String(i).padStart(4, "0"));
-  }
-
-  const progressBar = new cliProgress.SingleBar({
-    format: "Progress |{bar}| {percentage}% | {value}/{total}",
-    barCompleteChar: "\u2588",
-    barIncompleteChar: "\u2591",
-    hideCursor: true,
-  });
-
-  progressBar.start(combinations.length, 0);
-
-  // Process in batches
-  for (let i = 0; i < combinations.length; i += BATCH_SIZE) {
-    const batch = combinations.slice(i, i + BATCH_SIZE);
-    const tasks = [];
-
-    for (const code of batch) {
-      tasks.push(composeBackground(code, progressBar));
-    }
-
-    await Promise.all(tasks);
-  }
-
-  progressBar.stop();
-  console.log(`✅ Generated ${stats.generated} backgrounds`);
-  console.log(`⏭️  Skipped ${stats.skipped} existing files`);
+function getCombinations() {
+  if (SINGLE_ONLY) return [...Array(10)].map((_, i) => String(i));
+  return [
+    ...[...Array(10)].map((_, i) => String(i)),
+    ...[...Array(100)].map((_, i) => String(i).padStart(2, "0")),
+    ...[...Array(1000)].map((_, i) => String(i).padStart(3, "0")),
+    ...[...Array(10000)].map((_, i) => String(i).padStart(4, "0")),
+  ];
 }
 
-/**
- * Generate content hash from buffer
- */
-function generateHash(buffer) {
-  return createHash("sha256").update(buffer).digest("hex").substring(0, 8);
-}
+async function composeBackground(code, bar) {
+  const digits = [...code].map(Number);
+  const totalW = DIG_W * digits.length + DIG_SP * (digits.length - 1);
+  const [xOff, yOff] = [(IMG_W - totalW) / 2, (IMG_H - DIG_H) / 2];
 
-/**
- * Compose single background
- */
-async function composeBackground(code, progressBar) {
-  const digits = code.split("").map(Number);
-  const glyphsDir = path.join(GLYPHS_DIR, "sharp");
+  const composites = digits.map((d, i) => ({
+    input: path.join(GLYPHS_DIR, `${d}_${i % 4}.png`),
+    left: Math.round(xOff + i * (DIG_W + DIG_SP)),
+    top: Math.round(yOff),
+  }));
 
-  // Calculate total width including spacing between digits
-  const totalWidth =
-    DIGIT_WIDTH * digits.length + DIGIT_SPACING * (digits.length - 1);
-  const xOffset = (IMAGE_WIDTH - totalWidth) / 2;
-  const yOffset = (IMAGE_HEIGHT - DIGIT_HEIGHT) / 2;
+  const buffer = await sharp({ create: { width: IMG_W, height: IMG_H, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite(composites).png({ quality: 80, compressionLevel: 9 }).toBuffer();
 
-  // Build composites
-  const composites = [];
-  for (let i = 0; i < digits.length; i++) {
-    const digit = digits[i];
-    const colorIdx = i % COLORS.length;
-    const glyphPath = path.join(glyphsDir, `${digit}_${colorIdx}.png`);
-
-    composites.push({
-      input: glyphPath,
-      left: Math.round(xOffset + i * (DIGIT_WIDTH + DIGIT_SPACING)),
-      top: Math.round(yOffset),
-    });
-  }
-
-  // Create base image
-  const backgroundColor = { r: 0, g: 0, b: 0, alpha: 0 }; // transparent
-
-  const buffer = await sharp({
-    create: {
-      width: IMAGE_WIDTH,
-      height: IMAGE_HEIGHT,
-      channels: 4,
-      background: backgroundColor,
-    },
-  })
-    .composite(composites)
-    .png({ quality: 80, compressionLevel: 9 })
-    .toBuffer();
-
-  // Generate content hash for filename
-  const hash = generateHash(buffer);
-  const filename = `${code}.${hash}.png`;
+  const filename = `${code}.${hash(buffer)}.png`;
   const filepath = path.join(SHARP_DIR, filename);
 
-  // Check if file with same hash already exists (skip if not forced)
-  if (!FORCE && (await fileExists(filepath))) {
+  if (!FORCE && await exists(filepath)) {
     stats.skipped++;
-    manifest[code] = filename;
-    progressBar.increment();
-    return;
+  } else {
+    await fs.writeFile(filepath, buffer);
+    stats.generated++;
+    stats.totalSize += buffer.length;
   }
-
-  await fs.writeFile(filepath, buffer);
-
-  // Update manifest
   manifest[code] = filename;
-
-  stats.generated++;
-  stats.totalSize += buffer.length;
-  progressBar.increment();
+  bar.increment();
 }
 
-/**
- * Main
- */
+async function composeBackgrounds() {
+  console.log("\n🎨 Composing backgrounds...");
+  await fs.mkdir(SHARP_DIR, { recursive: true });
+
+  const combos = getCombinations();
+  const bar = new cliProgress.SingleBar({ format: "Progress |{bar}| {percentage}% | {value}/{total}", barCompleteChar: "\u2588", barIncompleteChar: "\u2591", hideCursor: true });
+  bar.start(combos.length, 0);
+
+  for (let i = 0; i < combos.length; i += 100) {
+    await Promise.all(combos.slice(i, i + 100).map((c) => composeBackground(c, bar)));
+  }
+
+  bar.stop();
+  console.log(`✅ Generated ${stats.generated} backgrounds\n⏭️  Skipped ${stats.skipped} existing files`);
+}
+
 async function main() {
-  console.log("🚀 Fast Optimized Keypad Background Generator\n");
-  console.log(`Output: ${OUTPUT_DIR}`);
-  console.log(
-    `Mode: ${
-      SINGLE_DIGITS_ONLY
-        ? "Single digits only (0-9)"
-        : "All combinations (0-9999)"
-    }`
-  );
-  console.log(`Force: ${FORCE}\n`);
+  console.log(`🚀 Fast Optimized Keypad Background Generator\n\nOutput: ${OUTPUT_DIR}\nMode: ${SINGLE_ONLY ? "Single digits (0-9)" : "All (0-9999)"}\nForce: ${FORCE}\n`);
 
   await generateGlyphs();
   await composeBackgrounds();
 
-  // Save manifest
-  const manifestPath = path.join(OUTPUT_DIR, "manifest.json");
-  await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
-  console.log(`\n📋 Manifest saved: ${manifestPath}`);
+  await fs.writeFile(path.join(OUTPUT_DIR, "manifest.json"), JSON.stringify(manifest, null, 2));
+  console.log(`\n📋 Manifest saved`);
 
-  const duration = ((Date.now() - stats.startTime) / 1000).toFixed(1);
-  const avgSize = stats.generated > 0 ? stats.totalSize / stats.generated : 0;
-
-  console.log("\n✅ Complete!\n");
-  console.log("Statistics:");
-  console.log(`  Glyphs: ${stats.glyphsGenerated}`);
-  console.log(`  Generated: ${stats.generated}`);
-  console.log(`  Skipped: ${stats.skipped}`);
-  console.log(`  Manifest entries: ${Object.keys(manifest).length}`);
-  console.log(`  Total size: ${formatSize(stats.totalSize)}`);
-  console.log(`  Average size: ${formatSize(avgSize)}`);
-  console.log(`  Duration: ${duration}s`);
-  console.log(
-    `  Speed: ${(stats.generated / parseFloat(duration)).toFixed(1)} images/sec`
-  );
+  const dur = ((Date.now() - stats.start) / 1000).toFixed(1);
+  const avg = stats.generated > 0 ? stats.totalSize / stats.generated : 0;
+  console.log(`\n✅ Complete!\n\nStatistics:\n  Glyphs: ${stats.glyphs}\n  Generated: ${stats.generated}\n  Skipped: ${stats.skipped}\n  Manifest: ${Object.keys(manifest).length}\n  Total: ${fmtSize(stats.totalSize)}\n  Avg: ${fmtSize(avg)}\n  Duration: ${dur}s\n  Speed: ${(stats.generated / parseFloat(dur)).toFixed(1)} img/s`);
 }
 
 main().catch(console.error);

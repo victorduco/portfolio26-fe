@@ -1,20 +1,15 @@
-/* Import design tokens and utilities */
 @import "./styles/tokens.css";
 @import "./styles/utilities.css";
 
-/* Global reset */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --global-bg: none;
+  --page-background: #171717;
+  --page-text: #ffffff;
 }
 
-/* Global baseline styling */
 body {
-  margin: 0;
-  padding: 0;
   font-family: var(--font-family-base);
   background: var(--page-background, #171717);
   color: var(--page-text, #ffffff);
@@ -24,26 +19,6 @@ body {
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-:root {
-  --global-bg: none;
-  --page-background: #171717;
-  --page-text: #ffffff;
-}
+#app { width: 100%; min-height: 100vh; max-width: 100vw; display: flex; align-items: stretch; justify-content: flex-start; }
 
-#app {
-  width: 100%;
-  min-height: 100vh;
-  max-width: 100vw;
-  display: flex;
-  align-items: stretch;
-  justify-content: flex-start;
-  margin: 0;
-  padding: 0;
-}
-
-/* Global focus styles for keyboard navigation accessibility */
-*:focus-visible {
-  outline: 2px solid rgba(39, 169, 255, 0.8);
-  outline-offset: 4px;
-  border-radius: 4px;
-}
+*:focus-visible { outline: 2px solid rgba(39, 169, 255, 0.8); outline-offset: 4px; border-radius: 4px; }

@@ -1,63 +1,27 @@
 <script setup>
-import { onMounted, onUnmounted, watch } from "vue";
-import { RouterView, useRoute, useRouter } from "vue-router";
+import { onMounted, watch } from "vue";
+import { RouterView, useRoute } from "vue-router";
 import Keypad from "./pages/keypad-page/keypad/Keypad.vue";
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
-// import { useLenis } from "./composables/useLenis.js";
 
 const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
-// const { setupLenis, destroy } = useLenis();
 const route = useRoute();
-const router = useRouter();
 
-onMounted(() => {
-  checkAuth();
+onMounted(checkAuth);
 
-  // Initialize Lenis smooth scroll with snap
-  // setupLenis();
-});
-
-onUnmounted(() => {
-  // Cleanup Lenis on unmount
-  // destroy();
-});
-
-// Force scroll to top for story pages on route change
-watch(() => route.path, (newPath, oldPath) => {
+watch(() => route.path, (newPath) => {
   if (newPath.startsWith("/story")) {
-    // Stop Lenis temporarily to force scroll position
-    // const { stop, start } = useLenis();
-    // stop();
-
-    // Immediate scroll
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
-    // Delayed scroll to override any other scroll behavior
-    const delays = [10, 50, 100, 200];
-    delays.forEach(delay => {
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-      }, delay);
-    });
-
-    // Re-enable Lenis after scroll is set (story pages don't use it, but we enable it anyway)
-    // setTimeout(() => {
-    //   start();
-    // }, 300);
+    [0, 10, 50, 100, 200].forEach(delay =>
+      setTimeout(() => window.scrollTo(0, 0), delay)
+    );
   }
 }, { immediate: true });
 
 const handleUnlock = async () => {
   mixpanel.track("Gate Unlocked");
-
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
+  await new Promise(resolve => setTimeout(resolve, 100));
   setAuthenticated(true);
   await checkAuth();
 };
@@ -77,19 +41,11 @@ const handleUnlock = async () => {
 
 <style scoped>
 .auth-loading {
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  background: #171717;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+  background: #171717;
+  height: 100dvh;
 }
 
-.app-shell,
-.app-main {
-  width: 100%;
-}
+.app-shell, .app-main { width: 100%; }
 </style>

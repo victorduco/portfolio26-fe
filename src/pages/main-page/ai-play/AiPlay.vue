@@ -80,12 +80,12 @@ import { spring, createSpring, diamondVariants, diamondShapeVariants } from "./a
 defineProps({ darkMode: { type: Boolean, default: true } });
 
 const floatingItems = [
-  { icon: HaIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 40, rotation: 0, animateRotation: false, hoverSpringMultiplier: 1.1, positioning: { width: 'clamp(100px,13vw,170px)', height: 'clamp(100px,13vw,170px)', top: '10%', left: '14%', animation: 'float 8s ease-in-out infinite', '--t1': '15px,-20px,5deg', '--t2': '-10px,-15px,-3deg', '--t3': '10px,-25px,4deg', '--p1': '25%', '--p2': '50%', '--p3': '75%' } },
-  { icon: Flower2, defaultIcon: Leaf, color: "#FF83A2", iconSize: 32, rotation: 45, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(85px,10vw,135px)', height: 'clamp(85px,10vw,135px)', top: '18%', right: '15%', animation: 'float 10s ease-in-out infinite', '--t1': '-20px,15px,-6deg', '--t2': '-15px,-10px,4deg', '--t3': '0,0,0', '--p1': '33%', '--p2': '66%', '--p3': '100%' } },
-  { icon: SproutIcon, defaultIcon: Leaf, color: "#00FFBC", iconSize: 36, rotation: 90, animateRotation: false, hoverSpringMultiplier: 1.3, positioning: { width: 'clamp(95px,11vw,155px)', height: 'clamp(95px,11vw,155px)', top: '12%', left: '42%', animation: 'float 9s ease-in-out infinite', '--t1': '20px,10px,7deg', '--t2': '-15px,15px,-5deg', '--t3': '0,0,0', '--p1': '30%', '--p2': '60%', '--p3': '100%' } },
-  { icon: Palmtree, defaultIcon: Leaf, color: "#FFFF78", iconSize: 45, rotation: 135, animateRotation: false, hoverSpringMultiplier: 1.4, positioning: { width: 'clamp(120px,15vw,190px)', height: 'clamp(120px,15vw,190px)', bottom: '15%', left: '10%', animation: 'float 11s ease-in-out infinite', '--t1': '-25px,-10px,-4deg', '--t2': '20px,-15px,6deg', '--t3': '0,0,0', '--p1': '40%', '--p2': '80%', '--p3': '100%' } },
-  { icon: DropIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 42, rotation: 180, animateRotation: false, hoverSpringMultiplier: 1.2, positioning: { width: 'clamp(110px,14vw,180px)', height: 'clamp(110px,14vw,180px)', bottom: '12%', right: '10%', animation: 'float 7.5s ease-in-out infinite', '--t1': '15px,20px,5deg', '--t2': '-20px,10px,-7deg', '--t3': '0,0,0', '--p1': '35%', '--p2': '70%', '--p3': '100%' } },
-  { icon: Flower, defaultIcon: Leaf, color: "#FF83A2", iconSize: 30, rotation: 225, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(75px,9vw,130px)', height: 'clamp(75px,9vw,130px)', bottom: '18%', right: '38%', animation: 'float 9.5s ease-in-out infinite', '--t1': '-10px,15px,-3deg', '--t2': '15px,-20px,4deg', '--t3': '-15px,-10px,-5deg', '--p1': '25%', '--p2': '50%', '--p3': '75%' } },
+  { icon: HaIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 40, rotation: 0, animateRotation: false, hoverSpringMultiplier: 1.1, positioning: { width: 'clamp(100px,13vw,170px)', height: 'clamp(100px,13vw,170px)', top: '10%', left: '14%', animation: 'float1 8s ease-in-out infinite' } },
+  { icon: Flower2, defaultIcon: Leaf, color: "#FF83A2", iconSize: 32, rotation: 45, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(85px,10vw,135px)', height: 'clamp(85px,10vw,135px)', top: '18%', right: '15%', animation: 'float2 10s ease-in-out infinite' } },
+  { icon: SproutIcon, defaultIcon: Leaf, color: "#00FFBC", iconSize: 36, rotation: 90, animateRotation: false, hoverSpringMultiplier: 1.3, positioning: { width: 'clamp(95px,11vw,155px)', height: 'clamp(95px,11vw,155px)', top: '12%', left: '42%', animation: 'float3 9s ease-in-out infinite' } },
+  { icon: Palmtree, defaultIcon: Leaf, color: "#FFFF78", iconSize: 45, rotation: 135, animateRotation: false, hoverSpringMultiplier: 1.4, positioning: { width: 'clamp(120px,15vw,190px)', height: 'clamp(120px,15vw,190px)', bottom: '15%', left: '10%', animation: 'float4 11s ease-in-out infinite' } },
+  { icon: DropIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 42, rotation: 180, animateRotation: false, hoverSpringMultiplier: 1.2, positioning: { width: 'clamp(110px,14vw,180px)', height: 'clamp(110px,14vw,180px)', bottom: '12%', right: '10%', animation: 'float5 7.5s ease-in-out infinite' } },
+  { icon: Flower, defaultIcon: Leaf, color: "#FF83A2", iconSize: 30, rotation: 225, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(75px,9vw,130px)', height: 'clamp(75px,9vw,130px)', bottom: '18%', right: '38%', animation: 'float6 9.5s ease-in-out infinite' } },
 ];
 
 const hoveredIndex = ref(-1);
@@ -121,11 +121,37 @@ const hoveredIndex = ref(-1);
 .diamond-shape-color { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
 .plant-icon-wrapper, .icon-rotation-compensator { display: flex; align-items: center; justify-content: center; }
 .plant-icon { flex-shrink: 0; }
-@keyframes float {
+@keyframes float1 {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  var(--p1) { transform: translate(var(--t1)); }
-  var(--p2) { transform: translate(var(--t2)); }
-  var(--p3) { transform: translate(var(--t3)); }
+  25% { transform: translate(15px, -20px) rotate(5deg); }
+  50% { transform: translate(-10px, -15px) rotate(-3deg); }
+  75% { transform: translate(10px, -25px) rotate(4deg); }
+}
+@keyframes float2 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-20px, 15px) rotate(-6deg); }
+  66% { transform: translate(-15px, -10px) rotate(4deg); }
+}
+@keyframes float3 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(20px, 10px) rotate(7deg); }
+  60% { transform: translate(-15px, 15px) rotate(-5deg); }
+}
+@keyframes float4 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  40% { transform: translate(-25px, -10px) rotate(-4deg); }
+  80% { transform: translate(20px, -15px) rotate(6deg); }
+}
+@keyframes float5 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  35% { transform: translate(15px, 20px) rotate(5deg); }
+  70% { transform: translate(-20px, 10px) rotate(-7deg); }
+}
+@keyframes float6 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-10px, 15px) rotate(-3deg); }
+  50% { transform: translate(15px, -20px) rotate(4deg); }
+  75% { transform: translate(-15px, -10px) rotate(-5deg); }
 }
 .ai-play__title {
   max-width: 900px;

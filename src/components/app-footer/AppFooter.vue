@@ -3,42 +3,17 @@
     <div class="app-footer__inner">
       <h2 class="app-footer__name">Victor Diukov</h2>
       <div class="app-footer__links">
-        <a
-          href="mailto:mail@victorduco.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="app-footer__link"
-        >
-          mail@victorduco.com
-          <span class="app-footer__icon"></span>
+        <a href="mailto:mail@victorduco.com" target="_blank" rel="noopener noreferrer" class="app-footer__link">
+          mail@victorduco.com<span class="app-footer__icon"></span>
         </a>
-        <a
-          :href="resumePath"
-          target="_blank"
-          rel="noopener noreferrer"
-          download="Victor_Diukov_Resume.pdf"
-          class="app-footer__link"
-        >
-          Resume
-          <span class="app-footer__icon"></span>
+        <a :href="resumePath" target="_blank" rel="noopener noreferrer" download="Victor_Diukov_Resume.pdf" class="app-footer__link">
+          Resume<span class="app-footer__icon"></span>
         </a>
-        <a
-          href="https://www.linkedin.com/in/victorduco/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="app-footer__link"
-        >
-          LinkedIn
-          <span class="app-footer__icon"></span>
+        <a href="https://www.linkedin.com/in/victorduco/" target="_blank" rel="noopener noreferrer" class="app-footer__link">
+          LinkedIn<span class="app-footer__icon"></span>
         </a>
-        <a
-          href="https://github.com/victorduco/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="app-footer__link"
-        >
-          GitHub
-          <span class="app-footer__icon"></span>
+        <a href="https://github.com/victorduco/" target="_blank" rel="noopener noreferrer" class="app-footer__link">
+          GitHub<span class="app-footer__icon"></span>
         </a>
       </div>
     </div>
@@ -47,14 +22,7 @@
 
 <script setup>
 import { getDocumentPath } from "@/utils/mediaResolver.js";
-
-defineProps({
-  darkMode: {
-    type: Boolean,
-    default: false,
-  },
-});
-
+defineProps({ darkMode: { type: Boolean, default: false } });
 const resumePath = getDocumentPath("victor_diukov_resume.pdf");
 </script>
 
@@ -62,8 +30,9 @@ const resumePath = getDocumentPath("victor_diukov_resume.pdf");
 .app-footer {
   width: 100%;
   padding: 48px 0;
+  background-color: #fff;
+  color: #000;
 }
-
 .app-footer__inner {
   max-width: 100%;
   margin: 0 auto;
@@ -73,19 +42,20 @@ const resumePath = getDocumentPath("victor_diukov_resume.pdf");
   align-items: center;
   gap: 32px;
 }
-
-.app-footer__name {
+.app-footer__name,
+.app-footer__link {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
   font-size: clamp(14px, 1.5vw, 16px);
   line-height: 1.5;
-  letter-spacing: -0.01em;
   color: currentColor;
+}
+.app-footer__name {
+  letter-spacing: -0.01em;
   opacity: 0.65;
   margin: 0;
   flex-shrink: 0;
 }
-
 .app-footer__links {
   display: flex;
   align-items: center;
@@ -93,86 +63,35 @@ const resumePath = getDocumentPath("victor_diukov_resume.pdf");
   flex-wrap: wrap;
   justify-content: flex-end;
 }
-
 .app-footer__link {
-  font-family: var(--font-family-base);
-  font-weight: var(--font-weight-medium);
-  font-size: clamp(14px, 1.5vw, 16px);
-  line-height: 1.5;
-  color: currentColor;
-  opacity: 1;
   text-decoration: none;
   transition: opacity 0.3s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  position: relative;
 }
-
-.app-footer__link:hover {
-  opacity: 0.65;
-}
-
+.app-footer__link:hover { opacity: 0.65; }
 .app-footer__icon {
   width: 14px;
   height: 14px;
-  background-image: url("@/assets/icons/link.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  background: url("@/assets/icons/link.svg") center/contain no-repeat;
   opacity: 0;
   transition: opacity 0.3s ease;
   flex-shrink: 0;
-}
-
-.app-footer__link:hover .app-footer__icon {
-  opacity: 0.65;
-}
-
-/* Light theme by default - white background with dark text */
-.app-footer {
-  background-color: #ffffff;
-  color: #000000;
-}
-
-.app-footer__icon {
   filter: brightness(0);
 }
-
-/* Dark theme */
+.app-footer__link:hover .app-footer__icon { opacity: 0.65; }
 .app-footer.dark-mode {
-  background-color: #111111;
-  color: #ffffff;
+  background-color: #111;
+  color: #fff;
 }
-
-.app-footer.dark-mode .app-footer__icon {
-  filter: brightness(1);
-}
-
+.app-footer.dark-mode .app-footer__icon { filter: brightness(1); }
 @media (max-width: 768px) {
-  .app-footer {
-    padding: 40px 0;
-  }
-
-  .app-footer__inner {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0 24px;
-    gap: 24px;
-  }
-
-  .app-footer__links {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 20px;
-  }
+  .app-footer { padding: 40px 0; }
+  .app-footer__inner { flex-direction: column; align-items: flex-start; padding: 0 24px; gap: 24px; }
+  .app-footer__links { width: 100%; justify-content: flex-start; gap: 20px; }
 }
-
 @media (max-width: 480px) {
-  .app-footer__links {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
+  .app-footer__links { flex-direction: column; align-items: flex-start; gap: 16px; }
 }
 </style>

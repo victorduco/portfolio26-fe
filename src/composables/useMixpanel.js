@@ -1,15 +1,8 @@
 import { inject } from "vue";
 
+const noop = () => {};
+const stub = { track: noop, identify: noop, people: { set: noop } };
+
 export function useMixpanel() {
-  const mixpanel = inject("mixpanel");
-
-  if (!mixpanel) {
-    return {
-      track: () => {},
-      identify: () => {},
-      people: { set: () => {} },
-    };
-  }
-
-  return mixpanel;
+  return inject("mixpanel") || stub;
 }

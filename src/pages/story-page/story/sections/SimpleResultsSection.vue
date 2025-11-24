@@ -8,53 +8,12 @@
 </template>
 
 <script setup>
-defineProps({
-  title: {
-    type: String,
-    default: 'Results',
-  },
-  text: {
-    type: String,
-    required: true,
-  },
-});
+defineProps({ title: { type: String, default: 'Results' }, text: { type: String, required: true } })
 </script>
 
 <style scoped>
-.story-results-simple {
-  width: 100%;
-  /* Reduced top padding to account for margin from MediaContainer above (48px) */
-  /* This creates consistent spacing: 48px (media margin) + 40px (this padding) = 88px total */
-  padding: 40px 0 168px;
-  overflow-x: hidden;
-  display: flex;
-  justify-content: center;
-}
-
-.results-content {
-  width: 100%;
-  max-width: 1200px;
-  padding: 0 16px;
-  box-sizing: border-box;
-}
-
-.results-text {
-  font-family: var(--font-family-base);
-  font-size: 16px;
-  font-weight: var(--font-weight-regular);
-  line-height: 1.8;
-  margin: 0;
-  color: inherit;
-  opacity: 0.8;
-}
-
-@media (max-width: 768px) {
-  .story-results-simple {
-    padding: 60px 0 24px;
-  }
-
-  .results-content {
-    padding: 0 24px;
-  }
-}
+.story-results-simple { width: 100%; padding: 40px 0 168px; display: flex; justify-content: center; }
+.results-content { width: 100%; max-width: 1200px; padding: 0 16px; box-sizing: border-box; }
+.results-text { font-size: 16px; line-height: 1.8; margin: 0; opacity: 0.8; }
+@media (max-width: 768px) { .story-results-simple { padding: 60px 0 24px; } .results-content { padding: 0 24px; } }
 </style>

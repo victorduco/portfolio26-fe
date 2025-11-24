@@ -1,17 +1,9 @@
 import mixpanel from "mixpanel-browser";
 
-const ENABLE_MIXPANEL_IN_DEV = false;
+const stub = { track: () => {}, identify: () => {}, people: { set: () => {} } };
+const shouldInit = import.meta.env.PROD || false;
 
-const shouldInitialize = import.meta.env.PROD || ENABLE_MIXPANEL_IN_DEV;
-
-// Stub for dev when disabled
-const stub = {
-  track: () => {},
-  identify: () => {},
-  people: { set: () => {} },
-};
-
-if (shouldInitialize) {
+if (shouldInit) {
   mixpanel.init("92b17c4d676f977a493c89b740ddf7ec", {
     autocapture: true,
     record_sessions_percent: 100,
@@ -21,12 +13,10 @@ if (shouldInitialize) {
   });
 }
 
-// Export the right instance
-const mixpanelInstance = shouldInitialize ? mixpanel : stub;
+const mixpanelInstance = shouldInit ? mixpanel : stub;
 
-// Vue plugin
 export default {
-  install(app) {
+  install: (app) => {
     app.config.globalProperties.$mixpanel = mixpanelInstance;
     app.provide("mixpanel", mixpanelInstance);
   },

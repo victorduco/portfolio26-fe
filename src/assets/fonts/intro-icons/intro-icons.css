@@ -1,44 +1,26 @@
 @font-face {
   font-family: "intro-icons";
   src: url("./font/intro-icons.eot?59094033");
-  src: url("./font/intro-icons.eot?59094033#iefix") format("embedded-opentype"),
-    url("./font/intro-icons.woff2?59094033") format("woff2"),
-    url("./font/intro-icons.woff?59094033") format("woff"),
-    url("./font/intro-icons.ttf?59094033") format("truetype"),
-    url("./font/intro-icons.svg?59094033#intro-icons") format("svg");
+  src: url("./font/intro-icons.eot?59094033#iefix") format("embedded-opentype"), url("./font/intro-icons.woff2?59094033") format("woff2"), url("./font/intro-icons.woff?59094033") format("woff"), url("./font/intro-icons.ttf?59094033") format("truetype"), url("./font/intro-icons.svg?59094033#intro-icons") format("svg");
   font-weight: normal;
   font-style: normal;
 }
 
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
+[class^="icon-"]:before, [class*=" icon-"]:before {
   font-family: "intro-icons";
   font-style: normal;
   font-weight: normal;
   speak: never;
-
   display: inline-block;
   text-decoration: inherit;
   text-align: center;
-
-  /* For safety - reset parent styles, that can break glyph codes*/
   font-variant: normal;
   text-transform: none;
-
-  /* Font smoothing. That was taken from TWBS */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-d:before {
-  content: "\e800";
-} /* '' */
-.icon-c:before {
-  content: "\e801";
-} /* '' */
-.icon-b:before {
-  content: "\e802";
-} /* '' */
-.icon-a:before {
-  content: "\e803";
-} /* '' */
+.icon-d:before { content: "\e800"; }
+.icon-c:before { content: "\e801"; }
+.icon-b:before { content: "\e802"; }
+.icon-a:before { content: "\e803"; }

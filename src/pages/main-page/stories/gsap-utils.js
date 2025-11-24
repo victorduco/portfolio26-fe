@@ -1,51 +1,23 @@
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-/**
- * Cleanup GSAP animations and ScrollTriggers
- * @param {Object} animationInstance - Animation instance with timelines and triggers
- */
+const killTimelineWithTrigger = (tl) => {
+  if (!tl) return;
+  if (tl.scrollTrigger) tl.scrollTrigger.kill();
+  tl.kill();
+};
+
 export function cleanupAnimations(animationInstance) {
-  if (animationInstance) {
-    // Handle main pin
-    if (animationInstance.mainPin) {
-      animationInstance.mainPin.kill();
-    }
+  if (!animationInstance) return;
 
-    // Handle single timeline
-    if (animationInstance.scrollTrigger) {
-      animationInstance.scrollTrigger.kill();
-    }
-    if (animationInstance.timeline) {
-      if (animationInstance.timeline.scrollTrigger) {
-        animationInstance.timeline.scrollTrigger.kill();
-      }
-      animationInstance.timeline.kill();
-    }
+  if (animationInstance.mainPin) animationInstance.mainPin.kill();
+  if (animationInstance.scrollTrigger) animationInstance.scrollTrigger.kill();
+  if (animationInstance.videoTrigger) animationInstance.videoTrigger.kill();
 
-    // Handle multiple timelines
-    if (animationInstance.timeline1) {
-      if (animationInstance.timeline1.scrollTrigger) {
-        animationInstance.timeline1.scrollTrigger.kill();
-      }
-      animationInstance.timeline1.kill();
-    }
-    if (animationInstance.timeline2) {
-      if (animationInstance.timeline2.scrollTrigger) {
-        animationInstance.timeline2.scrollTrigger.kill();
-      }
-      animationInstance.timeline2.kill();
-    }
-    if (animationInstance.scrollTrigger1) {
-      animationInstance.scrollTrigger1.kill();
-    }
-    if (animationInstance.scrollTrigger2) {
-      animationInstance.scrollTrigger2.kill();
-    }
+  killTimelineWithTrigger(animationInstance.timeline);
+  [1, 2].forEach(i => {
+    killTimelineWithTrigger(animationInstance[`timeline${i}`]);
+    if (animationInstance[`scrollTrigger${i}`]) animationInstance[`scrollTrigger${i}`].kill();
+  });
 
-    // Handle video trigger (Story3)
-    if (animationInstance.videoTrigger) {
-      animationInstance.videoTrigger.kill();
-    }
-  }
   ScrollTrigger.getAll().forEach((st) => st.kill());
 }
