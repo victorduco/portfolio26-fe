@@ -22,7 +22,7 @@ defineProps({ results: { type: Array, required: true }, resultsNote: { type: Str
 .results-content { width: 100%; max-width: 1200px; padding: 0 16px; box-sizing: border-box; }
 .results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
 .result-item { display: flex; flex-direction: column; gap: 12px; }
-.result-heading { font-size: 18px; font-weight: var(--font-weight-semibold); line-height: 1.3; margin: 0; }
+.result-heading { font-size: 18px; font-weight: var(--font-weight-semibold); line-height: 1.3; margin: 0; color: inherit; }
 .result-description { font-size: 16px; line-height: 1.6; margin: 0; opacity: 0.8; }
 .results-note { font-size: 14px; line-height: 1.6; margin: 48px 0 0; opacity: 0.6; text-align: center; }
 @media (max-width: 900px) { .results-grid { grid-template-columns: 1fr; gap: 32px; } }

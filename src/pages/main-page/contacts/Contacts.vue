@@ -118,7 +118,7 @@ const resumePath = getDocumentPath("victor_diukov_resume.pdf");
 @media (max-width: 900px) {
   .contacts__content { padding: clamp(40px, 8vh, 80px) clamp(20px, 5vw, 48px); }
   .contacts__container { grid-template-columns: 1fr; gap: clamp(24px, 4vh, 40px); }
-  .contacts__name, .contacts__link--primary { text-align: center; justify-self: center; }
+  .contacts__link--primary { text-align: center; justify-self: center; }
 }
 @media (max-width: 767px) {
   .contacts__content { padding: 48px clamp(16px, 4vw, 32px); min-height: calc(100dvh - 64px); }

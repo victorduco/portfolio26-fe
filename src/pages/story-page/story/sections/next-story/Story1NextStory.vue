@@ -34,9 +34,9 @@
 
 @media (max-width: 767px) {
   .text-container { transform: translate(-50%, -200px); width: 100%; max-width: 100%; padding: 0 clamp(16px, 4vw, 32px); box-sizing: border-box; }
-  .tags-container { flex-direction: column; gap: 8px; }
-  .tag { width: 100%; }
+  .company-text, .main-text { text-align: center; width: 100%; }
+  .tags-container { flex-direction: column; gap: 8px; align-items: stretch; width: 100%; }
+  .tag { width: 100%; text-align: center; }
   .tag-separator { display: none; }
-  .line-element { transform: translate(-50%, calc(-50% + 100px)); width: calc(100vw - 48px); border-radius: 0; }
 }
 </style>

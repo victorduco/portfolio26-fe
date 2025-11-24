@@ -39,6 +39,8 @@ const { isPlaying, isMuted, hasStartedPlayback, isFullscreen, shouldBeMutedByDef
 } = useVideoPlayer(props.videoSrc, videoElement);
 
 let observer = null;
+let playTimeout = null;
+let isCurrentlyVisible = false;
 const interactionEvents = ["click", "touchstart", "keydown"];
 const fullscreenEvents = ["fullscreenchange", "webkitfullscreenchange"];
 
@@ -49,9 +51,26 @@ onMounted(() => {
   if (videoContainerRef.value) {
     observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= props.autoplayThreshold) {
-          if (!userPaused.value) setTimeout(attemptPlay, 300);
-        } else pauseVideo();
+        const isVisibleEnough = entry.isIntersecting && entry.intersectionRatio >= props.autoplayThreshold;
+        isCurrentlyVisible = isVisibleEnough;
+
+        if (playTimeout) {
+          clearTimeout(playTimeout);
+          playTimeout = null;
+        }
+
+        if (isVisibleEnough) {
+          if (!userPaused.value) {
+            playTimeout = setTimeout(() => {
+              if (isCurrentlyVisible && !userPaused.value) {
+                attemptPlay();
+              }
+              playTimeout = null;
+            }, 300);
+          }
+        } else {
+          pauseVideo();
+        }
       },
       { threshold: [0, 0.1, 0.25, 0.5, props.autoplayThreshold, 0.9, 1] }
     );
@@ -62,6 +81,10 @@ onMounted(() => {
 onUnmounted(() => {
   interactionEvents.forEach(e => document.removeEventListener(e, handleUserInteraction));
   fullscreenEvents.forEach(e => document.removeEventListener(e, handleFullscreenChange));
+  if (playTimeout) {
+    clearTimeout(playTimeout);
+    playTimeout = null;
+  }
   observer?.disconnect();
   pauseVideo();
 });

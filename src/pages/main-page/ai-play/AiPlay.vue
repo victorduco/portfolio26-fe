@@ -5,7 +5,7 @@
         <motion.div
           v-for="(item, index) in floatingItems"
           :key="index"
-          class="float-img"
+          :class="['float-img', `float-img-${index + 1}`]"
           :style="item.positioning"
           :variants="diamondVariants"
           :animate="hoveredIndex === index ? 'groupHover' : 'default'"
@@ -80,12 +80,12 @@ import { spring, createSpring, diamondVariants, diamondShapeVariants } from "./a
 defineProps({ darkMode: { type: Boolean, default: true } });
 
 const floatingItems = [
-  { icon: HaIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 40, rotation: 0, animateRotation: false, hoverSpringMultiplier: 1.1, positioning: { width: 'clamp(100px,13vw,170px)', height: 'clamp(100px,13vw,170px)', top: '10%', left: '14%', animation: 'float1 8s ease-in-out infinite' } },
-  { icon: Flower2, defaultIcon: Leaf, color: "#FF83A2", iconSize: 32, rotation: 45, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(85px,10vw,135px)', height: 'clamp(85px,10vw,135px)', top: '18%', right: '15%', animation: 'float2 10s ease-in-out infinite' } },
-  { icon: SproutIcon, defaultIcon: Leaf, color: "#00FFBC", iconSize: 36, rotation: 90, animateRotation: false, hoverSpringMultiplier: 1.3, positioning: { width: 'clamp(95px,11vw,155px)', height: 'clamp(95px,11vw,155px)', top: '12%', left: '42%', animation: 'float3 9s ease-in-out infinite' } },
-  { icon: Palmtree, defaultIcon: Leaf, color: "#FFFF78", iconSize: 45, rotation: 135, animateRotation: false, hoverSpringMultiplier: 1.4, positioning: { width: 'clamp(120px,15vw,190px)', height: 'clamp(120px,15vw,190px)', bottom: '15%', left: '10%', animation: 'float4 11s ease-in-out infinite' } },
-  { icon: DropIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 42, rotation: 180, animateRotation: false, hoverSpringMultiplier: 1.2, positioning: { width: 'clamp(110px,14vw,180px)', height: 'clamp(110px,14vw,180px)', bottom: '12%', right: '10%', animation: 'float5 7.5s ease-in-out infinite' } },
-  { icon: Flower, defaultIcon: Leaf, color: "#FF83A2", iconSize: 30, rotation: 225, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(75px,9vw,130px)', height: 'clamp(75px,9vw,130px)', bottom: '18%', right: '38%', animation: 'float6 9.5s ease-in-out infinite' } },
+  { icon: HaIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 40, rotation: 0, animateRotation: false, hoverSpringMultiplier: 1.1, positioning: { width: 'clamp(100px,13vw,170px)', height: 'clamp(100px,13vw,170px)', top: '10%', left: '14%' } },
+  { icon: Flower2, defaultIcon: Leaf, color: "#FF83A2", iconSize: 32, rotation: 45, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(85px,10vw,135px)', height: 'clamp(85px,10vw,135px)', top: '18%', right: '15%' } },
+  { icon: SproutIcon, defaultIcon: Leaf, color: "#00FFBC", iconSize: 36, rotation: 90, animateRotation: false, hoverSpringMultiplier: 1.3, positioning: { width: 'clamp(95px,11vw,155px)', height: 'clamp(95px,11vw,155px)', top: '12%', left: '42%' } },
+  { icon: Palmtree, defaultIcon: Leaf, color: "#FFFF78", iconSize: 45, rotation: 135, animateRotation: false, hoverSpringMultiplier: 1.4, positioning: { width: 'clamp(120px,15vw,190px)', height: 'clamp(120px,15vw,190px)', bottom: '15%', left: '10%' } },
+  { icon: DropIcon, defaultIcon: Leaf, color: "#27A9FF", iconSize: 42, rotation: 180, animateRotation: false, hoverSpringMultiplier: 1.2, positioning: { width: 'clamp(110px,14vw,180px)', height: 'clamp(110px,14vw,180px)', bottom: '12%', right: '10%' } },
+  { icon: Flower, defaultIcon: Leaf, color: "#FF83A2", iconSize: 30, rotation: 225, animateRotation: true, hoverSpringMultiplier: 1.0, positioning: { width: 'clamp(75px,9vw,130px)', height: 'clamp(75px,9vw,130px)', bottom: '18%', right: '38%' } },
 ];
 
 const hoveredIndex = ref(-1);
@@ -105,6 +105,12 @@ const hoveredIndex = ref(-1);
 }
 .floating-images { position: absolute; inset: 0; z-index: 0; }
 .float-img { position: absolute; will-change: transform; animation-play-state: running !important; }
+.float-img-1 { animation: float1 8s ease-in-out infinite; }
+.float-img-2 { animation: float2 10s ease-in-out infinite; }
+.float-img-3 { animation: float3 9s ease-in-out infinite; }
+.float-img-4 { animation: float4 11s ease-in-out infinite; }
+.float-img-5 { animation: float5 7.5s ease-in-out infinite; }
+.float-img-6 { animation: float6 9.5s ease-in-out infinite; }
 .diamond-shape {
   width: 100%;
   height: 100%;
