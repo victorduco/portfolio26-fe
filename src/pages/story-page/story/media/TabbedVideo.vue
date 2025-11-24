@@ -1,8 +1,6 @@
 <template>
   <div class="tabbed-video-container" ref="containerRef">
-    <nav class="tabs-nav">
-      <button v-for="(tab, i) in tabs" :key="i" class="tab-button" :class="{ active: activeTab === i }" @click="switchTab(i)">{{ tab.title }}</button>
-    </nav>
+    <TabsNav :tabs="tabs" :active-tab="activeTab" @tab-change="switchTab" />
     <div class="video-wrapper">
       <video v-for="(tab, i) in tabs" :key="`video-${i}`" :ref="el => el && (videoRefs[i] = el)" :src="tab.videoSrc" muted playsinline preload="auto" class="tab-video" :class="{ 'video-active': activeTab === i, 'video-paused-blur': activeTab === i && !isPlaying && hasStartedPlayback }" @ended="isPlaying = false" @click="togglePlayPause" />
       <div v-if="!isPlaying && hasStartedPlayback" class="pause-overlay" @click="togglePlayPause">
@@ -16,6 +14,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import VideoControls from "./VideoControls.vue";
+import TabsNav from "@/components/tabs-nav/TabsNav.vue";
 import { useChapteredVideo } from "@/composables/useChapteredVideo";
 import { useMediaQuery } from "@/composables/useMediaQuery";
 
@@ -79,10 +78,6 @@ onUnmounted(() => { observer?.disconnect(); pauseVideo(); });
 
 <style scoped>
 .tabbed-video-container { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 40px); box-sizing: border-box; position: relative; }
-.tabs-nav { display: flex; gap: clamp(4px, 1vw, 8px); margin-bottom: clamp(16px, 2.5vw, 24px); padding: clamp(3px, 0.5vw, 4px); background: rgba(0,0,0,0.05); border-radius: 12px; }
-.tab-button { padding: clamp(8px, 1.2vw, 12px) clamp(16px, 2.5vw, 24px); background: transparent; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-family: var(--font-family-base); font-weight: var(--font-weight-medium); font-size: clamp(12px, 1.4vw, 14px); line-height: 1.4; color: inherit; opacity: 0.6; white-space: nowrap; }
-.tab-button:hover { opacity: 0.8; background: rgba(0,0,0,0.05); }
-.tab-button.active { background: var(--story-primary-color, #007aff); color: #fff; opacity: 1; }
 .video-wrapper { position: relative; max-width: 1200px; width: 100%; overflow: hidden; border-radius: 12px; border: 1px solid #ccc; line-height: 0; }
 .tab-video { width: 100%; height: auto; display: none; cursor: pointer; transition: filter 0.3s ease; }
 .tab-video.video-active { display: block; }
