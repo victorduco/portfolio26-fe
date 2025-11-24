@@ -34,6 +34,21 @@ export const story1Content = {
         },
       },
       {
+        heading: h('Visual Design Iterations', 'UI Evolution Process'),
+        textBefore: 'Through multiple design iterations, we refined the visual language to balance clarity with sophistication. Each iteration brought us closer to a design that feels both approachable and professional.',
+        media: {
+          type: 'tabbed-img', props: {
+            mediaLabel: 'Four stages of visual refinement',
+            tabs: [
+              { title: 'Version 1', imageSrc: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1600&h=900&fit=crop', alt: 'Initial design concept' },
+              { title: 'Version 2', imageSrc: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1600&h=900&fit=crop&sat=-100', alt: 'Refined layout' },
+              { title: 'Version 3', imageSrc: 'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=1600&h=900&fit=crop', alt: 'Enhanced visual hierarchy' },
+              { title: 'Final', imageSrc: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop', alt: 'Production-ready design' }
+            ],
+          }
+        },
+      },
+      {
         heading: h('Consistent Experience Across Variable Inputs', 'Product Vision & Design System'),
         textBefore: 'We developed a comprehensive AI framework that combines conversational design with intelligent automation. The system uses natural language processing to understand user intent and provides contextual assistance throughout the reconciliation workflow, reducing the learning curve by 70%.',
         media: { type: 'parallax', props: { image1: '/images/story1-framework-1.png', image2: '/images/story1-framework-2.png', image3: '/images/story1-framework-3.png', mediaLabel: 'Input & Output Elements for Chat and Classic UI' } },

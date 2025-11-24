@@ -28,13 +28,14 @@ import ParallaxImg from '../media/ParallaxImg.vue'
 import HorizontalParallaxImg from '../media/HorizontalParallaxImg.vue'
 import ChapteredVideo from '../media/ChapteredVideo.vue'
 import TabbedVideo from '../media/TabbedVideo.vue'
+import TabbedImg from '../media/TabbedImg.vue'
 import LayeredImg from '../media/LayeredImg.vue'
 import { resolveMediaPath } from '@/utils/mediaResolver.js'
 
 interface Props { heading?: { main: string; subtitle?: string }; textBefore?: string; media?: { type: string; props: Record<string, any> }; textAfter?: string; backgroundColor?: string }
 const props = defineProps<Props>()
 
-const mediaComponents: Record<string, Component> = { image: FullscreenImg, video: FullscreenVideo, parallax: ParallaxImg, horizontalParallax: HorizontalParallaxImg, 'chaptered-video': ChapteredVideo, 'tabbed-video': TabbedVideo, 'layered-cards': LayeredImg }
+const mediaComponents: Record<string, Component> = { image: FullscreenImg, video: FullscreenVideo, parallax: ParallaxImg, horizontalParallax: HorizontalParallaxImg, 'chaptered-video': ChapteredVideo, 'tabbed-video': TabbedVideo, 'tabbed-img': TabbedImg, 'layered-cards': LayeredImg }
 
 const mediaConfig: Record<string, { type: 'fullheight' | 'fullwidth'; overflow: 'hidden' | 'visible'; wrapper: string; container: string }> = {
   image: { type: 'fullheight', overflow: 'hidden', wrapper: 'fullscreen-image-wrapper', container: '' },
@@ -43,6 +44,7 @@ const mediaConfig: Record<string, { type: 'fullheight' | 'fullwidth'; overflow: 
   horizontalParallax: { type: 'fullheight', overflow: 'hidden', wrapper: 'horizontal-parallax-wrapper', container: '' },
   'chaptered-video': { type: 'fullheight', overflow: 'hidden', wrapper: 'chaptered-video-wrapper', container: '' },
   'tabbed-video': { type: 'fullheight', overflow: 'hidden', wrapper: 'tabbed-video-wrapper', container: '' },
+  'tabbed-img': { type: 'fullheight', overflow: 'hidden', wrapper: 'tabbed-img-wrapper', container: '' },
   'layered-cards': { type: 'fullwidth', overflow: 'visible', wrapper: 'layered-cards-wrapper', container: 'layered-cards' },
 }
 const defaultCfg = { type: 'fullheight' as const, overflow: 'hidden' as const, wrapper: '', container: '' }
@@ -53,7 +55,11 @@ function getMediaProps(p: Record<string, any>, bgColor?: string): Record<string,
   const resolved: Record<string, any> = {}
   for (const [k, v] of Object.entries(rest)) {
     if (typeof v === 'string' && (v.startsWith('/images/') || v.startsWith('/videos/'))) resolved[k] = resolveMediaPath(v)
-    else if (k === 'tabs' && Array.isArray(v)) resolved[k] = v.map((t: any) => ({ ...t, videoSrc: t.videoSrc ? resolveMediaPath(t.videoSrc) : t.videoSrc }))
+    else if (k === 'tabs' && Array.isArray(v)) resolved[k] = v.map((t: any) => ({
+      ...t,
+      videoSrc: t.videoSrc ? resolveMediaPath(t.videoSrc) : t.videoSrc,
+      imageSrc: t.imageSrc ? resolveMediaPath(t.imageSrc) : t.imageSrc
+    }))
     else resolved[k] = v
   }
   resolved.backgroundColor = backgroundColor || bgColor || '#ffffff'
