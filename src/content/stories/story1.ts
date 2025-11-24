@@ -11,7 +11,7 @@ export const story1Content = {
       {
         heading: h('Something Went Wrong, Somehow', 'Account Reconciliation Specifics'),
         textBefore: 'A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.',
-        media: img('/images/story1-domain-tree.png', 'Users must grasp multiple subdomains to resolve problems.', { enableMagnifier: true }),
+        media: img('/images/story1-domain-tree.png', 'Users must grasp multiple subdomains to resolve problems.'),
       },
       {
         heading: h('Identifying Cross-Regional Patterns in User Workflows', 'Global Product Research'),
