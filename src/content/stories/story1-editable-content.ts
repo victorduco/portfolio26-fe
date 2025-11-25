@@ -231,18 +231,18 @@ export const story1EditableContent = {
         ],
       },
       {
-        sectionTag: "Adaptive Interface Elements",
-        heading: "Diving Deeper Into How Context Shapes Each Interaction",
+        sectionTag: "Context Input",
+        heading: "Flexible Ways to Add Context",
 
         textBefore: "Our system intelligently adapts to user context, providing relevant information and actions at the right moment. Each interaction is enhanced with smart suggestions and dynamic content that responds to user behavior.",
 
         // Медиа: tabbed-img с двумя состояниями (state1/state2)
-        mediaLabel: "Context-Driven UI",
+        mediaLabel: "Users may need a wide range of different context types.",
 
         tabs: [
           {
-            tabTitle: "Context Recognition",
-            note: "2.3.1 — без изменений названия таба",
+            tabTitle: "Add from List",
+            note: "ПЕРЕИМЕНОВАТЬ таб: Context Recognition → Add from List",
             imageSrcState1: "story1-chat-context-state1.png",
             imageSrcState2: "story1-chat-context-state2.png",
             markers: [
@@ -253,8 +253,8 @@ export const story1EditableContent = {
             ],
           },
           {
-            tabTitle: "Ticket Management",
-            note: "2.3.2 — без изменений названия таба",
+            tabTitle: "Search by Details",
+            note: "ПЕРЕИМЕНОВАТЬ таб: Ticket Management → Search by Details",
             imageSrcState1: "story1-chat-ticket-state1.png",
             imageSrcState2: "story1-chat-ticket-state2.png",
             markers: [

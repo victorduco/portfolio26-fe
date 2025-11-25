@@ -36,18 +36,23 @@ export const story1Content = {
     sections: [
       {
         heading: h(
-          "Something Went Wrong, Somehow",
+          "Why Does This Feel Like Solving a Case?",
           "Account Reconciliation Specifics"
         ),
         textBefore:
           "A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.",
         media: img(
           "/images/story1-domain-tree.png",
-          "Users must grasp multiple subdomains to resolve problems.",
+          "Reconciliation Domain Map",
           [
             {
               position: { x: 41.21, y: 26.76 },
-              text: "Bounce rate of 67% indicates major UX issues in the onboarding flow",
+              text: "Users must grasp multiple subdomains to resolve problems.",
+              buttonColor: "#9B4AE2",
+            },
+            {
+              position: { x: 58.79, y: 73.24 },
+              text: "The correct entry point for resolving an issue is rarely obvious.",
               buttonColor: "#9B4AE2",
             },
           ]
@@ -55,7 +60,7 @@ export const story1Content = {
       },
       {
         heading: h(
-          "Identifying Cross-Regional Patterns in User Workflows",
+          "Spotting the Patterns Hidden Across Regions",
           "Global Product Research"
         ),
         textBefore:
@@ -64,7 +69,7 @@ export const story1Content = {
           "/images/story1-scale-2.png",
           "/images/story1-scale-1.png",
           "/images/story1-scale-3.png",
-          "Research Summary and Business Context",
+          "Scale & Research Highlights",
           []
         ),
       },
@@ -75,7 +80,7 @@ export const story1Content = {
     sections: [
       {
         heading: h(
-          "Pairing Natural Dialogue with Heavy Data Workflows",
+          "Let's Blend Natural Language With Serious Data Tasks",
           "Conversational & Classic UI"
         ),
         textBefore:
@@ -84,7 +89,7 @@ export const story1Content = {
           type: "tabbed-video",
           props: {
             mediaLabel:
-              "Two workflows, one unified experience. Users pick what fits best.",
+              "Conversational and Classic Workflows",
             tabs: [
               {
                 title: "AI-Based User Flow",
@@ -100,7 +105,7 @@ export const story1Content = {
       },
       {
         heading: h(
-          "Helping Users See What Truly Matters in the Data",
+          "Flowing Smoothly From Conversation to Full Data View",
           "Data Visualization"
         ),
         textBefore:
@@ -108,44 +113,44 @@ export const story1Content = {
         media: {
           type: "tabbed-img",
           props: {
-            mediaLabel: "Four stages of visual refinement",
+            mediaLabel: "Chat–Full View Linking",
             defaultButtonColor: "#9B4AE2",
             tabs: [
               {
-                title: "Version 1",
+                title: "Static Data",
                 imageSrc: "/images/story1-data-1-1.png",
-                alt: "Initial design concept",
+                alt: "Static data view",
                 markers: [
                   {
                     position: { x: 32.93, y: 71.71 },
-                    text: "Initial navigation concept with basic structure",
+                    text: "User can dive from the summary view into a full-screen data snapshot.",
                   },
                   {
                     position: { x: 96.01, y: 10.66 },
-                    text: "Early content layout experimentation",
+                    text: "Classic UI features like filters help users navigate large data sets.",
                   },
                   {
                     position: { x: 57.65, y: 10.66 },
-                    text: "Third marker",
+                    text: "After reviewing the data, users can reference it and return to the chat.",
                   },
                 ],
               },
               {
-                title: "Version 2",
+                title: "Interactive Mode",
                 imageSrc: "/images/story1-data-1-2.png",
-                alt: "Refined layout",
+                alt: "Interactive mode view",
                 markers: [
                   {
                     position: { x: 46.57, y: 62.12 },
-                    text: "Simplified color palette for better readability",
+                    text: "User can dive from the summary view into a full-screen mode to perform actions.",
                   },
                   {
                     position: { x: 90.02, y: 59.11 },
-                    text: "Second marker",
+                    text: "Users can perform key actions directly within the chat or in the classic UI.",
                   },
                   {
                     position: { x: 57.81, y: 9.06 },
-                    text: "Third marker",
+                    text: "After completing actions, the user can return to the conversation.",
                   },
                 ],
               },
@@ -166,18 +171,18 @@ export const story1Content = {
             image1: "/images/story1-framework-1.png",
             image2: "/images/story1-framework-2.png",
             image3: "/images/story1-framework-3.png",
-            mediaLabel: "Input & Output Elements for Chat and Classic UI",
+            mediaLabel: "Universal Input & Output Elements",
           },
         },
       },
       {
-        heading: h("Interactive State Management", "Dynamic UI Feedback"),
+        heading: h("The Project-Specific Chat Features", "Core AI Features"),
         textBefore:
           "Our chat interface demonstrates sophisticated state management with smooth transitions between different interaction states. Each state change provides clear visual feedback to guide users through their workflow.",
         media: {
           type: "tabbed-img",
           props: {
-            mediaLabel: "Chat interface state transitions",
+            mediaLabel: "Chat UI Patterns",
             defaultButtonColor: "#9B4AE2",
             maxWidth: "1200px",
             borderWidth: "2px",
@@ -185,34 +190,38 @@ export const story1Content = {
             borderRadius: "15px",
             tabs: [
               {
+                title: "Quick Actions",
+                imageSrc: "/images/story1-chat-quick-actions-state1.png",
+                imageSrcState2: "/images/story1-chat-quick-actions-state2.png",
+                alt: "Quick actions interface",
+                markers: [
+                  {
+                    position: { x: 50, y: 50 },
+                    text: "Most frequent requests are available in one click.",
+                  },
+                ],
+              },
+              {
                 title: "Chat History",
                 imageSrc: "/images/story1-chat-history-state1.png",
                 imageSrcState2: "/images/story1-chat-history-state2.png",
                 alt: "Chat history interface",
                 markers: [
                   {
-                    position: { x: 67.73, y: 14.51 },
-                    text: "Real-time message updates with smooth transitions",
-                  },
-                  {
                     position: { x: 75.08, y: 77.46 },
-                    text: "Context-aware action buttons appear on hover",
+                    text: "Context and attachments help users quickly find the right conversation in the history.",
                   },
                 ],
               },
               {
-                title: "Account View",
+                title: "Adding Context",
                 imageSrc: "/images/story1-chat-account-state1.png",
                 imageSrcState2: "/images/story1-chat-account-state2.png",
-                alt: "Account management view",
+                alt: "Adding context view",
                 markers: [
                   {
                     position: { x: 30.18, y: 56.04 },
-                    text: "Dynamic account information loading",
-                  },
-                  {
-                    position: { x: 52, y: 80.94 },
-                    text: "Interactive controls with state feedback",
+                    text: "Users can add context in multiple ways.",
                   },
                 ],
               },
@@ -221,13 +230,13 @@ export const story1Content = {
         },
       },
       {
-        heading: h("Contextual Intelligence", "Adaptive Interface Elements"),
+        heading: h("Flexible Ways to Add Context", "Context Input"),
         textBefore:
           "Our system intelligently adapts to user context, providing relevant information and actions at the right moment. Each interaction is enhanced with smart suggestions and dynamic content that responds to user behavior.",
         media: {
           type: "tabbed-img",
           props: {
-            mediaLabel: "Context-aware interface features",
+            mediaLabel: "Users may need a wide range of different context types.",
             defaultButtonColor: "#9B4AE2",
             maxWidth: "1200px",
             borderWidth: "2px",
@@ -235,38 +244,38 @@ export const story1Content = {
             borderRadius: "15px",
             tabs: [
               {
-                title: "Context Recognition",
+                title: "Add from List",
                 imageSrc: "/images/story1-chat-context-state1.png",
                 imageSrcState2: "/images/story1-chat-context-state2.png",
-                alt: "Context recognition interface",
+                alt: "Add from list interface",
                 markers: [
                   {
                     position: { x: 41.97, y: 56.8 },
-                    text: "AI-powered context detection adapts interface elements",
+                    text: "User can add context directly from a predefined list.",
                   },
                 ],
               },
               {
-                title: "Ticket Management",
+                title: "Search by Details",
                 imageSrc: "/images/story1-chat-ticket-state1.png",
                 imageSrcState2: "/images/story1-chat-ticket-state2.png",
-                alt: "Ticket management view",
+                alt: "Search by details view",
                 markers: [
                   {
                     position: { x: 56.27, y: 60.83 },
-                    text: "Smart ticket suggestions based on user behavior",
+                    text: "User can search for specific context types through the list.",
                   },
                 ],
               },
               {
-                title: "Smart Linking",
+                title: "Added Context",
                 imageSrc: "/images/story1-chat-link2-state1.png",
                 imageSrcState2: "/images/story1-chat-link2-state2.png",
-                alt: "Smart linking interface",
+                alt: "Added context interface",
                 markers: [
                   {
                     position: { x: 57.5, y: 68 },
-                    text: "Intelligent relationship detection between entities",
+                    text: "After adding context, users can see details without opening external systems.",
                   },
                 ],
               },
