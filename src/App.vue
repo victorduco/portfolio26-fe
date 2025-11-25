@@ -11,7 +11,7 @@ const mixpanel = useMixpanel();
 const route = useRoute();
 
 // Enable marker coordinate picker
-const picker = useMarkerCoordinatePicker({ enabled: false });
+const picker = useMarkerCoordinatePicker({ enabled: true });
 
 onMounted(checkAuth);
 

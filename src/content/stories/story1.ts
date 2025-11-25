@@ -117,12 +117,16 @@ export const story1Content = {
                 alt: "Initial design concept",
                 markers: [
                   {
-                    position: { x: 22.62, y: 0 },
+                    position: { x: 32.93, y: 71.71 },
                     text: "Initial navigation concept with basic structure",
                   },
                   {
-                    position: { x: 76.5, y: 0 },
+                    position: { x: 96.01, y: 10.66 },
                     text: "Early content layout experimentation",
+                  },
+                  {
+                    position: { x: 57.65, y: 10.66 },
+                    text: "Third marker",
                   },
                 ],
               },
@@ -132,12 +136,37 @@ export const story1Content = {
                 alt: "Refined layout",
                 markers: [
                   {
-                    position: { x: 50.19, y: 36.08 },
+                    position: { x: 46.57, y: 62.12 },
                     text: "Simplified color palette for better readability",
+                  },
+                  {
+                    position: { x: 90.02, y: 59.11 },
+                    text: "Second marker",
+                  },
+                  {
+                    position: { x: 57.81, y: 9.06 },
+                    text: "Third marker",
                   },
                 ],
               },
             ],
+          },
+        },
+      },
+      {
+        heading: h(
+          "Consistent Experience Across Variable Inputs",
+          "Product Vision & Design System"
+        ),
+        textBefore:
+          "We developed a comprehensive AI framework that combines conversational design with intelligent automation. The system uses natural language processing to understand user intent and provides contextual assistance throughout the reconciliation workflow, reducing the learning curve by 70%.",
+        media: {
+          type: "parallax",
+          props: {
+            image1: "/images/story1-framework-1.png",
+            image2: "/images/story1-framework-2.png",
+            image3: "/images/story1-framework-3.png",
+            mediaLabel: "Input & Output Elements for Chat and Classic UI",
           },
         },
       },
@@ -178,7 +207,7 @@ export const story1Content = {
                 alt: "Account management view",
                 markers: [
                   {
-                    position: { x: 30.08, y: 59.24 },
+                    position: { x: 30.18, y: 56.04 },
                     text: "Dynamic account information loading",
                   },
                   {
@@ -212,7 +241,7 @@ export const story1Content = {
                 alt: "Context recognition interface",
                 markers: [
                   {
-                    position: { x: 42.14, y: 59 },
+                    position: { x: 41.97, y: 56.8 },
                     text: "AI-powered context detection adapts interface elements",
                   },
                 ],
@@ -242,23 +271,6 @@ export const story1Content = {
                 ],
               },
             ],
-          },
-        },
-      },
-      {
-        heading: h(
-          "Consistent Experience Across Variable Inputs",
-          "Product Vision & Design System"
-        ),
-        textBefore:
-          "We developed a comprehensive AI framework that combines conversational design with intelligent automation. The system uses natural language processing to understand user intent and provides contextual assistance throughout the reconciliation workflow, reducing the learning curve by 70%.",
-        media: {
-          type: "parallax",
-          props: {
-            image1: "/images/story1-framework-1.png",
-            image2: "/images/story1-framework-2.png",
-            image3: "/images/story1-framework-3.png",
-            mediaLabel: "Input & Output Elements for Chat and Classic UI",
           },
         },
       },
