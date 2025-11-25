@@ -90,7 +90,7 @@ export function useMarkerAnimations() {
       if (ringEl) {
         tl.to(ringEl, {
           scale: 1.3,
-          opacity: 0.6,
+          opacity: 0.3,
           duration: 0.4,
           ease: 'power2.out',
         }, startDelay + (index * stagger));
@@ -118,11 +118,17 @@ export function useMarkerAnimations() {
       });
 
       if (element) {
+        // Обновить ScrollTrigger после загрузки изображений
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 100);
+
         const st = ScrollTrigger.create({
           trigger: element,
           start: 'top 50%', // Верх элемента на середине экрана (50% от верха viewport)
+          end: 'bottom top', // Низ элемента на верху экрана (0% viewport)
           once: true,
-          markers: true, // Визуальные маркеры для отладки включены
+          markers: false, // Визуальные маркеры для отладки отключены
           invalidateOnRefresh: true, // ✅ Пересчитывать при изменении
           refreshPriority: -1, // ✅ Обновлять после изображений
           onRefresh: (self) => {
@@ -130,6 +136,8 @@ export function useMarkerAnimations() {
               start: self.start,
               end: self.end,
               progress: self.progress,
+              triggerElement: element,
+              triggerBounds: element.getBoundingClientRect(),
             });
           },
           onEnter: () => {

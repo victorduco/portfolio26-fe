@@ -33,6 +33,7 @@ const props = defineProps({
 });
 
 const containerRef = ref(null);
+const imgWrapperRef = ref(null);
 
 const {
   overlayRef,
@@ -41,7 +42,7 @@ const {
   cleanup,
 } = useImageMarkers({
   markers: props.markers,
-  triggerElement: containerRef,
+  triggerElement: imgWrapperRef,
   enableScrollTrigger: true,
 });
 

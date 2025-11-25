@@ -200,17 +200,16 @@ watch(() => props.isOpen, (isOpen) => {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 2;
-  will-change: transform;
-  transform: rotate(45deg) scale(1);
+  transform: rotate(45deg);
 }
 
-.marker-button:hover {
-  transform: rotate(45deg) scale(1.15);
+.marker-button:not(.is-open):hover {
+  transform: rotate(45deg) scale(1.15) !important;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
-.marker-button:active {
-  transform: rotate(45deg) scale(0.9);
+.marker-button:not(.is-open):active {
+  transform: rotate(45deg) scale(0.95) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
@@ -265,17 +264,6 @@ watch(() => props.isOpen, (isOpen) => {
   transform-origin: center center;
   will-change: transform, opacity;
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-}
-
-.marker-popup:hover {
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-  transform: translate(-50%, -50%) scale(1.02);
-}
-
-.marker-popup:active {
-  transform: translate(-50%, -50%) scale(0.98);
-  transition: transform 0.1s ease;
 }
 
 .marker-popup-content {
