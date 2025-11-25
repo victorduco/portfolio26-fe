@@ -1,9 +1,26 @@
 <template>
   <!-- Desktop: Layered cards view -->
   <div v-if="!isMobile" class="cards-container" ref="containerRef" :style="{ ...shadowVars, ...cardSizeStyles }">
+    <!-- Cards с overlay внутри каждой для правильной привязки -->
     <div v-for="card in cards" :key="card.position" class="card" :class="`card-${card.position}`" :ref="el => card.ref.value = el" :style="{ zIndex: card.zIndex }">
       <div class="card-inner">
         <img :src="card.image" :alt="card.alt || `${card.position} card`" loading="lazy" />
+
+        <!-- Marker overlay привязан к card-inner (картинке) -->
+        <ImageMarkerOverlay
+          v-if="markersLogic.hasMarkers.value && markersLogic.getMarkersForCard(card.position).length > 0"
+          :ref="el => markersLogic.setOverlayRef(el, card.position)"
+          :markers="markersLogic.getMarkersForCard(card.position)"
+          :default-button-color="defaultButtonColor"
+          :default-icon-color="defaultIconColor"
+          :default-icon-type="defaultIconType"
+          :close-scope="containerRef"
+          :shared-open-marker="markersLogic.openMarkerKey.value"
+          class="card-marker-overlay"
+          @markers-ready="(refs) => markersLogic.handleMarkersReady(refs, card.position)"
+          @marker-opened="(key) => markersLogic.openMarkerKey.value = key"
+          @marker-closed="() => markersLogic.openMarkerKey.value = null"
+        />
       </div>
     </div>
   </div>
@@ -20,6 +37,18 @@
     <div class="slider-dots">
       <button v-for="(_, i) in 3" :key="i" class="slider-dot" :class="{ active: slider.current === i }" @click="slider.current = i" :aria-label="`Go to slide ${i + 1}`" />
     </div>
+
+    <!-- Mobile markers overlay for current slide (опционально) -->
+    <ImageMarkerOverlay
+      v-if="markersLogic.hasMarkers.value && markersLogic.currentSlideMarkers.value.length > 0"
+      ref="mobileOverlayRef"
+      :markers="markersLogic.currentSlideMarkers.value"
+      :default-button-color="defaultButtonColor"
+      :default-icon-color="defaultIconColor"
+      :default-icon-type="defaultIconType"
+      class="mobile-marker-overlay"
+      @markers-ready="markersLogic.handleMobileMarkersReady"
+    />
   </div>
 </template>
 
@@ -27,6 +56,8 @@
 import { ref, onMounted, onUnmounted, computed, watch, nextTick, reactive } from 'vue';
 import { parallaxSpeeds } from './layeredCardsVariants.js';
 import { useAdaptiveShadow } from '@/composables/useAdaptiveShadow.js';
+import ImageMarkerOverlay from '@/components/media/markers/ImageMarkerOverlay.vue';
+import { useLayeredImgMarkers } from '@/composables/useLayeredImgMarkers';
 
 const props = defineProps({
   imageLeft: { type: String, required: true },
@@ -42,6 +73,10 @@ const props = defineProps({
   zIndexCenter: { type: Number, default: 2 },
   zIndexRight: { type: Number, default: 1 },
   borderRadius: { type: Number, default: 24 },
+  markers: { type: Array, default: () => [] },
+  defaultButtonColor: { type: String, default: '#4A90E2' },
+  defaultIconColor: { type: String, default: '#ffffff' },
+  defaultIconType: { type: String, default: 'plus' },
 });
 
 const isMobile = ref(false);
@@ -77,6 +112,15 @@ const updateSlideWidth = () => {
 
 const shadowVars = computed(() => useAdaptiveShadow());
 const cardSizeStyles = computed(() => ({ '--card-border-radius': `${props.borderRadius}px` }));
+
+// Markers logic (изолировано в composable)
+const markersLogic = useLayeredImgMarkers({
+  markers: props.markers,
+  cards: cards,
+  layeredContainerRef: containerRef,
+  isMobile: isMobile,
+  sliderCurrent: computed(() => slider.current),
+});
 
 // Touch handlers
 const touch = {
@@ -122,6 +166,9 @@ const updateParallax = () => {
     const offset = centeredProgress * 60 * card.speed;
     card.ref.value.style.transform = `translateY(${offset}px)`;
   });
+
+  // Синхронизация markers с parallax (изолировано в composable)
+  markersLogic.syncOverlaysWithParallax(cards.value);
 
   animationFrameId = requestAnimationFrame(updateParallax);
 };
@@ -264,4 +311,23 @@ onUnmounted(() => {
 
 .slider-dot.active { background-color: #000000; }
 .slider-dot:hover { background-color: rgba(0, 0, 0, 0.4); }
+
+/* Marker overlay привязан к card-inner (картинке) */
+.card-marker-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mobile-marker-overlay {
+  position: absolute;
+  top: 16px;
+  left: 24px;
+  right: 24px;
+  bottom: 48px;
+  pointer-events: none;
+}
 </style>

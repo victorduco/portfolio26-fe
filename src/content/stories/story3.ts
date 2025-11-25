@@ -1,8 +1,8 @@
 const h = (main: string, subtitle?: string) => ({ main, subtitle })
-const cards = (l: string, c: string, r: string, label: string, opts = {}) => ({
-  type: 'layered-cards', props: { imageLeft: l, imageCenter: c, imageRight: r, zIndexLeft: 2, zIndexCenter: 3, zIndexRight: 1, mediaLabel: label, ...opts }
+const cards = (l: string, c: string, r: string, label: string, opts = {}, markers: any[] = []) => ({
+  type: 'layered-cards', props: { imageLeft: l, imageCenter: c, imageRight: r, zIndexLeft: 2, zIndexCenter: 3, zIndexRight: 1, mediaLabel: label, markers, ...opts }
 })
-const img = (src: string, label: string) => ({ type: 'image', props: { imageSrc: src, mediaLabel: label } })
+const img = (src: string, label: string, markers: any[] = []) => ({ type: 'image', props: { imageSrc: src, mediaLabel: label, markers } })
 
 export const story3Content = {
   background: {
@@ -11,12 +11,20 @@ export const story3Content = {
       {
         heading: h('Harsh Conditions, Critical Actions', 'User Challenge'),
         textBefore: 'The platform faced critical challenges across multiple dimensions. Users struggled with fragmented workflows, inconsistent interfaces, and a steep learning curve that resulted in low feature adoption. The mobile experience was particularly problematic, with conversion rates significantly lagging behind desktop. These issues compounded into a broader problem of user retention and engagement.',
-        media: cards('/images/story3-challenge-1.png', '/images/story3-challenge-3.png', '/images/story3-challenge-2.png', 'Typical field conditions: rain, safety equipment, and a tablet with a protective screen.'),
+        media: cards('/images/story3-challenge-1.png', '/images/story3-challenge-3.png', '/images/story3-challenge-2.png', 'Typical field conditions: rain, safety equipment, and a tablet with a protective screen.', {}, [
+          { targetImage: 'left', position: { x: 50, y: 40 }, text: 'Fragmented workflows caused confusion', buttonColor: '#E24A4A' },
+          { targetImage: 'center', position: { x: 50, y: 50 }, text: 'Harsh field conditions require robust UX', buttonColor: '#4A90E2' },
+          { targetImage: 'right', position: { x: 50, y: 45 }, text: 'Protective equipment limits interaction', buttonColor: '#4AE290' }
+        ]),
       },
       {
         heading: h('Previous Design'),
         textBefore: 'The e-commerce platform suffered from severe usability issues that were driving customers away. Complex navigation made product discovery frustrating, the checkout flow had 7+ steps causing massive cart abandonment, and mobile experience was broken with tiny buttons and unresponsive layouts. Performance was abysmal with 8+ second load times on mobile, causing users to leave before pages even loaded.',
-        media: img('/images/story3-task.png', 'Previous version: Home screen, My Tasks (two views), and user profile.'),
+        media: img('/images/story3-task.png', 'Previous version: Home screen, My Tasks (two views), and user profile.', [
+          { position: { x: 25, y: 35 }, text: 'Complex navigation patterns', buttonColor: '#E24A4A' },
+          { position: { x: 50, y: 50 }, text: 'Cluttered task management interface', buttonColor: '#6B4AE2' },
+          { position: { x: 75, y: 40 }, text: 'Inconsistent user profile design', buttonColor: '#4A90E2' }
+        ]),
       },
     ],
   },

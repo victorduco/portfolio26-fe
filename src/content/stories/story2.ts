@@ -1,8 +1,8 @@
 const h = (main: string, subtitle?: string) => ({ main, subtitle })
-const cards = (l: string, c: string, r: string, label: string) => ({
-  type: 'layered-cards', props: { imageLeft: l, imageCenter: c, imageRight: r, zIndexLeft: 2, zIndexCenter: 3, zIndexRight: 1, mediaLabel: label }
+const cards = (l: string, c: string, r: string, label: string, markers: any[] = []) => ({
+  type: 'layered-cards', props: { imageLeft: l, imageCenter: c, imageRight: r, zIndexLeft: 2, zIndexCenter: 3, zIndexRight: 1, mediaLabel: label, markers }
 })
-const img = (src: string, label: string) => ({ type: 'image', props: { imageSrc: src, mediaLabel: label } })
+const img = (src: string, label: string, markers: any[] = []) => ({ type: 'image', props: { imageSrc: src, mediaLabel: label, markers } })
 
 export const story2Content = {
   background: {
@@ -11,7 +11,11 @@ export const story2Content = {
       {
         heading: h('Leader in Employee Communications', 'About Smarp / Haiilo'),
         textBefore: "Smarp is the leading employee communication platform trusted by global enterprises including Google, Coca-Cola, and L'Oréal. With over 50,000 active users across Fortune 500 companies, Smarp empowers organizations to connect teams, share knowledge, and build stronger company culture.",
-        media: cards('/images/story2-about-1.png', '/images/story2-about-3.png', '/images/story2-about-2.png', 'Key Highlights from Smarp (now Haiilo) with major clients, core features, and results'),
+        media: cards('/images/story2-about-1.png', '/images/story2-about-3.png', '/images/story2-about-2.png', 'Key Highlights from Smarp (now Haiilo) with major clients, core features, and results', [
+          { targetImage: 'left', position: { x: 50, y: 35 }, text: 'Major clients including Fortune 500 companies', buttonColor: '#4A90E2' },
+          { targetImage: 'center', position: { x: 50, y: 50 }, text: '50,000+ active users across global enterprises', buttonColor: '#E24A90' },
+          { targetImage: 'right', position: { x: 50, y: 40 }, text: 'Core features for team connection and knowledge sharing', buttonColor: '#4AE290' }
+        ]),
       },
       {
         heading: h('Desktop-First Mobile Experience', 'Challenge'),
@@ -31,7 +35,10 @@ export const story2Content = {
       {
         heading: h('Defining What Matters Most for Employee Comms', 'Ideation & Prioritization'),
         textBefore: 'Created low-fidelity wireframes to explore new navigation patterns and information architecture. Iterated rapidly through multiple concepts, testing different approaches to content organization, feature discoverability, and user flows. Collaborated closely with product managers and engineers to ensure technical feasibility while pushing for better UX.',
-        media: img('/images/story2-wireframes.png', 'Wireframes Exploring Different Solution Concepts'),
+        media: img('/images/story2-wireframes.png', 'Wireframes Exploring Different Solution Concepts', [
+          { position: { x: 30, y: 40 }, text: 'Explored new navigation patterns and IA structures', buttonColor: '#6B4AE2' },
+          { position: { x: 70, y: 55 }, text: 'Tested different content organization approaches', buttonColor: '#4A90E2' }
+        ]),
       },
       {
         heading: h('Polishing the UX of the New Flows', 'Prototype Testing'),

@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import svgLoader from 'vite-svg-loader';
 import { fileURLToPath, URL } from "node:url";
 import fs from "node:fs";
 import path from "node:path";
@@ -26,7 +27,12 @@ if (backgroundsExist) {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    svgLoader({
+      defaultImport: 'url' // По умолчанию импортировать как URL, а не компонент
+    })
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
