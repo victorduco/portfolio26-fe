@@ -11,11 +11,7 @@ export const story2Content = {
       {
         heading: h('Leader in Employee Communications', 'About Smarp / Haiilo'),
         textBefore: "Smarp is the leading employee communication platform trusted by global enterprises including Google, Coca-Cola, and L'Oréal. With over 50,000 active users across Fortune 500 companies, Smarp empowers organizations to connect teams, share knowledge, and build stronger company culture.",
-        media: cards('/images/story2-about-1.png', '/images/story2-about-3.png', '/images/story2-about-2.png', 'Key Highlights from Smarp (now Haiilo) with major clients, core features, and results', [
-          { targetImage: 'left', position: { x: 50, y: 35 }, text: 'Major clients including Fortune 500 companies', buttonColor: '#4A90E2' },
-          { targetImage: 'center', position: { x: 50, y: 50 }, text: '50,000+ active users across global enterprises', buttonColor: '#E24A90' },
-          { targetImage: 'right', position: { x: 50, y: 40 }, text: 'Core features for team connection and knowledge sharing', buttonColor: '#4AE290' }
-        ]),
+        media: cards('/images/story2-about-1.png', '/images/story2-about-3.png', '/images/story2-about-2.png', 'Key Highlights from Smarp (now Haiilo) with major clients, core features, and results'),
       },
       {
         heading: h('Desktop-First Mobile Experience', 'Challenge'),
@@ -36,8 +32,7 @@ export const story2Content = {
         heading: h('Defining What Matters Most for Employee Comms', 'Ideation & Prioritization'),
         textBefore: 'Created low-fidelity wireframes to explore new navigation patterns and information architecture. Iterated rapidly through multiple concepts, testing different approaches to content organization, feature discoverability, and user flows. Collaborated closely with product managers and engineers to ensure technical feasibility while pushing for better UX.',
         media: img('/images/story2-wireframes.png', 'Wireframes Exploring Different Solution Concepts', [
-          { position: { x: 30, y: 40 }, text: 'Explored new navigation patterns and IA structures', buttonColor: '#6B4AE2' },
-          { position: { x: 70, y: 55 }, text: 'Tested different content organization approaches', buttonColor: '#4A90E2' }
+          { position: { x: 30, y: 40 }, text: 'Explored new navigation patterns and IA structures', buttonColor: '#E17E7A' }
         ]),
       },
       {
@@ -53,12 +48,17 @@ export const story2Content = {
       {
         heading: h('Enhanced Content Options for Employees and Community Managers', 'Home Screen'),
         textBefore: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        media: img('/images/story2-final-1.png', 'Home screen featuring a slider, an interactive widget, articles, company events, channels, personal recommendations, and curated content for key moments.'),
+        media: img('/images/story2-final-1.png', 'Home screen featuring a slider, an interactive widget, articles, company events, channels, personal recommendations, and curated content for key moments.', [
+          { position: { x: 25, y: 50 }, text: 'Interactive widget and personalized content', buttonColor: '#E17E7A' },
+          { position: { x: 75, y: 50 }, text: 'Company events and curated key moments', buttonColor: '#E17E7A' }
+        ]),
       },
       {
         heading: h('Supporting New Content Types and Improving UX', 'Internal Screens'),
         textBefore: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        media: img('/images/story2-final-2.png', 'Channel and search result screens updated to support the new features.'),
+        media: img('/images/story2-final-2.png', 'Channel and search result screens updated to support the new features.', [
+          { position: { x: 50, y: 50 }, text: 'Updated channel and search screens', buttonColor: '#E17E7A' }
+        ]),
       },
     ],
   },

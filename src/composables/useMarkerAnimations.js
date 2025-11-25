@@ -19,7 +19,7 @@ export function useMarkerAnimations() {
       stagger = 0.5,
       duration = 0.6,
       ease = 'back.out(1.7)',
-      startDelay = 1.0,
+      startDelay = 0.5,
       useScrollTrigger = true,
     } = options;
 
@@ -122,7 +122,7 @@ export function useMarkerAnimations() {
           trigger: element,
           start: 'top 50%', // Верх элемента на середине экрана (50% от верха viewport)
           once: true,
-          markers: false, // Визуальные маркеры для отладки отключены
+          markers: true, // Визуальные маркеры для отладки включены
           invalidateOnRefresh: true, // ✅ Пересчитывать при изменении
           refreshPriority: -1, // ✅ Обновлять после изображений
           onRefresh: (self) => {

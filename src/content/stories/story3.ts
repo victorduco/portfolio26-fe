@@ -52,12 +52,6 @@ export const story3Content = {
               text: "Harsh field conditions require robust UX",
               buttonColor: "#ca4034",
             },
-            {
-              targetImage: "right",
-              position: { x: 53, y: 80 },
-              text: "Protective equipment limits interaction",
-              buttonColor: "#ca4034",
-            },
           ]
         ),
       },
@@ -67,24 +61,7 @@ export const story3Content = {
           "The e-commerce platform suffered from severe usability issues that were driving customers away. Complex navigation made product discovery frustrating, the checkout flow had 7+ steps causing massive cart abandonment, and mobile experience was broken with tiny buttons and unresponsive layouts. Performance was abysmal with 8+ second load times on mobile, causing users to leave before pages even loaded.",
         media: img(
           "/images/story3-task.png",
-          "Previous version: Home screen, My Tasks (two views), and user profile.",
-          [
-            {
-              position: { x: 25, y: 35 },
-              text: "Complex navigation patterns",
-              buttonColor: "#ca4034",
-            },
-            {
-              position: { x: 50, y: 50 },
-              text: "Cluttered task management interface",
-              buttonColor: "#ca4034",
-            },
-            {
-              position: { x: 75, y: 40 },
-              text: "Inconsistent user profile design",
-              buttonColor: "#ca4034",
-            },
-          ]
+          "Previous version: Home screen, My Tasks (two views), and user profile."
         ),
       },
     ],
@@ -103,7 +80,22 @@ export const story3Content = {
           "/images/story3-ground-1.png",
           "/images/story3-ground-3.png",
           "/images/story3-ground-2.png",
-          "Internal documentation samples: personas, best practices, and user testing of the previous design."
+          "Internal documentation samples: personas, best practices, and user testing of the previous design.",
+          {},
+          [
+            {
+              targetImage: "center",
+              position: { x: 50, y: 50 },
+              text: "User personas based on research",
+              buttonColor: "#ca4034",
+            },
+            {
+              targetImage: "right",
+              position: { x: 50, y: 50 },
+              text: "Usability testing insights",
+              buttonColor: "#ca4034",
+            },
+          ]
         ),
       },
       {
@@ -117,7 +109,16 @@ export const story3Content = {
           "/images/story3-audit-1.png",
           "/images/story3-audit-3.png",
           "/images/story3-audit-2.png",
-          "Sample slides from the final report showing issues and solutions."
+          "Sample slides from the final report showing issues and solutions.",
+          {},
+          [
+            {
+              targetImage: "center",
+              position: { x: 50, y: 50 },
+              text: "Prioritized UX recommendations",
+              buttonColor: "#ca4034",
+            },
+          ]
         ),
         textAfter:
           "The audit findings provided a clear foundation for the redesign phase. Armed with data-driven insights and validated recommendations, the team was ready to transform the platform from a frustrating experience into an intuitive, high-performing e-commerce solution.",
@@ -139,7 +140,15 @@ export const story3Content = {
           "/images/story3-home-1-3.png",
           "/images/story3-home-1-2.png",
           "The home screen adapts to the user's current situation, showing only what matters most.",
-          { borderRadius: 25 }
+          { borderRadius: 25 },
+          [
+            {
+              targetImage: "right",
+              position: { x: 50, y: 50 },
+              text: "Adaptive home screen",
+              buttonColor: "#ca4034",
+            },
+          ]
         ),
       },
       {
@@ -173,7 +182,15 @@ export const story3Content = {
           "/images/story3-nav-1-3.png",
           "/images/story3-nav-1-2.png",
           "Examples of visual hierarchy: (1) the menu stays low-priority; (2) notifications gain prominence only when something critical happens.",
-          { borderRadius: 25 }
+          { borderRadius: 25 },
+          [
+            {
+              targetImage: "left",
+              position: { x: 50, y: 50 },
+              text: "Low-priority menu design",
+              buttonColor: "#ca4034",
+            },
+          ]
         ),
       },
       {
@@ -188,7 +205,21 @@ export const story3Content = {
           "/images/story3-order-1-3.png",
           "/images/story3-order-1-2.png",
           "Examples of order screens: main view, steps panel, and order overview.",
-          { borderRadius: 25 }
+          { borderRadius: 25 },
+          [
+            {
+              targetImage: "left",
+              position: { x: 50, y: 50 },
+              text: "Main order view",
+              buttonColor: "#ca4034",
+            },
+            {
+              targetImage: "right",
+              position: { x: 50, y: 50 },
+              text: "Order overview",
+              buttonColor: "#ca4034",
+            },
+          ]
         ),
       },
       {
