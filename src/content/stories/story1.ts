@@ -117,11 +117,11 @@ export const story1Content = {
                 alt: "Initial design concept",
                 markers: [
                   {
-                    position: { x: 40.21, y: 25.76 },
+                    position: { x: 22.62, y: 0 },
                     text: "Initial navigation concept with basic structure",
                   },
                   {
-                    position: { x: 57.98, y: 19.44 },
+                    position: { x: 76.5, y: 0 },
                     text: "Early content layout experimentation",
                   },
                 ],
@@ -132,7 +132,7 @@ export const story1Content = {
                 alt: "Refined layout",
                 markers: [
                   {
-                    position: { x: 93.46, y: 40.81 },
+                    position: { x: 50.19, y: 36.08 },
                     text: "Simplified color palette for better readability",
                   },
                 ],

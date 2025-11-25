@@ -236,13 +236,14 @@ const markersLogic = useTabbedImgMarkers({
   display: inline-block;
   max-width: 100%;
   max-height: 100%;
-  overflow: hidden;
+  overflow: visible;
   box-sizing: border-box;
 }
 
 .img-states-wrapper {
   position: relative;
   display: block;
+  overflow: clip;
 }
 
 .tab-img {
