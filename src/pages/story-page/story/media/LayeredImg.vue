@@ -245,7 +245,7 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   border-radius: var(--card-border-radius, 24px);
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0px 3px 12px color-mix(in srgb, var(--shadow-saturated) var(--shadow-opacity), transparent);
   transform-origin: center center;
   box-sizing: border-box;
