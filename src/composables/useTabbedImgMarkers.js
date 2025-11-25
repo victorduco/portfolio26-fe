@@ -51,12 +51,26 @@ export function useTabbedImgMarkers(options = {}) {
     const refs = markerRefsMap.value[tabIndex];
     if (!refs || refs.length === 0) return;
 
+    // Reset markers to initial state before animating
+    refs.forEach((markerRef) => {
+      if (!markerRef || !markerRef.$el) return;
+
+      const markerEl = markerRef.$el;
+      const buttonEl = markerEl.querySelector(".marker-button");
+      const ringEl = markerEl.querySelector(".marker-ring");
+
+      if (buttonEl) {
+        buttonEl.style.transform = 'scale(0) rotate(0deg)';
+        buttonEl.style.opacity = '0';
+      }
+      if (ringEl) {
+        ringEl.style.transform = 'scale(1)';
+        ringEl.style.opacity = '0';
+      }
+    });
+
     nextTick(() => {
       animateMarkersEntry(refs, imgWrapperRef.value, {
-        
-        
-        
-        
         // Для первого таба используем ScrollTrigger, для остальных - сразу показываем
         useScrollTrigger: tabIndex === 0,
       });
@@ -69,7 +83,31 @@ export function useTabbedImgMarkers(options = {}) {
    * Watch tab changes to animate markers
    */
   watch(activeTab, (newTab, oldTab) => {
-    if (newTab !== oldTab && !animatedTabs.value.has(newTab)) {
+    if (newTab !== oldTab) {
+      // Reset markers for the old tab
+      const oldRefs = markerRefsMap.value[oldTab];
+      if (oldRefs && oldRefs.length > 0) {
+        oldRefs.forEach((markerRef) => {
+          if (!markerRef || !markerRef.$el) return;
+
+          const markerEl = markerRef.$el;
+          const buttonEl = markerEl.querySelector(".marker-button");
+          const ringEl = markerEl.querySelector(".marker-ring");
+
+          if (buttonEl) {
+            buttonEl.style.transform = 'scale(0) rotate(0deg)';
+            buttonEl.style.opacity = '0';
+          }
+          if (ringEl) {
+            ringEl.style.transform = 'scale(1)';
+            ringEl.style.opacity = '0';
+          }
+        });
+      }
+
+      // Remove from animated tabs to allow re-animation
+      animatedTabs.value.delete(newTab);
+
       // Небольшая задержка чтобы дождаться перехода изображения
       setTimeout(() => {
         animateTabMarkers(newTab);
@@ -83,7 +121,7 @@ export function useTabbedImgMarkers(options = {}) {
   watch(
     () => markerRefsMap.value[0],
     (refs) => {
-      if (refs && refs.length > 0 && !animatedTabs.value.has(0)) {
+      if (refs && refs.length > 0 && activeTab.value === 0 && !animatedTabs.value.has(0)) {
         animateTabMarkers(0);
       }
     },

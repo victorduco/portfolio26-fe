@@ -11,15 +11,29 @@
         class="tab-img-wrapper"
         :class="{ 'wrapper-active': activeTab === i }"
       >
-        <div class="img-container">
-          <img
-            :src="tab.imageSrc"
-            :alt="tab.alt || 'Tab image'"
-            loading="lazy"
-            class="tab-img"
-          />
+        <div class="img-container" :style="imgContainerStyle">
+          <div class="img-states-wrapper">
+            <!-- State 1 image (base layer) -->
+            <img
+              :src="tab.imageSrc"
+              :alt="tab.alt || 'Tab image'"
+              loading="lazy"
+              class="tab-img tab-img-state1"
+            />
+
+            <!-- State 2 image (overlay layer with fade animation) -->
+            <img
+              v-if="tab.imageSrcState2"
+              :src="tab.imageSrcState2"
+              :alt="tab.alt || 'Tab image state 2'"
+              loading="lazy"
+              class="tab-img tab-img-state2"
+              :class="{ 'state2-visible': activeTab === i && tabStates[i] }"
+            />
+          </div>
 
           <!-- Marker overlay для этого таба (привязан к img) -->
+          <!-- Add data-marker-overlay attribute to help identify overlay elements -->
           <ImageMarkerOverlay
             v-if="markersLogic.hasMarkers.value && tab.markers && tab.markers.length > 0"
             :markers="tab.markers"
@@ -28,6 +42,7 @@
             :default-icon-type="defaultIconType"
             :visible="activeTab === i"
             class="tab-marker-overlay"
+            data-marker-overlay
             @markers-ready="(refs) => markersLogic.handleMarkersReady(refs, i)"
           />
         </div>
@@ -37,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import TabsNav from "@/components/tabs-nav/TabsNav.vue";
 import ImageMarkerOverlay from '@/components/media/markers/ImageMarkerOverlay.vue';
 import { useTabbedImgMarkers } from '@/composables/useTabbedImgMarkers';
@@ -59,12 +74,33 @@ const props = defineProps({
   defaultIconType: {
     type: String,
     default: 'plus'
+  },
+  maxWidth: {
+    type: String,
+    default: null
+  },
+  borderWidth: {
+    type: String,
+    default: null
+  },
+  borderColor: {
+    type: String,
+    default: null
+  },
+  borderRadius: {
+    type: String,
+    default: null
   }
 });
 
 const containerRef = ref(null);
 const imgWrapperRef = ref(null);
 const activeTab = ref(0);
+
+// Track state2 visibility for each tab
+const tabStates = ref({});
+const hasBeenVisible = ref({});
+let observer = null;
 
 // Extract only titles for TabsNav (без markers)
 const tabsWithTitles = computed(() => {
@@ -75,10 +111,72 @@ const tabsWithTitles = computed(() => {
   }));
 });
 
+// Computed styles for image container
+const imgContainerStyle = computed(() => {
+  const styles = {};
+  if (props.maxWidth) styles.maxWidth = props.maxWidth;
+  if (props.borderWidth && props.borderColor) {
+    styles.border = `${props.borderWidth} solid ${props.borderColor}`;
+  }
+  if (props.borderRadius) styles.borderRadius = props.borderRadius;
+  return styles;
+});
+
 const switchTab = (index) => {
   if (index === activeTab.value) return;
+
+  // Hide state2 for the previous tab
+  const oldTab = activeTab.value;
+  tabStates.value[oldTab] = false;
+
+  // Reset state for the new tab to allow re-animation
+  tabStates.value[index] = false;
+
   activeTab.value = index;
+
+  // Mark this tab as visible (since parent component is already visible if user can switch tabs)
+  hasBeenVisible.value[index] = true;
+
+  // Trigger animation for the new tab
+  triggerState2Animation(index);
 };
+
+const triggerState2Animation = (tabIndex) => {
+  const tab = props.tabs[tabIndex];
+  if (tab && tab.imageSrcState2) {
+    // Show state1 for 0.5 seconds (same as marker animation startDelay), then show state2
+    setTimeout(() => {
+      tabStates.value[tabIndex] = true;
+    }, 500);
+  }
+};
+
+// Setup Intersection Observer
+onMounted(() => {
+  if (!containerRef.value) return;
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !hasBeenVisible.value[activeTab.value]) {
+          hasBeenVisible.value[activeTab.value] = true;
+          triggerState2Animation(activeTab.value);
+        }
+      });
+    },
+    {
+      threshold: 0.5, // Trigger when 50% of component is visible
+    }
+  );
+
+  observer.observe(containerRef.value);
+});
+
+onUnmounted(() => {
+  if (observer && containerRef.value) {
+    observer.unobserve(containerRef.value);
+  }
+});
 
 // Markers logic (изолировано в composable)
 const markersLogic = useTabbedImgMarkers({
@@ -138,6 +236,13 @@ const markersLogic = useTabbedImgMarkers({
   display: inline-block;
   max-width: 100%;
   max-height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.img-states-wrapper {
+  position: relative;
+  display: block;
 }
 
 .tab-img {
@@ -149,6 +254,25 @@ const markersLogic = useTabbedImgMarkers({
   display: block;
 }
 
+.tab-img-state1 {
+  /* Base image that defines the size */
+}
+
+.tab-img-state2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.tab-img-state2.state2-visible {
+  opacity: 1;
+}
+
 .tab-marker-overlay {
   position: absolute;
   top: 0;
@@ -156,5 +280,16 @@ const markersLogic = useTabbedImgMarkers({
   width: 100%;
   height: 100%;
   pointer-events: none;
+  z-index: 10;
+}
+
+/* Make sure marker buttons can receive clicks */
+.tab-marker-overlay :deep(.marker-button) {
+  pointer-events: auto;
+}
+
+/* Make sure marker popups can receive clicks */
+.tab-marker-overlay :deep(.marker-popup) {
+  pointer-events: auto;
 }
 </style>

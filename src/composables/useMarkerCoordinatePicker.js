@@ -264,8 +264,16 @@ export function useMarkerCoordinatePicker(options = {}) {
         .marker-button,
         .marker-popup,
         .card-marker-overlay,
-        .mobile-marker-overlay {
+        .mobile-marker-overlay,
+        .tab-marker-overlay,
+        .image-marker-overlay {
           pointer-events: none !important;
+        }
+        /* Сделать изображения кликабельными */
+        .tab-img,
+        .tab-img-state1,
+        .tab-img-state2 {
+          pointer-events: auto !important;
         }
       `;
       document.head.appendChild(style);
