@@ -104,36 +104,19 @@ export const story1Content = {
             tabs: [
               {
                 title: 'Version 1',
-                imageSrc: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1600&h=900&fit=crop',
+                imageSrc: '/images/story1-data-1-1.png',
                 alt: 'Initial design concept',
                 markers: [
-                  { position: { x: 30, y: 25 }, text: 'Initial navigation concept with basic structure' },
-                  { position: { x: 70, y: 60 }, text: 'Early content layout experimentation' }
+                  { position: { x: 40.21, y: 25.76 }, text: 'Initial navigation concept with basic structure' },
+                  { position: { x: 57.98, y: 19.44 }, text: 'Early content layout experimentation' }
                 ]
               },
               {
                 title: 'Version 2',
-                imageSrc: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1600&h=900&fit=crop&sat=-100',
+                imageSrc: '/images/story1-data-1-2.png',
                 alt: 'Refined layout',
                 markers: [
-                  { position: { x: 50, y: 40 }, text: 'Simplified color palette for better readability' }
-                ]
-              },
-              {
-                title: 'Version 3',
-                imageSrc: 'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=1600&h=900&fit=crop',
-                alt: 'Enhanced visual hierarchy',
-                markers: [
-                  { position: { x: 40, y: 30 }, text: 'Improved visual hierarchy with larger headings' },
-                  { position: { x: 60, y: 70 }, text: 'Enhanced spacing for better content flow' }
-                ]
-              },
-              {
-                title: 'Final',
-                imageSrc: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop',
-                alt: 'Production-ready design',
-                markers: [
-                  { position: { x: 50, y: 50 }, text: 'Production-ready design with all refinements applied' }
+                  { position: { x: 93.46, y: 40.81 }, text: 'Simplified color palette for better readability' }
                 ]
               }
             ],
