@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import NavigationItem from "./NavigationItem.vue";
 import NavigationChevron from "@/components/navigation-chevron/NavigationChevron.vue";
 import { useMediaQuery, NAVIGATION_MOBILE } from "@/composables/useMediaQuery.js";
@@ -59,7 +59,10 @@ function handleNavigate(sectionId, closeMenu = false) {
 function setupIntersectionObserver() {
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting && !entry.target.id.startsWith("story")) {
+      // Skip only main page story sections (story1, story2, story3) - they use ScrollTrigger
+      // Allow story page sections (story1-summary, story1-task, etc.)
+      const isMainPageStory = entry.target.id === "story1" || entry.target.id === "story2" || entry.target.id === "story3";
+      if (entry.isIntersecting && !isMainPageStory) {
         activeSection.value = entry.target.id;
         emit("activeSectionChange", entry.target.id);
       }
@@ -82,8 +85,10 @@ function handleStorySectionActive({ detail: { sectionId } }) {
 onMounted(() => {
   setupIntersectionObserver();
   window.addEventListener("story-section-active", handleStorySectionActive);
-  activeSection.value = props.sections[0]?.id || "";
-  emit("animationComplete");
+  nextTick(() => {
+    activeSection.value = props.sections[0]?.id || "";
+    emit("animationComplete");
+  });
 });
 
 onUnmounted(() => {

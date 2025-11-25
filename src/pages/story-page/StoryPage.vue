@@ -2,7 +2,7 @@
   <div :class="`story${storyId}-page`" :style="pageStyle">
     <div class="story-main-content">
       <NavigationChevron class="story-page-back" type="route" to="/" direction="back" aria-label="Back to home" :dark-mode="config.darkMode" />
-      <PageNavigation :sections="navigationSections" :enable-intro-animation="false" :dark-mode="config.darkMode" />
+      <PageNavigation :sections="navigationSections" :dark-mode="config.darkMode" />
       <section :id="`story${storyId}-summary`">
         <SummarySection :story-id="storyId" :story-config="config" />
       </section>
