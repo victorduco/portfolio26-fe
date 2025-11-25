@@ -65,13 +65,17 @@ export const story1EditableContent = {
         textBefore: "A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.",
 
         // Медиа: image - story1-domain-tree.png
-        mediaLabel: "Users must grasp multiple subdomains to resolve problems.",
+        mediaLabel: "Reconciliation Domain Map",
 
-        // Маркеры для этого изображения (текст временный - оставляем метаданные)
+        // Маркеры для этого изображения
         markers: [
           {
-            note: "Marker 1 на изображении story1-domain-tree.png",
-            text: "Bounce rate of 67% indicates major UX issues in the onboarding flow",
+            note: "1.1.1 — ОСТАВИТЬ",
+            text: "Users must grasp multiple subdomains to resolve problems.",
+          },
+          {
+            note: "1.1.2 — ДОБАВИТЬ новый маркер",
+            text: "The correct entry point for resolving an issue is rarely obvious.",
           },
         ],
       },
@@ -83,7 +87,7 @@ export const story1EditableContent = {
 
         // Медиа: layered-cards (3 изображения)
         // story1-scale-1.png (center), story1-scale-2.png (left), story1-scale-3.png (right)
-        mediaLabel: "Research Summary and Business Context",
+        mediaLabel: "Scale & Research Highlights",
 
         markers: [],
       },
@@ -106,7 +110,7 @@ export const story1EditableContent = {
 
         // Медиа: tabbed-video (2 вкладки)
         // story1-ai-flow.mp4, story1-classic-flow.mp4
-        mediaLabel: "Two workflows, one unified experience. Users pick what fits best.",
+        mediaLabel: "Conversational and Classic Workflows",
       },
       {
         sectionTag: "Data Visualization",
@@ -115,42 +119,44 @@ export const story1EditableContent = {
         textBefore: "Through multiple design iterations, we refined the visual language to balance clarity with sophistication. Each iteration brought us closer to a design that feels both approachable and professional.",
 
         // Медиа: tabbed-img (2 версии с маркерами)
-        mediaLabel: "Four stages of visual refinement",
+        mediaLabel: "Chat–Full View Linking",
 
         tabs: [
           {
-            tabTitle: "Version 1",
+            tabTitle: "Static Data",
+            note: "ПЕРЕИМЕНОВАТЬ таб: Version 1 → Static Data",
             imageSrc: "story1-data-1-1.png",
             markers: [
               {
-                note: "Marker 1 на Version 1",
-                text: "Initial navigation concept with basic structure",
+                note: "2.1.1 — новый текст",
+                text: "User can dive from the summary view into a full-screen data snapshot.",
               },
               {
-                note: "Marker 2 на Version 1",
-                text: "Early content layout experimentation",
+                note: "2.1.2 — новый текст",
+                text: "Classic UI features like filters help users navigate large data sets.",
               },
               {
-                note: "Marker 3 на Version 1",
-                text: "Third marker",
+                note: "2.1.3 — новый текст",
+                text: "After reviewing the data, users can reference it and return to the chat.",
               },
             ],
           },
           {
-            tabTitle: "Version 2",
+            tabTitle: "Interactive Mode",
+            note: "ПЕРЕИМЕНОВАТЬ таб: Version 2 → Interactive Mode",
             imageSrc: "story1-data-1-2.png",
             markers: [
               {
-                note: "Marker 1 на Version 2",
-                text: "Simplified color palette for better readability",
+                note: "2.1.4 — новый текст",
+                text: "User can dive from the summary view into a full-screen mode to perform actions.",
               },
               {
-                note: "Marker 2 на Version 2",
-                text: "Second marker",
+                note: "2.1.5 — новый текст",
+                text: "Users can perform key actions directly within the chat or in the classic UI.",
               },
               {
-                note: "Marker 3 на Version 2",
-                text: "Third marker",
+                note: "2.1.6 — ОСТАВИТЬ",
+                text: "After completing actions, the user can return to the conversation.",
               },
             ],
           },
@@ -164,7 +170,7 @@ export const story1EditableContent = {
 
         // Медиа: parallax (3 изображения)
         // story1-framework-1.png, story1-framework-2.png, story1-framework-3.png
-        mediaLabel: "Input & Output Elements for Chat and Classic UI",
+        mediaLabel: "Universal Input & Output Elements",
       },
       {
         sectionTag: "Core AI Features",
@@ -173,36 +179,52 @@ export const story1EditableContent = {
         textBefore: "Our chat interface demonstrates sophisticated state management with smooth transitions between different interaction states. Each state change provides clear visual feedback to guide users through their workflow.",
 
         // Медиа: tabbed-img с двумя состояниями (state1/state2)
-        mediaLabel: "Chat interface state transitions",
+        mediaLabel: "Chat UI Patterns",
 
         tabs: [
           {
-            tabTitle: "Chat History",
-            imageSrcState1: "story1-chat-history-state1.png",
-            imageSrcState2: "story1-chat-history-state2.png",
+            tabTitle: "Quick Actions",
+            note: "2.2.0 — ДОБАВИТЬ новый первый таб",
+            imageSrcState1: "ТРЕБУЕТСЯ_НОВОЕ_ИЗОБРАЖЕНИЕ",
+            imageSrcState2: "ТРЕБУЕТСЯ_НОВОЕ_ИЗОБРАЖЕНИЕ",
             markers: [
               {
-                note: "Marker 1 на Chat History",
-                text: "Real-time message updates with smooth transitions",
-              },
-              {
-                note: "Marker 2 на Chat History",
-                text: "Context-aware action buttons appear on hover",
+                note: "2.2.0 — новый маркер",
+                text: "Most frequent requests are available in one click.",
               },
             ],
           },
           {
-            tabTitle: "Account View",
+            tabTitle: "Chat History",
+            note: "2.2.1-2.2.2 — изменения в маркерах",
+            imageSrcState1: "story1-chat-history-state1.png",
+            imageSrcState2: "story1-chat-history-state2.png",
+            markers: [
+              {
+                note: "2.2.1 — УДАЛИТЬ этот маркер полностью",
+                text: "[УДАЛИТЬ] Real-time message updates with smooth transitions",
+                action: "DELETE",
+              },
+              {
+                note: "2.2.2 — ОСТАВИТЬ",
+                text: "Context and attachments help users quickly find the right conversation in the history.",
+              },
+            ],
+          },
+          {
+            tabTitle: "Adding Context",
+            note: "ПЕРЕИМЕНОВАТЬ таб: Account View → Adding Context",
             imageSrcState1: "story1-chat-account-state1.png",
             imageSrcState2: "story1-chat-account-state2.png",
             markers: [
               {
-                note: "Marker 1 на Account View",
-                text: "Dynamic account information loading",
+                note: "2.2.3 — ОСТАВИТЬ",
+                text: "Users can add context in multiple ways.",
               },
               {
-                note: "Marker 2 на Account View",
-                text: "Interactive controls with state feedback",
+                note: "2.2.4 — УДАЛИТЬ этот маркер полностью",
+                text: "[УДАЛИТЬ] Interactive controls with state feedback",
+                action: "DELETE",
               },
             ],
           },
@@ -215,39 +237,42 @@ export const story1EditableContent = {
         textBefore: "Our system intelligently adapts to user context, providing relevant information and actions at the right moment. Each interaction is enhanced with smart suggestions and dynamic content that responds to user behavior.",
 
         // Медиа: tabbed-img с двумя состояниями (state1/state2)
-        mediaLabel: "Context-aware interface features",
+        mediaLabel: "Context-Driven UI",
 
         tabs: [
           {
             tabTitle: "Context Recognition",
+            note: "2.3.1 — без изменений названия таба",
             imageSrcState1: "story1-chat-context-state1.png",
             imageSrcState2: "story1-chat-context-state2.png",
             markers: [
               {
-                note: "Marker 1 на Context Recognition",
-                text: "AI-powered context detection adapts interface elements",
+                note: "2.3.1 — ОСТАВИТЬ",
+                text: "User can add context directly from a predefined list.",
               },
             ],
           },
           {
             tabTitle: "Ticket Management",
+            note: "2.3.2 — без изменений названия таба",
             imageSrcState1: "story1-chat-ticket-state1.png",
             imageSrcState2: "story1-chat-ticket-state2.png",
             markers: [
               {
-                note: "Marker 1 на Ticket Management",
-                text: "Smart ticket suggestions based on user behavior",
+                note: "2.3.2 — ОСТАВИТЬ",
+                text: "User can search for specific context types through the list.",
               },
             ],
           },
           {
-            tabTitle: "Smart Linking",
+            tabTitle: "Added Context",
+            note: "ПЕРЕИМЕНОВАТЬ таб: Smart Linking → Added Context",
             imageSrcState1: "story1-chat-link2-state1.png",
             imageSrcState2: "story1-chat-link2-state2.png",
             markers: [
               {
-                note: "Marker 1 на Smart Linking",
-                text: "Intelligent relationship detection between entities",
+                note: "2.3.3 — ОСТАВИТЬ",
+                text: "After adding context, users can see details without opening external systems.",
               },
             ],
           },
