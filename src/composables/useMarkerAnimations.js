@@ -67,6 +67,7 @@ export function useMarkerAnimations() {
       gsap.set(buttonEl, {
         scale: 0,
         opacity: 0,
+        rotation: 0,
       });
 
       if (ringEl) {
@@ -80,6 +81,7 @@ export function useMarkerAnimations() {
       tl.to(buttonEl, {
         scale: 1,
         opacity: 1,
+        rotation: 45,
         duration,
         ease,
       }, startDelay + (index * stagger));

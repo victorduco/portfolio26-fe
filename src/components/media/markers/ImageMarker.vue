@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { gsap } from 'gsap';
 import PlusIcon from '@/assets/icons/plus.svg?component';
 import RocketIcon from '@/assets/icons/rocket.svg?component';
@@ -197,19 +197,22 @@ watch(() => props.isOpen, (isOpen) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 2;
   will-change: transform;
-  transform: rotate(45deg);
+  transform: rotate(45deg) scale(1);
 }
 
 .marker-button:hover {
-  transform: rotate(45deg) scale(1.1);
+  transform: rotate(45deg) scale(1.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .marker-button:active {
-  transform: rotate(45deg) scale(0.95);
+  transform: rotate(45deg) scale(0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .marker-button.is-open {
@@ -236,9 +239,15 @@ watch(() => props.isOpen, (isOpen) => {
   border: 2px solid;
   border-radius: 8px;
   transform: translate(-50%, -50%);
-  opacity: 0.6;
+  opacity: 0;
   pointer-events: none;
   z-index: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.marker-button:hover .marker-ring {
+  opacity: 0.4;
+  transform: translate(-50%, -50%) scale(1.2);
 }
 
 /* Всплывающее сообщение */
@@ -251,11 +260,22 @@ watch(() => props.isOpen, (isOpen) => {
   max-width: 400px;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
   z-index: 10;
   transform-origin: center center;
   will-change: transform, opacity;
   cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.marker-popup:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.marker-popup:active {
+  transform: translate(-50%, -50%) scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 .marker-popup-content {
