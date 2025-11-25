@@ -59,7 +59,7 @@ export const story1EditableContent = {
         // Section Tag (подзаголовок)
         sectionTag: "Account Reconciliation Specifics",
         // Heading (заголовок секции)
-        heading: "Something Went Wrong, Somehow",
+        heading: "Why Does This Feel Like Solving a Case?",
 
         // Текст ДО медиа
         textBefore: "A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.",
@@ -77,7 +77,7 @@ export const story1EditableContent = {
       },
       {
         sectionTag: "Global Product Research",
-        heading: "Identifying Cross-Regional Patterns in User Workflows",
+        heading: "Spotting the Patterns Hidden Across Regions",
 
         textBefore: "The platform processes over 2.5 million transactions daily across 50+ enterprise clients, handling reconciliation for accounts ranging from $10M to $2B in monthly volume. Our AI models maintain 99.7% accuracy while reducing processing time from hours to minutes.",
 
@@ -100,7 +100,7 @@ export const story1EditableContent = {
     sections: [
       {
         sectionTag: "Conversational & Classic UI",
-        heading: "Pairing Natural Dialogue with Heavy Data Workflows",
+        heading: "Let's Blend Natural Language With Serious Data Tasks",
 
         textBefore: "Our hybrid approach seamlessly integrates AI-powered conversational interfaces with traditional UI components. Users can switch between chat-based interactions and classic forms based on their preference and task complexity, ensuring flexibility without sacrificing efficiency.",
 
@@ -110,7 +110,7 @@ export const story1EditableContent = {
       },
       {
         sectionTag: "Data Visualization",
-        heading: "Helping Users See What Truly Matters in the Data",
+        heading: "Flowing Smoothly From Conversation to Full Data View",
 
         textBefore: "Through multiple design iterations, we refined the visual language to balance clarity with sophistication. Each iteration brought us closer to a design that feels both approachable and professional.",
 
@@ -167,8 +167,8 @@ export const story1EditableContent = {
         mediaLabel: "Input & Output Elements for Chat and Classic UI",
       },
       {
-        sectionTag: "Dynamic UI Feedback",
-        heading: "Interactive State Management",
+        sectionTag: "Core AI Features",
+        heading: "The Project-Specific Chat Features",
 
         textBefore: "Our chat interface demonstrates sophisticated state management with smooth transitions between different interaction states. Each state change provides clear visual feedback to guide users through their workflow.",
 
@@ -210,7 +210,7 @@ export const story1EditableContent = {
       },
       {
         sectionTag: "Adaptive Interface Elements",
-        heading: "Contextual Intelligence",
+        heading: "Diving Deeper Into How Context Shapes Each Interaction",
 
         textBefore: "Our system intelligently adapts to user context, providing relevant information and actions at the right moment. Each interaction is enhanced with smart suggestions and dynamic content that responds to user behavior.",
 
