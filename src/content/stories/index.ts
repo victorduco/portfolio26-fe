@@ -3,7 +3,7 @@ import { story2Content } from './story2'
 import { story3Content } from './story3'
 
 export type MediaProps = { type: string; props: Record<string, unknown> }
-export type Heading = { main: string; subtitle?: string }
+export type Heading = { main: string; sectionTag?: string }
 export type Section = { heading?: Heading; textBefore?: string; media?: MediaProps; textAfter?: string }
 export type ContentGroup = { heading?: Heading; sections: Section[] }
 export type StoryContent = Record<string, ContentGroup>

@@ -1,4 +1,4 @@
-const h = (main: string, subtitle?: string) => ({ main, subtitle })
+const h = (main: string, sectionTag?: string) => ({ main, sectionTag })
 const cards = (l: string, c: string, r: string, label: string, markers: any[] = []) => ({
   type: 'layered-cards', props: { imageLeft: l, imageCenter: c, imageRight: r, zIndexLeft: 2, zIndexCenter: 3, zIndexRight: 1, mediaLabel: label, markers }
 })

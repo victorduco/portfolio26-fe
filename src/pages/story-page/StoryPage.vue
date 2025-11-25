@@ -8,9 +8,9 @@
       </section>
       <section v-for="(contentSection, key) in storyContent" :key="key" :id="`story${storyId}-${key}`" class="content-section">
         <div v-if="contentSection.heading" class="section-title">
-          <h3 :class="contentSection.heading.subtitle ? 'story-heading-two-level' : 'story-heading-single'">
-            <template v-if="contentSection.heading.subtitle">
-              <span class="story-heading-subtitle">{{ contentSection.heading.subtitle }}</span>
+          <h3 :class="contentSection.heading.sectionTag ? 'story-heading-two-level' : 'story-heading-single'">
+            <template v-if="contentSection.heading.sectionTag">
+              <span class="story-heading-subtitle">{{ contentSection.heading.sectionTag }}</span>
               <span class="story-heading-main">{{ contentSection.heading.main }}</span>
             </template>
             <template v-else>{{ contentSection.heading.main }}</template>

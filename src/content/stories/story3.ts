@@ -1,4 +1,4 @@
-const h = (main: string, subtitle?: string) => ({ main, subtitle });
+const h = (main: string, sectionTag?: string) => ({ main, sectionTag });
 const cards = (
   l: string,
   c: string,

@@ -1,9 +1,9 @@
 <template>
   <section class="story-section">
     <div v-if="heading" class="section-heading content-block">
-      <h4 v-if="!heading.subtitle" class="story-section-heading-single">{{ heading.main }}</h4>
+      <h4 v-if="!heading.sectionTag" class="story-section-heading-single">{{ heading.main }}</h4>
       <div v-else class="story-section-heading-two-level">
-        <div class="story-section-heading-subtitle">{{ heading.subtitle }}</div>
+        <div class="story-section-heading-subtitle">{{ heading.sectionTag }}</div>
         <h4 class="story-section-heading-main">{{ heading.main }}</h4>
       </div>
     </div>
@@ -32,7 +32,7 @@ import TabbedImg from '../media/TabbedImg.vue'
 import LayeredImg from '../media/LayeredImg.vue'
 import { resolveMediaPath } from '@/utils/mediaResolver.js'
 
-interface Props { heading?: { main: string; subtitle?: string }; textBefore?: string; media?: { type: string; props: Record<string, any> }; textAfter?: string; backgroundColor?: string }
+interface Props { heading?: { main: string; sectionTag?: string }; textBefore?: string; media?: { type: string; props: Record<string, any> }; textAfter?: string; backgroundColor?: string }
 const props = defineProps<Props>()
 
 const mediaComponents: Record<string, Component> = { image: FullscreenImg, video: FullscreenVideo, parallax: ParallaxImg, horizontalParallax: HorizontalParallaxImg, 'chaptered-video': ChapteredVideo, 'tabbed-video': TabbedVideo, 'tabbed-img': TabbedImg, 'layered-cards': LayeredImg }
