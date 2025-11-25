@@ -4,10 +4,14 @@ import { RouterView, useRoute } from "vue-router";
 import Keypad from "./pages/keypad-page/keypad/Keypad.vue";
 import { useAuth } from "./composables/useAuth.js";
 import { useMixpanel } from "./composables/useMixpanel.js";
+import { useMarkerCoordinatePicker } from "./composables/useMarkerCoordinatePicker.js";
 
 const { isAuthenticated, isLoading, checkAuth, setAuthenticated } = useAuth();
 const mixpanel = useMixpanel();
 const route = useRoute();
+
+// Enable marker coordinate picker
+const picker = useMarkerCoordinatePicker({ enabled: true });
 
 onMounted(checkAuth);
 

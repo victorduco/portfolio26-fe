@@ -20,7 +20,7 @@
 <style scoped>
 .story1-next-story { --font: 'Noto Sans', sans-serif; position: relative; width: 100%; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f5f5f5; }
 
-.text-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -210px); text-align: center; z-index: 1; width: 90vw; max-width: 1200px; }
+.text-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -210px); text-align: center; z-index: 1; width: 100%; max-width: 1200px; padding: 0 5vw; box-sizing: border-box; }
 .company-text { margin: 0 0 12px; font: 700 clamp(16px, 2vw, 28px)/1.4 var(--font); color: #007aff; }
 .main-text { margin: 0; font: 600 clamp(24px, 2.2vw, 48px)/1.2 var(--font); color: #000; }
 .tags-container { margin: 16px 0 0; display: flex; gap: 4px; justify-content: center; align-items: center; }

@@ -42,13 +42,13 @@ export const story3Content = {
           [
             {
               targetImage: "left",
-              position: { x: 90, y: 25 },
+              position: { x: 91.11, y: 12.93 },
               text: "Fragmented workflows caused confusion",
               buttonColor: "#ca4034",
             },
             {
               targetImage: "center",
-              position: { x: 50, y: 45 },
+              position: { x: 51.59, y: 88.53 },
               text: "Harsh field conditions require robust UX",
               buttonColor: "#ca4034",
             },
@@ -84,14 +84,8 @@ export const story3Content = {
           {},
           [
             {
-              targetImage: "center",
-              position: { x: 50, y: 50 },
-              text: "User personas based on research",
-              buttonColor: "#ca4034",
-            },
-            {
               targetImage: "right",
-              position: { x: 50, y: 50 },
+              position: { x: 50, y: 0 },
               text: "Usability testing insights",
               buttonColor: "#ca4034",
             },
@@ -114,7 +108,7 @@ export const story3Content = {
           [
             {
               targetImage: "center",
-              position: { x: 50, y: 50 },
+              position: { x: 89.28, y: 37.5 },
               text: "Prioritized UX recommendations",
               buttonColor: "#ca4034",
             },
@@ -144,7 +138,7 @@ export const story3Content = {
           [
             {
               targetImage: "right",
-              position: { x: 50, y: 50 },
+              position: { x: 75.25, y: 12.84 },
               text: "Adaptive home screen",
               buttonColor: "#ca4034",
             },
@@ -186,8 +180,14 @@ export const story3Content = {
           [
             {
               targetImage: "left",
-              position: { x: 50, y: 50 },
+              position: { x: 79.32, y: 14.22 },
               text: "Low-priority menu design",
+              buttonColor: "#ca4034",
+            },
+            {
+              targetImage: "right",
+              position: { x: 82.09, y: 29.77 },
+              text: "Critical notifications prominence",
               buttonColor: "#ca4034",
             },
           ]
@@ -208,14 +208,8 @@ export const story3Content = {
           { borderRadius: 25 },
           [
             {
-              targetImage: "left",
-              position: { x: 50, y: 50 },
-              text: "Main order view",
-              buttonColor: "#ca4034",
-            },
-            {
               targetImage: "right",
-              position: { x: 50, y: 50 },
+              position: { x: 24.32, y: 15.67 },
               text: "Order overview",
               buttonColor: "#ca4034",
             },
