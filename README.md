@@ -127,6 +127,11 @@ portfolio26-fe/
 - `npm run cdn:check` - Verify CDN setup
 - `npm run cdn:sync` - Upload backgrounds to S3
 - `npm run cdn:sync:manifest` - Upload manifest to S3
+- `npm run cdn:sync:images` - Upload images to S3
+- `npm run cdn:sync:videos` - Upload videos to S3
+- `npm run cdn:sync:fonts` - Upload fonts to S3
+- `npm run cdn:sync:media` - Upload all media (images, videos, fonts)
+- `npm run cdn:sync:all` - Upload everything (backgrounds, media, manifests)
 
 ### Testing
 
