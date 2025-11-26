@@ -191,12 +191,12 @@ export const story1Content = {
             tabs: [
               {
                 title: "Quick Actions",
-                imageSrc: "/images/story1-chat-quick-actions-state1.png",
-                imageSrcState2: "/images/story1-chat-quick-actions-state2.png",
+                imageSrc: "/images/story1-chat-quick-state1.png",
+                imageSrcState2: "/images/story1-chat-quick-state2.png",
                 alt: "Quick actions interface",
                 markers: [
                   {
-                    position: { x: 50, y: 50 },
+                    position: { x: 41.3, y: 66.44 },
                     text: "Most frequent requests are available in one click.",
                   },
                 ],

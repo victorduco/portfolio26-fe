@@ -7,7 +7,9 @@
       <div class="video-wrapper">
         <video v-for="(tab, i) in tabs" :key="`video-${i}`" :ref="el => el && (videoRefs[i] = el)" :src="tab.videoSrc" muted playsinline preload="auto" class="tab-video" :class="{ 'video-active': activeTab === i, 'video-paused-blur': activeTab === i && !isPlaying && hasStartedPlayback }" @ended="isPlaying = false" @click="togglePlayPause" />
         <div v-if="!isPlaying && hasStartedPlayback" class="pause-overlay" @click="togglePlayPause">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="40" fill="rgba(255,255,255,0.9)"/><path d="M32 25L55 40L32 55V25Z" fill="#000"/></svg>
+          <svg viewBox="0 0 100 100" fill="currentColor" class="pause-play-icon" aria-label="Play video">
+            <path d="M32 23L32 77C32 78.5 33 79.5 34.5 79L73 52C74.5 51.2 74.5 48.8 73 48L34.5 21C33 20.5 32 21.5 32 23Z" />
+          </svg>
         </div>
         <VideoControls v-if="hasStartedPlayback" :is-playing="isPlaying" :is-muted="true" :is-fullscreen="isFullscreen" :is-small-screen="isSmallScreen" :hide-mute="true" @toggle-play-pause="togglePlayPause" @restart="restartVideo" @toggle-fullscreen="toggleFullscreen" />
       </div>
@@ -85,9 +87,13 @@ onUnmounted(() => { observer?.disconnect(); pauseVideo(); });
 .tabs-wrapper { width: 100%; display: flex; justify-content: center; padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 40px) 0; flex-shrink: 0; }
 .tabs-wrapper :deep(.tabs-nav) { max-width: 1200px; }
 .video-content { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; padding: clamp(16px, 2.5vw, 24px) clamp(16px, 3vw, 40px) clamp(24px, 4vw, 40px); }
-.video-wrapper { position: relative; max-width: 1200px; width: 100%; overflow: hidden; border-radius: 12px; border: 1px solid #ccc; line-height: 0; }
+.video-wrapper { position: relative; max-width: 1200px; width: 100%; overflow: hidden; border-radius: 12px; line-height: 0; }
+.video-wrapper::after { content: ''; position: absolute; inset: 0; border-radius: 12px; box-shadow: inset 0 0 0 2px #0D0D0D; pointer-events: none; z-index: 10; }
 .tab-video { width: 100%; height: auto; display: none; cursor: pointer; transition: filter 0.3s ease; }
 .tab-video.video-active { display: block; }
 .tab-video.video-paused-blur { filter: blur(4px); }
-.pause-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; background: rgba(255,255,255,0.6); border-radius: inherit; }
+.pause-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; background: rgba(0, 0, 0, 0.6); border-radius: inherit; }
+.pause-play-icon { width: 120px; height: 120px; color: #fff; filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3)); cursor: pointer; }
+.pause-play-icon path { transition: opacity 0.2s ease; }
+.pause-play-icon:hover path { opacity: 0.8; }
 </style>

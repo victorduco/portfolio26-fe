@@ -12,7 +12,7 @@
         :class="{ 'wrapper-active': activeTab === i }"
       >
         <div class="img-container" :style="imgContainerStyle">
-          <div class="img-states-wrapper">
+          <div class="img-states-wrapper" :style="imgStatesWrapperStyle">
             <!-- State 1 image (base layer) -->
             <img
               :src="tab.imageSrc"
@@ -31,6 +31,9 @@
               :class="{ 'state2-visible': activeTab === i && tabStates[i] }"
             />
           </div>
+
+          <!-- Inner border overlay (only when border is specified) -->
+          <div v-if="hasBorder" class="inner-border-overlay" :style="imgStatesWrapperStyle"></div>
 
           <!-- Marker overlay для этого таба (привязан к img) -->
           <!-- Add data-marker-overlay attribute to help identify overlay elements -->
@@ -111,15 +114,35 @@ const tabsWithTitles = computed(() => {
   }));
 });
 
+// Check if border is specified
+const hasBorder = computed(() => props.borderWidth && props.borderColor);
+
 // Computed styles for image container
 const imgContainerStyle = computed(() => {
   const styles = {};
   if (props.maxWidth) styles.maxWidth = props.maxWidth;
   if (props.borderWidth && props.borderColor) {
     styles.border = `${props.borderWidth} solid ${props.borderColor}`;
+    styles.backgroundColor = props.borderColor;
   }
   if (props.borderRadius) styles.borderRadius = props.borderRadius;
   return styles;
+});
+
+// Computed styles for inner wrapper to adjust border radius
+const imgStatesWrapperStyle = computed(() => {
+  if (!props.borderRadius || !props.borderWidth) return {};
+
+  // Parse border radius and border width
+  const radiusValue = parseFloat(props.borderRadius);
+  const borderValue = parseFloat(props.borderWidth);
+
+  // Subtract border width from radius for inner element
+  const innerRadius = Math.max(0, radiusValue - borderValue);
+
+  return {
+    borderRadius: `${innerRadius}px`
+  };
 });
 
 const switchTab = (index) => {
@@ -244,6 +267,14 @@ const markersLogic = useTabbedImgMarkers({
   position: relative;
   display: block;
   overflow: clip;
+}
+
+.inner-border-overlay {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 2px #0D0D0D;
+  pointer-events: none;
+  z-index: 20;
 }
 
 .tab-img {
