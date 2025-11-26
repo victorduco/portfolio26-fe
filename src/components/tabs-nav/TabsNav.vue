@@ -39,6 +39,7 @@ defineEmits(['tab-change']);
 }
 
 .tab-button {
+  flex: 1;
   padding: clamp(8px, 1.2vw, 12px) clamp(32px, 4.5vw, 48px);
   background: transparent;
   border: none;

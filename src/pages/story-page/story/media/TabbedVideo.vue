@@ -1,12 +1,16 @@
 <template>
   <div class="tabbed-video-container" ref="containerRef">
-    <TabsNav :tabs="tabs" :active-tab="activeTab" @tab-change="switchTab" />
-    <div class="video-wrapper">
-      <video v-for="(tab, i) in tabs" :key="`video-${i}`" :ref="el => el && (videoRefs[i] = el)" :src="tab.videoSrc" muted playsinline preload="auto" class="tab-video" :class="{ 'video-active': activeTab === i, 'video-paused-blur': activeTab === i && !isPlaying && hasStartedPlayback }" @ended="isPlaying = false" @click="togglePlayPause" />
-      <div v-if="!isPlaying && hasStartedPlayback" class="pause-overlay" @click="togglePlayPause">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="40" fill="rgba(255,255,255,0.9)"/><path d="M32 25L55 40L32 55V25Z" fill="#000"/></svg>
+    <div class="tabs-wrapper">
+      <TabsNav :tabs="tabs" :active-tab="activeTab" @tab-change="switchTab" />
+    </div>
+    <div class="video-content">
+      <div class="video-wrapper">
+        <video v-for="(tab, i) in tabs" :key="`video-${i}`" :ref="el => el && (videoRefs[i] = el)" :src="tab.videoSrc" muted playsinline preload="auto" class="tab-video" :class="{ 'video-active': activeTab === i, 'video-paused-blur': activeTab === i && !isPlaying && hasStartedPlayback }" @ended="isPlaying = false" @click="togglePlayPause" />
+        <div v-if="!isPlaying && hasStartedPlayback" class="pause-overlay" @click="togglePlayPause">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="40" fill="rgba(255,255,255,0.9)"/><path d="M32 25L55 40L32 55V25Z" fill="#000"/></svg>
+        </div>
+        <VideoControls v-if="hasStartedPlayback" :is-playing="isPlaying" :is-muted="true" :is-fullscreen="isFullscreen" :is-small-screen="isSmallScreen" :hide-mute="true" @toggle-play-pause="togglePlayPause" @restart="restartVideo" @toggle-fullscreen="toggleFullscreen" />
       </div>
-      <VideoControls v-if="hasStartedPlayback" :is-playing="isPlaying" :is-muted="true" :is-fullscreen="isFullscreen" :is-small-screen="isSmallScreen" :hide-mute="true" @toggle-play-pause="togglePlayPause" @restart="restartVideo" @toggle-fullscreen="toggleFullscreen" />
     </div>
   </div>
 </template>
@@ -77,7 +81,10 @@ onUnmounted(() => { observer?.disconnect(); pauseVideo(); });
 </script>
 
 <style scoped>
-.tabbed-video-container { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 40px); box-sizing: border-box; position: relative; }
+.tabbed-video-container { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; position: relative; }
+.tabs-wrapper { width: 100%; display: flex; justify-content: center; padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 40px) 0; flex-shrink: 0; }
+.tabs-wrapper :deep(.tabs-nav) { max-width: 1200px; }
+.video-content { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; padding: clamp(16px, 2.5vw, 24px) clamp(16px, 3vw, 40px) clamp(24px, 4vw, 40px); }
 .video-wrapper { position: relative; max-width: 1200px; width: 100%; overflow: hidden; border-radius: 12px; border: 1px solid #ccc; line-height: 0; }
 .tab-video { width: 100%; height: auto; display: none; cursor: pointer; transition: filter 0.3s ease; }
 .tab-video.video-active { display: block; }
