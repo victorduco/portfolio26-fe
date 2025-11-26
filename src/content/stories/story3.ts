@@ -221,6 +221,30 @@ export const story3Content = {
           { borderRadius: 25 },
           [
             {
+              targetImage: "left",
+              position: { x: 21.23, y: 85.9 },
+              text: "Flat navigation structure reduced the number of required transitions and made moving across order details significantly faster.",
+              buttonColor: "#ca4034",
+            },
+            {
+              targetImage: "center",
+              position: { x: 50, y: 0 },
+              text: "Contextual guidance is embedded directly into the core workflow, helping operators stay confident without breaking focus.",
+              buttonColor: "#ca4034",
+            },
+            {
+              targetImage: "center",
+              position: { x: 22.99, y: 83.81 },
+              text: "Quick access to supplementary information is always available for cases where operators need additional context on the spot.",
+              buttonColor: "#ca4034",
+            },
+            {
+              targetImage: "center",
+              position: { x: 80.54, y: 61.77 },
+              text: "Comment creation and review are integrated into the main flow, eliminating detours and making communication effortless.",
+              buttonColor: "#ca4034",
+            },
+            {
               targetImage: "right",
               position: { x: 24.32, y: 15.67 },
               text: "The overview screen consolidates all required information so users don't need to piece things together.",
