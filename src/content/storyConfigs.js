@@ -6,9 +6,9 @@ export const storyConfigs = {
     summaryVideo: "story1-summary.mp4",
     videoBackground: "#f5f5f7",
     results: [
-      { title: "Noticeable Time Reduction", description: "Task completion times improved significantly, with reductions in time required depending on task complexity." },
-      { title: "Lower SLA Violations", description: "AI has enhanced the system's ability to identify incidents and perform predictive analysis, improving decision-making." },
-      { title: "Peak Load Support", description: "Workload management during peak financial periods has improved, resulting in smoother operations and reduced stress for users." }
+      { title: "Noticeable Time Reduction", description: "The combined dashboard and AI workflows significantly reduced investigation time during the first year." },
+      { title: "Lower SLA Violations", description: "Earlier visibility and automation reduced SLA violations across high-volume reconciliation tasks." },
+      { title: "Peak Load Support", description: "The solution handled year-end and holiday peak loads more reliably, reducing operational bottlenecks." }
     ],
     nextStory: { storyId: "2", title: "Relaunching the Employee Comms App" },
   },
@@ -21,13 +21,12 @@ export const storyConfigs = {
     videoBackground: "#F7E7E7",
     mediaLabel: "Side-by-Side Comparison of the Old and New Home Screens",
     results: [
-      { label: "App Rating", iconSrc: new URL('@/assets/icons/results-star.svg', import.meta.url).href, title: "3.2 → 4.6", description: "Average rating in the App Store and Google Play Store." },
-      { label: "Installation Rate", iconSrc: new URL('@/assets/icons/results-download.svg', import.meta.url).href, title: "4.5% → 32%", description: "Percentage of users who installed the app out of the total user base." },
-      { label: "Active Users", iconSrc: new URL('@/assets/icons/results-user.svg', import.meta.url).href, title: "0.5% → 14%", description: "Percentage of users who became regular mobile app users out of the total user base." }
+      { label: "App Rating", iconSrc: new URL('@/assets/icons/results-star.svg', import.meta.url).href, title: "3.2 → 4.6", description: "A significantly improved experience led to a sharp increase in user satisfaction, reflected in higher store ratings sustained throughout the year after relaunch." },
+      { label: "Installation Rate", iconSrc: new URL('@/assets/icons/results-download.svg', import.meta.url).href, title: "4.5% → 32%", description: "Clearer value, improved usability, and stronger internal advocacy increased installation rates, showing that the relaunch successfully repositioned the mobile app within the company." },
+      { label: "Active Users", iconSrc: new URL('@/assets/icons/results-user.svg', import.meta.url).href, title: "0.5% → 14%", description: "Meaningful UX improvements translated into real behavior change as weekly active usage grew steadily in the months following launch." }
     ],
-    resultsIntro: "The results show impact 11 months post-launch. Metrics were measured and validated by the marketing team through comprehensive analytics tracking across App Store, Google Play, and internal user engagement platforms.",
+    resultsIntro: "The relaunch delivered measurable, sustained improvements across adoption, satisfaction, and engagement. Below are key outcomes gathered from the first eleven months post-launch.",
     resultsMediaLabel: "Redesign results showing impact 11 months post-launch",
-    resultsConclusion: "These improvements demonstrate the significant impact of the redesign on user engagement and satisfaction. The mobile experience transformation led to measurable business outcomes and validated our design decisions through real-world usage data.",
     nextStory: { storyId: "3", title: "A Full Redesign of an Oil Terminal Operations App" },
   },
   3: {

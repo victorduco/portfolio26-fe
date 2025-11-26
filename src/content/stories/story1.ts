@@ -40,7 +40,7 @@ export const story1Content = {
           "Account Reconciliation Specifics"
         ),
         textBefore:
-          "A rapidly growing SaaS company faced critical user engagement issues despite having a solid product. Their bounce rate hit 67%, with only 23% adopting key features. The mobile experience was particularly weak, converting at just 8%.",
+          "Users spent significant time verifying whether transactions were reconciled correctly and investigating issues before deciding what action to take.",
         media: img(
           "/images/story1-domain-tree.png",
           "Reconciliation Domain Map",
@@ -64,7 +64,7 @@ export const story1Content = {
           "Global Product Research"
         ),
         textBefore:
-          "The platform processes over 2.5 million transactions daily across 50+ enterprise clients, handling reconciliation for accounts ranging from $10M to $2B in monthly volume. Our AI models maintain 99.7% accuracy while reducing processing time from hours to minutes.",
+          "I partnered with product and engineering teams to identify shared problems across regions and understand which improvements were feasible technically.",
         media: cards(
           "/images/story1-scale-2.png",
           "/images/story1-scale-1.png",
@@ -84,7 +84,7 @@ export const story1Content = {
           "Conversational & Classic UI"
         ),
         textBefore:
-          "Our hybrid approach seamlessly integrates AI-powered conversational interfaces with traditional UI components. Users can switch between chat-based interactions and classic forms based on their preference and task complexity, ensuring flexibility without sacrificing efficiency.",
+          "Since the AI layer extended an existing dashboard, the goal was to integrate both experiences seamlessly, using natural language to support complex data tasks.",
         media: {
           type: "tabbed-video",
           props: {
@@ -109,7 +109,7 @@ export const story1Content = {
           "Data Visualization"
         ),
         textBefore:
-          "Through multiple design iterations, we refined the visual language to balance clarity with sophistication. Each iteration brought us closer to a design that feels both approachable and professional.",
+          "The challenge was enabling smooth transitions between chat and large-scale data views while keeping high-volume datasets clear and easy to explore.",
         media: {
           type: "tabbed-img",
           props: {
@@ -164,7 +164,7 @@ export const story1Content = {
           "Product Vision & Design System"
         ),
         textBefore:
-          "We developed a comprehensive AI framework that combines conversational design with intelligent automation. The system uses natural language processing to understand user intent and provides contextual assistance throughout the reconciliation workflow, reducing the learning curve by 70%.",
+          "Different teams shipped different models, so I defined shared principles to maintain consistency across evolving inputs and product components.",
         media: {
           type: "parallax",
           props: {
@@ -178,7 +178,7 @@ export const story1Content = {
       {
         heading: h("The Project-Specific Chat Features", "Core AI Features"),
         textBefore:
-          "Our chat interface demonstrates sophisticated state management with smooth transitions between different interaction states. Each state change provides clear visual feedback to guide users through their workflow.",
+          "Users had specific mental models for how they searched and reviewed their work, which influenced how chat history and prompt patterns needed to function.",
         media: {
           type: "tabbed-img",
           props: {
@@ -232,7 +232,7 @@ export const story1Content = {
       {
         heading: h("Flexible Ways to Add Context", "Context Input"),
         textBefore:
-          "Our system intelligently adapts to user context, providing relevant information and actions at the right moment. Each interaction is enhanced with smart suggestions and dynamic content that responds to user behavior.",
+          "Most user requests depended on structured data rather than text, so I focused on making context sharing feel as natural as handing information to a colleague.",
         media: {
           type: "tabbed-img",
           props: {
