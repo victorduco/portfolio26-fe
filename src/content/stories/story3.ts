@@ -32,7 +32,7 @@ export const story3Content = {
       {
         heading: h("Harsh Conditions, Critical Actions", "User Challenge"),
         textBefore:
-          "The platform faced critical challenges across multiple dimensions. Users struggled with fragmented workflows, inconsistent interfaces, and a steep learning curve that resulted in low feature adoption. The mobile experience was particularly problematic, with conversion rates significantly lagging behind desktop. These issues compounded into a broader problem of user retention and engagement.",
+          "Field operators work in harsh, high-pressure conditions where every step must follow strict procedures. They log actions, follow multi-stage instructions, and complete safety-critical tasks with almost no margin for error.",
         media: cards(
           "/images/story3-challenge-1.png",
           "/images/story3-challenge-3.png",
@@ -58,7 +58,7 @@ export const story3Content = {
       {
         heading: h("Previous Design"),
         textBefore:
-          "The e-commerce platform suffered from severe usability issues that were driving customers away. Complex navigation made product discovery frustrating, the checkout flow had 7+ steps causing massive cart abandonment, and mobile experience was broken with tiny buttons and unresponsive layouts. Performance was abysmal with 8+ second load times on mobile, causing users to leave before pages even loaded.",
+          "As an external expert, I was brought in to evaluate the product objectively, identify core UX issues, and clarify what needed to change to make the app usable for field operators.",
         media: img(
           "/images/story3-task.png",
           "Previous version: Home screen, My Tasks (two views), and user profile.",
@@ -82,7 +82,7 @@ export const story3Content = {
           "User & Competitor Research"
         ),
         textBefore:
-          "Conducted extensive usability testing with 30+ participants and analyzed top 10 competitors to identify industry best practices. Heat maps revealed friction points, scroll depth analytics showed content discovery issues, and competitor analysis identified key opportunities for differentiation in navigation, checkout flows, and mobile experience.",
+          "I began by validating assumptions through user interviews, operational observations, and competitor analysis. My goal was to build a factual foundation for change, rooted in actual user behavior and real task patterns.",
         media: cards(
           "/images/story3-ground-1.png",
           "/images/story3-ground-3.png",
@@ -111,7 +111,7 @@ export const story3Content = {
           "UX Audit Report"
         ),
         textBefore:
-          "Delivered comprehensive UX audit report with prioritized recommendations across 5 key areas: navigation & IA, product discovery, checkout optimization, mobile experience, and performance. Each recommendation included severity rating, estimated impact, implementation effort, and supporting data from user testing. Created detailed roadmap for phased implementation aligned with business priorities.",
+          "For leadership, I delivered a highly structured audit highlighting the most critical UX issues and concrete, feasible fixes.",
         media: cards(
           "/images/story3-audit-1.png",
           "/images/story3-audit-3.png",
@@ -128,7 +128,7 @@ export const story3Content = {
           ]
         ),
         textAfter:
-          "The audit findings provided a clear foundation for the redesign phase. Armed with data-driven insights and validated recommendations, the team was ready to transform the platform from a frustrating experience into an intuitive, high-performing e-commerce solution.",
+          "Leadership quickly recognized the clarity and depth of the audit and decided to continue working with me on a full redesign of the application.",
       },
     ],
   },
@@ -141,7 +141,7 @@ export const story3Content = {
           "Home Page"
         ),
         textBefore:
-          "A design system with 142 components provided consistency. Navigation restructured through user testing reduced clicks-to-product from 4.2 to 2.1. Mobile got touch-optimized interactions and streamlined checkout. A/B tests validated every decision.",
+          "I segmented the UX by user groups and focused the home experience on operators' real needs, keeping only essential information visible and removing distracting or irrelevant items from their workflow.",
         media: cards(
           "/images/story3-home-1-1.png",
           "/images/story3-home-1-3.png",
@@ -160,7 +160,7 @@ export const story3Content = {
       },
       {
         textBefore:
-          "The new interface introduced streamlined workflows that significantly reduced cognitive load. By consolidating related actions and providing contextual information at the right moment, users could accomplish tasks with fewer clicks and less mental effort. Progressive disclosure techniques ensured that advanced features remained accessible without overwhelming new users.",
+          "Because operators repeatedly encounter similar order patterns, I designed interactions that simplify these scenarios and make daily tasks feel smoother and more predictable.",
         media: {
           type: "horizontalParallax",
           props: {
@@ -183,7 +183,7 @@ export const story3Content = {
       {
         heading: h("Attention Goes to What Truly Matters", "App Navigation"),
         textBefore:
-          "Gradual migration allowed business continuity while rebuilding. We audited 47 page templates, prioritized revenue-driving pages, and set targets: 75% faster loads, 100% mobile conversion increase, Lighthouse scores above 95.",
+          "Navigation was rebuilt to spotlight critical tasks. Non-essential items were collapsed, and all interactive elements were intentionally large to support quick, confident use in challenging field conditions.",
         media: cards(
           "/images/story3-nav-1-1.png",
           "/images/story3-nav-1-3.png",
@@ -212,7 +212,7 @@ export const story3Content = {
           "Order View"
         ),
         textBefore:
-          "Redesigned the homepage with a clean, modern aesthetic that prioritizes product discovery and creates clear visual hierarchy. Implemented large hero imagery, featured product carousels, and category navigation that guides users naturally through the experience. Reduced clutter by 60%, improved above-the-fold conversion triggers, and created a mobile-first responsive layout that adapts beautifully across all screen sizes.",
+          "Order pages now use a flattened structure that reduces transitions by half. Key information appears earlier, and navigation between task stages has become faster and more intuitive.",
         media: cards(
           "/images/story3-order-1-1.png",
           "/images/story3-order-1-3.png",
@@ -231,7 +231,7 @@ export const story3Content = {
       },
       {
         textBefore:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+          "Smaller interaction enhancements across navigation and task flows collectively reduced cognitive load, helping operators stay focused on their demanding, safety-critical responsibilities.",
         media: cards(
           "/images/story3-nav-2-1.png",
           "/images/story3-nav-2-3.png",
