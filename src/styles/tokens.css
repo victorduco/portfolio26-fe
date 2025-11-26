@@ -11,6 +11,7 @@
 }
 .story-heading-single, .story-heading-main, .story-results-title {
   font-family: var(--story-title-font, var(--font-family-base)); margin: 0; color: inherit;
+  line-height: 1.5;
 }
 h3.story-results-title { margin-bottom: 24px; color: inherit !important; }
 .story-heading-two-level, .story-section-heading-two-level { margin: 0; }
