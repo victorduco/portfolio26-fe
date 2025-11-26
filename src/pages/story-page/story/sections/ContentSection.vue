@@ -58,7 +58,8 @@ function getMediaProps(p: Record<string, any>, bgColor?: string): Record<string,
     else if (k === 'tabs' && Array.isArray(v)) resolved[k] = v.map((t: any) => ({
       ...t,
       videoSrc: t.videoSrc ? resolveMediaPath(t.videoSrc) : t.videoSrc,
-      imageSrc: t.imageSrc ? resolveMediaPath(t.imageSrc) : t.imageSrc
+      imageSrc: t.imageSrc ? resolveMediaPath(t.imageSrc) : t.imageSrc,
+      imageSrcState2: t.imageSrcState2 ? resolveMediaPath(t.imageSrcState2) : t.imageSrcState2
     }))
     else resolved[k] = v
   }
