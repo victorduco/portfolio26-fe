@@ -12,17 +12,12 @@ const manifestPath = path.join(backgroundsDir, "manifest.json");
 const backgroundsExist = fs.existsSync(backgroundsDir);
 const manifestExists = fs.existsSync(manifestPath);
 
-if (backgroundsExist) {
-  console.log("✅ Pregenerated keypad backgrounds found");
-  if (manifestExists) {
-    console.log("✅ Background manifest found");
-  } else {
-    console.warn("⚠️  Manifest not found. Run 'npm run generate:backgrounds'");
-  }
-} else {
+if (!backgroundsExist) {
   console.warn(
     "⚠️  Pregenerated keypad backgrounds not found. Run 'npm run generate:backgrounds' to create them."
   );
+} else if (!manifestExists) {
+  console.warn("⚠️  Manifest not found. Run 'npm run generate:backgrounds'");
 }
 
 // https://vite.dev/config/

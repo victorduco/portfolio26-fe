@@ -23,14 +23,6 @@ export function useMarkerAnimations() {
       useScrollTrigger = true,
     } = options;
 
-    console.log("[Markers Animation] animateMarkersEntry called", {
-      markerRefsCount: markerRefs?.length,
-      hasTrigerElement: !!triggerElement,
-      triggerElementValue: triggerElement?.value,
-      useScrollTrigger,
-      options,
-    });
-
     if (!markerRefs || markerRefs.length === 0) {
       console.warn("[Markers Animation] No marker refs!");
       return;
@@ -39,8 +31,6 @@ export function useMarkerAnimations() {
     // Создаем timeline для анимации
     const tl = gsap.timeline({
       paused: useScrollTrigger, // Если используем ScrollTrigger - ставим на паузу
-      onStart: () => console.log("[Markers Animation] Timeline started!"),
-      onComplete: () => console.log("[Markers Animation] Timeline completed!"),
     });
 
     markerRefs.forEach((markerRef, index) => {
@@ -52,11 +42,6 @@ export function useMarkerAnimations() {
       const markerEl = markerRef.$el;
       const buttonEl = markerEl.querySelector(".marker-button");
       const ringEl = markerEl.querySelector(".marker-ring");
-
-      console.log(`[Markers Animation] Setting up marker ${index}`, {
-        hasButton: !!buttonEl,
-        hasRing: !!ringEl,
-      });
 
       if (!buttonEl) {
         console.warn(`[Markers Animation] Marker ${index} has no button!`);
@@ -98,12 +83,6 @@ export function useMarkerAnimations() {
       // Получить реальный элемент (если передан ref)
       const element = triggerElement.value || triggerElement;
 
-      console.log("[Markers Animation] Setting up ScrollTrigger", {
-        element,
-        elementType: element?.constructor?.name,
-        elementTag: element?.tagName,
-      });
-
       if (element) {
         // Обновить ScrollTrigger после загрузки изображений
         setTimeout(() => {
@@ -118,36 +97,11 @@ export function useMarkerAnimations() {
           markers: false, // Визуальные маркеры для отладки отключены
           invalidateOnRefresh: true, // ✅ Пересчитывать при изменении
           refreshPriority: -1, // ✅ Обновлять после изображений
-          onRefresh: (self) => {
-            console.log("[Markers Animation] 🔄 ScrollTrigger refreshed!", {
-              start: self.start,
-              end: self.end,
-              progress: self.progress,
-              triggerElement: element,
-              triggerBounds: element.getBoundingClientRect(),
-            });
-          },
           onEnter: () => {
-            console.log(
-              "[Markers Animation] ✅ ScrollTrigger ENTERED! Playing timeline..."
-            );
             tl.play();
-          },
-          onLeave: () => {
-            console.log("[Markers Animation] ScrollTrigger left");
-          },
-          onEnterBack: () => {
-            console.log("[Markers Animation] ScrollTrigger entered back");
-          },
-          onUpdate: (self) => {
-            console.log(
-              "[Markers Animation] 📍 ScrollTrigger update - progress:",
-              self.progress
-            );
           },
         });
 
-        console.log("[Markers Animation] ScrollTrigger created", st);
         scrollTriggers.push(st);
       } else {
         console.error(
@@ -156,7 +110,6 @@ export function useMarkerAnimations() {
       }
     } else if (!useScrollTrigger) {
       // Запустить сразу
-      console.log("[Markers Animation] Playing immediately (no ScrollTrigger)");
       tl.play();
     } else {
       console.warn(

@@ -197,14 +197,7 @@ export function useMarkerCoordinatePicker(options = {}) {
     // Скопировать в буфер обмена
     const clipboardText = `Image: ${imgId}\n{ position: { x: ${percentX}, y: ${percentY} } }`;
 
-    navigator.clipboard.writeText(clipboardText).then(() => {
-      console.log('%c📍 Marker Coordinate (copied to clipboard!)', 'background: #000; color: #00ff00; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
-      console.log(`Image: ${imgId}`);
-      console.log(`{ position: { x: ${percentX}, y: ${percentY} } }`);
-    }).catch(err => {
-      console.log('%c📍 Marker Coordinate', 'background: #000; color: #00ff00; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
-      console.log(`Image: ${imgId}`);
-      console.log(`{ position: { x: ${percentX}, y: ${percentY} } }`);
+    navigator.clipboard.writeText(clipboardText).catch(err => {
       console.warn('Failed to copy to clipboard:', err);
     });
 
@@ -281,10 +274,6 @@ export function useMarkerCoordinatePicker(options = {}) {
 
     // Использовать capture phase с максимальным приоритетом
     document.addEventListener('click', handleImageClick, { capture: true });
-
-    console.log('%c📍 Marker Coordinate Picker ENABLED', 'background: #00ff00; color: #000; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
-    console.log('Click on any image to get marker coordinates');
-    console.log('All existing markers are temporarily disabled');
   };
 
   /**
@@ -301,8 +290,6 @@ export function useMarkerCoordinatePicker(options = {}) {
 
     // Удалить временные маркеры
     document.querySelectorAll('.temp-coordinate-marker').forEach(m => m.remove());
-
-    console.log('%c📍 Marker Coordinate Picker DISABLED', 'background: #ff0000; color: #fff; font-weight: bold; padding: 4px 8px; border-radius: 4px;');
   };
 
   /**
