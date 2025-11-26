@@ -43,13 +43,13 @@ export const story3Content = {
             {
               targetImage: "left",
               position: { x: 91.11, y: 12.93 },
-              text: "Fragmented workflows caused confusion",
+              text: "Example of the environments where the mobile app is used.",
               buttonColor: "#ca4034",
             },
             {
               targetImage: "center",
               position: { x: 51.59, y: 88.53 },
-              text: "Harsh field conditions require robust UX",
+              text: "Enterprise devices often rely on outdated hardware and protective layers that impact usability.",
               buttonColor: "#ca4034",
             },
           ]
@@ -61,7 +61,14 @@ export const story3Content = {
           "The e-commerce platform suffered from severe usability issues that were driving customers away. Complex navigation made product discovery frustrating, the checkout flow had 7+ steps causing massive cart abandonment, and mobile experience was broken with tiny buttons and unresponsive layouts. Performance was abysmal with 8+ second load times on mobile, causing users to leave before pages even loaded.",
         media: img(
           "/images/story3-task.png",
-          "Previous version: Home screen, My Tasks (two views), and user profile."
+          "Previous version: Home screen, My Tasks (two views), and user profile.",
+          [
+            {
+              position: { x: 39.8, y: 10.47 },
+              text: "Previous home screen showed all information for all user types in one view.",
+              buttonColor: "#ca4034",
+            },
+          ]
         ),
       },
     ],
@@ -84,9 +91,15 @@ export const story3Content = {
           {},
           [
             {
+              targetImage: "center",
+              position: { x: 77.6, y: 36.9 },
+              text: "I conducted interviews with 12 users to understand their needs and workflows.",
+              buttonColor: "#ca4034",
+            },
+            {
               targetImage: "right",
               position: { x: 50, y: 0 },
-              text: "Usability testing insights",
+              text: "The document covers most companies in the market with structured UX data for each.",
               buttonColor: "#ca4034",
             },
           ]
@@ -108,8 +121,8 @@ export const story3Content = {
           [
             {
               targetImage: "center",
-              position: { x: 89.28, y: 37.5 },
-              text: "Prioritized UX recommendations",
+              position: { x: 88.87, y: 37.41 },
+              text: "The final report is organized by user types with clear action points and examples.",
               buttonColor: "#ca4034",
             },
           ]
@@ -139,7 +152,7 @@ export const story3Content = {
             {
               targetImage: "right",
               position: { x: 75.25, y: 12.84 },
-              text: "Adaptive home screen",
+              text: "The header, illustration and other elements adapt based on the user's context.",
               buttonColor: "#ca4034",
             },
           ]
@@ -180,14 +193,14 @@ export const story3Content = {
           [
             {
               targetImage: "left",
-              position: { x: 79.32, y: 14.22 },
-              text: "Low-priority menu design",
+              position: { x: 26.52, y: 50.41 },
+              text: "All essential tools for Operators are surfaced on the home screen, with everything else collapsed into the menu.",
               buttonColor: "#ca4034",
             },
             {
               targetImage: "right",
-              position: { x: 82.09, y: 29.77 },
-              text: "Critical notifications prominence",
+              position: { x: 82.01, y: 28.45 },
+              text: "Critical notifications are clearly highlighted.",
               buttonColor: "#ca4034",
             },
           ]
@@ -210,7 +223,7 @@ export const story3Content = {
             {
               targetImage: "right",
               position: { x: 24.32, y: 15.67 },
-              text: "Order overview",
+              text: "The overview screen consolidates all required information so users don't need to piece things together.",
               buttonColor: "#ca4034",
             },
           ]
