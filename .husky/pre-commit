@@ -40,6 +40,24 @@ else
   echo "⏭️  No images directory found"
 fi
 
+echo ""
+echo "📄 Checking for new/updated documents..."
+
+# Check if there are any document files in the documents directory
+if [ -d "public/documents" ]; then
+  # Check if there are any NEW document files staged for commit (not deleted)
+  if git diff --cached --name-only --diff-filter=AM | grep -qE "public/documents/.*\.pdf$"; then
+    echo "📋 Found document files staged for commit"
+
+    MEDIA_UPDATED=true
+    echo "✅ Documents detected for CDN sync"
+  else
+    echo "⏭️  No new document files found in staged changes"
+  fi
+else
+  echo "⏭️  No documents directory found"
+fi
+
 # If any media was updated, prepare manifest and sync to CDN
 if [ "$MEDIA_UPDATED" = true ]; then
   echo ""
@@ -51,9 +69,9 @@ if [ "$MEDIA_UPDATED" = true ]; then
   # Add manifest to staging (not ignored)
   git add public/media-manifest.json 2>/dev/null || true
 
-  # Sync to CDN (images, videos, and manifest)
+  # Sync to CDN (all media types)
   echo "📤 Uploading to CDN..."
-  npm run cdn:sync:media
+  npm run cdn:sync
 
   echo "✅ Media synced to CDN"
 fi
