@@ -58,20 +58,16 @@ else
   echo "⏭️  No documents directory found"
 fi
 
-# If any media was updated, prepare manifest and sync to CDN
+# If any media was updated, deploy to CDN
 if [ "$MEDIA_UPDATED" = true ]; then
   echo ""
-  echo "☁️  Preparing media manifest and syncing to CDN..."
+  echo "☁️  Deploying media to CDN..."
 
-  # Generate manifest with hashed filenames
-  npm run media:prepare
+  # Deploy: prepare manifest + sync all media types
+  npm run cdn:deploy
 
   # Add manifest to staging (not ignored)
   git add public/media-manifest.json 2>/dev/null || true
 
-  # Sync to CDN (all media types)
-  echo "📤 Uploading to CDN..."
-  npm run cdn:sync
-
-  echo "✅ Media synced to CDN"
+  echo "✅ Media deployed to CDN"
 fi

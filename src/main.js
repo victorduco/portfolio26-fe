@@ -12,7 +12,8 @@ import { initMediaResolver } from "./utils/mediaResolver.js";
 import { loadFonts } from "./utils/fontLoader.js";
 
 if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
-initMediaResolver();
-loadFonts();
 
-createApp(App).use(directivesPlugin).use(mixpanelPlugin).use(router).mount("#app");
+// Initialize media resolver and load fonts before mounting app
+Promise.all([initMediaResolver(), loadFonts()]).then(() => {
+  createApp(App).use(directivesPlugin).use(mixpanelPlugin).use(router).mount("#app");
+});

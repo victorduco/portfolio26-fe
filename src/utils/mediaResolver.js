@@ -34,7 +34,12 @@ function getMediaPath(type, filename) {
 
   if (IS_DEV) return hashedName ? `${prefix}${hashedName}` : `${prefix}${filename}`;
 
+  // In production, always use hashed name. Fallback to filename only if manifest failed to load.
   const resolved = hashedName || filename;
+  if (!hashedName && import.meta.env.PROD) {
+    console.warn(`Media manifest missing entry for: ${type}/${filename}`);
+  }
+
   return USE_CDN ? `${CDN_BASE_URL}${prefix}${resolved}` : `${prefix}${resolved}`;
 }
 
