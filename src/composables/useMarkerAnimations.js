@@ -24,7 +24,6 @@ export function useMarkerAnimations() {
     } = options;
 
     if (!markerRefs || markerRefs.length === 0) {
-      console.warn("[Markers Animation] No marker refs!");
       return;
     }
 
@@ -35,7 +34,6 @@ export function useMarkerAnimations() {
 
     markerRefs.forEach((markerRef, index) => {
       if (!markerRef || !markerRef.$el) {
-        console.warn(`[Markers Animation] Marker ${index} has no $el`);
         return;
       }
 
@@ -44,7 +42,6 @@ export function useMarkerAnimations() {
       const ringEl = markerEl.querySelector(".marker-ring");
 
       if (!buttonEl) {
-        console.warn(`[Markers Animation] Marker ${index} has no button!`);
         return;
       }
 
@@ -91,30 +88,22 @@ export function useMarkerAnimations() {
 
         const st = ScrollTrigger.create({
           trigger: element,
-          start: "top 50%", // Верх элемента на середине экрана (50% от верха viewport)
-          end: "bottom top", // Низ элемента на верху экрана (0% viewport)
+          start: "top 50%",
+          end: "bottom top",
           once: true,
-          markers: false, // Визуальные маркеры для отладки отключены
-          invalidateOnRefresh: true, // ✅ Пересчитывать при изменении
-          refreshPriority: -1, // ✅ Обновлять после изображений
+          markers: false,
+          invalidateOnRefresh: true,
+          refreshPriority: -1,
           onEnter: () => {
             tl.play();
           },
         });
 
         scrollTriggers.push(st);
-      } else {
-        console.error(
-          "[Markers Animation] ❌ No valid element for ScrollTrigger!"
-        );
       }
     } else if (!useScrollTrigger) {
       // Запустить сразу
       tl.play();
-    } else {
-      console.warn(
-        "[Markers Animation] ScrollTrigger enabled but no trigger element provided!"
-      );
     }
 
     return tl;

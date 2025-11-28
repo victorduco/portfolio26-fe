@@ -200,8 +200,11 @@ onMounted(() => {
       (entries) => {
         entries.forEach((entry) => {
           isInViewport = entry.isIntersecting;
-          if (isInViewport) startParallax();
-          else stopParallax();
+          if (isInViewport) {
+            startParallax();
+          } else {
+            stopParallax();
+          }
         });
       },
       { rootMargin: '100px 0px', threshold: 0 }

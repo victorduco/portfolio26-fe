@@ -1,4 +1,4 @@
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { useMarkerAnimations } from './useMarkerAnimations';
 
 /**
@@ -33,10 +33,10 @@ export function useImageMarkers(options = {}) {
 
     nextTick(() => {
       animateMarkersEntry(refs, trigger || triggerElement, {
-        
-        
-        
-        
+
+
+
+
         useScrollTrigger: enableScrollTrigger,
       });
 

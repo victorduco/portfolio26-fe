@@ -87,8 +87,11 @@ const overlayStyle = computed(() => {
 
 const setMarkerRef = (el, index) => {
   if (el) {
+    // Валидный ref - сохраняем
     markerRefs.value[index] = el;
   }
+  // Если el === null, это размонтирование старого компонента
+  // Игнорируем, чтобы не перезаписать refs новых компонентов
 };
 
 const handleMarkerOpen = (index) => {

@@ -6,7 +6,7 @@
       <section :id="`story${storyId}-summary`">
         <SummarySection :story-id="storyId" :story-config="config" />
       </section>
-      <section v-for="(contentSection, key) in storyContent" :key="key" :id="`story${storyId}-${key}`" class="content-section">
+      <section v-for="(contentSection, key) in storyContent" :key="`${storyId}-${key}`" :id="`story${storyId}-${key}`" class="content-section">
         <div v-if="contentSection.heading" class="section-title">
           <h3 :class="contentSection.heading.sectionTag ? 'story-heading-two-level' : 'story-heading-single'">
             <template v-if="contentSection.heading.sectionTag">
@@ -16,7 +16,7 @@
             <template v-else>{{ contentSection.heading.main }}</template>
           </h3>
         </div>
-        <ContentSection v-for="(section, i) in contentSection.sections" :key="i" :heading="section.heading" :text-before="section.textBefore" :media="section.media" :text-after="section.textAfter" :background-color="config.videoBackground" />
+        <ContentSection v-for="(section, i) in contentSection.sections" :key="`${storyId}-${key}-${i}`" :heading="section.heading" :text-before="section.textBefore" :media="section.media" :text-after="section.textAfter" :background-color="config.videoBackground" />
       </section>
       <section v-if="config.results" :id="`story${storyId}-results`">
         <ResultsCardsSection v-if="storyId === '2'" :results="config.results" :intro-text="config.resultsIntro" :conclusion-text="config.resultsConclusion" :card-background="config.videoBackground" :media-label="config.resultsMediaLabel" />

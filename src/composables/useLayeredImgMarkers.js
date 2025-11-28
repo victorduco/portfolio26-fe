@@ -93,10 +93,10 @@ export function useLayeredImgMarkers(options = {}) {
       // Запускаем анимацию появления
       nextTick(() => {
         animateMarkersEntry(sortedRefs, layeredContainerRef.value, {
-          
-          
-          
-          
+
+
+
+
           useScrollTrigger: true,
         });
       });
@@ -109,10 +109,10 @@ export function useLayeredImgMarkers(options = {}) {
   const handleMobileMarkersReady = (refs) => {
     nextTick(() => {
       animateMarkersEntry(refs, layeredContainerRef.value, {
-        
-        
-        
-        
+
+
+
+
         useScrollTrigger: false,
       });
     });
