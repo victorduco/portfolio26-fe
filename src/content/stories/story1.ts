@@ -88,8 +88,7 @@ export const story1Content = {
         media: {
           type: "tabbed-video",
           props: {
-            mediaLabel:
-              "Conversational and Classic Workflows",
+            mediaLabel: "Conversational and Classic Workflows",
             tabs: [
               {
                 title: "AI-Based User Flow",
@@ -171,6 +170,9 @@ export const story1Content = {
             image1: "/images/story1-framework-1.png",
             image2: "/images/story1-framework-2.png",
             image3: "/images/story1-framework-3.png",
+            maxWidth1: "524px", // 1048/2
+            maxWidth2: "1254px", // 2508/2
+            maxWidth3: "774px", // 1548/2
             mediaLabel: "Universal Input & Output Elements",
           },
         },
@@ -236,7 +238,8 @@ export const story1Content = {
         media: {
           type: "tabbed-img",
           props: {
-            mediaLabel: "Users may need a wide range of different context types.",
+            mediaLabel:
+              "Users may need a wide range of different context types.",
             defaultButtonColor: "#9B4AE2",
             maxWidth: "1200px",
             borderWidth: "2px",
