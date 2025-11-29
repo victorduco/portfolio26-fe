@@ -128,7 +128,7 @@ export const story3Content = {
           ]
         ),
         textAfter:
-          "Leadership quickly recognized the clarity and depth of the audit and decided to continue working with me on a full redesign of the application.",
+          "Leadership recognized the clarity and depth of the audit and decided to continue working with me on a full redesign of the application.",
       },
     ],
   },
