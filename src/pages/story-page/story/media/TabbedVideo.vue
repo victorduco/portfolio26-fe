@@ -134,6 +134,11 @@ onMounted(() => {
   const onFsChange = () => (isFullscreen.value = !!document.fullscreenElement);
   document.addEventListener("fullscreenchange", onFsChange);
 
+  // Set playback rate for all videos
+  videoRefs.value.forEach((video) => {
+    if (video) video.playbackRate = 1.5;
+  });
+
   observer = new IntersectionObserver(
     ([entry]) => {
       if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
