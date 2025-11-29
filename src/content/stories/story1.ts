@@ -3,7 +3,6 @@ const cards = (
   l: string,
   c: string,
   r: string,
-  label: string,
   markers: any[] = []
 ) => ({
   type: "layered-cards",
@@ -14,16 +13,14 @@ const cards = (
     zIndexLeft: 2,
     zIndexCenter: 3,
     zIndexRight: 1,
-    mediaLabel: label,
     markers: markers,
     defaultButtonColor: "#4A90E2",
   },
 });
-const img = (src: string, label: string, markers: any[] = [], opts = {}) => ({
+const img = (src: string, markers: any[] = [], opts = {}) => ({
   type: "image",
   props: {
     imageSrc: src,
-    mediaLabel: label,
     markers: markers,
     defaultButtonColor: "#4A90E2",
     ...opts,
@@ -43,7 +40,6 @@ export const story1Content = {
           "Users spent significant time verifying whether transactions were reconciled correctly and investigating issues before deciding what action to take.",
         media: img(
           "/images/story1-domain-tree.png",
-          "Reconciliation Domain Map",
           [
             {
               position: { x: 41.21, y: 26.76 },
@@ -69,7 +65,6 @@ export const story1Content = {
           "/images/story1-scale-2.png",
           "/images/story1-scale-1.png",
           "/images/story1-scale-3.png",
-          "Scale & Research Highlights",
           []
         ),
       },
@@ -88,7 +83,6 @@ export const story1Content = {
         media: {
           type: "tabbed-video",
           props: {
-            mediaLabel: "Conversational and Classic Workflows",
             tabs: [
               {
                 title: "AI-Based User Flow",
@@ -112,7 +106,6 @@ export const story1Content = {
         media: {
           type: "tabbed-img",
           props: {
-            mediaLabel: "Chat–Full View Linking",
             defaultButtonColor: "#9B4AE2",
             tabs: [
               {
@@ -170,7 +163,6 @@ export const story1Content = {
             image1: "/images/story1-framework-1.png",
             image2: "/images/story1-framework-2.png",
             image3: "/images/story1-framework-3.png",
-            mediaLabel: "Universal Input & Output Elements",
           },
         },
       },
@@ -181,7 +173,6 @@ export const story1Content = {
         media: {
           type: "tabbed-img",
           props: {
-            mediaLabel: "Chat UI Patterns",
             defaultButtonColor: "#9B4AE2",
             maxWidth: "1200px",
             borderWidth: "2px",
@@ -235,8 +226,6 @@ export const story1Content = {
         media: {
           type: "tabbed-img",
           props: {
-            mediaLabel:
-              "Users may need a wide range of different context types.",
             defaultButtonColor: "#9B4AE2",
             maxWidth: "1200px",
             borderWidth: "2px",

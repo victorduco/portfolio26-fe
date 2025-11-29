@@ -1,6 +1,7 @@
 <template>
   <section class="story-results">
     <div class="results-content">
+      <div class="heading-divider"></div>
       <h3 class="story-results-title">Results</h3>
       <div class="results-grid">
         <div v-for="(result, i) in results" :key="i" class="result-item">
@@ -20,6 +21,7 @@ defineProps({ results: { type: Array, required: true }, resultsNote: { type: Str
 <style scoped>
 .story-results { width: 100%; padding: 40px 0 168px; display: flex; justify-content: center; }
 .results-content { width: 100%; max-width: 1200px; padding: 0 16px; box-sizing: border-box; }
+.heading-divider { width: 100%; height: 1px; background: rgba(0, 0, 0, 0.1); margin-bottom: 40px; }
 .results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
 .result-item { display: flex; flex-direction: column; gap: 12px; }
 .result-heading { font-size: 18px; font-weight: var(--font-weight-semibold); line-height: 1.3; margin: 0; color: inherit; }

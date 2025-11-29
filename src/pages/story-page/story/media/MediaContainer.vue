@@ -1,11 +1,5 @@
 <template>
   <div :class="['media-container-wrapper', wrapperClass]">
-    <MediaLabel
-      v-if="label || sources.length > 0"
-      :label="label"
-      :sources="sources"
-      :tag="labelTag"
-    />
     <div
       :class="[
         'media-container',
@@ -21,7 +15,6 @@
 
 <script setup>
 import { computed } from "vue";
-import MediaLabel from "../elements/MediaLabel.vue";
 
 const props = defineProps({
   backgroundColor: { type: String, default: "transparent" },
@@ -30,9 +23,6 @@ const props = defineProps({
     default: "hidden",
     validator: (v) => ["hidden", "visible"].includes(v),
   },
-  label: { type: String, default: "" },
-  sources: { type: Array, default: () => [] },
-  labelTag: { type: String, default: "h3" },
   wrapperClass: { type: String, default: "" },
   containerClass: { type: String, default: "" },
 });
@@ -40,7 +30,7 @@ const props = defineProps({
 const containerStyle = computed(() => ({
   overflow: props.overflow,
   backgroundColor: props.backgroundColor,
-  height: "95vh",
+  height: "90vh",
   minHeight: "950px",
   width: "98vw",
 }));
@@ -55,7 +45,7 @@ const containerStyle = computed(() => ({
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-  margin: 48px 0;
+  margin: 36px 0 48px;
   overflow: visible;
 }
 .media-container {
