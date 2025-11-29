@@ -55,7 +55,7 @@
           system.
         </p>
         <a
-          href="https://github.com/victorduco/agent-taskmanager"
+          href="https://github.com/victorduco/agent-ha"
           target="_blank"
           rel="noopener noreferrer"
           class="body1 ai-play__link"

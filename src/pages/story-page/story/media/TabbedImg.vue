@@ -1,7 +1,11 @@
 <template>
   <div class="tabbed-img-container" ref="containerRef">
     <div class="tabs-wrapper">
-      <TabsNav :tabs="tabsWithTitles" :active-tab="activeTab" @tab-change="switchTab" />
+      <TabsNav
+        :tabs="tabsWithTitles"
+        :active-tab="activeTab"
+        @tab-change="switchTab"
+      />
     </div>
     <div class="img-wrapper" ref="imgWrapperRef">
       <!-- Обернем каждое изображение для корректного позиционирования меток -->
@@ -33,12 +37,20 @@
           </div>
 
           <!-- Inner border overlay (only when border is specified) -->
-          <div v-if="hasBorder" class="inner-border-overlay" :style="imgStatesWrapperStyle"></div>
+          <div
+            v-if="hasBorder"
+            class="inner-border-overlay"
+            :style="imgStatesWrapperStyle"
+          ></div>
 
           <!-- Marker overlay для этого таба (привязан к img) -->
           <!-- Add data-marker-overlay attribute to help identify overlay elements -->
           <ImageMarkerOverlay
-            v-if="markersLogic.hasMarkers.value && tab.markers && tab.markers.length > 0"
+            v-if="
+              markersLogic.hasMarkers.value &&
+              tab.markers &&
+              tab.markers.length > 0
+            "
             :markers="tab.markers"
             :default-button-color="defaultButtonColor"
             :default-icon-color="defaultIconColor"
@@ -57,43 +69,46 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import TabsNav from "@/components/tabs-nav/TabsNav.vue";
-import ImageMarkerOverlay from '@/components/media/markers/ImageMarkerOverlay.vue';
-import { useTabbedImgMarkers } from '@/composables/useTabbedImgMarkers';
+import ImageMarkerOverlay from "@/components/media/markers/ImageMarkerOverlay.vue";
+import { useTabbedImgMarkers } from "@/composables/useTabbedImgMarkers";
 
 const props = defineProps({
   tabs: {
     type: Array,
     required: true,
-    validator: tabs => tabs.every(t => typeof t.title === "string" && typeof t.imageSrc === "string")
+    validator: (tabs) =>
+      tabs.every(
+        (t) => typeof t.title === "string" && typeof t.imageSrc === "string"
+      ),
   },
   defaultButtonColor: {
     type: String,
-    default: '#4A90E2'
+    default: "#4A90E2",
   },
   defaultIconColor: {
     type: String,
-    default: '#ffffff'
+    default: "#ffffff",
   },
   defaultIconType: {
     type: String,
-    default: 'plus'
+    default: "plus",
   },
   maxWidth: {
     type: String,
-    default: null
+    default: null,
   },
   borderWidth: {
     type: String,
-    default: null
+    default: null,
   },
   borderColor: {
     type: String,
-    default: null
+    default: null,
   },
   borderRadius: {
     type: String,
-    default: null
-  }
+    default: null,
+  },
 });
 
 const containerRef = ref(null);
@@ -107,10 +122,10 @@ let observer = null;
 
 // Extract only titles for TabsNav (без markers)
 const tabsWithTitles = computed(() => {
-  return props.tabs.map(tab => ({
+  return props.tabs.map((tab) => ({
     title: tab.title,
     imageSrc: tab.imageSrc,
-    alt: tab.alt
+    alt: tab.alt,
   }));
 });
 
@@ -141,7 +156,7 @@ const imgStatesWrapperStyle = computed(() => {
   const innerRadius = Math.max(0, radiusValue - borderValue);
 
   return {
-    borderRadius: `${innerRadius}px`
+    borderRadius: `${innerRadius}px`,
   };
 });
 
@@ -215,15 +230,19 @@ const markersLogic = useTabbedImgMarkers({
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
   position: relative;
+  padding: 40px 0;
 }
 
 .tabs-wrapper {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 40px) 0;
+  padding: 0 clamp(16px, 3vw, 40px);
+  flex-shrink: 0;
 }
 
 .tabs-wrapper :deep(.tabs-nav) {
@@ -231,13 +250,15 @@ const markersLogic = useTabbedImgMarkers({
 }
 
 .img-wrapper {
-  flex: 1;
   width: 100%;
+  max-width: 85vw;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: clamp(16px, 2.5vw, 24px) 40px clamp(24px, 4vw, 40px);
+  padding: 0 40px;
+  margin-top: 0vh;
+  flex-shrink: 0;
 }
 
 .tab-img-wrapper {
@@ -272,7 +293,7 @@ const markersLogic = useTabbedImgMarkers({
 .inner-border-overlay {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 0 2px #0D0D0D;
+  box-shadow: inset 0 0 0 2px #0d0d0d;
   pointer-events: none;
   z-index: 20;
 }
