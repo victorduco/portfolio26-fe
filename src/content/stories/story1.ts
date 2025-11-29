@@ -170,9 +170,6 @@ export const story1Content = {
             image1: "/images/story1-framework-1.png",
             image2: "/images/story1-framework-2.png",
             image3: "/images/story1-framework-3.png",
-            maxWidth1: "524px", // 1048/2
-            maxWidth2: "1254px", // 2508/2
-            maxWidth3: "774px", // 1548/2
             mediaLabel: "Universal Input & Output Elements",
           },
         },

@@ -20,9 +20,6 @@ const props = defineProps({
   width1: { type: String, default: '20%' },
   width2: { type: String, default: '50%' },
   width3: { type: String, default: '30%' },
-  maxWidth1: { type: String, default: null },
-  maxWidth2: { type: String, default: null },
-  maxWidth3: { type: String, default: null },
   alt: { type: String, default: 'Parallax image' },
 });
 
@@ -35,9 +32,9 @@ const imageSizes = reactive([
 ]);
 
 const images = [
-  { src: props.image1, width: props.width1, maxWidth: props.maxWidth1, speed: props.speed1 },
-  { src: props.image2, width: props.width2, maxWidth: props.maxWidth2, speed: props.speed2 },
-  { src: props.image3, width: props.width3, maxWidth: props.maxWidth3, speed: props.speed3 },
+  { src: props.image1, width: props.width1, speed: props.speed1 },
+  { src: props.image2, width: props.width2, speed: props.speed2 },
+  { src: props.image3, width: props.width3, speed: props.speed3 },
 ];
 
 const handleImageLoad = (index, event) => {
@@ -47,18 +44,9 @@ const handleImageLoad = (index, event) => {
 };
 
 const getStripStyle = (index) => {
-  const manualMaxWidth = images[index].maxWidth;
-
-  const style = {
+  return {
     width: images[index].width // Базовая ширина в процентах
   };
-
-  // Если задан вручную maxWidth - используем его как максимальную ширину контейнера
-  if (manualMaxWidth) {
-    style.maxWidth = manualMaxWidth;
-  }
-
-  return style;
 };
 
 onMounted(() => {
